@@ -28,7 +28,7 @@
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
 
-#define Placa_Version "2,29"
+#define Placa_Version "2,31"
 
 Seguranca seg;
 String usuario1 = seg.retornaUsuario();
@@ -318,8 +318,8 @@ void setup(void){
   server.on("/executeupdate", executeupdate);
   server.on("/executeupdatebeta", executeupdateBeta);
   server.on("/versao", versao);
-  server.on("/versaobeta", versaoBeta);
   server.on("/link", linkversao);
+  server.on("/link", linkversaoBeta);
   //server.on("/limpadevice", limpadevice);
   server.on("/ultimodisparo", ultimodisp);
   server.on("/buscaNotificar", buscaNotificar);
