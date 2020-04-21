@@ -316,7 +316,9 @@ void setup(void){
   server.on("/gravadevice", gravadevice);
   server.on("/buscadevice", buscadevice);
   server.on("/executeupdate", executeupdate);
+  server.on("/executeupdatebeta", executeupdateBeta);
   server.on("/versao", versao);
+  server.on("/versaobeta", versaoBeta);
   server.on("/link", linkversao);
   //server.on("/limpadevice", limpadevice);
   server.on("/ultimodisparo", ultimodisp);

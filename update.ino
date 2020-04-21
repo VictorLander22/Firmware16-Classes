@@ -6,8 +6,39 @@ void executeupdate()
     return server.requestAuthentication();
 
   server.send(200, "text/html", "ok");
+//http://keepin.com.br/firmware/16/autoresidencial.ino.bin
+  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/autoresidencial.bin");
+  //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
 
-  t_httpUpdate_return ret = ESPhttpUpdate.update("http://www.fcleal.com.br/esp8266/16/autoresidencial.ino.bin");
+  switch (ret)
+  {
+  case HTTP_UPDATE_FAILED:
+    Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    //            server.send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
+    break;
+
+  case HTTP_UPDATE_NO_UPDATES:
+    Serial.println("HTTP_UPDATE_NO_UPDATES");
+    //    server.send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
+    break;
+
+  case HTTP_UPDATE_OK:
+    Serial.println("ok");
+    //    server.send(200, "text/html", "HTTP_UPDATE_OK");
+    break;
+  }
+}
+
+void executeupdateBeta()
+{
+  //const char* www_username = www_username2.c_str();
+  //const char* www_password = www_password2.c_str();
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  server.send(200, "text/html", "ok");
+//http://keepin.com.br/firmware/16/autoresidencial.ino.bin
+  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/beta/firmware16.bin");
   //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
 
   switch (ret)
@@ -46,8 +77,19 @@ void linkversao()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", "http://www.fcleal.com.br/esp8266/16/versao.txt");
+  server.send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
 }
+
+void linkversaoBeta()
+{
+  //const char* www_username = www_username2.c_str();
+  //const char* www_password = www_password2.c_str();
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  server.send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
+}
+
 
 void logData(String dados)
 {
