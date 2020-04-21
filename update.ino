@@ -7,7 +7,7 @@ void executeupdate()
 
   server.send(200, "text/html", "ok");
 //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
-  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/autoresidencial.bin");
+  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/firmware16.bin");
   //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
 
   switch (ret)
