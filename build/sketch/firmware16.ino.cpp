@@ -424,33 +424,33 @@ void sendRFp();
 void trataSensores();
 #line 181 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void sendDataToFirebase(String MSG, int numSen, String vTag);
-#line 263 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 270 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void lersensores();
-#line 287 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 294 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void gravasensor();
-#line 336 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 343 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void gravasensor2(String Valor);
-#line 352 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 359 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 boolean verificaSensores(int nsensor, String vsAtual);
-#line 966 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 973 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void consultaSensor();
-#line 1040 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1047 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 String lerSensor();
-#line 1050 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1057 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void consensor();
-#line 1069 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1076 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void gravadevice();
-#line 1100 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1107 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void buscadevice();
-#line 1145 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1152 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void ultimodisp();
-#line 1159 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1166 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void retornaNotificar();
-#line 1176 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1183 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void buscaNotificar();
-#line 1194 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1201 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void gravanot();
-#line 1234 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1241 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void gravanot2(String Valor);
 #line 1 "f:\\Desenvolvimento\\keepin\\firmware16\\skeleton.ino"
 String vskeleton();
@@ -6890,23 +6890,30 @@ void sendDataToFirebase(String MSG, int numSen, String vTag) {
           data = data + "\"badge\":\"0\",";     
           data = data + "\"content-available\": \"1\",";
           data = data + "\"sound\":\"default\"";               
-          data = data + "}"; 
+          data = data + "},"; 
+          data = data + "\"data\": {";
+          data = data + "\"app\": \"keepin\",";
+          data = data + "\"msg\": \"" + MSG + "\"";
+          data = data + "}";          
           data = data + " }";
       }
       else
       {
           data = "{";
           data = data + "\"to\": \"" + reg.substring(1) + "\",";
-          data = data + "\"data\": {";
+          data = data + "\"notification\": {";
           //data = data + "\"custom_notification\": {";
-          data = data + "\"notification_title\": \"" + MSG + "\",";
-          data = data + "\"notification_largeicon\" : \"http://www.keepin.com.br/img/Logo_semtexto.fw.png\",";
-          data = data + "\"notification_text\":\"" + MSG + "\",";   
-          data = data + "\"notification_vibrate\":\"1\",";     
-          data = data + "\"notification_visibility\": \"1\",";
-          data = data + "\"notification_priority\": \"1\",";
-          data = data + "\"notification_onlyalertonce\":\"1\"";               
-          data = data + "}";      
+          data = data + "\"body\": \"" + MSG + "\",";
+          data = data + "\"title\" : \"" + MSG + "\",";
+          data = data + "\"tag\":\"" + vTag + "\",";   
+          data = data + "\"badge\":\"0\",";     
+          data = data + "\"content-available\": \"1\",";
+          data = data + "\"sound\":\"default\"";               
+          data = data + "},"; 
+          data = data + "\"data\": {";
+          data = data + "\"app\": \"keepin\",";
+          data = data + "\"msg\": \"" + MSG + "\"";
+          data = data + "}";          
           data = data + " }";
       }
       Serial.println("Send data...");
@@ -8584,7 +8591,7 @@ void executeupdate()
 
   server.send(200, "text/html", "ok");
 //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
-  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/autoresidencial.bin");
+  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/firmware16.bin");
   //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
 
   switch (ret)

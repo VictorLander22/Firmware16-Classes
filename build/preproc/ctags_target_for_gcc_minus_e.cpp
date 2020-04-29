@@ -6598,6 +6598,10 @@ void sendDataToFirebase(String MSG, int numSen, String vTag) {
           data = data + "\"badge\":\"0\",";
           data = data + "\"content-available\": \"1\",";
           data = data + "\"sound\":\"default\"";
+          data = data + "},";
+          data = data + "\"data\": {";
+          data = data + "\"app\": \"keepin\",";
+          data = data + "\"msg\": \"" + MSG + "\"";
           data = data + "}";
           data = data + " }";
       }
@@ -6605,15 +6609,18 @@ void sendDataToFirebase(String MSG, int numSen, String vTag) {
       {
           data = "{";
           data = data + "\"to\": \"" + reg.substring(1) + "\",";
-          data = data + "\"data\": {";
+          data = data + "\"notification\": {";
           //data = data + "\"custom_notification\": {";
-          data = data + "\"notification_title\": \"" + MSG + "\",";
-          data = data + "\"notification_largeicon\" : \"http://www.keepin.com.br/img/Logo_semtexto.fw.png\",";
-          data = data + "\"notification_text\":\"" + MSG + "\",";
-          data = data + "\"notification_vibrate\":\"1\",";
-          data = data + "\"notification_visibility\": \"1\",";
-          data = data + "\"notification_priority\": \"1\",";
-          data = data + "\"notification_onlyalertonce\":\"1\"";
+          data = data + "\"body\": \"" + MSG + "\",";
+          data = data + "\"title\" : \"" + MSG + "\",";
+          data = data + "\"tag\":\"" + vTag + "\",";
+          data = data + "\"badge\":\"0\",";
+          data = data + "\"content-available\": \"1\",";
+          data = data + "\"sound\":\"default\"";
+          data = data + "},";
+          data = data + "\"data\": {";
+          data = data + "\"app\": \"keepin\",";
+          data = data + "\"msg\": \"" + MSG + "\"";
           data = data + "}";
           data = data + " }";
       }
@@ -8288,7 +8295,7 @@ void executeupdate()
 
   server.send(200, "text/html", "ok");
 //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
-  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/autoresidencial.bin");
+  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/firmware16.bin");
   //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
 
   switch (ret)
