@@ -224,6 +224,10 @@ bool usaCloud = false;
 void setup(void){
   Serial.begin(115200);
   //ConfigAuth();
+
+  Serial.println("");
+  Serial.println("Keepin Firmware: " + Placa_Version);
+
    
   configIR();
 
