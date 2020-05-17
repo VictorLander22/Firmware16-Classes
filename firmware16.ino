@@ -226,7 +226,7 @@ void setup(void){
   //ConfigAuth();
 
   Serial.println("");
-  Serial.println("Keepin Firmware: " + Placa_Version);
+  Serial.println("Keepin Firmware: " + String(Placa_Version));
 
    
   configIR();
