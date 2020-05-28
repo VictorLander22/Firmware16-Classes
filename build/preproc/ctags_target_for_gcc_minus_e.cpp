@@ -152,7 +152,7 @@ ESP8266WebServer server(80);
 
 int contadorled = 0;
 
-unsigned long starTime = 0; // Use unsigned long when dealing with millis()
+unsigned long starTime = 0; // Use unsigned long when dealing with millisAtual
 unsigned long interval = 500; // 1000 millis = 1 second
 //unsigned long Contador = 0;
 
@@ -237,7 +237,7 @@ void setup(void)
 
   lerConfiguracao();
 
-  lastDebounceTime = millis();
+  lastDebounceTime = millisAtual;
 
   //pinMode(LedWiFI, OUTPUT);
   //pinMode(LedVerde, OUTPUT);
@@ -247,9 +247,9 @@ void setup(void)
   //digitalWrite(LedVerde, LOW);
   //digitalWrite(LedAmarelo, LOW);
 
-  //tempoatual = millis();
-  starTime = millis();
-  rfmilis = millis();
+  //tempoatual = millisAtual;
+  starTime = millisAtual;
+  rfmilis = millisAtual;
 
   configRF();
 
@@ -291,8 +291,8 @@ void setup(void)
   //    Serial.println("MDNS responder started");
   //  }
 
-  lastWifiTime = millis();
-  //lastPulso = millis();
+  lastWifiTime = millisAtual;
+  //lastPulso = millisAtual;
 
   //ArduinoOTA.begin();
 
@@ -445,7 +445,7 @@ void loop(void)
       {
         if (vConfigWIFI == "0")
         {
-          lastWifiTime = millis();
+          lastWifiTime = millisAtual;
         }
         rssi = WiFi.RSSI();
         //Serial.println(String(rssi));
@@ -471,10 +471,10 @@ void loop(void)
     // reconexao
     if ((vConfigWIFI == "0" && WiFi.status() != WL_CONNECTED) || (vConfigWIFI == "0" && tipoWifiAtual == 2))
     {
-      if ((millis() - lastWifiTime) >= 300000)
+      if ((millisAtual - lastWifiTime) >= 300000)
       {
         conectar();
-        lastWifiTime = millis();
+        lastWifiTime = millisAtual;
       }
     }
 
@@ -484,7 +484,7 @@ void loop(void)
       conectar();
     }
 
-    //Serial.println("Tempo: " + String(millis() - tempoatual));
+    //Serial.println("Tempo: " + String(millisAtual - tempoatual));
 
     //Serial.println(String(sensor1.read8(), BIN));
     //Serial.println(sensor1.read(0));
@@ -542,9 +542,9 @@ void loop(void)
     }
 
     //  if (HorarioAtual.Second() != Segundo)
-    if (Segundo == -1 || (millis() - Segundo) > 200)
+    if (Segundo == -1 || (millisAtual - Segundo) > 200)
     {
-      Segundo = millis();
+      Segundo = millisAtual;
       //Segundo = HorarioAtual.Second();
       chip3.write(LedGeral, !chip3.read(LedGeral));
     }
@@ -608,9 +608,9 @@ void loop(void)
     {
       //Serial.println("sinal de radio detectado");
       //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
-      if (millis() - rfmilis >= 10000 || millis() - rfmilis < 0)
+      if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
       {
-        rfmilis = millis();
+        rfmilis = millisAtual;
         for (int i = 0; i < 30; i++)
         {
           ultimoEstadoRF[i] = 0x0;
@@ -1772,13 +1772,15 @@ void alterasenhapi() {
 
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
-void gravacena() {
-  if(!server.authenticate(www_username, www_password))
+void gravacena()
+{
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     String ia = server.arg("ia");
     String vTipo = server.arg("t");
     String Valor = server.arg("v");
@@ -1788,13 +1790,13 @@ void gravacena() {
 
     if (ia == "1") // inicio de arquivo
     {
-      File rFile = SPIFFS.open("/ce_"+IdCena+".cfg","w");
+      File rFile = SPIFFS.open("/ce_" + IdCena + ".cfg", "w");
       rFile.println(Valor);
       rFile.close();
     }
     else
     {
-      File rFile = SPIFFS.open("/ce_"+IdCena+".cfg","a");
+      File rFile = SPIFFS.open("/ce_" + IdCena + ".cfg", "a");
       //String ValorAnterior = rFile.readString();
       //rFile.close();
 
@@ -1810,27 +1812,26 @@ void gravacena() {
   }
   else
   {
-      server.send(200, "text/html", "-1");
+    server.send(200, "text/html", "-1");
   }
-
-
 }
 
-
-void lerArquivo(String id) {
+void lerArquivo(String id)
+{
   SPIFFS.begin();
 
-  File rFile = SPIFFS.open("/ce_"+id+".cfg", "r");
+  File rFile = SPIFFS.open("/ce_" + id + ".cfg", "r");
   String linhas;
   //linhas = rFile.readString();
 
   //Serial.println("linhas das cenas");
   int qtde = 0;
-  while(rFile.available()) {
-      String linhas = rFile.readStringUntil('\n');
-      Serial.print(linhas);
-      qtde++;
-    }
+  while (rFile.available())
+  {
+    String linhas = rFile.readStringUntil('\n');
+    Serial.print(linhas);
+    qtde++;
+  }
 
   rFile.close();
   SPIFFS.end();
@@ -1838,13 +1839,15 @@ void lerArquivo(String id) {
   Serial.println(qtde);
 }
 
-void triggerCena(String arq) {
+void triggerCena(String arq)
+{
   cenaExecucao = true;
   cenaPAtual = 0;
   ArqCena = arq;
 }
 
-void checkCena() {
+void checkCena()
+{
   if (cenaExecucao == true)
   {
     String Comando;
@@ -1852,9 +1855,9 @@ void checkCena() {
     SPIFFS.begin();
     if (cenaPAtual == 0) // abre spiff e mantem aberto
     {
-      rFile = SPIFFS.open("/ce_"+ArqCena+".cfg", "r");
+      rFile = SPIFFS.open("/ce_" + ArqCena + ".cfg", "r");
 
-      while(rFile.available())
+      while (rFile.available())
       {
         String linhas = rFile.readStringUntil('\n');
         if (cenaPTotal == 0)
@@ -1864,7 +1867,6 @@ void checkCena() {
         cenaPTotal++;
       }
       cenaPAtual++;
-
     }
     if (cenaPAtual >= 1)
     {
@@ -1880,7 +1882,7 @@ void checkCena() {
       {
         rFile.seek(0, SeekSet);
         int conCena = 1;
-        while(rFile.available())
+        while (rFile.available())
         {
           String linhas = rFile.readStringUntil('\n');
           if (conCena == cenaPAtual)
@@ -1891,7 +1893,6 @@ void checkCena() {
           }
           conCena++;
         }
-
       }
     }
     if (cenaPAtual > cenaPTotal)
@@ -1903,7 +1904,6 @@ void checkCena() {
       cenaPAtual = 0;
       cenaPTotal = 0;
     }
-
   }
 }
 
@@ -1946,59 +1946,50 @@ void executaCena(String comandoCena)
           posicaof = 5;
           cmdPorta += comandoCena[i];
         }
-        else
-        if (cmdTipo == "2")
+        else if (cmdTipo == "2")
         {
           posicaof = 8;
           cmdQtde += comandoCena[i];
         }
-        else
-        if (cmdTipo == "3")
+        else if (cmdTipo == "3")
         {
           posicaof = 4;
           cmdAcao += comandoCena[i];
         }
-        else
-        if (cmdTipo == "4")
+        else if (cmdTipo == "4")
         {
           posicaof = 6;
           cmdPorta += comandoCena[i];
         }
       }
-      else
-      if (posicaoi == 5)
+      else if (posicaoi == 5)
       {
         if (cmdTipo == "1")
         {
           cmdAcao += comandoCena[i];
         }
-        else
-        if (cmdTipo == "2")
+        else if (cmdTipo == "2")
         {
           cmdAcao += comandoCena[i];
         }
-        else
-        if (cmdTipo == "4")
+        else if (cmdTipo == "4")
         {
           cmdValorMin += comandoCena[i];
         }
       }
-      else
-      if (posicaoi == 6)
+      else if (posicaoi == 6)
       {
         if (cmdTipo == "2")
         {
           cmdAcao2 += comandoCena[i];
-//          cmdPorta += comandoCena[i];
+          //          cmdPorta += comandoCena[i];
         }
-        else
-        if (cmdTipo == "4")
+        else if (cmdTipo == "4")
         {
           cmdAcao += comandoCena[i];
         }
       }
-      else
-      if (posicaoi == 7)
+      else if (posicaoi == 7)
       {
         if (cmdTipo == "2")
         {
@@ -2006,22 +1997,19 @@ void executaCena(String comandoCena)
           //cmdModelo += comandoCena[i];
         }
       }
-      else
-      if (posicaoi == 8)
+      else if (posicaoi == 8)
       {
         if (cmdTipo == "2")
         {
           cmdModelo += comandoCena[i];
         }
       }
-
     }
     else // encontrou o caracter '|'
     {
       posicaoi++;
     }
   }
-
 
   IPAddress Destino;
   Destino.fromString(cmdIP);
@@ -2033,34 +2021,32 @@ void executaCena(String comandoCena)
     {
       if (cmdAcao == "0") // desliga
       {
-        LigaDesliga(cmdPorta.toInt()-1, 0x0, "", 0);
+        LigaDesliga(cmdPorta.toInt() - 1, 0x0, "", 0);
       }
       else if (cmdAcao == "1") // liga
       {
-        LigaDesliga(cmdPorta.toInt()-1, 0x1, "", 0);
+        LigaDesliga(cmdPorta.toInt() - 1, 0x1, "", 0);
       }
       else if (cmdAcao == "2") // pulso
       {
-        LigaDesliga(cmdPorta.toInt()-1, 0x0, "", 1);
+        LigaDesliga(cmdPorta.toInt() - 1, 0x0, "", 1);
       }
-      cenaPAtual ++;
+      cenaPAtual++;
     }
     else //upd
     {
       char replyPacekt[255] = "";
       if (cmdAcao == "0") // desliga
       {
-        Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID)+"|E|0|";
+        Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID) + "|E|0|";
       }
-      else
-      if (cmdAcao == "1") // liga
+      else if (cmdAcao == "1") // liga
       {
-        Texto = cmdIP + "|" + cmdPorta + "|true|" + String(cmdChipID)+"|E|0|";
+        Texto = cmdIP + "|" + cmdPorta + "|true|" + String(cmdChipID) + "|E|0|";
       }
-      else
-      if (cmdAcao == "2") // pulso
+      else if (cmdAcao == "2") // pulso
       {
-        Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID)+"|E|1|";
+        Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID) + "|E|1|";
       }
       Serial.println(Texto);
       Texto.toCharArray(replyPacekt, 255);
@@ -2069,55 +2055,51 @@ void executaCena(String comandoCena)
       Udp.write(replyPacekt);
       Udp.endPacket();
       delay(200);
-      cenaPAtual ++;
+      cenaPAtual++;
     }
   }
-  else
-  if (cmdTipo == "2") // IR
+  else if (cmdTipo == "2") // IR
   {
     if (Destino == IpDispositivo)
     {
-      if (lastCnTime == 0 || (millis() - lastCnTime >= 300))
+      if (lastCnTime == 0 || (millisAtual - lastCnTime >= 300))
       {
-        cenaPAtual ++;
+        cenaPAtual++;
         sendIRCMD(cmdAcao, cmdAcao2, cmdQtde.toInt(), cmdPorta.toInt(), cmdModelo.toInt(), cmdQtde.toInt());
-        lastCnTime = millis();
+        lastCnTime = millisAtual;
         //delay(300);
       }
-      else if (millis() - lastCnTime < 0)
+      else if (millisAtual - lastCnTime < 0)
       {
-        lastCnTime = millis();
+        lastCnTime = millisAtual;
       }
     }
     else //upd - não implentado UPD para IR
     {
     }
   }
-  else
-  if (cmdTipo == "3") // timer
+  else if (cmdTipo == "3") // timer
   {
     Serial.println("Entrou no timer");
     if (lastCnTime <= 0)
     {
-      lastCnTime = millis();
+      lastCnTime = millisAtual;
     }
 
-    if (lastCnTime == 0 || (millis() - lastCnTime >= cmdAcao.toInt()))
+    if (lastCnTime == 0 || (millisAtual - lastCnTime >= cmdAcao.toInt()))
     {
-      cenaPAtual ++;
+      cenaPAtual++;
       lastCnTime = -1;
     }
-    else if (millis() - lastCnTime < 0)
+    else if (millisAtual - lastCnTime < 0)
     {
-      lastCnTime = millis();
+      lastCnTime = millisAtual;
     }
-
   }
-  else
-  if (cmdTipo == "4") // Dimmer
+  else if (cmdTipo == "4") // Dimmer
   {
     char replyPacekt[255] = "";
-    String Texto = cmdIP + "|" + cmdPorta + "|" + cmdAcao + "|" + cmdChipID +"|X|";
+    String Texto = cmdIP + "|" + cmdPorta + "|" + cmdAcao + "|" + cmdChipID + "|X|";
 
     Texto += cmdValorMin + "|n|";
     Texto.toCharArray(replyPacekt, 255);
@@ -2127,49 +2109,54 @@ void executaCena(String comandoCena)
     Udp.write(replyPacekt);
     Udp.endPacket();
 
-    cenaPAtual ++;
+    cenaPAtual++;
   }
   else
   {
-    cenaPAtual ++;
+    cenaPAtual++;
   }
-
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cloud.ino"
-void cloud() {
-    HTTPClient http;
-    http.begin("http://cloud.keepin.com.br/api/control/3");
-    int httpCode = http.GET();
-    String payload;
-    if (httpCode > 0) {
-        payload = http.getString();
-        Serial.println(payload);
-    }
+void cloud()
+{
+  HTTPClient http;
+  http.begin("http://cloud.keepin.com.br/api/control/3");
+  int httpCode = http.GET();
+  String payload;
+  if (httpCode > 0)
+  {
+    payload = http.getString();
+    Serial.println(payload);
+  }
 
-    http.end();
+  http.end();
 
-//    StaticJsonBuffer<200> jsonBuffer;
+  //    StaticJsonBuffer<200> jsonBuffer;
 
-    DynamicJsonBuffer jsonBuffer(payload.length());
-    JsonObject& root = jsonBuffer.parseObject(payload);
+  DynamicJsonBuffer jsonBuffer(payload.length());
+  JsonObject &root = jsonBuffer.parseObject(payload);
 
-    if(!root.success()) {
-        Serial.println("parseObject() failed");
-    } else {
+  if (!root.success())
+  {
+    Serial.println("parseObject() failed");
+  }
+  else
+  {
 
-      const String Descricao = root["descricao"];
-      const bool ED1 = root["ed1"];
-      const bool ED3 = root["ed3"];
+    const String Descricao = root["descricao"];
+    const bool ED1 = root["ed1"];
+    const bool ED3 = root["ed3"];
 
-      Serial.println(Descricao);
-      Serial.println(ED1);
-      Serial.println(ED3);
-    }
+    Serial.println(Descricao);
+    Serial.println(ED1);
+    Serial.println(ED3);
+  }
 
-    server.send(200, "text/html", "ok");
+  server.send(200, "text/html", "ok");
 }
 
-void sendCloud() {
+void sendCloud()
+{
   String sSensor1 = String(sensor1.read8(), 2);
   String sSensor2 = String(sensor2.read8(), 2);
 
@@ -2234,7 +2221,7 @@ void sendCloud() {
   dataPost = dataPost + "\"ED14\": \"" + retornaValorCloud(sSensor2[2]) + "\",";
   dataPost = dataPost + "\"ED15\": \"" + retornaValorCloud(sSensor2[1]) + "\",";
   dataPost = dataPost + "\"ED16\": \"" + retornaValorCloud(sSensor2[0]) + "\",";
-  dataPost = dataPost + "\"ip\": \"" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) +"." + String(IpDispositivo[3]) + "\",";
+  dataPost = dataPost + "\"ip\": \"" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "\",";
   dataPost = dataPost + "\"notificacao\": \"" + String(notificar) + "\",";
   dataPost = dataPost + "\"sinal\": \"" + String(rssi) + "\"";
   dataPost = dataPost + " }";
@@ -2245,9 +2232,9 @@ void sendCloud() {
   http.setTimeout(600);
   http.setReuse(true);
   //http.useHTTP10(false);
-//  http.begin(cliente, "192.168.1.147", 443, "/api/keepin", true);
+  //  http.begin(cliente, "192.168.1.147", 443, "/api/keepin", true);
   http.begin(cliente, "http://cloud.keepin.com.br/api/keepin");
-//  http.begin(cliente, "http://192.168.1.147/api/keepin");
+  //  http.begin(cliente, "http://192.168.1.147/api/keepin");
   http.addHeader("Content-Type", "application/json");
   http.setUserAgent("KEEPIN/" + String("2,32") + " Automacao");
   //http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
@@ -2257,73 +2244,89 @@ void sendCloud() {
   http.end();
   //Serial.println(payload);
   Serial.println("Cloud code: " + String(httpCode));
-  if (httpCode == 200 && payload != "[]") {
+  if (httpCode == 200 && payload != "[]")
+  {
     //Serial.println("Payload: " + payload);
     DynamicJsonBuffer jsonBuffer(payload.length());
-    JsonArray& array1 = jsonBuffer.parseArray(payload);
-//    JsonObject& root = jsonBuffer.parseObject(payload);
+    JsonArray &array1 = jsonBuffer.parseArray(payload);
+    //    JsonObject& root = jsonBuffer.parseObject(payload);
 
-    if(!array1.success()) {
-        Serial.println("antes");
-        Serial.println("parseObject() failed");
-    } else {
+    if (!array1.success())
+    {
+      Serial.println("antes");
+      Serial.println("parseObject() failed");
+    }
+    else
+    {
       //Serial.println("qtde registros");
       //Serial.println(array1.size());
 
-      for (int indice = 0; indice < array1.size(); indice++){
+      for (int indice = 0; indice < array1.size(); indice++)
+      {
         //JsonObject& root = jsonBuffer.parseObject(array1[indice]);
 
         //if(!root.success()) {
-          //Serial.println("parseObject() failed");
-        //}    
+        //Serial.println("parseObject() failed");
+        //}
         //{"tipo":"1","acao":"1","modelo":null,"qtdeBit":null,"porta":3},
         const String tipoJson = array1[indice]["tipo"];
         const String acaoJson = array1[indice]["acao"];
         const String qtdeJson = array1[indice]["qtdeBit"];
         const String modeloJson = array1[indice]["modelo"];
         const String portaJson = array1[indice]["porta"];
-            //Serial.println("porta: " + portaJson);
+        //Serial.println("porta: " + portaJson);
 
         if (tipoJson == "1") // saida
         {
           //Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
-          if (porta >= 0) {
-            if (acaoJson == "1") {
+          if (porta >= 0)
+          {
+            if (acaoJson == "1")
+            {
               LigaDesliga(porta, 0x1, "", 0);
-            } else if (acaoJson == "0") {
+            }
+            else if (acaoJson == "0")
+            {
               LigaDesliga(porta, 0x0, "", 0);
             }
           }
-        } else if (tipoJson == "2") // saida pulsada
+        }
+        else if (tipoJson == "2") // saida pulsada
         {
           //Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
-          if (porta >= 0) {
+          if (porta >= 0)
+          {
             LigaDesliga(porta, 0x1, "", 1);
           }
-        } else if (tipoJson == "3") // IR
+        }
+        else if (tipoJson == "3") // IR
         {
           //Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
-          if (porta >= 0) {
-            cenaPAtual ++;
+          if (porta >= 0)
+          {
+            cenaPAtual++;
             sendIRCMD(acaoJson, "", qtdeJson.toInt(), portaJson.toInt(), modeloJson.toInt(), qtdeJson.toInt());
-            lastCnTime = millis();
+            lastCnTime = millisAtual;
             delay(300);
           }
-        } else if (tipoJson == "4") // RF
+        }
+        else if (tipoJson == "4") // RF
         {
           unsigned long Valor = strtoul(acaoJson.c_str(), __null, 10);
 
           sSendRF.send(Valor, 32);
-        } else if (tipoJson == "5")
+        }
+        else if (tipoJson == "5")
         {
           triggerCena(acaoJson);
-        } else if (tipoJson == "6") // notificacao
+        }
+        else if (tipoJson == "6") // notificacao
         {
           SPIFFS.begin();
           File f = SPIFFS.open("/notific.txt", "w");
@@ -2336,14 +2339,17 @@ void sendCloud() {
           if (acaoJson == "true")
           {
             notificar = true;
-          } else {
+          }
+          else
+          {
             notificar = false;
           }
         }
       }
     }
 
-    if (payload != "[]") {
+    if (payload != "[]")
+    {
       http.setTimeout(600);
       http.setReuse(true);
       http.begin(cliente, "http://cloud.keepin.com.br/api/keepinactions/delete");
@@ -2351,29 +2357,32 @@ void sendCloud() {
       http.setUserAgent("KEEPIN/" + String("2,32") + " Automacao");
       //http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
       httpCode = http.POST(payload);
-      if (httpCode == 200) {
-          payload = http.getString();
-          //Serial.println(payload);
+      if (httpCode == 200)
+      {
+        payload = http.getString();
+        //Serial.println(payload);
       }
     }
     http.end();
-  } else if (httpCode != 200) {
+  }
+  else if (httpCode != 200)
+  {
     Serial.println("servidor fora! Code: " + String(httpCode));
     http.end();
   }
   cliente.stop();
 }
 
-String retornaValorCloud(char val) {
-    if (val == '0')
-    {
-        return "true";
-    }
-    else
-    {
-        return "false";
-    }
-
+String retornaValorCloud(char val)
+{
+  if (val == '0')
+  {
+    return "true";
+  }
+  else
+  {
+    return "false";
+  }
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void reiniciar()
@@ -6506,7 +6515,7 @@ void getRF()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "*");
@@ -6518,17 +6527,18 @@ void habRF()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   //enReadRF = true;
   server.send(200, "text/html", "ok");
 }
 
-void gravarf() {
+void gravarf()
+{
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   SensorRFAlterado = true;
@@ -6537,12 +6547,14 @@ void gravarf() {
   String Senha = server.arg("k");
 
   Serial.println(Valor);
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     SPIFFS.begin();
     File f = SPIFFS.open("/rf.txt", "w");
 
-    if (!f) {
-      SPIFFS .format();
+    if (!f)
+    {
+      SPIFFS.format();
       File f = SPIFFS.open("/rf.txt", "w");
     }
 
@@ -6557,7 +6569,7 @@ void gravarf() {
 void trataRF()
 {
   static unsigned long limparUltimoDisparoRF = 0;
-  unsigned long currenTime = millis();
+  unsigned long currenTime = millisAtual;
   //Contador += 1;
   if (currenTime - starTime >= interval)
   {
@@ -6580,17 +6592,14 @@ void trataRF()
       {
         sendDataToFirebase("Sensor " + String(numSensorMSG + 1) + " disparado", numSensorMSG, "2");
       }
-      else
-      if (enviarsms)
+      else if (enviarsms)
       {
         sendSMS(numSensorMSG);
       }
       ultimoDisparo = numSensorMSG;
       limparUltimoDisparoRF = 0;
     }
-
   }
-
 }
 
 boolean verificaSensoresRF()
@@ -6614,7 +6623,7 @@ boolean verificaSensoresRF()
   String texto = "";
   boolean valorRetorno = false;
 
-  for (int nsensor = 0; nsensor < 30; nsensor ++)
+  for (int nsensor = 0; nsensor < 30; nsensor++)
   {
     texto = SensoresRF[nsensor];
     texto.trim();
@@ -6671,7 +6680,7 @@ boolean verificaSensoresRF()
         i3++;
       }
 
-    } // fim separar dados      
+    } // fim separar dados
     vCodigo.trim();
     if (vCodigo == codigoRF)
     {
@@ -6680,23 +6689,21 @@ boolean verificaSensoresRF()
     }
   }
 
-
-
   if (sensorRFDisparado)
   {
-// pega somente o disparo
-  numSensorMSG = numSensorDisparado;
+    // pega somente o disparo
+    numSensorMSG = numSensorDisparado;
 
-  texto = SensoresRF[numSensorDisparado];
-  texto.trim();
-  Funcao = "";
-  PortaAparelho = "";
-  Msg = "";
-  vChip = "";
-  vIPDest = "";
-  vCodigo = "";
-  vTamanho = "";
-  i3 = 1;
+    texto = SensoresRF[numSensorDisparado];
+    texto.trim();
+    Funcao = "";
+    PortaAparelho = "";
+    Msg = "";
+    vChip = "";
+    vIPDest = "";
+    vCodigo = "";
+    vTamanho = "";
+    i3 = 1;
 
     //separa dados nas variaveis
     for (int i2 = 0; i2 <= 60; i2++)
@@ -6737,16 +6744,13 @@ boolean verificaSensoresRF()
         {
           vTamanho += texto[i2];
         }
-
-
       }
       else
       {
         i3++;
       }
 
-    } // fim separar dados      
-
+    } // fim separar dados
   }
 
   if (sensorRFDisparado) // se houve correspondencia
@@ -6760,30 +6764,25 @@ boolean verificaSensoresRF()
     {
       ValorAtuacaoRF = "1";
     }
-    else
-    if (Funcao == "1")
+    else if (Funcao == "1")
     {
       ValorAtuacaoRF = "0";
     }
-    else
-    if (Funcao == "4")
+    else if (Funcao == "4")
     {
       enviarsms = true;
       ValorAtuacaoRF = "1";
       msgDisparadaRF[numSensorDisparado] = false;
     }
-    else
-    if (Funcao == "5")
+    else if (Funcao == "5")
     {
       ValorAtuacaoRF = "1";
     }
-    else
-    if (Funcao == "6")
+    else if (Funcao == "6")
     {
       ValorAtuacaoRF = vsAtualRF;
     }
-    else
-    if (Funcao == "8")
+    else if (Funcao == "8")
     {
       ValorAtuacaoRF = "1";
     }
@@ -6792,7 +6791,7 @@ boolean verificaSensoresRF()
       ValorAtuacaoRF = "1";
     }
 
-//varia com o status atual da prota
+    //varia com o status atual da prota
     if (vsAtualRF == "0")
     {
       estadoAtualRF[numSensorDisparado] = 0x0;
@@ -6802,30 +6801,29 @@ boolean verificaSensoresRF()
       estadoAtualRF[numSensorDisparado] = 0x1;
     }
 
-////    
-//    Serial.print("Valor Atuacao: ");
-  //  Serial.println(ValorAtuacaoRF);
-//    Serial.print("Valor vsAtualRF: ");
+    ////
+    //    Serial.print("Valor Atuacao: ");
+    //  Serial.println(ValorAtuacaoRF);
+    //    Serial.print("Valor vsAtualRF: ");
     //Serial.println(vsAtualRF);
     //Serial.print("Valor estadoAtualRF: ");
     //Serial.println(estadoAtualRF[nsensor]);
     //Serial.print("Valor ultimoestadorf: ");
     //Serial.println(ultimoEstadoRF[nsensor]);
 
- ///  Reseta os marcadores de acionamento
+    ///  Reseta os marcadores de acionamento
 
     if (estadoAtualRF[numSensorDisparado] == ultimoEstadoRF[numSensorDisparado] && ValorAtuacaoRF != vsAtualRF)
     {
       if (Funcao == "7")
       {
-          ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
+        ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
       }
     }
 
-
-    if (ValorAtuacaoRF == vsAtualRF && estadoAtualRF[numSensorDisparado] != ultimoEstadoRF[numSensorDisparado] )
+    if (ValorAtuacaoRF == vsAtualRF && estadoAtualRF[numSensorDisparado] != ultimoEstadoRF[numSensorDisparado])
     {
-      if (Funcao == "0" || Funcao == "1" || Funcao== "4")
+      if (Funcao == "0" || Funcao == "1" || Funcao == "4")
       {
         //Serial.println("disparou");
         ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
@@ -6839,25 +6837,24 @@ boolean verificaSensoresRF()
 
         if (Destino == IpDispositivo)
         {
-          LigaDesliga(PortaAparelho.toInt()-1, 0x1, "", 0);
+          LigaDesliga(PortaAparelho.toInt() - 1, 0x1, "", 0);
         }
         else // envia udp
         {
-            char replyPacekt[255] = "";
-            String Texto = vIPDest + "|" + PortaAparelho + "|true|" + String(vChip)+"|E|";
-            Serial.println(Texto);
-            Texto.toCharArray(replyPacekt, 255);
-            Serial.println("enviado comando UDP");
-            Udp.beginPacket(Destino, localUdpPort);
-            Udp.write(replyPacekt);
-            Udp.endPacket();
-            msgDisparadaRF[numSensorDisparado] = true;
+          char replyPacekt[255] = "";
+          String Texto = vIPDest + "|" + PortaAparelho + "|true|" + String(vChip) + "|E|";
+          Serial.println(Texto);
+          Texto.toCharArray(replyPacekt, 255);
+          Serial.println("enviado comando UDP");
+          Udp.beginPacket(Destino, localUdpPort);
+          Udp.write(replyPacekt);
+          Udp.endPacket();
+          msgDisparadaRF[numSensorDisparado] = true;
         }
         if (Msg == "1")
         {
           valorRetorno = true;
           msgDisparadaRF[numSensorDisparado] = false;
-
         }
         else
         {
@@ -6871,19 +6868,18 @@ boolean verificaSensoresRF()
 
         if (Destino == IpDispositivo)
         {
-          LigaDesliga(PortaAparelho.toInt()-1, 0x0, "", 0);
+          LigaDesliga(PortaAparelho.toInt() - 1, 0x0, "", 0);
         }
         else
         {
-            char replyPacekt[255] = "";
-            String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|E|";
-            Texto.toCharArray(replyPacekt, 255);
-            Serial.println("enviado comando UDP");
-            Udp.beginPacket(Destino, localUdpPort);
-            Udp.write(replyPacekt);
-            Udp.endPacket();
-            msgDisparadaRF[numSensorDisparado] = true;
-
+          char replyPacekt[255] = "";
+          String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|";
+          Texto.toCharArray(replyPacekt, 255);
+          Serial.println("enviado comando UDP");
+          Udp.beginPacket(Destino, localUdpPort);
+          Udp.write(replyPacekt);
+          Udp.endPacket();
+          msgDisparadaRF[numSensorDisparado] = true;
         }
         if (Msg == "1")
         {
@@ -6900,35 +6896,35 @@ boolean verificaSensoresRF()
 
         if (estadoAtualRF[numSensorDisparado] == 0x1 && ultimoEstadoRF[numSensorDisparado] == 0x0)
         {
-//            Inverte(PortaAparelho.toInt()-1);                          
-              if ((millis() - lastDebounceTime) > rfDelay)
-              {
-                IPAddress Destino;
-                Destino.fromString(vIPDest);
+          //            Inverte(PortaAparelho.toInt()-1);
+          if ((millisAtual - lastDebounceTime) > rfDelay)
+          {
+            IPAddress Destino;
+            Destino.fromString(vIPDest);
 
-                if (Destino == IpDispositivo)
-                {
-                  lastDebounceTime = millis();
-                  Inverte(PortaAparelho.toInt()-1);
-                  msgDisparadaRF[numSensorDisparado] = true;
-                  ultimoEstadoRF[numSensorDisparado] = estadoAtual[numSensorDisparado];
-                //  delay(300);    
-                }
-                else
-                {
-                  lastDebounceTime = millis();
-                  char replyPacekt[255] = "";
-                  String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|I|";
-                  Serial.println(Texto);
-                  Texto.toCharArray(replyPacekt, 255);
-                  Serial.println("enviado comando UDP");
-                  Udp.beginPacket(Destino, localUdpPort);
-                  Udp.write(replyPacekt);
-                  Udp.endPacket();
-                  msgDisparadaRF[numSensorDisparado] = true;
-                  ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
-                }
-              }
+            if (Destino == IpDispositivo)
+            {
+              lastDebounceTime = millisAtual;
+              Inverte(PortaAparelho.toInt() - 1);
+              msgDisparadaRF[numSensorDisparado] = true;
+              ultimoEstadoRF[numSensorDisparado] = estadoAtual[numSensorDisparado];
+              //  delay(300);
+            }
+            else
+            {
+              lastDebounceTime = millisAtual;
+              char replyPacekt[255] = "";
+              String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
+              Serial.println(Texto);
+              Texto.toCharArray(replyPacekt, 255);
+              Serial.println("enviado comando UDP");
+              Udp.beginPacket(Destino, localUdpPort);
+              Udp.write(replyPacekt);
+              Udp.endPacket();
+              msgDisparadaRF[numSensorDisparado] = true;
+              ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
+            }
+          }
         }
         valorRetorno = false;
       }
@@ -6936,125 +6932,119 @@ boolean verificaSensoresRF()
       {
         if (estadoAtualRF[numSensorDisparado] == 0x1 && ultimoEstadoRF[numSensorDisparado] == 0x0)
         {
-          if ((millis() - lastDebounceTime) > rfDelay)
+          if ((millisAtual - lastDebounceTime) > rfDelay)
           {
-              IPAddress Destino;
-              Destino.fromString(vIPDest);
+            IPAddress Destino;
+            Destino.fromString(vIPDest);
 
-              if (Destino == IpDispositivo)
-              {
-                lastDebounceTime = millis();
-                Inverte(PortaAparelho.toInt()-1);
-                msgDisparadaRF[numSensorDisparado] = true;
-                ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
-                //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);    
-              }
-              else
-              {
-                lastDebounceTime = millis();
-                char replyPacekt[255] = "";
-                String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|I|";
-                Texto.toCharArray(replyPacekt, 255);
-                Serial.println("enviado comando UDP");
-                Udp.beginPacket(Destino, localUdpPort);
-                Udp.write(replyPacekt);
-                Udp.endPacket();
-                msgDisparadaRF[numSensorDisparado] = true;
-                ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
-              }
+            if (Destino == IpDispositivo)
+            {
+              lastDebounceTime = millisAtual;
+              Inverte(PortaAparelho.toInt() - 1);
+              msgDisparadaRF[numSensorDisparado] = true;
+              ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
+              //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+            }
+            else
+            {
+              lastDebounceTime = millisAtual;
+              char replyPacekt[255] = "";
+              String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
+              Texto.toCharArray(replyPacekt, 255);
+              Serial.println("enviado comando UDP");
+              Udp.beginPacket(Destino, localUdpPort);
+              Udp.write(replyPacekt);
+              Udp.endPacket();
+              msgDisparadaRF[numSensorDisparado] = true;
+              ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
+            }
           }
         }
-        else
-        if (estadoAtualRF[numSensorDisparado] == 0x0 && ultimoEstadoRF[numSensorDisparado] == 0x1)
+        else if (estadoAtualRF[numSensorDisparado] == 0x0 && ultimoEstadoRF[numSensorDisparado] == 0x1)
         {
-            if ((millis() - lastDebounceTime) > rfDelay)
-            {
-              IPAddress Destino;
-              Destino.fromString(vIPDest);
-
-              if (Destino == IpDispositivo)
-              {
-                  lastDebounceTime = millis();
-                  Inverte(PortaAparelho.toInt()-1);
-      //            LigaDesliga(PortaAparelho.toInt()-1, LOW, "", 0);    
-                  msgDisparadaRF[numSensorDisparado] = true;
-                  ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
-              }
-              else
-              {
-                lastDebounceTime = millis();
-                char replyPacekt[255] = "";
-                String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|I|";
-                Texto.toCharArray(replyPacekt, 255);
-                Serial.println("enviado comando UDP");
-                Udp.beginPacket(Destino, localUdpPort);
-                Udp.write(replyPacekt);
-                Udp.endPacket();
-                msgDisparadaRF[numSensorDisparado] = true;
-                ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
-              }
-            }
-        }
-      valorRetorno = false;
-    }
-    else if (Funcao == "7")
-    {
-      if ((millis() - lastDebounceTime) > debounceDelay*3)
-      {
-        lastDebounceTime = millis();
-        IPAddress Destino;
-        Destino.fromString(vIPDest);
-
-        if (Destino == IpDispositivo && ultimoEstadoRF[numSensorDisparado] != estadoAtualRF[numSensorDisparado])
-        {
-          LigaDesliga(PortaAparelho.toInt()-1, 0x1, "", 1);
-          ultimoEstadoRF[numSensorDisparado] = estadoAtual[numSensorDisparado];
-        }
-        else
-        if (Destino != IpDispositivo && ultimoEstadoRF[numSensorDisparado] != estadoAtualRF[numSensorDisparado])
-        {
-          //udp
-          char replyPacekt[255] = "";
-          String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|E|1|";
-          Texto.toCharArray(replyPacekt, 255);
-          Serial.println("enviado comando UDP");
-          Udp.beginPacket(Destino, localUdpPort);
-          Udp.write(replyPacekt);
-          Udp.endPacket();
-          msgDisparadaRF[numSensorDisparado] = true;
-          ultimoEstadoRF[numSensorDisparado] = estadoAtual[numSensorDisparado];
-
-        }
-      }
-    }
-    else if (Funcao == "8")
-    {
-        if (estadoAtualRF[numSensorDisparado] == 0x1 && ultimoEstadoRF[numSensorDisparado] == 0x0)
-        {
-          if ((millis() - lastDebounceTime) > rfDelay)
+          if ((millisAtual - lastDebounceTime) > rfDelay)
           {
-              // Cena
-            triggerCena(PortaAparelho);
-            lastDebounceTime = millis();
+            IPAddress Destino;
+            Destino.fromString(vIPDest);
+
+            if (Destino == IpDispositivo)
+            {
+              lastDebounceTime = millisAtual;
+              Inverte(PortaAparelho.toInt() - 1);
+              //            LigaDesliga(PortaAparelho.toInt()-1, LOW, "", 0);
+              msgDisparadaRF[numSensorDisparado] = true;
+              ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
+            }
+            else
+            {
+              lastDebounceTime = millisAtual;
+              char replyPacekt[255] = "";
+              String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
+              Texto.toCharArray(replyPacekt, 255);
+              Serial.println("enviado comando UDP");
+              Udp.beginPacket(Destino, localUdpPort);
+              Udp.write(replyPacekt);
+              Udp.endPacket();
+              msgDisparadaRF[numSensorDisparado] = true;
+              ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
+            }
+          }
+        }
+        valorRetorno = false;
+      }
+      else if (Funcao == "7")
+      {
+        if ((millisAtual - lastDebounceTime) > debounceDelay * 3)
+        {
+          lastDebounceTime = millisAtual;
+          IPAddress Destino;
+          Destino.fromString(vIPDest);
+
+          if (Destino == IpDispositivo && ultimoEstadoRF[numSensorDisparado] != estadoAtualRF[numSensorDisparado])
+          {
+            LigaDesliga(PortaAparelho.toInt() - 1, 0x1, "", 1);
+            ultimoEstadoRF[numSensorDisparado] = estadoAtual[numSensorDisparado];
+          }
+          else if (Destino != IpDispositivo && ultimoEstadoRF[numSensorDisparado] != estadoAtualRF[numSensorDisparado])
+          {
+            //udp
+            char replyPacekt[255] = "";
+            String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
+            Texto.toCharArray(replyPacekt, 255);
+            Serial.println("enviado comando UDP");
+            Udp.beginPacket(Destino, localUdpPort);
+            Udp.write(replyPacekt);
+            Udp.endPacket();
             msgDisparadaRF[numSensorDisparado] = true;
             ultimoEstadoRF[numSensorDisparado] = estadoAtual[numSensorDisparado];
-
           }
         }
-      valorRetorno = false;
+      }
+      else if (Funcao == "8")
+      {
+        if (estadoAtualRF[numSensorDisparado] == 0x1 && ultimoEstadoRF[numSensorDisparado] == 0x0)
+        {
+          if ((millisAtual - lastDebounceTime) > rfDelay)
+          {
+            // Cena
+            triggerCena(PortaAparelho);
+            lastDebounceTime = millisAtual;
+            msgDisparadaRF[numSensorDisparado] = true;
+            ultimoEstadoRF[numSensorDisparado] = estadoAtual[numSensorDisparado];
+          }
+        }
+        valorRetorno = false;
+      }
+      else
+      {
+        if (msgDisparadaRF[numSensorDisparado] == true)
+        {
+          msgDisparadaRF[numSensorDisparado] = false;
+        }
+        valorRetorno = false;
+      }
     }
-    else
-    {
-     if (msgDisparadaRF[numSensorDisparado] == true)
-     {
-      msgDisparadaRF[numSensorDisparado] = false;
-     }
-     valorRetorno = false;
-
-    }
-
-   }
-   numSensorDisparado = -1;
+    numSensorDisparado = -1;
   }
   ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
   return valorRetorno;
@@ -7084,10 +7074,9 @@ void consultaSensorRF()
       {
         textoSensor += texto[posicao];
       }
-      else
-      if (texto[posicao] == '|' && contador < 7)
+      else if (texto[posicao] == '|' && contador < 7)
       {
-        contador ++;
+        contador++;
         textoSensor += texto[posicao];
       }
 
@@ -7101,7 +7090,7 @@ void consultaSensorRF()
         }
         i++;
       }
-      posicao ++;
+      posicao++;
     }
   }
 }
@@ -7110,73 +7099,74 @@ void ultimodisprf()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     server.send(200, "text/html", ultimoDisparoRF);
   }
 }
-
 
 void sendRFp()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   unsigned long Valor = strtoul(server.arg("c").c_str(), __null, 10);
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     sSendRF.send(Valor, 32);
     server.send(200, "text/html", "ok");
   }
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
-void trataDevice(String (& Devices) [20])
+void trataDevice(String (&Devices)[20])
 {
-    SPIFFS.begin();
-    File f = SPIFFS.open("/device.txt", "r");
+  SPIFFS.begin();
+  File f = SPIFFS.open("/device.txt", "r");
 
-    String valorDevice = f.readStringUntil('*');
-    //Serial.println(valorDevice);
-    f.close();
-    SPIFFS.end();
+  String valorDevice = f.readStringUntil('*');
+  //Serial.println(valorDevice);
+  f.close();
+  SPIFFS.end();
 
-    int posicaoDevice = 0;
+  int posicaoDevice = 0;
 
-    for (int i = 0; i < 20; i++)
+  for (int i = 0; i < 20; i++)
+  {
+    Devices[i] = "";
+  }
+
+  for (int i = 0; i <= valorDevice.length(); i++)
+  {
+    if (valorDevice[i] != ';')
     {
-      Devices[i] = "";
-    }
-
-    for (int i = 0; i <= valorDevice.length(); i++)
-    {
-      if (valorDevice[i] != ';')
+      if (valorDevice[i] != '*' && int(valorDevice[i]) != 13 && int(valorDevice[i]) != 0)
       {
-        if (valorDevice[i] != '*' && int(valorDevice[i]) != 13 && int(valorDevice[i]) != 0)
-        {
-          Devices[posicaoDevice] += valorDevice[i];
-        }
+        Devices[posicaoDevice] += valorDevice[i];
+      }
+    }
+    else
+    {
+      if (posicaoDevice >= 20)
+      {
+        posicaoDevice = 20;
       }
       else
       {
-        if (posicaoDevice >= 20)
-        {
-          posicaoDevice = 20;
-        }
-        else
-        {
-          posicaoDevice += 1;
-        }
+        posicaoDevice += 1;
       }
     }
-    Serial.println(valorDevice);
-    DeviceAlterado = false;
+  }
+  Serial.println(valorDevice);
+  DeviceAlterado = false;
 }
 
 void trataSensores()
@@ -7201,7 +7191,6 @@ void trataSensores()
     //trataDevice();
   }
 
-
   String sChip1 = String(chip1.read8(), 2);
   String sChip2 = String(chip2.read8(), 2);
 
@@ -7215,33 +7204,29 @@ void trataSensores()
     sChip2 = '0' + sChip2;
   }
 
-
-
   // separa os valores ligos no array
   String valorSensores[16] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
   int posicaoSensor;
 
-
-
   for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
   {
-    valorSensores[posicaoSensor] = sSensor1.substring(7-posicaoSensor, 8-posicaoSensor);
+    valorSensores[posicaoSensor] = sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor);
   }
 
   for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
   {
-    valorSensores[posicaoSensor+8] = sSensor2.substring(7-posicaoSensor, 8-posicaoSensor);
+    valorSensores[posicaoSensor + 8] = sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor);
   }
-  // fim separação dos valroes lidos  
+  // fim separação dos valroes lidos
 
   //sensor1.write(7, LOW);
   //Serial.println(sSensor1);
   //Serial.println(String(sensor1.read(7)));
 
-
-  unsigned long currenTime = millis();
+  unsigned long currenTime = millisAtual;
   //Contador += 1;
-  if (currenTime - starTime >= interval){
+  if (currenTime - starTime >= interval)
+  {
     limparUltimoDisparo++;
 
     if (limparUltimoDisparo > 1200)
@@ -7253,7 +7238,7 @@ void trataSensores()
     rssi = WiFi.RSSI();
     char replyPacekt[255] = "";
     String valSensores = sSensor1 + sSensor2;
-    valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) +"." + String(IpDispositivo[3]) + "|" + valSensores+"|" + sChip1+sChip2+"|"+rssi+"*";
+    valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + rssi + "*";
     valSensores.toCharArray(replyPacekt, 255);
     //Serial.println(valSensores);
     IPAddress broadcastIp = IpDispositivo;
@@ -7271,53 +7256,51 @@ void trataSensores()
     }
 
     //Serial.println(Contador);
-//    Contador = 0;  
+    //    Contador = 0;
     Udp.beginPacketMulticast(broadcastIp, localUdpPort, IpDispositivo);
     //Udp.beginPacket(broadcastIp, localUdpPort);
     Udp.write(replyPacekt);
     Udp.endPacket();
-    starTime = millis();
+    starTime = millisAtual;
   }
   else if ((currenTime - starTime) < 0)
   {
-    starTime = millis();
+    starTime = millisAtual;
   }
 
-
- for (int numSensor = 0; numSensor <= 15; numSensor++)
- {
-
-//  if (SensorAlterado && (sSensor1 != "11111111" || sSensor2 != "11111111")) 
-  if (verificaSensores(numSensor, valorSensores[numSensor] ))
+  for (int numSensor = 0; numSensor <= 15; numSensor++)
   {
-    if (msgDisparada[numSensor] == false)
+
+    //  if (SensorAlterado && (sSensor1 != "11111111" || sSensor2 != "11111111"))
+    if (verificaSensores(numSensor, valorSensores[numSensor]))
     {
-      if (notificar)
+      if (msgDisparada[numSensor] == false)
       {
-        if (nomeSensores[numSensor + 1] != "")
+        if (notificar)
         {
-          sendDataToFirebase("Sensor " + nomeSensores[numSensor + 1] + " disparado", numSensor, "1");
+          if (nomeSensores[numSensor + 1] != "")
+          {
+            sendDataToFirebase("Sensor " + nomeSensores[numSensor + 1] + " disparado", numSensor, "1");
+          }
+          else
+          {
+            sendDataToFirebase("Sensor " + String(numSensor + 1) + " disparado", numSensor, "1");
+          }
         }
-        else
+        else if (enviarsms)
         {
-          sendDataToFirebase("Sensor " + String(numSensor + 1) + " disparado", numSensor, "1");
+          sendSMS(numSensor);
         }
+        ultimoDisparo = sSensor1 + sSensor2;
+        limparUltimoDisparo = 0;
+        Serial.println("Sensor disparado");
       }
-      else
-      if (enviarsms)
-      {
-        sendSMS(numSensor);
-      }
-      ultimoDisparo = sSensor1 + sSensor2;
-      limparUltimoDisparo = 0;
-      Serial.println("Sensor disparado");
     }
   }
- }
 }
 
-
-void sendDataToFirebase(String MSG, int numSen, String vTag) {
+void sendDataToFirebase(String MSG, int numSen, String vTag)
+{
   WiFiClient cliente;
   String Devices[20];
   trataDevice(Devices);
@@ -7327,8 +7310,8 @@ void sendDataToFirebase(String MSG, int numSen, String vTag) {
 
   for (int i = 0; i <= 9; i++)
   {
-//    reg = "APA91bH1RwO17t1VXFfQ4HkQTsvIncLp-SjhGH3WTDtO3_fTDJiOdk43wjNR2-IaOPcEOJvfm-Gp5iRMdk8c-Sy-GNyspsUxK4JS8ZuPo6Nhe9tR9smyrxvSRWBU216mVgTN6UjzdjEj";
-//    reg = "fshYIY1u_GY:APA91bFXybZ0qcmldA8uIqltpGz8nHImMYV6B2I_PqsCmQiE6WKQFSXJhq0zo3vlIi-h-JZLt5i6HyZbJE9qFGJvA_Qg2ioDdQqfNnIY8Emun_LzEUCO48xXTKs9GcyU9UuaaASkEDOX";    
+    //    reg = "APA91bH1RwO17t1VXFfQ4HkQTsvIncLp-SjhGH3WTDtO3_fTDJiOdk43wjNR2-IaOPcEOJvfm-Gp5iRMdk8c-Sy-GNyspsUxK4JS8ZuPo6Nhe9tR9smyrxvSRWBU216mVgTN6UjzdjEj";
+    //    reg = "fshYIY1u_GY:APA91bFXybZ0qcmldA8uIqltpGz8nHImMYV6B2I_PqsCmQiE6WKQFSXJhq0zo3vlIi-h-JZLt5i6HyZbJE9qFGJvA_Qg2ioDdQqfNnIY8Emun_LzEUCO48xXTKs9GcyU9UuaaASkEDOX";
     reg = String(Devices[i]);
     //reg.trim();
 
@@ -7337,54 +7320,55 @@ void sendDataToFirebase(String MSG, int numSen, String vTag) {
       //Serial.println(reg.substring(0,1));
       //Serial.println(reg.substring(1));
       String data = "";
-      if (reg.substring(0,1) == "2")
+      if (reg.substring(0, 1) == "2")
       {
-          Serial.println("Iphone");
-          data = "{";
-          data = data + "\"to\": \"" + reg.substring(1) + "\",";
-          data = data + "\"notification\": {";
-          //data = data + "\"custom_notification\": {";
-          data = data + "\"body\": \"" + MSG + "\",";
-          data = data + "\"title\" : \"" + MSG + "\",";
-          data = data + "\"tag\":\"" + vTag + "\",";
-          data = data + "\"badge\":\"0\",";
-          data = data + "\"content-available\": \"1\",";
-          data = data + "\"sound\":\"default\"";
-          data = data + "},";
-          data = data + "\"data\": {";
-          data = data + "\"app\": \"keepin\",";
-          data = data + "\"msg\": \"" + MSG + "\"";
-          data = data + "}";
-          data = data + " }";
+        Serial.println("Iphone");
+        data = "{";
+        data = data + "\"to\": \"" + reg.substring(1) + "\",";
+        data = data + "\"notification\": {";
+        //data = data + "\"custom_notification\": {";
+        data = data + "\"body\": \"" + MSG + "\",";
+        data = data + "\"title\" : \"" + MSG + "\",";
+        data = data + "\"tag\":\"" + vTag + "\",";
+        data = data + "\"badge\":\"0\",";
+        data = data + "\"content-available\": \"1\",";
+        data = data + "\"sound\":\"default\"";
+        data = data + "},";
+        data = data + "\"data\": {";
+        data = data + "\"app\": \"keepin\",";
+        data = data + "\"msg\": \"" + MSG + "\"";
+        data = data + "}";
+        data = data + " }";
       }
       else
       {
-          data = "{";
-          data = data + "\"to\": \"" + reg.substring(1) + "\",";
-          data = data + "\"notification\": {";
-          //data = data + "\"custom_notification\": {";
-          data = data + "\"body\": \"" + MSG + "\",";
-          data = data + "\"title\" : \"" + MSG + "\",";
-          data = data + "\"tag\":\"" + vTag + "\",";
-          data = data + "\"badge\":\"0\",";
-          data = data + "\"content-available\": \"1\",";
-          data = data + "\"sound\":\"default\"";
-          data = data + "},";
-          data = data + "\"data\": {";
-          data = data + "\"app\": \"keepin\",";
-          data = data + "\"msg\": \"" + MSG + "\"";
-          data = data + "}";
-          data = data + " }";
+        data = "{";
+        data = data + "\"to\": \"" + reg.substring(1) + "\",";
+        data = data + "\"notification\": {";
+        //data = data + "\"custom_notification\": {";
+        data = data + "\"body\": \"" + MSG + "\",";
+        data = data + "\"title\" : \"" + MSG + "\",";
+        data = data + "\"tag\":\"" + vTag + "\",";
+        data = data + "\"badge\":\"0\",";
+        data = data + "\"content-available\": \"1\",";
+        data = data + "\"sound\":\"default\"";
+        data = data + "},";
+        data = data + "\"data\": {";
+        data = data + "\"app\": \"keepin\",";
+        data = data + "\"msg\": \"" + MSG + "\"";
+        data = data + "}";
+        data = data + " }";
       }
       Serial.println("Send data...");
-//      if (cliente.connect("fcm.googleapis.com", 80)) {
-        if (cliente.connect("cloud.fcleal.com.br", 80)) {
+      //      if (cliente.connect("fcm.googleapis.com", 80)) {
+      if (cliente.connect("cloud.fcleal.com.br", 80))
+      {
         Serial.println("Connected to the server..");
-//        cliente.println("POST /fcm/send HTTP/1.1");
+        //        cliente.println("POST /fcm/send HTTP/1.1");
         cliente.println("POST /api/keepin/fcm HTTP/1.1");
         cliente.println("Authorization: key=" + serve + "");
         cliente.println("Content-Type: application/json");
-//        cliente.println("Host: fcm.googleapis.com");
+        //        cliente.println("Host: fcm.googleapis.com");
         cliente.println("Host: cloud.fcleal.com.br");
         cliente.print("Content-Length: ");
         cliente.println(data.length());
@@ -7392,7 +7376,8 @@ void sendDataToFirebase(String MSG, int numSen, String vTag) {
         cliente.print(data);
       }
       Serial.println("Data sent...Reading response..");
-      while (cliente.available()) {
+      while (cliente.available())
+      {
         char c = cliente.read();
         Serial.print(c);
       }
@@ -7406,10 +7391,11 @@ void sendDataToFirebase(String MSG, int numSen, String vTag) {
   cliente.stop();
 }
 
-void lersensores() {
+void lersensores()
+{
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String sSensor1 = String(sensor1.read8(), 2);
@@ -7425,15 +7411,14 @@ void lersensores() {
     sSensor2 = '0' + sSensor2;
   }
 
-
-
   server.send(200, "text/html", sSensor1);
 }
 
-void gravasensor() {
+void gravasensor()
+{
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   //String idAgenda = server.arg("ag");
@@ -7449,12 +7434,14 @@ void gravasensor() {
     nomeSensores[Indice] = nomeS;
   }
 
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     SPIFFS.begin();
     File f = SPIFFS.open("/sensores.txt", "w");
 
-    if (!f) {
-      SPIFFS .format();
+    if (!f)
+    {
+      SPIFFS.format();
       File f = SPIFFS.open("/sensores.txt", "w");
     }
 
@@ -7479,14 +7466,16 @@ void gravasensor() {
   consultaSensor();
 }
 
-void gravasensor2(String Valor) {
+void gravasensor2(String Valor)
+{
   SensorAlterado = true;
 
   SPIFFS.begin();
   File f = SPIFFS.open("/sensores.txt", "w");
 
-  if (!f) {
-    SPIFFS .format();
+  if (!f)
+  {
+    SPIFFS.format();
     File f = SPIFFS.open("/sensores.txt", "w");
   }
 
@@ -7495,509 +7484,495 @@ void gravasensor2(String Valor) {
   SPIFFS.end();
 }
 
-boolean verificaSensores(int nsensor, String vsAtual) {
-    if (SensorAlterado)
-    {
-      SensorAlterado = false;
-      consultaSensor();
-    }
-    //String texto = consultaAgenda(i);
-    String texto = Sensores[nsensor];
-    texto.trim();
+boolean verificaSensores(int nsensor, String vsAtual)
+{
+  if (SensorAlterado)
+  {
+    SensorAlterado = false;
+    consultaSensor();
+  }
+  //String texto = consultaAgenda(i);
+  String texto = Sensores[nsensor];
+  texto.trim();
 
-    String Porta = "";
-    String Funcao = "";
-    String PortaAparelho = "";
-    String Msg = "";
-    String vChip = "";
-    String vIPDest = "";
-    String PortaAparelho2 = "";
-    String vChip2 = "";
-    String vIPDest2 = "";
-    String vTipo1 = "";
-    String vTipo2 = "";
-    int i3 = 1;
-    boolean valorRetorno = false;
-    enviarsms = false;
-    static unsigned long inicioAcionado[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static boolean vDisparadoSensor[16] = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
+  String Porta = "";
+  String Funcao = "";
+  String PortaAparelho = "";
+  String Msg = "";
+  String vChip = "";
+  String vIPDest = "";
+  String PortaAparelho2 = "";
+  String vChip2 = "";
+  String vIPDest2 = "";
+  String vTipo1 = "";
+  String vTipo2 = "";
+  int i3 = 1;
+  boolean valorRetorno = false;
+  enviarsms = false;
+  static unsigned long inicioAcionado[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  static boolean vDisparadoSensor[16] = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
 
-    //separa dados nas variaveis
-    for (int i2 = 0; i2 <= 100; i2++)
+  //separa dados nas variaveis
+  for (int i2 = 0; i2 <= 100; i2++)
+  {
+    if (texto[i2] != '|' && i3 <= 11 && texto != "")
     {
-      if (texto[i2] != '|' && i3 <= 11 && texto != "")
+      if (i3 == 1)
       {
-        if (i3 == 1)
-        {
-          Porta += texto[i2];
-        }
+        Porta += texto[i2];
+      }
 
-        if (i3 == 2)
-        {
-          Funcao += texto[i2];
-        }
+      if (i3 == 2)
+      {
+        Funcao += texto[i2];
+      }
 
-        if (i3 == 3)
-        {
-          PortaAparelho += texto[i2];
-        }
+      if (i3 == 3)
+      {
+        PortaAparelho += texto[i2];
+      }
 
-        if (i3 == 4)
-        {
-          Msg += texto[i2];
-        }
+      if (i3 == 4)
+      {
+        Msg += texto[i2];
+      }
 
-        if (i3 == 5) //ip
-        {
-          vIPDest += texto[i2];
-        }
+      if (i3 == 5) //ip
+      {
+        vIPDest += texto[i2];
+      }
 
-        if (i3 == 6) // ChipID
-        {
-          vChip += texto[i2];
-        }
+      if (i3 == 6) // ChipID
+      {
+        vChip += texto[i2];
+      }
 
-        if (i3 == 7) // Porta Aparelho 2
-        {
-          PortaAparelho2 += texto[i2];
-        }
+      if (i3 == 7) // Porta Aparelho 2
+      {
+        PortaAparelho2 += texto[i2];
+      }
 
-        if (i3 == 8) // IP Destino 2
-        {
-          vIPDest2 += texto[i2];
-        }
+      if (i3 == 8) // IP Destino 2
+      {
+        vIPDest2 += texto[i2];
+      }
 
-        if (i3 == 9) // ChipID 2
-        {
-          vChip2 += texto[i2];
-        }
+      if (i3 == 9) // ChipID 2
+      {
+        vChip2 += texto[i2];
+      }
 
-        if (i3 == 10) // vTipo1 - Se é retenção ou pulso
-        {
-          vTipo1 += texto[i2];
-        }
+      if (i3 == 10) // vTipo1 - Se é retenção ou pulso
+      {
+        vTipo1 += texto[i2];
+      }
 
-        if (i3 == 11) // vTipo2 - Se é retenção ou pulso
-        {
-          vTipo2 += texto[i2];
-        }
+      if (i3 == 11) // vTipo2 - Se é retenção ou pulso
+      {
+        vTipo2 += texto[i2];
+      }
+    }
+    else
+    {
+      i3++;
+    }
 
+  } // fim separar dados
+
+  // iniciar tratamento.
+  String ValorAtuacao;
+  if (Funcao == "0" || Funcao == "2" || Funcao == "3" || Funcao == "8")
+  {
+    ValorAtuacao = "0";
+  }
+  else if (Funcao == "1")
+  {
+    ValorAtuacao = "1";
+  }
+  else if (Funcao == "4")
+  {
+    enviarsms = true;
+    ValorAtuacao = "0";
+  }
+  else if (Funcao == "5")
+  {
+    ValorAtuacao = "0";
+  }
+  else if (Funcao == "6" || Funcao == "9" || Funcao == "10")
+  {
+    ValorAtuacao = vsAtual;
+  }
+  else if (Funcao == "7")
+  {
+    ValorAtuacao = "0";
+  }
+
+  //varial com o status atual da prota
+
+  if (vsAtual == "0")
+  {
+    estadoAtual[nsensor] = 0x1;
+  }
+  else
+  {
+    estadoAtual[nsensor] = 0x0;
+  }
+
+  if (nsensor == 3)
+  {
+    //Serial.println(Funcao);
+    //Serial.print("estadoAtual: ");
+    //Serial.println(estadoAtual[nsensor]);
+    //       ultimoEstado[nsensor] = estadoAtual[nsensor];
+    //Serial.print("ultimoEstado: ");
+    //      Serial.println(ultimoEstado[nsensor]);
+  }
+
+  ////
+  ///  Reseta os marcadores de acionamento
+  if (estadoAtual[nsensor] == ultimoEstado[nsensor] && ValorAtuacao != vsAtual)
+  {
+    if (Funcao == "7")
+    {
+      ultimoEstado[nsensor] = estadoAtual[nsensor];
+    }
+  }
+
+  if (Funcao == "8" && ValorAtuacao != vsAtual) // trata dupla funcao
+  {
+    if (inicioAcionado[nsensor] > 0)
+    {
+      if (millisAtual < inicioAcionado[nsensor])
+      {
+        inicioAcionado[nsensor] = (4294967295 - inicioAcionado[nsensor]) + millisAtual;
+      }
+
+      if ((millisAtual - inicioAcionado[nsensor] > 1300) && (vDisparadoSensor[nsensor] == false))
+      {
+        Serial.println("maior que 2 segundos"); /// acionamento 2
+        inicioAcionado[nsensor] = 0;
+        vDisparadoSensor[nsensor] = true;
+
+        IPAddress Destino;
+        Destino.fromString(vIPDest2);
+
+        IPAddress Comparacao(192, 168, 4, 1);
+        if (Destino == IpDispositivo || IpDispositivo == Comparacao || vTipo2 == "2")
+        {
+          lastDebounceTime = millisAtual;
+          if (vTipo2 == "2") // cenas
+          {
+            triggerCena(PortaAparelho2);
+          }
+          else if (vTipo2 == "1")
+          {
+            LigaDesliga(PortaAparelho2.toInt() - 1, 0x1, "", 1);
+          }
+          else
+          {
+            Inverte(PortaAparelho2.toInt() - 1);
+          }
+          ultimoEstado[nsensor] = estadoAtual[nsensor];
+          //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+        }
+        else
+        {
+          //udp
+          char replyPacekt[255] = "";
+          String Texto = "";
+          if (vTipo2 == "1")
+          {
+            Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|E|1|";
+          }
+          else
+          {
+            Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|I|";
+          }
+          Texto.toCharArray(replyPacekt, 255);
+          Serial.println("enviado comando UDP");
+          Udp.beginPacket(Destino, localUdpPort);
+          Udp.write(replyPacekt);
+          Udp.endPacket();
+          msgDisparada[nsensor] = true;
+        }
+      }
+      else if (vDisparadoSensor[nsensor] == false)
+      {
+        Serial.println("Menor que 2 segundos");
+        inicioAcionado[nsensor] = 0;
+        vDisparadoSensor[nsensor] = true;
+
+        IPAddress Destino;
+        Destino.fromString(vIPDest);
+        IPAddress Comparacao(192, 168, 4, 1);
+
+        if (Destino == IpDispositivo || IpDispositivo == Comparacao)
+        {
+          lastDebounceTime = millisAtual;
+          if (vTipo1 == "1")
+          {
+            LigaDesliga(PortaAparelho.toInt() - 1, 0x1, "", 1);
+          }
+          else
+          {
+            Inverte(PortaAparelho.toInt() - 1);
+          }
+          ultimoEstado[nsensor] = estadoAtual[nsensor];
+          //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+        }
+        else
+        {
+          //udp
+          char replyPacekt[255] = "";
+          String Texto = "";
+          if (vTipo1 == "1")
+          {
+            Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
+          }
+          else
+          {
+            Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
+          }
+          Texto.toCharArray(replyPacekt, 255);
+          Serial.println("enviado comando UDP");
+          Udp.beginPacket(Destino, localUdpPort);
+          Udp.write(replyPacekt);
+          Udp.endPacket();
+          msgDisparada[nsensor] = true;
+        }
+      }
+    }
+  }
+  else if (Funcao == "8" && ValorAtuacao == vsAtual) // caso tenha ficado mais de 2 segundos ligado já executa.
+  {
+    if (millisAtual < inicioAcionado[nsensor])
+    {
+      inicioAcionado[nsensor] = (4294967295 - inicioAcionado[nsensor]) + millisAtual;
+    }
+
+    if ((millisAtual - inicioAcionado[nsensor] > 1300) && (vDisparadoSensor[nsensor] == false))
+    {
+      Serial.println("maior que 2 segundos");
+      inicioAcionado[nsensor] = 0;
+      vDisparadoSensor[nsensor] = true;
+
+      IPAddress Destino;
+      Destino.fromString(vIPDest2);
+      IPAddress Comparacao(192, 168, 4, 1);
+
+      if (Destino == IpDispositivo || IpDispositivo == Comparacao || vTipo2 == "2")
+      {
+        lastDebounceTime = millisAtual;
+        if (vTipo2 == "2") // cenas
+        {
+          triggerCena(PortaAparelho2);
+        }
+        else if (vTipo2 == "1")
+        {
+          LigaDesliga(PortaAparelho2.toInt() - 1, 0x1, "", 1);
+        }
+        else
+        {
+          Inverte(PortaAparelho2.toInt() - 1);
+        }
+        ultimoEstado[nsensor] = estadoAtual[nsensor];
+        //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
       }
       else
       {
-        i3++;
+        //udp
+        char replyPacekt[255] = "";
+        String Texto = "";
+        if (vTipo2 == "1")
+        {
+          Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|E|1|";
+        }
+        else
+        {
+          Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|I|";
+        }
+        Texto.toCharArray(replyPacekt, 255);
+        Serial.println("enviado comando UDP");
+        Udp.beginPacket(Destino, localUdpPort);
+        Udp.write(replyPacekt);
+        Udp.endPacket();
+        msgDisparada[nsensor] = true;
       }
+    }
+  }
 
-    } // fim separar dados
+  if (Msg == "1")
+  {
+    valorRetorno = true;
+  }
 
-    // iniciar tratamento.
-    String ValorAtuacao;
-    if (Funcao == "0" || Funcao == "2" || Funcao == "3" || Funcao == "8")
+  if (ValorAtuacao == vsAtual && estadoAtual[nsensor] != ultimoEstado[nsensor])
+  {
+    if (Funcao == "0" || Funcao == "1" || Funcao == "4")
     {
-      ValorAtuacao = "0";
+      valorRetorno = true;
     }
-    else
-    if (Funcao == "1")
+    else if (Funcao == "2") // liga porta
     {
-      ValorAtuacao = "1";
-    }
-    else
-    if (Funcao == "4")
-    {
-      enviarsms = true;
-      ValorAtuacao = "0";
-    }
-    else
-    if (Funcao == "5")
-    {
-      ValorAtuacao = "0";
-    }
-    else
-    if (Funcao == "6" || Funcao == "9" || Funcao == "10")
-    {
-      ValorAtuacao = vsAtual;
-    }
-    else
-    if (Funcao == "7")
-    {
-      ValorAtuacao = "0";
-    }
+      IPAddress Destino;
+      Destino.fromString(vIPDest);
+      IPAddress Comparacao(192, 168, 4, 1);
 
-//varial com o status atual da prota
-
-    if (vsAtual == "0")
-    {
-      estadoAtual[nsensor] = 0x1;
-    }
-    else
-    {
-      estadoAtual[nsensor] = 0x0;
-    }
-
-    if (nsensor == 3)
-    {
-   //Serial.println(Funcao);
-      //Serial.print("estadoAtual: ");
-      //Serial.println(estadoAtual[nsensor]);
-//       ultimoEstado[nsensor] = estadoAtual[nsensor];                   
-      //Serial.print("ultimoEstado: ");
-//      Serial.println(ultimoEstado[nsensor]);
-    }
-
-////    
-    ///  Reseta os marcadores de acionamento
-    if (estadoAtual[nsensor] == ultimoEstado[nsensor] && ValorAtuacao != vsAtual)
-    {
-      if (Funcao == "7")
+      if (Destino == IpDispositivo || IpDispositivo == Comparacao)
       {
-          ultimoEstado[nsensor] = estadoAtual[nsensor];
+        LigaDesliga(PortaAparelho.toInt() - 1, 0x1, "", 0);
       }
-    }
-
-    if (Funcao == "8" && ValorAtuacao != vsAtual) // trata dupla funcao
-    {
-      if (inicioAcionado[nsensor] > 0)
+      else // envia udp
       {
-        if (millis() < inicioAcionado[nsensor])
-        {
-          inicioAcionado[nsensor] = (4294967295 - inicioAcionado[nsensor]) + millis();
-        }
-
-        if ((millis() - inicioAcionado[nsensor] > 1300) && (vDisparadoSensor[nsensor] == false))
-        {
-          Serial.println("maior que 2 segundos"); /// acionamento 2
-          inicioAcionado[nsensor] = 0;
-          vDisparadoSensor[nsensor] = true;
-
-
-            IPAddress Destino;
-            Destino.fromString(vIPDest2);
-
-            IPAddress Comparacao(192,168,4,1);
-            if (Destino == IpDispositivo || IpDispositivo == Comparacao || vTipo2 == "2")
-            {
-              lastDebounceTime = millis();
-              if (vTipo2 == "2") // cenas
-              {
-                triggerCena(PortaAparelho2);
-              }
-              else
-              if (vTipo2 == "1")
-              {
-                LigaDesliga(PortaAparelho2.toInt()-1, 0x1, "", 1);
-              }
-              else
-              {
-                Inverte(PortaAparelho2.toInt()-1);
-              }
-              ultimoEstado[nsensor] = estadoAtual[nsensor];
-              //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);    
-            }
-            else
-            {
-              //udp
-                char replyPacekt[255] = "";
-                String Texto = "";
-                if (vTipo2 == "1")
-                {
-                  Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2)+"|E|1|";
-                }
-                else
-                {
-                  Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2)+"|I|";
-                }
-                Texto.toCharArray(replyPacekt, 255);
-                Serial.println("enviado comando UDP");
-                Udp.beginPacket(Destino, localUdpPort);
-                Udp.write(replyPacekt);
-                Udp.endPacket();
-                msgDisparada[nsensor] = true;
-            }
-        }
-        else if (vDisparadoSensor[nsensor] == false)
-        {
-          Serial.println("Menor que 2 segundos");
-          inicioAcionado[nsensor] = 0;
-          vDisparadoSensor[nsensor] = true;
-
-
-            IPAddress Destino;
-            Destino.fromString(vIPDest);
-            IPAddress Comparacao(192,168,4,1);
-
-            if (Destino == IpDispositivo || IpDispositivo == Comparacao)
-            {
-              lastDebounceTime = millis();
-              if (vTipo1 == "1")
-              {
-                LigaDesliga(PortaAparelho.toInt()-1, 0x1, "", 1);
-              }
-              else
-              {
-                Inverte(PortaAparelho.toInt()-1);
-              }
-              ultimoEstado[nsensor] = estadoAtual[nsensor];
-              //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);    
-            }
-            else
-            {
-              //udp
-                char replyPacekt[255] = "";
-                String Texto = "";
-                if (vTipo1 == "1")
-                {
-                  Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|E|1|";
-                }
-                else
-                {
-                  Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|I|";
-                }
-                Texto.toCharArray(replyPacekt, 255);
-                Serial.println("enviado comando UDP");
-                Udp.beginPacket(Destino, localUdpPort);
-                Udp.write(replyPacekt);
-                Udp.endPacket();
-                msgDisparada[nsensor] = true;
-            }
-        }
+        char replyPacekt[255] = "";
+        String Texto = vIPDest + "|" + PortaAparelho + "|true|" + String(vChip) + "|E|0|";
+        Serial.println(Texto);
+        Texto.toCharArray(replyPacekt, 255);
+        Serial.println("enviado comando UDP");
+        Udp.beginPacket(Destino, localUdpPort);
+        Udp.write(replyPacekt);
+        Udp.endPacket();
+        msgDisparada[nsensor] = true;
       }
-    }
-    else
-    if (Funcao == "8" && ValorAtuacao == vsAtual) // caso tenha ficado mais de 2 segundos ligado já executa.
-    {
-        if (millis() < inicioAcionado[nsensor])
-        {
-          inicioAcionado[nsensor] = (4294967295 - inicioAcionado[nsensor]) + millis();
-        }
-
-        if ((millis() - inicioAcionado[nsensor] > 1300) && (vDisparadoSensor[nsensor] == false))
-        {
-          Serial.println("maior que 2 segundos");
-          inicioAcionado[nsensor] = 0;
-          vDisparadoSensor[nsensor] = true;
-
-            IPAddress Destino;
-            Destino.fromString(vIPDest2);
-            IPAddress Comparacao(192,168,4,1);
-
-            if (Destino == IpDispositivo || IpDispositivo == Comparacao || vTipo2 == "2")
-            {
-              lastDebounceTime = millis();
-              if (vTipo2 == "2") // cenas
-              {
-                triggerCena(PortaAparelho2);
-              }
-              else
-              if (vTipo2 == "1")
-              {
-                LigaDesliga(PortaAparelho2.toInt()-1, 0x1, "", 1);
-              }
-              else
-              {
-                Inverte(PortaAparelho2.toInt()-1);
-              }
-              ultimoEstado[nsensor] = estadoAtual[nsensor];
-              //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);    
-            }
-            else
-            {
-              //udp
-                char replyPacekt[255] = "";
-                String Texto = "";
-                if (vTipo2 == "1")
-                {
-                  Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2)+"|E|1|";
-                }
-                else
-                {
-                  Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2)+"|I|";
-                }
-                Texto.toCharArray(replyPacekt, 255);
-                Serial.println("enviado comando UDP");
-                Udp.beginPacket(Destino, localUdpPort);
-                Udp.write(replyPacekt);
-                Udp.endPacket();
-                msgDisparada[nsensor] = true;
-            }
-
-        }
-    }
-
-    if (Msg == "1")
-    {
-          valorRetorno = true;
-    }
-
-    if (ValorAtuacao == vsAtual && estadoAtual[nsensor] != ultimoEstado[nsensor])
-    {
-      if (Funcao == "0" || Funcao =="1" || Funcao=="4")
+      if (Msg == "1")
       {
         valorRetorno = true;
       }
-      else if (Funcao == "2") // liga porta
+      else
       {
-        IPAddress Destino;
-        Destino.fromString(vIPDest);
-        IPAddress Comparacao(192,168,4,1);
-
-        if (Destino == IpDispositivo || IpDispositivo == Comparacao)
-        {
-          LigaDesliga(PortaAparelho.toInt()-1, 0x1, "", 0);
-        }
-        else // envia udp
-        {
-            char replyPacekt[255] = "";
-            String Texto = vIPDest + "|" + PortaAparelho + "|true|" + String(vChip)+"|E|0|";
-            Serial.println(Texto);
-            Texto.toCharArray(replyPacekt, 255);
-            Serial.println("enviado comando UDP");
-            Udp.beginPacket(Destino, localUdpPort);
-            Udp.write(replyPacekt);
-            Udp.endPacket();
-            msgDisparada[nsensor] = true;
-        }
-        if (Msg == "1")
-        {
-          valorRetorno = true;
-        }
-        else
-        {
-          valorRetorno = false;
-        }
+        valorRetorno = false;
       }
-      else if (Funcao == "3") // desliga porta
-      {
-        IPAddress Destino;
-        Destino.fromString(vIPDest);
-        IPAddress Comparacao(192,168,4,1);
+    }
+    else if (Funcao == "3") // desliga porta
+    {
+      IPAddress Destino;
+      Destino.fromString(vIPDest);
+      IPAddress Comparacao(192, 168, 4, 1);
 
-        if (Destino == IpDispositivo || IpDispositivo == Comparacao)
-        {
-          LigaDesliga(PortaAparelho.toInt()-1, 0x0, "", 0);
-        }
-        else
-        {
-            char replyPacekt[255] = "";
-            String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|E|0|";
-            Texto.toCharArray(replyPacekt, 255);
-            Serial.println("enviado comando UDP");
-            Udp.beginPacket(Destino, localUdpPort);
-            Udp.write(replyPacekt);
-            Udp.endPacket();
-            msgDisparada[nsensor] = true;
-        }
-        if (Msg == "1")
-        {
-          valorRetorno = true;
-        }
-        else
-        {
-          valorRetorno = false;
-        }
+      if (Destino == IpDispositivo || IpDispositivo == Comparacao)
+      {
+        LigaDesliga(PortaAparelho.toInt() - 1, 0x0, "", 0);
       }
-      else if (Funcao == "5")
+      else
       {
-        if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
-        {
-          if ((millis() - lastDebounceTime) > debounceDelay)
-          {
-            IPAddress Destino;
-            Destino.fromString(vIPDest);
-            IPAddress Comparacao(192,168,4,1);
-
-            if (Destino == IpDispositivo || IpDispositivo == Comparacao)
-            {
-              lastDebounceTime = millis();
-              Inverte(PortaAparelho.toInt()-1);
-              ultimoEstado[nsensor] = estadoAtual[nsensor];
-            //  delay(300);    
-            }
-            else
-            {
-              //udp              
-                char replyPacekt[255] = "";
-                String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|I|";
-                Texto.toCharArray(replyPacekt, 255);
-                Serial.println("enviado comando UDP");
-                Udp.beginPacket(Destino, localUdpPort);
-                Udp.write(replyPacekt);
-                Udp.endPacket();
-                msgDisparada[nsensor] = true;
-
-            }
-          }
-        }
-        //valorRetorno = false; 
+        char replyPacekt[255] = "";
+        String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|0|";
+        Texto.toCharArray(replyPacekt, 255);
+        Serial.println("enviado comando UDP");
+        Udp.beginPacket(Destino, localUdpPort);
+        Udp.write(replyPacekt);
+        Udp.endPacket();
+        msgDisparada[nsensor] = true;
       }
-      else if (Funcao == "6") // interruptor normal
+      if (Msg == "1")
       {
-        if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
+        valorRetorno = true;
+      }
+      else
+      {
+        valorRetorno = false;
+      }
+    }
+    else if (Funcao == "5")
+    {
+      if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
+      {
+        if ((millisAtual - lastDebounceTime) > debounceDelay)
         {
-          if ((millis() - lastDebounceTime) > debounceDelay)
-          {
-            IPAddress Destino;
-            Destino.fromString(vIPDest);
-            IPAddress Comparacao(192,168,4,1);
+          IPAddress Destino;
+          Destino.fromString(vIPDest);
+          IPAddress Comparacao(192, 168, 4, 1);
 
-            if (Destino == IpDispositivo || Destino == Comparacao)
-            {
-              lastDebounceTime = millis();
-              Inverte(PortaAparelho.toInt()-1);
-              ultimoEstado[nsensor] = estadoAtual[nsensor];
-              //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);    
-            }
-            else
-            {
-              //udp
-                char replyPacekt[255] = "";
-                String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|I|";
-                Texto.toCharArray(replyPacekt, 255);
-                Serial.println("enviado comando UDP");
-                Udp.beginPacket(Destino, localUdpPort);
-                Udp.write(replyPacekt);
-                Udp.endPacket();
-                msgDisparada[nsensor] = true;
-            }
-          }
-
-        }
-        else
-        if (estadoAtual[nsensor] == 0x0 && ultimoEstado[nsensor] == 0x1)
-        {
-          if ((millis() - lastDebounceTime) > debounceDelay)
+          if (Destino == IpDispositivo || IpDispositivo == Comparacao)
           {
-            lastDebounceTime = millis();
-            Inverte(PortaAparelho.toInt()-1);
-            //LigaDesliga(PortaAparelho.toInt()-1, LOW, "", 0);    
+            lastDebounceTime = millisAtual;
+            Inverte(PortaAparelho.toInt() - 1);
             ultimoEstado[nsensor] = estadoAtual[nsensor];
+            //  delay(300);
+          }
+          else
+          {
+            //udp
+            char replyPacekt[255] = "";
+            String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
+            Texto.toCharArray(replyPacekt, 255);
+            Serial.println("enviado comando UDP");
+            Udp.beginPacket(Destino, localUdpPort);
+            Udp.write(replyPacekt);
+            Udp.endPacket();
+            msgDisparada[nsensor] = true;
           }
         }
-   //   valorRetorno = false; 
+      }
+      //valorRetorno = false;
+    }
+    else if (Funcao == "6") // interruptor normal
+    {
+      if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
+      {
+        if ((millisAtual - lastDebounceTime) > debounceDelay)
+        {
+          IPAddress Destino;
+          Destino.fromString(vIPDest);
+          IPAddress Comparacao(192, 168, 4, 1);
+
+          if (Destino == IpDispositivo || Destino == Comparacao)
+          {
+            lastDebounceTime = millisAtual;
+            Inverte(PortaAparelho.toInt() - 1);
+            ultimoEstado[nsensor] = estadoAtual[nsensor];
+            //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+          }
+          else
+          {
+            //udp
+            char replyPacekt[255] = "";
+            String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
+            Texto.toCharArray(replyPacekt, 255);
+            Serial.println("enviado comando UDP");
+            Udp.beginPacket(Destino, localUdpPort);
+            Udp.write(replyPacekt);
+            Udp.endPacket();
+            msgDisparada[nsensor] = true;
+          }
+        }
+      }
+      else if (estadoAtual[nsensor] == 0x0 && ultimoEstado[nsensor] == 0x1)
+      {
+        if ((millisAtual - lastDebounceTime) > debounceDelay)
+        {
+          lastDebounceTime = millisAtual;
+          Inverte(PortaAparelho.toInt() - 1);
+          //LigaDesliga(PortaAparelho.toInt()-1, LOW, "", 0);
+          ultimoEstado[nsensor] = estadoAtual[nsensor];
+        }
+      }
+      //   valorRetorno = false;
     }
     else if (Funcao == "7")
     {
       IPAddress Destino;
       Destino.fromString(vIPDest);
-      IPAddress Comparacao(192,168,4,1);
+      IPAddress Comparacao(192, 168, 4, 1);
 
       if ((Destino == IpDispositivo && ultimoEstado[nsensor] != estadoAtual[nsensor]) || (ultimoEstado[nsensor] != estadoAtual[nsensor] && IpDispositivo == Comparacao))
       {
-        LigaDesliga(PortaAparelho.toInt()-1, 0x1, "", 1);
+        LigaDesliga(PortaAparelho.toInt() - 1, 0x1, "", 1);
         ultimoEstado[nsensor] = estadoAtual[nsensor];
       }
-//      else if (Destino == IpDispositivo && ultimoEstado[Porta.toInt()] == estadoAtual[nsensor])
-//      {
-//        if (millis() - lastPulso > 10000 || millis() - lastPulso < 0)
-//        {
-//          ultimoEstado[Porta.toInt()] = !estadoAtual[nsensor];  
-//          lastPulso = millis();
-//        }
-//      }
-      else if (Destino != IpDispositivo && ultimoEstado[Porta.toInt()] != estadoAtual[nsensor] && IpDispositivo != Comparacao )
+      //      else if (Destino == IpDispositivo && ultimoEstado[Porta.toInt()] == estadoAtual[nsensor])
+      //      {
+      //        if (millisAtual - lastPulso > 10000 || millisAtual - lastPulso < 0)
+      //        {
+      //          ultimoEstado[Porta.toInt()] = !estadoAtual[nsensor];
+      //          lastPulso = millisAtual;
+      //        }
+      //      }
+      else if (Destino != IpDispositivo && ultimoEstado[Porta.toInt()] != estadoAtual[nsensor] && IpDispositivo != Comparacao)
       {
         //udp
         char replyPacekt[255] = "";
-        String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|E|1|";
+        String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
         Texto.toCharArray(replyPacekt, 255);
         Serial.println("enviado comando UDP");
         Udp.beginPacket(Destino, localUdpPort);
@@ -8006,110 +7981,102 @@ boolean verificaSensores(int nsensor, String vsAtual) {
         msgDisparada[nsensor] = true;
         ultimoEstado[nsensor] = estadoAtual[nsensor];
       }
-
     }
     else if (Funcao == "8")
+    {
+      if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
       {
-        if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
+        if ((millisAtual - lastDebounceTime) > debounceDelay)
         {
-          if ((millis() - lastDebounceTime) > debounceDelay)
+
+          if (inicioAcionado[nsensor] == 0)
           {
-
-            if (inicioAcionado[nsensor] == 0)
-            {
-              inicioAcionado[nsensor] = millis();
-              vDisparadoSensor[nsensor] = false;
-            }
+            inicioAcionado[nsensor] = millisAtual;
+            vDisparadoSensor[nsensor] = false;
           }
-
         }
+      }
 
- //     valorRetorno = false; 
+      //     valorRetorno = false;
     }
     else if (Funcao == "9") // interruptor invertido
     {
-        if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
+      if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
+      {
+        if ((millisAtual - lastDebounceTime) > debounceDelay)
         {
-          if ((millis() - lastDebounceTime) > debounceDelay)
-          {
-            IPAddress Destino;
-            Destino.fromString(vIPDest);
-            IPAddress Comparacao(192,168,4,1);
+          IPAddress Destino;
+          Destino.fromString(vIPDest);
+          IPAddress Comparacao(192, 168, 4, 1);
 
-            if (Destino == IpDispositivo || IpDispositivo == Comparacao)
-            {
-              lastDebounceTime = millis();
-              //Inverte(PortaAparelho.toInt()-1);                          
-              ultimoEstado[nsensor] = estadoAtual[nsensor];
-              LigaDesliga(PortaAparelho.toInt()-1, 0x0, "", 0);
-            }
-            else
-            {
-              //udp
-                char replyPacekt[255] = "";
-                String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip)+"|I|";
-                Texto.toCharArray(replyPacekt, 255);
-                Serial.println("enviado comando UDP");
-                Udp.beginPacket(Destino, localUdpPort);
-                Udp.write(replyPacekt);
-                Udp.endPacket();
-                msgDisparada[nsensor] = true;
-            }
-          }
-
-        }
-        else
-        if (estadoAtual[nsensor] == 0x0 && ultimoEstado[nsensor] == 0x1)
-        {
-          if ((millis() - lastDebounceTime) > debounceDelay)
+          if (Destino == IpDispositivo || IpDispositivo == Comparacao)
           {
-            lastDebounceTime = millis();
-            //Inverte(PortaAparelho.toInt()-1);                          
-            LigaDesliga(PortaAparelho.toInt()-1, 0x1, "", 0);
+            lastDebounceTime = millisAtual;
+            //Inverte(PortaAparelho.toInt()-1);
             ultimoEstado[nsensor] = estadoAtual[nsensor];
+            LigaDesliga(PortaAparelho.toInt() - 1, 0x0, "", 0);
+          }
+          else
+          {
+            //udp
+            char replyPacekt[255] = "";
+            String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
+            Texto.toCharArray(replyPacekt, 255);
+            Serial.println("enviado comando UDP");
+            Udp.beginPacket(Destino, localUdpPort);
+            Udp.write(replyPacekt);
+            Udp.endPacket();
+            msgDisparada[nsensor] = true;
           }
         }
-   //   valorRetorno = false; 
+      }
+      else if (estadoAtual[nsensor] == 0x0 && ultimoEstado[nsensor] == 0x1)
+      {
+        if ((millisAtual - lastDebounceTime) > debounceDelay)
+        {
+          lastDebounceTime = millisAtual;
+          //Inverte(PortaAparelho.toInt()-1);
+          LigaDesliga(PortaAparelho.toInt() - 1, 0x1, "", 0);
+          ultimoEstado[nsensor] = estadoAtual[nsensor];
+        }
+      }
+      //   valorRetorno = false;
     }
     else if (Funcao == "10") // Interruptor Cena
+    {
+      if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
       {
-        if (estadoAtual[nsensor] == 0x1 && ultimoEstado[nsensor] == 0x0)
+        if ((millisAtual - lastDebounceTime) > debounceDelay)
         {
-          if ((millis() - lastDebounceTime) > debounceDelay)
-          {
-              // cena1
-              triggerCena(PortaAparelho);
-          }
-
+          // cena1
+          triggerCena(PortaAparelho);
         }
-        else
-        if (estadoAtual[nsensor] == 0x0 && ultimoEstado[nsensor] == 0x1)
+      }
+      else if (estadoAtual[nsensor] == 0x0 && ultimoEstado[nsensor] == 0x1)
+      {
+        if ((millisAtual - lastDebounceTime) > debounceDelay)
         {
-          if ((millis() - lastDebounceTime) > debounceDelay)
-          {
-            // cena2
-            triggerCena(PortaAparelho2);
-          }
+          // cena2
+          triggerCena(PortaAparelho2);
         }
+      }
       valorRetorno = false;
     }
-
   }
   else
   {
-   if (msgDisparada[nsensor] == true)
-   {
-    msgDisparada[nsensor] = false;
-   }
-   valorRetorno = false;
+    if (msgDisparada[nsensor] == true)
+    {
+      msgDisparada[nsensor] = false;
+    }
+    valorRetorno = false;
   }
   ultimoEstado[nsensor] = estadoAtual[nsensor];
   return valorRetorno;
 }
 
-
-
-void consultaSensor() {
+void consultaSensor()
+{
   SPIFFS.begin();
   File f = SPIFFS.open("/sensores.txt", "r");
   File nf = SPIFFS.open("/nsensores.txt", "r");
@@ -8136,10 +8103,9 @@ void consultaSensor() {
       {
         textoSensor += texto[posicao];
       }
-      else
-      if (texto[posicao] == '|' && contador < 11)
+      else if (texto[posicao] == '|' && contador < 11)
       {
-        contador ++;
+        contador++;
         textoSensor += texto[posicao];
       }
 
@@ -8150,13 +8116,11 @@ void consultaSensor() {
         contador = 0;
         i++;
       }
-      posicao ++;
+      posicao++;
     }
   }
 
-
-
-// nomes dos sensores
+  // nomes dos sensores
   posicao = 0;
   i = 0;
   String textoNome = "";
@@ -8170,20 +8134,19 @@ void consultaSensor() {
       {
         textoNome += nomeS[posicao];
       }
-      else
-      if (nomeS[posicao] == '|' )
+      else if (nomeS[posicao] == '|')
       {
         nomeSensores[i] = textoNome;
         textoNome = "";
         i++;
       }
-      posicao ++;
+      posicao++;
     }
   }
-
 }
 
-String lerSensor() {
+String lerSensor()
+{
   SPIFFS.begin();
   File f = SPIFFS.open("/sensores.txt", "r");
   String texto = f.readStringUntil('*');
@@ -8193,10 +8156,11 @@ String lerSensor() {
   return texto;
 }
 
-void consensor() {
+void consensor()
+{
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Senha = server.arg("k");
@@ -8216,18 +8180,19 @@ void gravadevice()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Valor = server.arg("d");
   String Senha = server.arg("k");
 
-
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     SPIFFS.begin();
     File f = SPIFFS.open("/device.txt", "w");
 
-    if (!f) {
+    if (!f)
+    {
       SPIFFS.format();
       File f = SPIFFS.open("/device.txt", "w");
     }
@@ -8247,12 +8212,13 @@ void buscadevice()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     SPIFFS.begin();
     File f = SPIFFS.open("/device.txt", "r");
 
@@ -8262,10 +8228,7 @@ void buscadevice()
     SPIFFS.end();
     server.send(200, "text/html", valorDevice);
   }
-
-
 }
-
 
 /*
 
@@ -8304,48 +8267,48 @@ void limpadevice()
 }
 
 */
-# 1152 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+# 1124 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
 void ultimodisp()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     server.send(200, "text/html", ultimoDisparo);
   }
 }
 
-void retornaNotificar ()
+void retornaNotificar()
 {
-    SPIFFS.begin();
-    File f = SPIFFS.open("/notific.txt", "r");
+  SPIFFS.begin();
+  File f = SPIFFS.open("/notific.txt", "r");
 
-    String valor = f.readStringUntil('*');
+  String valor = f.readStringUntil('*');
 
-    if (valor == "true")
-      notificar = true;
-    else
-      notificar = false;
-    f.close();
-    SPIFFS.end();
-
+  if (valor == "true")
+    notificar = true;
+  else
+    notificar = false;
+  f.close();
+  SPIFFS.end();
 }
-
 
 void buscaNotificar()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     server.send(200, "text/html", String(notificar));
   }
   else
@@ -8358,18 +8321,19 @@ void gravanot()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Valor = server.arg("v");
   String Senha = server.arg("k");
 
-
-  if (Senha == "kdi9e") {
+  if (Senha == "kdi9e")
+  {
     SPIFFS.begin();
     File f = SPIFFS.open("/notific.txt", "w");
 
-    if (!f) {
+    if (!f)
+    {
       SPIFFS.format();
       File f = SPIFFS.open("/notific.txt", "w");
     }
@@ -8391,7 +8355,6 @@ void gravanot()
   }
 
   server.send(200, "text/html", "ok");
-
 }
 
 void gravanot2(String Valor)
@@ -8400,7 +8363,8 @@ void gravanot2(String Valor)
   SPIFFS.begin();
   File f = SPIFFS.open("/notific.txt", "w");
 
-  if (!f) {
+  if (!f)
+  {
     SPIFFS.format();
     File f = SPIFFS.open("/notific.txt", "w");
   }
@@ -8419,7 +8383,6 @@ void gravanot2(String Valor)
   {
     notificar = false;
   }
-
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\skeleton.ino"
 String vskeleton()

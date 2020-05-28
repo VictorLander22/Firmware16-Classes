@@ -1,48 +1,54 @@
-void cloud() {
-    HTTPClient http;
-    http.begin("http://cloud.keepin.com.br/api/control/3");
-    int httpCode = http.GET(); 
-    String payload;    
-    if (httpCode > 0) { 
-        payload = http.getString();   
-        Serial.println(payload);                     
-    }
+void cloud()
+{
+  HTTPClient http;
+  http.begin("http://cloud.keepin.com.br/api/control/3");
+  int httpCode = http.GET();
+  String payload;
+  if (httpCode > 0)
+  {
+    payload = http.getString();
+    Serial.println(payload);
+  }
 
-    http.end();
+  http.end();
 
-//    StaticJsonBuffer<200> jsonBuffer;
-    
-    DynamicJsonBuffer jsonBuffer(payload.length());
-    JsonObject& root = jsonBuffer.parseObject(payload);
+  //    StaticJsonBuffer<200> jsonBuffer;
 
-    if(!root.success()) {
-        Serial.println("parseObject() failed");
-    } else {    
+  DynamicJsonBuffer jsonBuffer(payload.length());
+  JsonObject &root = jsonBuffer.parseObject(payload);
 
-      const String Descricao = root["descricao"];
-      const bool ED1 = root["ed1"];
-      const bool ED3 = root["ed3"];
+  if (!root.success())
+  {
+    Serial.println("parseObject() failed");
+  }
+  else
+  {
 
-      Serial.println(Descricao);
-      Serial.println(ED1);
-      Serial.println(ED3);
-    }
+    const String Descricao = root["descricao"];
+    const bool ED1 = root["ed1"];
+    const bool ED3 = root["ed3"];
 
-    server.send(200, "text/html", "ok");      
+    Serial.println(Descricao);
+    Serial.println(ED1);
+    Serial.println(ED3);
+  }
+
+  server.send(200, "text/html", "ok");
 }
 
-void sendCloud() {
+void sendCloud()
+{
   String sSensor1 = String(sensor1.read8(), BIN);
   String sSensor2 = String(sensor2.read8(), BIN);
 
   while (sSensor1.length() < 8)
   {
-    sSensor1 = '0' + sSensor1;  
+    sSensor1 = '0' + sSensor1;
   }
 
   while (sSensor2.length() < 8)
   {
-    sSensor2 = '0' + sSensor2;  
+    sSensor2 = '0' + sSensor2;
   }
 
   String sChip1 = String(chip1.read8(), BIN);
@@ -50,12 +56,12 @@ void sendCloud() {
 
   while (sChip1.length() < 8)
   {
-    sChip1 = '0' + sChip1;  
+    sChip1 = '0' + sChip1;
   }
 
   while (sChip2.length() < 8)
   {
-    sChip2 = '0' + sChip2;  
+    sChip2 = '0' + sChip2;
   }
 
   int32_t rssi;
@@ -96,7 +102,7 @@ void sendCloud() {
   dataPost = dataPost + "\"ED14\": \"" + retornaValorCloud(sSensor2[2]) + "\",";
   dataPost = dataPost + "\"ED15\": \"" + retornaValorCloud(sSensor2[1]) + "\",";
   dataPost = dataPost + "\"ED16\": \"" + retornaValorCloud(sSensor2[0]) + "\",";
-  dataPost = dataPost + "\"ip\": \"" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) +"." + String(IpDispositivo[3]) + "\",";
+  dataPost = dataPost + "\"ip\": \"" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "\",";
   dataPost = dataPost + "\"notificacao\": \"" + String(notificar) + "\",";
   dataPost = dataPost + "\"sinal\": \"" + String(rssi) + "\"";
   dataPost = dataPost + " }";
@@ -107,9 +113,9 @@ void sendCloud() {
   http.setTimeout(600);
   http.setReuse(true);
   //http.useHTTP10(false);
-//  http.begin(cliente, "192.168.1.147", 443, "/api/keepin", true);
+  //  http.begin(cliente, "192.168.1.147", 443, "/api/keepin", true);
   http.begin(cliente, "http://cloud.keepin.com.br/api/keepin");
-//  http.begin(cliente, "http://192.168.1.147/api/keepin");
+  //  http.begin(cliente, "http://192.168.1.147/api/keepin");
   http.addHeader("Content-Type", "application/json");
   http.setUserAgent("KEEPIN/" + String(Placa_Version) + " Automacao");
   //http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
@@ -119,78 +125,94 @@ void sendCloud() {
   http.end();
   //Serial.println(payload);
   Serial.println("Cloud code: " + String(httpCode));
-  if (httpCode == 200 && payload != "[]") { 
+  if (httpCode == 200 && payload != "[]")
+  {
     //Serial.println("Payload: " + payload);
     DynamicJsonBuffer jsonBuffer(payload.length());
-    JsonArray& array1 = jsonBuffer.parseArray(payload);
-//    JsonObject& root = jsonBuffer.parseObject(payload);
+    JsonArray &array1 = jsonBuffer.parseArray(payload);
+    //    JsonObject& root = jsonBuffer.parseObject(payload);
 
-    if(!array1.success()) {
-        Serial.println("antes");
-        Serial.println("parseObject() failed");
-    } else {   
+    if (!array1.success())
+    {
+      Serial.println("antes");
+      Serial.println("parseObject() failed");
+    }
+    else
+    {
       //Serial.println("qtde registros");
       //Serial.println(array1.size());
 
-      for (int indice = 0; indice < array1.size(); indice++){
+      for (int indice = 0; indice < array1.size(); indice++)
+      {
         //JsonObject& root = jsonBuffer.parseObject(array1[indice]);
 
         //if(!root.success()) {
-          //Serial.println("parseObject() failed");
-        //}    
+        //Serial.println("parseObject() failed");
+        //}
         //{"tipo":"1","acao":"1","modelo":null,"qtdeBit":null,"porta":3},
         const String tipoJson = array1[indice]["tipo"];
         const String acaoJson = array1[indice]["acao"];
         const String qtdeJson = array1[indice]["qtdeBit"];
         const String modeloJson = array1[indice]["modelo"];
         const String portaJson = array1[indice]["porta"];
-            //Serial.println("porta: " + portaJson);
+        //Serial.println("porta: " + portaJson);
 
         if (tipoJson == "1") // saida
         {
           //Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
-          if (porta >= 0) {
-            if (acaoJson == "1") {
+          if (porta >= 0)
+          {
+            if (acaoJson == "1")
+            {
               LigaDesliga(porta, HIGH, "", 0);
-            } else if (acaoJson == "0") {
+            }
+            else if (acaoJson == "0")
+            {
               LigaDesliga(porta, LOW, "", 0);
             }
           }
-        } else if (tipoJson == "2") // saida pulsada
+        }
+        else if (tipoJson == "2") // saida pulsada
         {
           //Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
-          if (porta >= 0) {
+          if (porta >= 0)
+          {
             LigaDesliga(porta, HIGH, "", 1);
           }
-        } else if (tipoJson == "3") // IR
+        }
+        else if (tipoJson == "3") // IR
         {
           //Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
-          if (porta >= 0) {
-            cenaPAtual ++;      
-            sendIRCMD(acaoJson, "", qtdeJson.toInt(), portaJson.toInt(), modeloJson.toInt(), qtdeJson.toInt());    
-            lastCnTime = millis();
+          if (porta >= 0)
+          {
+            cenaPAtual++;
+            sendIRCMD(acaoJson, "", qtdeJson.toInt(), portaJson.toInt(), modeloJson.toInt(), qtdeJson.toInt());
+            lastCnTime = millisAtual;
             delay(300);
           }
-        } else if (tipoJson == "4") // RF
+        }
+        else if (tipoJson == "4") // RF
         {
           unsigned long Valor = strtoul(acaoJson.c_str(), NULL, 10);
 
-          sSendRF.send(Valor, 32);   
-        } else if (tipoJson == "5") 
+          sSendRF.send(Valor, 32);
+        }
+        else if (tipoJson == "5")
         {
           triggerCena(acaoJson);
-        } else if (tipoJson == "6") // notificacao
+        }
+        else if (tipoJson == "6") // notificacao
         {
-          SPIFFS.begin();   
+          SPIFFS.begin();
           File f = SPIFFS.open("/notific.txt", "w");
-              
-          f.println(acaoJson);    
+
+          f.println(acaoJson);
 
           f.close();
           SPIFFS.end();
@@ -198,42 +220,48 @@ void sendCloud() {
           if (acaoJson == "true")
           {
             notificar = true;
-          } else {
+          }
+          else
+          {
             notificar = false;
-          } 
+          }
         }
-      } 
+      }
     }
-   
-    if (payload != "[]") {
+
+    if (payload != "[]")
+    {
       http.setTimeout(600);
       http.setReuse(true);
       http.begin(cliente, "http://cloud.keepin.com.br/api/keepinactions/delete");
       http.addHeader("Content-Type", "application/json");
       http.setUserAgent("KEEPIN/" + String(Placa_Version) + " Automacao");
       //http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
-      httpCode = http.POST(payload); 
-      if (httpCode == 200) { 
-          payload = http.getString();   
-          //Serial.println(payload);
+      httpCode = http.POST(payload);
+      if (httpCode == 200)
+      {
+        payload = http.getString();
+        //Serial.println(payload);
       }
     }
     http.end();
-  } else if (httpCode != 200)  {
+  }
+  else if (httpCode != 200)
+  {
     Serial.println("servidor fora! Code: " + String(httpCode));
     http.end();
   }
-  cliente.stop();  
+  cliente.stop();
 }
 
-String retornaValorCloud(char val) {
-    if (val == '0')
-    {
-        return "true";
-    }        
-    else
-    {
-        return "false";
-    }
-    
+String retornaValorCloud(char val)
+{
+  if (val == '0')
+  {
+    return "true";
+  }
+  else
+  {
+    return "false";
+  }
 }

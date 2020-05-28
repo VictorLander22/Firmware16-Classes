@@ -1,26 +1,28 @@
-void gravacena() {
-  if(!server.authenticate(www_username, www_password))
+void gravacena()
+{
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {  
+  if (Senha == "kdi9e")
+  {
     String ia = server.arg("ia");
     String vTipo = server.arg("t");
     String Valor = server.arg("v");
     String IdCena = server.arg("id");
     Serial.println(Valor);
     SPIFFS.begin();
-    
+
     if (ia == "1") // inicio de arquivo
-    { 
-      File rFile = SPIFFS.open("/ce_"+IdCena+".cfg","w");
+    {
+      File rFile = SPIFFS.open("/ce_" + IdCena + ".cfg", "w");
       rFile.println(Valor);
       rFile.close();
     }
     else
     {
-      File rFile = SPIFFS.open("/ce_"+IdCena+".cfg","a");
+      File rFile = SPIFFS.open("/ce_" + IdCena + ".cfg", "a");
       //String ValorAnterior = rFile.readString();
       //rFile.close();
 
@@ -33,30 +35,29 @@ void gravacena() {
     SPIFFS.end();
     //lerArquivo(IdCena);
     server.send(200, "text/html", "ok");
-  }  
+  }
   else
   {
-      server.send(200, "text/html", "-1");
+    server.send(200, "text/html", "-1");
   }
-
-    
 }
 
-
-void lerArquivo(String id) {
+void lerArquivo(String id)
+{
   SPIFFS.begin();
 
-  File rFile = SPIFFS.open("/ce_"+id+".cfg", "r");
+  File rFile = SPIFFS.open("/ce_" + id + ".cfg", "r");
   String linhas;
   //linhas = rFile.readString();
 
   //Serial.println("linhas das cenas");
   int qtde = 0;
-  while(rFile.available()) {
-      String linhas = rFile.readStringUntil('\n');
-      Serial.print(linhas);
-      qtde++;
-    }
+  while (rFile.available())
+  {
+    String linhas = rFile.readStringUntil('\n');
+    Serial.print(linhas);
+    qtde++;
+  }
 
   rFile.close();
   SPIFFS.end();
@@ -64,13 +65,15 @@ void lerArquivo(String id) {
   Serial.println(qtde);
 }
 
-void triggerCena(String arq) {
+void triggerCena(String arq)
+{
   cenaExecucao = true;
   cenaPAtual = 0;
   ArqCena = arq;
 }
 
-void checkCena() {
+void checkCena()
+{
   if (cenaExecucao == true)
   {
     String Comando;
@@ -78,9 +81,9 @@ void checkCena() {
     SPIFFS.begin();
     if (cenaPAtual == 0) // abre spiff e mantem aberto
     {
-      rFile = SPIFFS.open("/ce_"+ArqCena+".cfg", "r");
+      rFile = SPIFFS.open("/ce_" + ArqCena + ".cfg", "r");
 
-      while(rFile.available()) 
+      while (rFile.available())
       {
         String linhas = rFile.readStringUntil('\n');
         if (cenaPTotal == 0)
@@ -88,9 +91,8 @@ void checkCena() {
           Comando = linhas;
         }
         cenaPTotal++;
-      }     
+      }
       cenaPAtual++;
-      
     }
     if (cenaPAtual >= 1)
     {
@@ -106,7 +108,7 @@ void checkCena() {
       {
         rFile.seek(0, SeekSet);
         int conCena = 1;
-        while(rFile.available()) 
+        while (rFile.available())
         {
           String linhas = rFile.readStringUntil('\n');
           if (conCena == cenaPAtual)
@@ -117,8 +119,7 @@ void checkCena() {
           }
           conCena++;
         }
-
-      }   
+      }
     }
     if (cenaPAtual > cenaPTotal)
     {
@@ -129,7 +130,6 @@ void checkCena() {
       cenaPAtual = 0;
       cenaPTotal = 0;
     }
-    
   }
 }
 
@@ -172,59 +172,50 @@ void executaCena(String comandoCena)
           posicaof = 5;
           cmdPorta += comandoCena[i];
         }
-        else
-        if (cmdTipo == "2")
+        else if (cmdTipo == "2")
         {
           posicaof = 8;
           cmdQtde += comandoCena[i];
         }
-        else
-        if (cmdTipo == "3")
+        else if (cmdTipo == "3")
         {
           posicaof = 4;
           cmdAcao += comandoCena[i];
         }
-        else
-        if (cmdTipo == "4")
+        else if (cmdTipo == "4")
         {
           posicaof = 6;
           cmdPorta += comandoCena[i];
         }
       }
-      else
-      if (posicaoi == 5)
+      else if (posicaoi == 5)
       {
         if (cmdTipo == "1")
         {
           cmdAcao += comandoCena[i];
         }
-        else
-        if (cmdTipo == "2")
+        else if (cmdTipo == "2")
         {
           cmdAcao += comandoCena[i];
         }
-        else
-        if (cmdTipo == "4")
+        else if (cmdTipo == "4")
         {
           cmdValorMin += comandoCena[i];
         }
       }
-      else
-      if (posicaoi == 6)
+      else if (posicaoi == 6)
       {
         if (cmdTipo == "2")
         {
           cmdAcao2 += comandoCena[i];
-//          cmdPorta += comandoCena[i];
+          //          cmdPorta += comandoCena[i];
         }
-        else
-        if (cmdTipo == "4")
+        else if (cmdTipo == "4")
         {
           cmdAcao += comandoCena[i];
         }
       }
-      else
-      if (posicaoi == 7)
+      else if (posicaoi == 7)
       {
         if (cmdTipo == "2")
         {
@@ -232,22 +223,19 @@ void executaCena(String comandoCena)
           //cmdModelo += comandoCena[i];
         }
       }
-      else
-      if (posicaoi == 8)
+      else if (posicaoi == 8)
       {
         if (cmdTipo == "2")
         {
           cmdModelo += comandoCena[i];
         }
       }
-      
     }
     else // encontrou o caracter '|'
     {
       posicaoi++;
     }
   }
-
 
   IPAddress Destino;
   Destino.fromString(cmdIP);
@@ -259,35 +247,33 @@ void executaCena(String comandoCena)
     {
       if (cmdAcao == "0") // desliga
       {
-        LigaDesliga(cmdPorta.toInt()-1, LOW, "", 0);                         
+        LigaDesliga(cmdPorta.toInt() - 1, LOW, "", 0);
       }
       else if (cmdAcao == "1") // liga
       {
-        LigaDesliga(cmdPorta.toInt()-1, HIGH, "", 0);                         
+        LigaDesliga(cmdPorta.toInt() - 1, HIGH, "", 0);
       }
       else if (cmdAcao == "2") // pulso
       {
-        LigaDesliga(cmdPorta.toInt()-1, LOW, "", 1);                                 
+        LigaDesliga(cmdPorta.toInt() - 1, LOW, "", 1);
       }
-      cenaPAtual ++;
+      cenaPAtual++;
     }
     else //upd
     {
-      char  replyPacekt[255] = "";  
+      char replyPacekt[255] = "";
       if (cmdAcao == "0") // desliga
       {
-        Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID)+"|E|0|";
+        Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID) + "|E|0|";
       }
-      else
-      if (cmdAcao == "1") // liga
+      else if (cmdAcao == "1") // liga
       {
-        Texto = cmdIP + "|" + cmdPorta + "|true|" + String(cmdChipID)+"|E|0|";
+        Texto = cmdIP + "|" + cmdPorta + "|true|" + String(cmdChipID) + "|E|0|";
       }
-      else
-      if (cmdAcao == "2") // pulso
+      else if (cmdAcao == "2") // pulso
       {
-        Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID)+"|E|1|";
-      }      
+        Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID) + "|E|1|";
+      }
       Serial.println(Texto);
       Texto.toCharArray(replyPacekt, 255);
       Serial.println("enviado comando UDP");
@@ -295,69 +281,64 @@ void executaCena(String comandoCena)
       Udp.write(replyPacekt);
       Udp.endPacket();
       delay(200);
-      cenaPAtual ++;      
+      cenaPAtual++;
     }
   }
-  else
-  if (cmdTipo == "2") // IR
+  else if (cmdTipo == "2") // IR
   {
     if (Destino == IpDispositivo)
     {
-      if (lastCnTime == 0 || (millis() - lastCnTime >= 300))
+      if (lastCnTime == 0 || (millisAtual - lastCnTime >= 300))
       {
-        cenaPAtual ++;      
-        sendIRCMD(cmdAcao, cmdAcao2, cmdQtde.toInt(), cmdPorta.toInt(), cmdModelo.toInt(), cmdQtde.toInt());    
-        lastCnTime = millis();
+        cenaPAtual++;
+        sendIRCMD(cmdAcao, cmdAcao2, cmdQtde.toInt(), cmdPorta.toInt(), cmdModelo.toInt(), cmdQtde.toInt());
+        lastCnTime = millisAtual;
         //delay(300);
       }
-      else if (millis() - lastCnTime < 0)
+      else if (millisAtual - lastCnTime < 0)
       {
-        lastCnTime = millis();
+        lastCnTime = millisAtual;
       }
     }
     else //upd - não implentado UPD para IR
     {
-    }    
+    }
   }
-  else
-  if (cmdTipo == "3") // timer
+  else if (cmdTipo == "3") // timer
   {
     Serial.println("Entrou no timer");
     if (lastCnTime <= 0)
     {
-      lastCnTime = millis();      
+      lastCnTime = millisAtual;
     }
 
-    if (lastCnTime == 0 || (millis() - lastCnTime >= cmdAcao.toInt()))
+    if (lastCnTime == 0 || (millisAtual - lastCnTime >= cmdAcao.toInt()))
     {
-      cenaPAtual ++;
-      lastCnTime = -1;      
+      cenaPAtual++;
+      lastCnTime = -1;
     }
-    else if (millis() - lastCnTime < 0)
+    else if (millisAtual - lastCnTime < 0)
     {
-      lastCnTime = millis();      
+      lastCnTime = millisAtual;
     }
-    
   }
-  else
-  if (cmdTipo == "4") // Dimmer
+  else if (cmdTipo == "4") // Dimmer
   {
-    char  replyPacekt[255] = "";       
-    String Texto = cmdIP + "|" + cmdPorta + "|" + cmdAcao + "|" + cmdChipID +"|X|";
+    char replyPacekt[255] = "";
+    String Texto = cmdIP + "|" + cmdPorta + "|" + cmdAcao + "|" + cmdChipID + "|X|";
 
-    Texto += cmdValorMin + "|n|";       
+    Texto += cmdValorMin + "|n|";
     Texto.toCharArray(replyPacekt, 255);
-     
+
     Serial.println("enviado comando UDP");
     Udp.beginPacket(Destino, localUdpPort);
     Udp.write(replyPacekt);
     Udp.endPacket();
 
-    cenaPAtual ++;    
+    cenaPAtual++;
   }
   else
   {
-    cenaPAtual ++;    
+    cenaPAtual++;
   }
-
 }

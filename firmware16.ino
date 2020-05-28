@@ -28,7 +28,7 @@
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
 
-#define Placa_Version "2,32"
+#define Placa_Version "2,33"
 
 //Declarações Globais - Leo
 
@@ -151,7 +151,7 @@ ESP8266WebServer server(80);
 
 int contadorled = 0;
 
-unsigned long starTime = 0;   // Use unsigned long when dealing with millis()
+unsigned long starTime = 0;   // Use unsigned long when dealing with millisAtual
 unsigned long interval = 500; // 1000 millis = 1 second
 //unsigned long Contador = 0;
 
@@ -236,7 +236,7 @@ void setup(void)
 
   lerConfiguracao();
 
-  lastDebounceTime = millis();
+  lastDebounceTime = millisAtual;
 
   //pinMode(LedWiFI, OUTPUT);
   //pinMode(LedVerde, OUTPUT);
@@ -246,9 +246,9 @@ void setup(void)
   //digitalWrite(LedVerde, LOW);
   //digitalWrite(LedAmarelo, LOW);
 
-  //tempoatual = millis();
-  starTime = millis();
-  rfmilis = millis();
+  //tempoatual = millisAtual;
+  starTime = millisAtual;
+  rfmilis = millisAtual;
 
   configRF();
 
@@ -290,8 +290,8 @@ void setup(void)
   //    Serial.println("MDNS responder started");
   //  }
 
-  lastWifiTime = millis();
-  //lastPulso = millis();
+  lastWifiTime = millisAtual;
+  //lastPulso = millisAtual;
 
   //ArduinoOTA.begin();
 
@@ -435,7 +435,7 @@ void loop(void)
       {
         if (vConfigWIFI == "0")
         {
-          lastWifiTime = millis();
+          lastWifiTime = millisAtual;
         }
         rssi = WiFi.RSSI();
         //Serial.println(String(rssi));
@@ -461,10 +461,10 @@ void loop(void)
     // reconexao
     if ((vConfigWIFI == "0" && WiFi.status() != WL_CONNECTED) || (vConfigWIFI == "0" && tipoWifiAtual == 2))
     {
-      if ((millis() - lastWifiTime) >= 300000)
+      if ((millisAtual - lastWifiTime) >= 300000)
       {
         conectar();
-        lastWifiTime = millis();
+        lastWifiTime = millisAtual;
       }
     }
 
@@ -474,7 +474,7 @@ void loop(void)
       conectar();
     }
 
-    //Serial.println("Tempo: " + String(millis() - tempoatual));
+    //Serial.println("Tempo: " + String(millisAtual - tempoatual));
 
     //Serial.println(String(sensor1.read8(), BIN));
     //Serial.println(sensor1.read(0));
@@ -524,9 +524,9 @@ void loop(void)
     }
 
     //  if (HorarioAtual.Second() != Segundo)
-    if (Segundo == -1 || (millis() - Segundo) > 200)
+    if (Segundo == -1 || (millisAtual - Segundo) > 200)
     {
-      Segundo = millis();
+      Segundo = millisAtual;
       //Segundo = HorarioAtual.Second();
       chip3.write(LedGeral, !chip3.read(LedGeral));
     }
@@ -590,9 +590,9 @@ void loop(void)
     {
       //Serial.println("sinal de radio detectado");
       //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
-      if (millis() - rfmilis >= 10000 || millis() - rfmilis < 0)
+      if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
       {
-        rfmilis = millis();
+        rfmilis = millisAtual;
         for (int i = 0; i < 30; i++)
         {
           ultimoEstadoRF[i] = LOW;
