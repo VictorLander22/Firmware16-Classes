@@ -29,7 +29,7 @@
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
 
-#define Placa_Version "2,32"
+#define Placa_Version "2,33"
 
 //Declarações Globais - Leo
 

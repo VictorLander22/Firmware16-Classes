@@ -231,7 +231,7 @@ void setup(void)
   //ConfigAuth();
 
   Serial.println("");
-  Serial.println("Keepin Firmware: " + String("2,32"));
+  Serial.println("Keepin Firmware: " + String("2,33"));
 
   configIR();
 
@@ -2236,7 +2236,7 @@ void sendCloud()
   http.begin(cliente, "http://cloud.keepin.com.br/api/keepin");
   //  http.begin(cliente, "http://192.168.1.147/api/keepin");
   http.addHeader("Content-Type", "application/json");
-  http.setUserAgent("KEEPIN/" + String("2,32") + " Automacao");
+  http.setUserAgent("KEEPIN/" + String("2,33") + " Automacao");
   //http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
   int httpCode = http.POST(dataPost);
   //http.writeToStream(&Serial);
@@ -2354,7 +2354,7 @@ void sendCloud()
       http.setReuse(true);
       http.begin(cliente, "http://cloud.keepin.com.br/api/keepinactions/delete");
       http.addHeader("Content-Type", "application/json");
-      http.setUserAgent("KEEPIN/" + String("2,32") + " Automacao");
+      http.setUserAgent("KEEPIN/" + String("2,33") + " Automacao");
       //http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
       httpCode = http.POST(payload);
       if (httpCode == 200)
@@ -9087,7 +9087,7 @@ void versao()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", "2,32");
+  server.send(200, "text/html", "2,33");
 }
 
 void linkversao()
