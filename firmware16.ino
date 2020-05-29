@@ -37,6 +37,8 @@ unsigned long g_tempoInicioPulso[16];
 unsigned long millisAtual;
 unsigned long millisDebug;
 
+File UploadFile;
+
 //String CloudAddress = "http://keepin.com.br/api/"";
 //Const CloudAddress = "http://192.168.15.16:4000/";
 
@@ -356,6 +358,10 @@ void setup(void)
   server.on("/log", readlog);
   server.on("/gravacloud", GravaCloud);
   server.on("/dirarquivos", dirarquivos);
+  server.on("/downloadfile", File_Download);
+  server.on("/uploadfile", File_Upload);
+  server.on("/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
+  server.on("/deletefile",File_Delete);
   //server.on("/cloud", cloud);
   //  server.on("/sendcloud", sendCloud);
 

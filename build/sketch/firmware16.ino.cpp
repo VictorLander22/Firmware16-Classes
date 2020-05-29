@@ -38,6 +38,8 @@ unsigned long g_tempoInicioPulso[16];
 unsigned long millisAtual;
 unsigned long millisDebug;
 
+File UploadFile;
+
 //String CloudAddress = "http://keepin.com.br/api/"";
 //Const CloudAddress = "http://192.168.15.16:4000/";
 
@@ -225,9 +227,9 @@ long lastCnTime = -1;
 //   CLOUD ///
 bool usaCloud = false;
 
-#line 227 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 229 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void setup(void);
-#line 417 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 423 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void loop(void);
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
 void about();
@@ -323,6 +325,14 @@ void lerConfiguracao();
 void GravaCloud();
 #line 596 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void dirarquivos();
+#line 676 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+void File_Download();
+#line 714 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+void File_Upload();
+#line 729 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+void handleFileUpload();
+#line 791 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+void File_Delete();
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 void executaPulso(int porta);
 #line 15 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
@@ -507,7 +517,7 @@ void gravahtml();
 void testes2();
 #line 142 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
 void carregaDadosHTML();
-#line 227 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 229 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void setup(void)
 {
   Serial.begin(115200);
@@ -640,6 +650,10 @@ void setup(void)
   server.on("/log", readlog);
   server.on("/gravacloud", GravaCloud);
   server.on("/dirarquivos", dirarquivos);
+  server.on("/downloadfile", File_Download);
+  server.on("/uploadfile", File_Upload);
+  server.on("/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
+  server.on("/deletefile",File_Delete);
   //server.on("/cloud", cloud);
   //  server.on("/sendcloud", sendCloud);
 
@@ -3212,7 +3226,7 @@ void dirarquivos()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
   SPIFFS.begin();
-  Serial.println("Consultar sistema de arquivos:");
+  Serial.println("Consultar sistema de arquivos");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next())
   {
@@ -3284,6 +3298,151 @@ void ConfigAuth()
 
 }
 */
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+void File_Download()
+{ // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
+
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  String path = server.arg("f");
+
+  if (!path.startsWith("/"))
+    path = "/" + path;
+
+  //String path = "/httpuser.txt";
+  SPIFFS.begin();
+  if (SPIFFS.exists(path))
+  {
+    Serial.println("Arquivo existe");
+
+    File download = SPIFFS.open(path, "r");
+    //Serial.println(download);
+    //size_t sent = server.streamFile(file, "text/html");
+    //file.close();
+
+    if (download)
+    {
+      server.sendHeader("Content-Type", "text/text");
+      server.sendHeader("Content-Disposition", "attachment; filename=" + path);
+      server.sendHeader("Connection", "close");
+      server.streamFile(download, "application/octet-stream");
+      download.close();
+    }
+  }
+  else
+  {
+    Serial.println("Arquivo não existe");
+  }
+  SPIFFS.end();
+}
+
+void File_Upload()
+{
+  Serial.println("File upload stage-1");
+  //append_page_header();
+  String webfile = "<h3>Select File to Upload</h3>";
+  webfile += "<FORM action='/fupload' method='post' enctype='multipart/form-data'>";
+  webfile += "<input class='buttons' style='width:40%' type='file' name='fupload' id = 'fupload' value=''><br>";
+  webfile += "<br><button class='buttons' style='width:10%' type='submit'>Upload File</button><br>";
+  webfile += "<a href='/'>[Back]</a><br><br>";
+  //append_page_footer();
+  Serial.println("File upload stage-2");
+  server.send(200, "text/html", webfile);
+}
+
+
+void handleFileUpload()
+{ // upload a new file to the Filing system
+  
+  Serial.println("File upload stage-3");
+  HTTPUpload &uploadfile = server.upload(); 
+
+  if (uploadfile.status == UPLOAD_FILE_START)
+  {
+    Serial.println("File upload stage-4");
+    String filename = uploadfile.filename;
+    if (!filename.startsWith("/"))
+      filename = "/" + filename;
+    Serial.print("Upload File Name: ");
+    Serial.println(filename);
+
+    SPIFFS.begin();
+
+    SPIFFS.remove(filename); // Remove a previous version, otherwise data is appended the file again
+
+    UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
+
+  }
+  else if (uploadfile.status == UPLOAD_FILE_WRITE)
+  {
+    Serial.println("File upload stage-5");
+    if (UploadFile)
+    {
+      //SPIFFS.begin();
+     
+      UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
+
+    }
+  }
+  else if (uploadfile.status == UPLOAD_FILE_END)
+  {
+    if (UploadFile) // If the file was successfully created
+    {
+      UploadFile.close(); // Close the file again
+      Serial.print("Upload Size: ");
+      Serial.println(uploadfile.totalSize);
+
+      //append_page_header();
+      String webfile = "<h3>File was successfully uploaded</h3>";
+      webfile += "<h2>Uploaded File Name: ";
+      webfile += uploadfile.filename + "</h2>";
+      webfile += "<h2>File Size: OK";
+      //webfile += uploadfile.totalSize + "</h2><br>";
+      //append_page_footer();
+      server.send(200, "text/html", webfile);
+      //
+      SPIFFS.end();
+    }
+  }
+  else
+  {
+    Serial.println(uploadfile.totalSize);
+    SPIFFS.end();
+  }
+
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+void File_Delete()
+{ // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
+
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  String path = server.arg("f");
+
+  if (!path.startsWith("/"))
+    path = "/" + path;
+
+  SPIFFS.begin();
+  if (SPIFFS.exists(path))
+  {
+    Serial.println("Arquivo existe");
+    if (SPIFFS.remove(path))
+    {
+      Serial.println("Removido");
+      server.send(200, "text/html", "Removido");
+    }
+  }
+  else
+  {
+    Serial.println("Arquivo não existe");
+    server.send(200, "text/html", "Não existe");
+  }
+  SPIFFS.end();
+}
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 void executaPulso(int porta)
 {
