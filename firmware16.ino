@@ -51,7 +51,7 @@ String senha1 = seg.retornaSenha();
 const char *www_username = usuario1.c_str();
 const char *www_password = senha1.c_str();
 
-String TipoMemoria = "0";
+String TipoMemoria = "1";
 String vListaWifi = "";
 
 String vssid = "";
@@ -360,8 +360,9 @@ void setup(void)
   server.on("/dirarquivos", dirarquivos);
   server.on("/downloadfile", File_Download);
   server.on("/uploadfile", File_Upload);
-  server.on("/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
-  server.on("/deletefile",File_Delete);
+  server.on(
+      "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
+  server.on("/deletefile", File_Delete);
   //server.on("/cloud", cloud);
   //  server.on("/sendcloud", sendCloud);
 
@@ -388,7 +389,7 @@ void setup(void)
 
   Serial.println("Notificar: " + String(notificar));
 
-  TipoMemoria = lerMemoria();
+  TipoMemoria = "1"; //lerMemoria();
 
   Memoria();
   CarregaEntradas();
@@ -663,7 +664,7 @@ void loop(void)
         {
           g_tempoInicioPulso[iPorta] = 0;
         }
-        else if (millisAtual > g_tempoInicioPulso[iPorta] + 300)
+        else if (millisAtual > g_tempoInicioPulso[iPorta] + 500)
         {
           g_pulsoHabilita[iPorta] = false;
           if (iPorta < 8)

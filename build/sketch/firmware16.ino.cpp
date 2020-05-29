@@ -52,7 +52,7 @@ String senha1 = seg.retornaSenha();
 const char *www_username = usuario1.c_str();
 const char *www_password = senha1.c_str();
 
-String TipoMemoria = "0";
+String TipoMemoria = "1";
 String vListaWifi = "";
 
 String vssid = "";
@@ -229,7 +229,7 @@ bool usaCloud = false;
 
 #line 229 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void setup(void);
-#line 423 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 424 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void loop(void);
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
 void about();
@@ -317,21 +317,21 @@ void fmodelo();
 String lerMemoria();
 #line 371 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void Memoria();
-#line 412 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 396 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void fMemoria();
-#line 455 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 439 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void lerConfiguracao();
-#line 544 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 528 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void GravaCloud();
-#line 596 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 580 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void dirarquivos();
-#line 676 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 660 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void File_Download();
-#line 714 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 698 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void File_Upload();
-#line 729 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 712 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void handleFileUpload();
-#line 791 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 771 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 void File_Delete();
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 void executaPulso(int porta);
@@ -353,15 +353,15 @@ void ler();
 void handleNotFound();
 #line 180 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo);
-#line 257 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 217 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 int LePorta(int vPorta);
-#line 283 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 243 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 int LeSensor(int vPorta);
-#line 309 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 269 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 void ApagaPortas();
-#line 335 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 295 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 void Inverte(int vPorta);
-#line 381 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 341 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 void CarregaEntradas();
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ddns.ino"
 void chamaddns();
@@ -652,8 +652,9 @@ void setup(void)
   server.on("/dirarquivos", dirarquivos);
   server.on("/downloadfile", File_Download);
   server.on("/uploadfile", File_Upload);
-  server.on("/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
-  server.on("/deletefile",File_Delete);
+  server.on(
+      "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
+  server.on("/deletefile", File_Delete);
   //server.on("/cloud", cloud);
   //  server.on("/sendcloud", sendCloud);
 
@@ -680,7 +681,7 @@ void setup(void)
 
   Serial.println("Notificar: " + String(notificar));
 
-  TipoMemoria = lerMemoria();
+  TipoMemoria = "1"; //lerMemoria();
 
   Memoria();
   CarregaEntradas();
@@ -955,7 +956,7 @@ void loop(void)
         {
           g_tempoInicioPulso[iPorta] = 0;
         }
-        else if (millisAtual > g_tempoInicioPulso[iPorta] + 300)
+        else if (millisAtual > g_tempoInicioPulso[iPorta] + 500)
         {
           g_pulsoHabilita[iPorta] = false;
           if (iPorta < 8)
@@ -2998,25 +2999,9 @@ String lerMemoria()
 void Memoria()
 {
 
-  String retorno = lerMemoria();
+  String retorno = "1"; //lerMemoria();
   if (retorno == "1")
   {
-    /*
-    SPIFFS.begin();
-    File f = SPIFFS.open("/dm1.txt", "r");
-    String texto = f.readStringUntil('|');   
-    f.close();
-
-    chip1.write8(texto.toInt());
-
-    f = SPIFFS.open("/dm2.txt", "r");
-    texto = f.readStringUntil('|');   
-    f.close();
-
-    chip2.write8(texto.toInt());
-   
-    SPIFFS.end();       
-    */
 
     Rtc.get_chip1();
     Rtc.get_chip2();
@@ -3048,7 +3033,7 @@ void fMemoria()
   File f = SPIFFS.open("/memoria.txt", "w");
   f.println(valorm + "|");
   f.close();
-  TipoMemoria = lerMemoria();
+  TipoMemoria = "1"; //lerMemoria();
 
   if (TipoMemoria == "1")
   {
@@ -3352,12 +3337,11 @@ void File_Upload()
   server.send(200, "text/html", webfile);
 }
 
-
 void handleFileUpload()
 { // upload a new file to the Filing system
-  
+
   Serial.println("File upload stage-3");
-  HTTPUpload &uploadfile = server.upload(); 
+  HTTPUpload &uploadfile = server.upload();
 
   if (uploadfile.status == UPLOAD_FILE_START)
   {
@@ -3373,7 +3357,6 @@ void handleFileUpload()
     SPIFFS.remove(filename); // Remove a previous version, otherwise data is appended the file again
 
     UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
-
   }
   else if (uploadfile.status == UPLOAD_FILE_WRITE)
   {
@@ -3381,9 +3364,8 @@ void handleFileUpload()
     if (UploadFile)
     {
       //SPIFFS.begin();
-     
-      UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
 
+      UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
     }
   }
   else if (uploadfile.status == UPLOAD_FILE_END)
@@ -3411,7 +3393,6 @@ void handleFileUpload()
     Serial.println(uploadfile.totalSize);
     SPIFFS.end();
   }
-
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -3644,59 +3625,19 @@ void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
     {
       chip2.write(vPorta - 8, vFuncao);
     }
+
+    //if (TipoMemoria == "1")
+    //{
+    Rtc.chip1 = String(chip1.read8()).toInt();
+    Rtc.chip2 = String(chip2.read8()).toInt();
+
+    Rtc.set_chip1();
+    Rtc.set_chip2();
+    //}
   }
   else //pulsado
   {
-
     executaPulso(vPorta);
-    /*
-    if (vPorta < 8)
-    {
-
-
-
-
-
-
-      chip1.write(vPorta, LOW);  
-      delay(300);
-      chip1.write(vPorta, HIGH);     
-
-    }  
-    else
-    {
-
-
-
-
-
-      chip2.write(vPorta-8, LOW);
-      delay(300);
-      chip2.write(vPorta-8, HIGH);
-    } 
-
-*/
-  }
-
-  if (TipoMemoria == "1")
-  {
-    /*
-    SPIFFS.begin();
-    File f = SPIFFS.open("/dm1.txt", "w");
-    f.println(String(chip1.read8())+"|");
-    f.close();
-
-    f = SPIFFS.open("/dm2.txt", "w");
-    f.println(String(chip2.read8())+"|");
-    f.close();
-
-    SPIFFS.end();       
-    */
-    Rtc.chip1 = String(chip1.read8()).toInt();
-    Rtc.chip2 = String(chip2.read8()).toInt();
-    ;
-    Rtc.set_chip1();
-    Rtc.set_chip2();
   }
 }
 
@@ -3789,9 +3730,9 @@ void Inverte(int vPorta)
     chip2.write(vPorta - 8, !chip2.read(vPorta - 8));
   }
 
-  if (TipoMemoria == "1")
-  {
-    /*
+  //if (TipoMemoria == "1")
+  //{
+  /*
     SPIFFS.begin();
     File f = SPIFFS.open("/dm1.txt", "w");
     f.println(String(chip1.read8())+"|");
@@ -3803,12 +3744,12 @@ void Inverte(int vPorta)
 
     SPIFFS.end();       
     */
-    Rtc.chip1 = String(chip1.read8()).toInt();
-    Rtc.chip2 = String(chip2.read8()).toInt();
-    ;
-    Rtc.set_chip1();
-    Rtc.set_chip2();
-  }
+  Rtc.chip1 = String(chip1.read8()).toInt();
+  Rtc.chip2 = String(chip2.read8()).toInt();
+
+  Rtc.set_chip1();
+  Rtc.set_chip2();
+  //}
 }
 /*
 // Return RSSI or 0 if target SSID not found

@@ -52,7 +52,7 @@ String senha1 = seg.retornaSenha();
 const char *www_username = usuario1.c_str();
 const char *www_password = senha1.c_str();
 
-String TipoMemoria = "0";
+String TipoMemoria = "1";
 String vListaWifi = "";
 
 String vssid = "";
@@ -361,8 +361,9 @@ void setup(void)
   server.on("/dirarquivos", dirarquivos);
   server.on("/downloadfile", File_Download);
   server.on("/uploadfile", File_Upload);
-  server.on("/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
-  server.on("/deletefile",File_Delete);
+  server.on(
+      "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
+  server.on("/deletefile", File_Delete);
   //server.on("/cloud", cloud);
   //  server.on("/sendcloud", sendCloud);
 
@@ -389,7 +390,7 @@ void setup(void)
 
   Serial.println("Notificar: " + String(notificar));
 
-  TipoMemoria = lerMemoria();
+  TipoMemoria = "1"; //lerMemoria();
 
   Memoria();
   CarregaEntradas();
@@ -413,7 +414,7 @@ void setup(void)
   Serial.println(String(Rtc.chip2));
 
   */
-# 407 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+# 408 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
   // Inicializa Fireabase
   vchipId = ESP.getChipId();
   //Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
@@ -536,7 +537,7 @@ void loop(void)
       Serial.println(fs_info.totalBytes);
 
     */
-# 522 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+# 523 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
       nCiclos = 0;
       Minuto = HorarioAtual.Minute();
 
@@ -684,7 +685,7 @@ void loop(void)
   }
 
   */
-# 656 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+# 657 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
     //Logica para resete de entrada pulsada
     for (int iPorta = 0; iPorta <= 15; iPorta++)
     {
@@ -695,7 +696,7 @@ void loop(void)
         {
           g_tempoInicioPulso[iPorta] = 0;
         }
-        else if (millisAtual > g_tempoInicioPulso[iPorta] + 300)
+        else if (millisAtual > g_tempoInicioPulso[iPorta] + 500)
         {
           g_pulsoHabilita[iPorta] = false;
           if (iPorta < 8)
@@ -2769,41 +2770,10 @@ String lerMemoria()
 void Memoria()
 {
 
-  String retorno = lerMemoria();
+  String retorno = "1"; //lerMemoria();
   if (retorno == "1")
   {
-    /*
 
-    SPIFFS.begin();
-
-    File f = SPIFFS.open("/dm1.txt", "r");
-
-    String texto = f.readStringUntil('|');   
-
-    f.close();
-
-
-
-    chip1.write8(texto.toInt());
-
-
-
-    f = SPIFFS.open("/dm2.txt", "r");
-
-    texto = f.readStringUntil('|');   
-
-    f.close();
-
-
-
-    chip2.write8(texto.toInt());
-
-   
-
-    SPIFFS.end();       
-
-    */
-# 394 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
     Rtc.get_chip1();
     Rtc.get_chip2();
 
@@ -2834,7 +2804,7 @@ void fMemoria()
   File f = SPIFFS.open("/memoria.txt", "w");
   f.println(valorm + "|");
   f.close();
-  TipoMemoria = lerMemoria();
+  TipoMemoria = "1"; //lerMemoria();
 
   if (TipoMemoria == "1")
   {
@@ -2855,7 +2825,7 @@ void fMemoria()
     f.close();
 
     */
-# 437 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+# 421 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
     Rtc.chip1 = String(chip1.read8()).toInt();
     Rtc.chip2 = String(chip2.read8()).toInt();
     ;
@@ -3142,7 +3112,7 @@ void ConfigAuth()
 }
 
 */
-# 675 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+# 659 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void File_Download()
 { // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
@@ -3196,7 +3166,6 @@ void File_Upload()
   server.send(200, "text/html", webfile);
 }
 
-
 void handleFileUpload()
 { // upload a new file to the Filing system
 
@@ -3217,7 +3186,6 @@ void handleFileUpload()
     SPIFFS.remove(filename); // Remove a previous version, otherwise data is appended the file again
 
     UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
-
   }
   else if (uploadfile.status == UPLOAD_FILE_WRITE)
   {
@@ -3227,7 +3195,6 @@ void handleFileUpload()
       //SPIFFS.begin();
 
       UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
-
     }
   }
   else if (uploadfile.status == UPLOAD_FILE_END)
@@ -3255,7 +3222,6 @@ void handleFileUpload()
     Serial.println(uploadfile.totalSize);
     SPIFFS.end();
   }
-
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -3488,98 +3454,19 @@ void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
     {
       chip2.write(vPorta - 8, vFuncao);
     }
+
+    //if (TipoMemoria == "1")
+    //{
+    Rtc.chip1 = String(chip1.read8()).toInt();
+    Rtc.chip2 = String(chip2.read8()).toInt();
+
+    Rtc.set_chip1();
+    Rtc.set_chip2();
+    //}
   }
   else //pulsado
   {
-
     executaPulso(vPorta);
-    /*
-
-    if (vPorta < 8)
-
-    {
-
-
-
-
-
-
-
-
-
-
-
-
-
-      chip1.write(vPorta, LOW);  
-
-      delay(300);
-
-      chip1.write(vPorta, HIGH);     
-
-
-
-    }  
-
-    else
-
-    {
-
-
-
-
-
-
-
-
-
-
-
-      chip2.write(vPorta-8, LOW);
-
-      delay(300);
-
-      chip2.write(vPorta-8, HIGH);
-
-    } 
-
-
-
-*/
-# 233 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
-  }
-
-  if (TipoMemoria == "1")
-  {
-    /*
-
-    SPIFFS.begin();
-
-    File f = SPIFFS.open("/dm1.txt", "w");
-
-    f.println(String(chip1.read8())+"|");
-
-    f.close();
-
-
-
-    f = SPIFFS.open("/dm2.txt", "w");
-
-    f.println(String(chip2.read8())+"|");
-
-    f.close();
-
-
-
-    SPIFFS.end();       
-
-    */
-# 249 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
-    Rtc.chip1 = String(chip1.read8()).toInt();
-    Rtc.chip2 = String(chip2.read8()).toInt();
-    ;
-    Rtc.set_chip1();
-    Rtc.set_chip2();
   }
 }
 
@@ -3672,9 +3559,9 @@ void Inverte(int vPorta)
     chip2.write(vPorta - 8, !chip2.read(vPorta - 8));
   }
 
-  if (TipoMemoria == "1")
-  {
-    /*
+  //if (TipoMemoria == "1")
+  //{
+  /*
 
     SPIFFS.begin();
 
@@ -3697,13 +3584,13 @@ void Inverte(int vPorta)
     SPIFFS.end();       
 
     */
-# 360 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
-    Rtc.chip1 = String(chip1.read8()).toInt();
-    Rtc.chip2 = String(chip2.read8()).toInt();
-    ;
-    Rtc.set_chip1();
-    Rtc.set_chip2();
-  }
+# 320 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+  Rtc.chip1 = String(chip1.read8()).toInt();
+  Rtc.chip2 = String(chip2.read8()).toInt();
+
+  Rtc.set_chip1();
+  Rtc.set_chip2();
+  //}
 }
 /*
 
@@ -3730,7 +3617,7 @@ int32_t getRSSI(const char* target_ssid) {
 }
 
 */
-# 381 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+# 341 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
 void CarregaEntradas()
 {
   String sSensor1 = String(sensor1.read8(), 2);

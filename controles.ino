@@ -198,59 +198,19 @@ void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
     {
       chip2.write(vPorta - 8, vFuncao);
     }
+
+    //if (TipoMemoria == "1")
+    //{
+    Rtc.chip1 = String(chip1.read8()).toInt();
+    Rtc.chip2 = String(chip2.read8()).toInt();
+
+    Rtc.set_chip1();
+    Rtc.set_chip2();
+    //}
   }
   else //pulsado
   {
-
     executaPulso(vPorta);
-    /*
-    if (vPorta < 8)
-    {
-
-
-
-
-
-
-      chip1.write(vPorta, LOW);  
-      delay(300);
-      chip1.write(vPorta, HIGH);     
-
-    }  
-    else
-    {
-
-
-
-
-
-      chip2.write(vPorta-8, LOW);
-      delay(300);
-      chip2.write(vPorta-8, HIGH);
-    } 
-
-*/
-  }
-
-  if (TipoMemoria == "1")
-  {
-    /*
-    SPIFFS.begin();
-    File f = SPIFFS.open("/dm1.txt", "w");
-    f.println(String(chip1.read8())+"|");
-    f.close();
-
-    f = SPIFFS.open("/dm2.txt", "w");
-    f.println(String(chip2.read8())+"|");
-    f.close();
-
-    SPIFFS.end();       
-    */
-    Rtc.chip1 = String(chip1.read8()).toInt();
-    Rtc.chip2 = String(chip2.read8()).toInt();
-    ;
-    Rtc.set_chip1();
-    Rtc.set_chip2();
   }
 }
 
@@ -343,9 +303,9 @@ void Inverte(int vPorta)
     chip2.write(vPorta - 8, !chip2.read(vPorta - 8));
   }
 
-  if (TipoMemoria == "1")
-  {
-    /*
+  //if (TipoMemoria == "1")
+  //{
+  /*
     SPIFFS.begin();
     File f = SPIFFS.open("/dm1.txt", "w");
     f.println(String(chip1.read8())+"|");
@@ -357,12 +317,12 @@ void Inverte(int vPorta)
 
     SPIFFS.end();       
     */
-    Rtc.chip1 = String(chip1.read8()).toInt();
-    Rtc.chip2 = String(chip2.read8()).toInt();
-    ;
-    Rtc.set_chip1();
-    Rtc.set_chip2();
-  }
+  Rtc.chip1 = String(chip1.read8()).toInt();
+  Rtc.chip2 = String(chip2.read8()).toInt();
+
+  Rtc.set_chip1();
+  Rtc.set_chip2();
+  //}
 }
 /*
 // Return RSSI or 0 if target SSID not found

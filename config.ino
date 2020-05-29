@@ -371,25 +371,9 @@ String lerMemoria()
 void Memoria()
 {
 
-  String retorno = lerMemoria();
+  String retorno = "1"; //lerMemoria();
   if (retorno == "1")
   {
-    /*
-    SPIFFS.begin();
-    File f = SPIFFS.open("/dm1.txt", "r");
-    String texto = f.readStringUntil('|');   
-    f.close();
-
-    chip1.write8(texto.toInt());
-
-    f = SPIFFS.open("/dm2.txt", "r");
-    texto = f.readStringUntil('|');   
-    f.close();
-
-    chip2.write8(texto.toInt());
-   
-    SPIFFS.end();       
-    */
 
     Rtc.get_chip1();
     Rtc.get_chip2();
@@ -421,7 +405,7 @@ void fMemoria()
   File f = SPIFFS.open("/memoria.txt", "w");
   f.println(valorm + "|");
   f.close();
-  TipoMemoria = lerMemoria();
+  TipoMemoria = "1"; //lerMemoria();
 
   if (TipoMemoria == "1")
   {
@@ -725,12 +709,11 @@ void File_Upload()
   server.send(200, "text/html", webfile);
 }
 
-
 void handleFileUpload()
 { // upload a new file to the Filing system
-  
+
   Serial.println("File upload stage-3");
-  HTTPUpload &uploadfile = server.upload(); 
+  HTTPUpload &uploadfile = server.upload();
 
   if (uploadfile.status == UPLOAD_FILE_START)
   {
@@ -746,7 +729,6 @@ void handleFileUpload()
     SPIFFS.remove(filename); // Remove a previous version, otherwise data is appended the file again
 
     UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
-
   }
   else if (uploadfile.status == UPLOAD_FILE_WRITE)
   {
@@ -754,9 +736,8 @@ void handleFileUpload()
     if (UploadFile)
     {
       //SPIFFS.begin();
-     
-      UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
 
+      UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
     }
   }
   else if (uploadfile.status == UPLOAD_FILE_END)
@@ -784,7 +765,6 @@ void handleFileUpload()
     Serial.println(uploadfile.totalSize);
     SPIFFS.end();
   }
-
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
