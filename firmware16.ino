@@ -628,7 +628,7 @@ void loop(void)
       }
       mySwitch.resetAvailable();
 
-      delay(300);
+      //delay(300);
       //    noTone(Buzzer);
       //  enReadRF = false;
     }

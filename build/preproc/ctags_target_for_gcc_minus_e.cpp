@@ -646,7 +646,7 @@ void loop(void)
       }
       mySwitch.resetAvailable();
 
-      delay(300);
+      //delay(300);
       //    noTone(Buzzer);
       //  enReadRF = false;
     }
@@ -6546,7 +6546,7 @@ void configRF()
 {
   mySwitch.enableReceive(rxRF);
   sSendRF.enableTransmit(txRF);
-  sSendRF.setRepeatTransmit(15);
+  sSendRF.setRepeatTransmit(5);
 }
 
 void getRF()
@@ -7160,7 +7160,8 @@ void sendRFp()
 
   if (Senha == "kdi9e")
   {
-    sSendRF.send(Valor, 32);
+    sSendRF.setProtocol(6);
+    sSendRF.send(Valor, 28);
     server.send(200, "text/html", "ok");
   }
 }
