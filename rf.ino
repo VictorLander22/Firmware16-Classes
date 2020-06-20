@@ -616,8 +616,8 @@ void sendRFp()
 
   if (Senha == "kdi9e")
   {
-    sSendRF.setProtocol(6);
-    sSendRF.send(Valor, 28);
+    sSendRF.setProtocol(1);
+    sSendRF.send(Valor, 24);
     server.send(200, "text/html", "ok");
   }
 }

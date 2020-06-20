@@ -69,6 +69,7 @@ void triggerCena(String arq)
 {
   cenaExecucao = true;
   cenaPAtual = 0;
+  cenaPTotal = 0;
   ArqCena = arq;
 }
 
@@ -85,6 +86,7 @@ void checkCena()
 
       while (rFile.available())
       {
+
         String linhas = rFile.readStringUntil('\n');
         if (cenaPTotal == 0)
         {
@@ -92,7 +94,12 @@ void checkCena()
         }
         cenaPTotal++;
       }
+      Serial.println("Total cena: " + String(cenaPTotal));
       cenaPAtual++;
+      Serial.println("Cena atual: " + String(cenaPAtual));
+
+      rFile.close();
+      SPIFFS.end();
     }
     if (cenaPAtual >= 1)
     {
@@ -102,30 +109,57 @@ void checkCena()
       if (cenaPAtual == 1)
       {
         //Serial.print(Comando);
+        //Serial.println("primeiro");
+        //Serial.println("Cena atual: " + String(cenaPAtual));
+        Serial.println("Executar cena: " + Comando);
         executaCena(Comando);
-      }
+        //Serial.println("Exceutou cena primeiro");
+            }
       else
       {
-        rFile.seek(0, SeekSet);
+        Serial.println("Cena atual: " + String(cenaPAtual));
+        //rFile.seek(0, SeekSet);
+
+        SPIFFS.begin();
+        rFile = SPIFFS.open("/ce_" + ArqCena + ".cfg", "r");
         int conCena = 1;
+
         while (rFile.available())
         {
+          //Serial.println("\nInicio While");
+          //Serial.println("conCena while: " + String(conCena));
+          //Serial.println("Cena atual while: " + String(cenaPAtual));
+
           String linhas = rFile.readStringUntil('\n');
+
+          //Serial.println("Codigo lido arquivo: " + linhas + "Posição no arquivo: " + rFile.position());
+
           if (conCena == cenaPAtual)
           {
+
             Comando = linhas;
-            //Serial.print(Comando);
+            //Serial.println("Executar cena while: " + Comando);
+            //Serial.println("Cena atual antes execução: " + String(cenaPAtual));
+            Serial.println("Executar cena: " + Comando);
             executaCena(Comando);
+            //Serial.println("Cena atual apos execução" + String(cenaPAtual));
+            rFile.close();
+            SPIFFS.end();
+            //conCena = 0;
           }
           conCena++;
+
+          //Serial.println("ConCena fim while: " + String(conCena));
         }
+        //Serial.println("Sai do while");
       }
     }
+
     if (cenaPAtual > cenaPTotal)
     {
       rFile.close();
       SPIFFS.end();
-      //Serial.println("fim da cena");
+      Serial.println("\nfim da cena\n");
       cenaExecucao = false;
       cenaPAtual = 0;
       cenaPTotal = 0;
@@ -135,7 +169,7 @@ void checkCena()
 
 void executaCena(String comandoCena)
 {
-  Serial.print(comandoCena);
+  //Serial.print(comandoCena);
   String cmdChipID;
   String cmdIP;
   String cmdTipo;
@@ -151,6 +185,7 @@ void executaCena(String comandoCena)
 
   for (i = 0; i < comandoCena.length(); i++)
   {
+    //Serial.println("Posicao " + String(i));
     if (comandoCena[i] != '|' && posicaoi <= posicaof)
     {
       if (posicaoi == 1) // chip id
@@ -241,6 +276,7 @@ void executaCena(String comandoCena)
   Destino.fromString(cmdIP);
   String Texto;
   // comandos
+  //Serial.println("Tipo " + cmdTipo);
   if (cmdTipo == "1") // Rele
   {
     if (Destino == IpDispositivo)
@@ -290,14 +326,21 @@ void executaCena(String comandoCena)
     {
       if (lastCnTime == 0 || (millisAtual - lastCnTime >= 300))
       {
-        cenaPAtual++;
+        //Serial.println("CenaAntes " + String(cenaPAtual));
+
         sendIRCMD(cmdAcao, cmdAcao2, cmdQtde.toInt(), cmdPorta.toInt(), cmdModelo.toInt(), cmdQtde.toInt());
         lastCnTime = millisAtual;
+        //lastCnTime = millis();
+        //Serial.println("terminou IR");
+        // Serial.println("Cena apos ir " + String(cenaPAtual));
+        cenaPAtual++;
+        // Serial.println("Cena apos ir + 1 " + String(cenaPAtual));
         //delay(300);
       }
       else if (millisAtual - lastCnTime < 0)
       {
         lastCnTime = millisAtual;
+        //lastCnTime = millis();
       }
     }
     else //upd - não implentado UPD para IR
@@ -306,7 +349,7 @@ void executaCena(String comandoCena)
   }
   else if (cmdTipo == "3") // timer
   {
-    Serial.println("Entrou no timer");
+    //Serial.println("Entrou no timer " + String(lastCnTime));
     if (lastCnTime <= 0)
     {
       lastCnTime = millisAtual;
