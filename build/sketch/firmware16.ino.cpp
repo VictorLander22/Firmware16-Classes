@@ -224,7 +224,7 @@ bool usaCloud = false;
 
 #line 224 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
 void setup(void);
-#line 416 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
+#line 420 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
 void loop(void);
 #line 1 "f:\\Desenvolvimento\\keepin\\firmware16\\about.ino"
 void about();
@@ -264,9 +264,9 @@ void gravacena();
 void lerArquivo(String id);
 #line 67 "f:\\Desenvolvimento\\keepin\\firmware16\\cenas.ino"
 void triggerCena(String arq);
-#line 73 "f:\\Desenvolvimento\\keepin\\firmware16\\cenas.ino"
+#line 74 "f:\\Desenvolvimento\\keepin\\firmware16\\cenas.ino"
 void checkCena();
-#line 136 "f:\\Desenvolvimento\\keepin\\firmware16\\cenas.ino"
+#line 143 "f:\\Desenvolvimento\\keepin\\firmware16\\cenas.ino"
 void executaCena(String comandoCena);
 #line 1 "f:\\Desenvolvimento\\keepin\\firmware16\\cloud.ino"
 void cloud();
@@ -432,25 +432,25 @@ void gravasensor();
 void gravasensor2(String Valor);
 #line 359 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 boolean verificaSensores(int nsensor, String vsAtual);
-#line 973 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 976 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void consultaSensor();
-#line 1047 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1050 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 String lerSensor();
-#line 1057 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1060 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void consensor();
-#line 1076 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1079 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void gravadevice();
-#line 1107 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1110 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void buscadevice();
-#line 1152 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1155 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void ultimodisp();
-#line 1166 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1169 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void retornaNotificar();
-#line 1183 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1186 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void buscaNotificar();
-#line 1201 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1204 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void gravanot();
-#line 1241 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
+#line 1244 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void gravanot2(String Valor);
 #line 1 "f:\\Desenvolvimento\\keepin\\firmware16\\skeleton.ino"
 String vskeleton();
@@ -504,6 +504,10 @@ void carregaDadosHTML();
 void setup(void){
   Serial.begin(115200);
   //ConfigAuth();
+
+  Serial.println("");
+  Serial.println("Keepin Firmware: " + String(Placa_Version));
+
    
   configIR();
 
@@ -2039,6 +2043,7 @@ void lerArquivo(String id) {
 void triggerCena(String arq) {
   cenaExecucao = true;
   cenaPAtual = 0;
+  cenaPTotal = 0;
   ArqCena = arq;
 }
 
@@ -2046,10 +2051,10 @@ void checkCena() {
   if (cenaExecucao == true)
   {
     String Comando;
-    static File rFile;
     SPIFFS.begin();
     if (cenaPAtual == 0) // abre spiff e mantem aberto
     {
+      static File rFile;
       rFile = SPIFFS.open("/ce_"+ArqCena+".cfg", "r");
 
       while(rFile.available()) 
@@ -2062,7 +2067,9 @@ void checkCena() {
         cenaPTotal++;
       }     
       cenaPAtual++;
-      
+      rFile.close();
+      SPIFFS.end();
+      Serial.println("Total de cenas: " + String(cenaPTotal));
     }
     if (cenaPAtual >= 1)
     {
@@ -2076,11 +2083,14 @@ void checkCena() {
       }
       else
       {
-        rFile.seek(0, SeekSet);
+        static File rFile;
+        rFile = SPIFFS.open("/ce_"+ArqCena+".cfg", "r");
+//        rFile.seek(0, SeekSet);
         int conCena = 1;
         while(rFile.available()) 
         {
           String linhas = rFile.readStringUntil('\n');
+  
           if (conCena == cenaPAtual)
           {
             Comando = linhas;
@@ -2090,11 +2100,12 @@ void checkCena() {
           conCena++;
         }
 
+        rFile.close();
+        SPIFFS.end();
       }   
     }
     if (cenaPAtual > cenaPTotal)
     {
-      rFile.close();
       SPIFFS.end();
       //Serial.println("fim da cena");
       cenaExecucao = false;
@@ -7617,6 +7628,8 @@ boolean verificaSensores(int nsensor, String vsAtual) {
         {
           if ((millis() - lastDebounceTime) > debounceDelay)
           {
+            Serial.println("Interruptor Cena");
+            ultimoEstado[nsensor] = estadoAtual[nsensor];  
               // cena1
               triggerCena(PortaAparelho);
           }
@@ -7628,6 +7641,7 @@ boolean verificaSensores(int nsensor, String vsAtual) {
           if ((millis() - lastDebounceTime) > debounceDelay)
           {
             // cena2
+            ultimoEstado[nsensor] = estadoAtual[nsensor];  
             triggerCena(PortaAparelho2);
           }
         }

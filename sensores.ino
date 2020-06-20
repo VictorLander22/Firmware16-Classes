@@ -938,6 +938,8 @@ boolean verificaSensores(int nsensor, String vsAtual) {
         {
           if ((millis() - lastDebounceTime) > debounceDelay)
           {
+            Serial.println("Interruptor Cena");
+            ultimoEstado[nsensor] = estadoAtual[nsensor];  
               // cena1
               triggerCena(PortaAparelho);
           }
@@ -949,6 +951,7 @@ boolean verificaSensores(int nsensor, String vsAtual) {
           if ((millis() - lastDebounceTime) > debounceDelay)
           {
             // cena2
+            ultimoEstado[nsensor] = estadoAtual[nsensor];  
             triggerCena(PortaAparelho2);
           }
         }

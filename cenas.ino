@@ -67,6 +67,7 @@ void lerArquivo(String id) {
 void triggerCena(String arq) {
   cenaExecucao = true;
   cenaPAtual = 0;
+  cenaPTotal = 0;
   ArqCena = arq;
 }
 
@@ -74,10 +75,10 @@ void checkCena() {
   if (cenaExecucao == true)
   {
     String Comando;
-    static File rFile;
     SPIFFS.begin();
     if (cenaPAtual == 0) // abre spiff e mantem aberto
     {
+      static File rFile;
       rFile = SPIFFS.open("/ce_"+ArqCena+".cfg", "r");
 
       while(rFile.available()) 
@@ -90,7 +91,9 @@ void checkCena() {
         cenaPTotal++;
       }     
       cenaPAtual++;
-      
+      rFile.close();
+      SPIFFS.end();
+      Serial.println("Total de cenas: " + String(cenaPTotal));
     }
     if (cenaPAtual >= 1)
     {
@@ -104,11 +107,14 @@ void checkCena() {
       }
       else
       {
-        rFile.seek(0, SeekSet);
+        static File rFile;
+        rFile = SPIFFS.open("/ce_"+ArqCena+".cfg", "r");
+//        rFile.seek(0, SeekSet);
         int conCena = 1;
         while(rFile.available()) 
         {
           String linhas = rFile.readStringUntil('\n');
+  
           if (conCena == cenaPAtual)
           {
             Comando = linhas;
@@ -118,11 +124,12 @@ void checkCena() {
           conCena++;
         }
 
+        rFile.close();
+        SPIFFS.end();
       }   
     }
     if (cenaPAtual > cenaPTotal)
     {
-      rFile.close();
       SPIFFS.end();
       //Serial.println("fim da cena");
       cenaExecucao = false;
