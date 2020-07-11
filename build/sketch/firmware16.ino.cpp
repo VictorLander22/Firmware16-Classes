@@ -183,6 +183,7 @@ int rxRF = 12;
 int txRF = 15;
 //boolean enReadRF = false;
 int tamanhoRF = -1;
+int gProtocoloRF = 1;
 String codigoRF = "-1";
 boolean SensorRFAlterado = true;
 String SensoresRF[30] = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
@@ -222,9 +223,9 @@ long lastCnTime = -1;
 //   CLOUD ///
 bool usaCloud = false;
 
-#line 224 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
+#line 225 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
 void setup(void);
-#line 420 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
+#line 421 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
 void loop(void);
 #line 1 "f:\\Desenvolvimento\\keepin\\firmware16\\about.ino"
 void about();
@@ -500,7 +501,7 @@ void gravahtml();
 void testes2();
 #line 142 "f:\\Desenvolvimento\\keepin\\firmware16\\webconfig.ino"
 void carregaDadosHTML();
-#line 224 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
+#line 225 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
 void setup(void){
   Serial.begin(115200);
   //ConfigAuth();
@@ -897,6 +898,7 @@ void loop(void){
           Serial.print("bit ");
           Serial.print("Protocol: ");
           Serial.println( mySwitch.getReceivedProtocol() );
+          gProtocoloRF = mySwitch.getReceivedProtocol();
           trataRF();
           
         }
@@ -6058,7 +6060,7 @@ void getRF()
   if(!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
   
-  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "*");  
+  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");  
   tamanhoRF = -1;
   codigoRF = "-1";
 }
@@ -6679,11 +6681,11 @@ void sendRFp()
   
   unsigned long Valor = strtoul(server.arg("c").c_str(), NULL, 10);
   unsigned long _tamanhorf = strtoul(server.arg("t").c_str(), NULL, 10);
+  unsigned long _protocol = strtoul(server.arg("p").c_str(), NULL, 10);
   String Senha = server.arg("k");
 
   if (Senha == "kdi9e") {      
-    Serial.print("Valor: " + String(Valor));
-    Serial.print("Tamanho: " + String(_tamanhorf));
+    sSendRF.setProtocol(_protocol);
     sSendRF.send(Valor, _tamanhorf);   
     server.send(200, "text/html", "ok");
   }

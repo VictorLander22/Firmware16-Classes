@@ -12,7 +12,7 @@ void getRF()
   if(!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
   
-  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "*");  
+  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");  
   tamanhoRF = -1;
   codigoRF = "-1";
 }
@@ -633,9 +633,11 @@ void sendRFp()
   
   unsigned long Valor = strtoul(server.arg("c").c_str(), NULL, 10);
   unsigned long _tamanhorf = strtoul(server.arg("t").c_str(), NULL, 10);
+  unsigned long _protocol = strtoul(server.arg("p").c_str(), NULL, 10);
   String Senha = server.arg("k");
 
   if (Senha == "kdi9e") {      
+    sSendRF.setProtocol(_protocol);
     sSendRF.send(Valor, _tamanhorf);   
     server.send(200, "text/html", "ok");
   }
