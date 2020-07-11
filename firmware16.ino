@@ -189,6 +189,7 @@ int rxRF = 12;
 int txRF = 15;
 //boolean enReadRF = false;
 int tamanhoRF = -1;
+gProtocoloRF
 String codigoRF = "-1";
 boolean SensorRFAlterado = true;
 String SensoresRF[30] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
@@ -624,6 +625,7 @@ void loop(void)
         Serial.print("bit ");
         Serial.print("Protocol: ");
         Serial.println(mySwitch.getReceivedProtocol());
+        gProtocoloRF = mySwitch.getReceivedProtocol();
         trataRF();
       }
       mySwitch.resetAvailable();
