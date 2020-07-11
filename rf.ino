@@ -14,6 +14,7 @@ void getRF()
   
   server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");  
   tamanhoRF = -1;
+  gProtocoloRF = -1;
   codigoRF = "-1";
 }
 
