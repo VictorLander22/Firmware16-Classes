@@ -632,10 +632,11 @@ void sendRFp()
     return server.requestAuthentication();
   
   unsigned long Valor = strtoul(server.arg("c").c_str(), NULL, 10);
+  unsigned long _tamanhorf = strtoul(server.arg("t").c_str(), NULL, 10);
   String Senha = server.arg("k");
 
   if (Senha == "kdi9e") {      
-    sSendRF.send(Valor, 32);   
+    sSendRF.send(Valor, _tamanhorf);   
     server.send(200, "text/html", "ok");
   }
 }

@@ -29,7 +29,7 @@
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
 
-#define Placa_Version "2,32"
+#define Placa_Version "2,34"
 
 Seguranca seg;
 String usuario1 = seg.retornaUsuario();
@@ -6678,10 +6678,13 @@ void sendRFp()
     return server.requestAuthentication();
   
   unsigned long Valor = strtoul(server.arg("c").c_str(), NULL, 10);
+  unsigned long _tamanhorf = strtoul(server.arg("t").c_str(), NULL, 10);
   String Senha = server.arg("k");
 
   if (Senha == "kdi9e") {      
-    sSendRF.send(Valor, 32);   
+    Serial.print("Valor: " + String(Valor));
+    Serial.print("Tamanho: " + String(_tamanhorf));
+    sSendRF.send(Valor, _tamanhorf);   
     server.send(200, "text/html", "ok");
   }
 }

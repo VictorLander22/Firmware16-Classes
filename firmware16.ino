@@ -28,7 +28,7 @@
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
 
-#define Placa_Version "2,33"
+#define Placa_Version "2,34"
 
 Seguranca seg;
 String usuario1 = seg.retornaUsuario();
