@@ -619,6 +619,9 @@ void sendRFp()
   String Senha = server.arg("k");
 
   if (Senha == "kdi9e") {      
+    Serial.println("Valor: " + String(Valor));
+    Serial.println("Tamanho: " + String(_tamanhorf));
+    Serial.println("Protocolo: " + String(_protocol));
     sSendRF.setProtocol(_protocol);
     sSendRF.send(Valor, _tamanhorf);   
     server.send(200, "text/html", "ok");

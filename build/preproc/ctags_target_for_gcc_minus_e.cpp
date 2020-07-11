@@ -1,33 +1,33 @@
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
-# 2 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
+# 2 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
 //#ifndef UNIT_TEST
-# 4 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
+# 4 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
 //#endif
-# 6 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 7 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 8 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 9 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 10 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
+# 6 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 7 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 8 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 9 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 10 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
 //#include <ESP8266WiFiMesh.h>
-# 12 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 13 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 14 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 15 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 16 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 17 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
+# 12 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 13 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 14 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 15 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 16 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 17 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
 //#include <ArduinoOTA.h>
-# 19 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
+# 19 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
 //IR
-# 21 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 22 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 23 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
-# 24 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
+# 21 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 22 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 23 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
+# 24 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
 //RF
-# 26 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
+# 26 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
 //FIREBASE
 //#include <FirebaseArduino.h>
 //#include <FirebaseCloudMessaging.h>
-# 30 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino" 2
+# 30 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino" 2
 
 
 
@@ -190,6 +190,7 @@ int rxRF = 12;
 int txRF = 15;
 //boolean enReadRF = false;
 int tamanhoRF = -1;
+int gProtocoloRF = 1;
 String codigoRF = "-1";
 boolean SensorRFAlterado = true;
 String SensoresRF[30] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
@@ -414,7 +415,7 @@ void setup(void)
   Serial.println(String(Rtc.chip2));
 
   */
-# 408 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+# 409 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
   // Inicializa Fireabase
   vchipId = ESP.getChipId();
   //Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
@@ -537,7 +538,7 @@ void loop(void)
       Serial.println(fs_info.totalBytes);
 
     */
-# 523 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+# 524 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
       nCiclos = 0;
       Minuto = HorarioAtual.Minute();
 
@@ -642,6 +643,7 @@ void loop(void)
         Serial.print("bit ");
         Serial.print("Protocol: ");
         Serial.println(mySwitch.getReceivedProtocol());
+        gProtocoloRF = mySwitch.getReceivedProtocol();
         trataRF();
       }
       mySwitch.resetAvailable();
@@ -685,7 +687,7 @@ void loop(void)
   }
 
   */
-# 657 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+# 659 "f:\\Desenvolvimento\\keepin\\firmware16\\firmware16.ino"
     //Logica para resete de entrada pulsada
     for (int iPorta = 0; iPorta <= 15; iPorta++)
     {
@@ -729,11 +731,11 @@ void loop(void)
   //  Serial.println("memoria livre:");
   //  Serial.println(system_get_free_heap_size());
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\about.ino"
 void about() {
     server.send(200, "text/html", "<html><body><h1>Desenvolvido por:</h1><p>Fernando Leal</p><p>Julio Valadares</p><p>Leonardo Aquino</p><p><a href=\"http://www.keepin.com.br\">www.keepin.com.br</a></p></body></html>");
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\agenda.ino"
 // CONNECTIONS:
 // DS3231 SDA --> SDA
 // DS3231 SCL --> SCL
@@ -896,7 +898,7 @@ void verificaAgenda() {
     Serial.println("Agenda Cena Desliga: " + CenaDesliga);
 
  */
-# 159 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+# 159 "f:\\Desenvolvimento\\keepin\\firmware16\\agenda.ino"
     if (i == 3) {
       //Serial.println("Ativo: " + Ativo + " Tipo: " + Tipo);
     }
@@ -1174,7 +1176,7 @@ String consultaAgenda(int id) {
   return texto;
 
 */
-# 425 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+# 425 "f:\\Desenvolvimento\\keepin\\firmware16\\agenda.ino"
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "r");
   String texto = f.readStringUntil('*');
@@ -1214,7 +1216,7 @@ void consultaAgenda2() {
   SPIFFS.end();  
 
   */
-# 452 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+# 452 "f:\\Desenvolvimento\\keepin\\firmware16\\agenda.ino"
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "r");
   String texto = f.readStringUntil('*');
@@ -1361,7 +1363,7 @@ String RetornaData(const RtcDateTime& dt)
             dt.Second() );
     return datestring;
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\api.ino"
 void api() {
 //  const char* www_username = www_username2.c_str();
 //  const char* www_password = www_password2.c_str();
@@ -1778,7 +1780,7 @@ void alterasenhapi() {
   }
 
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\cenas.ino"
 void gravacena()
 {
   if (!server.authenticate(www_username, www_password))
@@ -2166,7 +2168,7 @@ void executaCena(String comandoCena)
     cenaPAtual++;
   }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cloud.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\cloud.ino"
 void cloud()
 {
   HTTPClient http;
@@ -2434,7 +2436,7 @@ String retornaValorCloud(char val)
     return "false";
   }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\config.ino"
 void reiniciar()
 {
   //  const char* www_username = www_username2.c_str();
@@ -2545,7 +2547,7 @@ void configuracao2()
   String mask = "";
 
   String gateway = "";*/
-# 107 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+# 107 "f:\\Desenvolvimento\\keepin\\firmware16\\config.ino"
   SPIFFS.begin();
   File f = SPIFFS.open("/ssid.txt", "r");
   String ssid = f.readStringUntil('|');
@@ -2868,7 +2870,7 @@ void fMemoria()
     f.close();
 
     */
-# 421 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+# 421 "f:\\Desenvolvimento\\keepin\\firmware16\\config.ino"
     Rtc.chip1 = String(chip1.read8()).toInt();
     Rtc.chip2 = String(chip2.read8()).toInt();
     ;
@@ -3155,7 +3157,7 @@ void ConfigAuth()
 }
 
 */
-# 659 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+# 659 "f:\\Desenvolvimento\\keepin\\firmware16\\config.ino"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void File_Download()
 { // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
@@ -3296,7 +3298,7 @@ void File_Delete()
   }
   SPIFFS.end();
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\controles.ino"
 void executaPulso(int porta)
 {
   if (porta < 8)
@@ -3627,7 +3629,7 @@ void Inverte(int vPorta)
     SPIFFS.end();       
 
     */
-# 320 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+# 320 "f:\\Desenvolvimento\\keepin\\firmware16\\controles.ino"
   Rtc.chip1 = String(chip1.read8()).toInt();
   Rtc.chip2 = String(chip2.read8()).toInt();
 
@@ -3660,7 +3662,7 @@ int32_t getRSSI(const char* target_ssid) {
 }
 
 */
-# 341 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+# 341 "f:\\Desenvolvimento\\keepin\\firmware16\\controles.ino"
 void CarregaEntradas()
 {
   String sSensor1 = String(sensor1.read8(), 2);
@@ -3709,7 +3711,7 @@ void CarregaEntradas()
     }
   }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ddns.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\ddns.ino"
 void chamaddns() {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
@@ -3932,7 +3934,7 @@ void chamaddns() {
     }
   }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\fab.ino"
 bool ConfigEN() {
     int chipId = ESP.getChipId();
     String texto = "1|6|1|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
@@ -4017,7 +4019,7 @@ bool resetIntPulsado ()
         return false;
     }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\ir.ino"
 void configIR()
 {
 
@@ -4298,7 +4300,7 @@ void dumpCode(decode_results *results)
     codigoIR = "" + hex + "" ;
 
   */
-# 262 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+# 262 "f:\\Desenvolvimento\\keepin\\firmware16\\ir.ino"
     codigoIR = "" + uint64ToString(results->value, 16) + "";
   }
   // Serial.println("CodigoIR: " + codigoIR) ;
@@ -4359,7 +4361,7 @@ void dumpCode(decode_results *results)
       Serial.print("Tamanho: ");
 
       Serial.println(tamanho);*/
-# 317 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+# 317 "f:\\Desenvolvimento\\keepin\\firmware16\\ir.ino"
     }
     Serial.println(";");
   }
@@ -4707,7 +4709,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       }
 
    */
-# 629 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+# 629 "f:\\Desenvolvimento\\keepin\\firmware16\\ir.ino"
       //      Serial.println("Qtde: " + String(QtdeBit));
 
       //      for (int i = 0; i <= QtdeBit-1; i++)
@@ -4743,7 +4745,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       Serial.println(String(vCodigo));
 
 */
-# 653 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+# 653 "f:\\Desenvolvimento\\keepin\\firmware16\\ir.ino"
     }
 
     Codigo = "";
@@ -4887,7 +4889,7 @@ uint16_t converteRAW(String codig, String codig2, int tam)
   //Serial.println("O que está gravado: " + Teste);
 
   */
-# 741 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+# 741 "f:\\Desenvolvimento\\keepin\\firmware16\\ir.ino"
 //return rawData;
 /*}*/
 
@@ -5241,7 +5243,7 @@ uint64_t getUInt64fromHex(char const *str)
 //
 //    return accumulator;
 //}
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\leituras.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\leituras.ino"
 void leituraUDP()
 {
 
@@ -5551,7 +5553,7 @@ int packetSize = Udp.parsePacket();
     server.send(200, "text/html", "ok");
   }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
 /*
 
 void mesh() {
@@ -5605,7 +5607,7 @@ void mesh() {
   if ((state != 1) and (state != 0)){
 
     /* Scan for other nodes and send them a message */
-# 28 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 28 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
     /*
 
     char request[60];
@@ -5677,7 +5679,7 @@ void mesh() {
   else if (state == 1){
 
     /* Scan for other nodes and send them a message */
-# 64 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 64 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
     /*
 
     char request[60];
@@ -5797,7 +5799,7 @@ void meshconsulta() {
 
 
 */
-# 124 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 124 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
 void conectar() {
   WiFi.disconnect();
   WiFi.softAPdisconnect();
@@ -6028,7 +6030,7 @@ void conectarmesh()
 }
 
 */
-# 318 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 318 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
 /*
 
 String manageRequest(String request)
@@ -6048,7 +6050,7 @@ String manageRequest(String request)
   mesh_Senha = "";  
 
   /* Print out received message */
-# 328 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 328 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
   /*
 /*
   Serial.print("received: ");
@@ -6152,7 +6154,7 @@ String manageRequest(String request)
 
 
   /* return a string to send back */
-# 380 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 380 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
   /*
 
   char response[60];
@@ -6276,7 +6278,7 @@ String manageRequest(String request)
 }
 
 */
-# 442 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 442 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
 void listawifi()
 {
 
@@ -6408,7 +6410,7 @@ void gravasenhahttp()
         SPIFFS.end();    
 
         */
-# 554 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+# 554 "f:\\Desenvolvimento\\keepin\\firmware16\\mesh.ino"
         Serial.println("Reiniciando sistema depois de alterar http senha");
         server.send(200, "text/html", "ok");
         delay(500);
@@ -6423,7 +6425,7 @@ void gravasenhahttp()
     }
 
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\normalize.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\normalize.ino"
 String vNormalize() {
   String html = "html {";
   html += "    font-family: sans-serif;";
@@ -6647,7 +6649,7 @@ String vNormalize() {
 
   return html;
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 void configRF()
 {
   mySwitch.enableReceive(rxRF);
@@ -6662,9 +6664,15 @@ void getRF()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "*");
+  Serial.println("enviando rf");
+  Serial.println("Valor: " + codigoRF);
+  Serial.println("Tamanho: " + String(tamanhoRF));
+  Serial.println("Protocolo: " + String(gProtocoloRF));
+  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
   tamanhoRF = -1;
+  gProtocoloRF = -1;
   codigoRF = "-1";
+
 }
 
 void habRF()
@@ -7262,16 +7270,20 @@ void sendRFp()
     return server.requestAuthentication();
 
   unsigned long Valor = strtoul(server.arg("c").c_str(), __null, 10);
+  unsigned long _tamanhorf = strtoul(server.arg("t").c_str(), __null, 10);
+  unsigned long _protocol = strtoul(server.arg("p").c_str(), __null, 10);
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e")
-  {
-    sSendRF.setProtocol(1);
-    sSendRF.send(Valor, 24);
+  if (Senha == "kdi9e") {
+    Serial.println("Valor: " + String(Valor));
+    Serial.println("Tamanho: " + String(_tamanhorf));
+    Serial.println("Protocolo: " + String(_protocol));
+    sSendRF.setProtocol(_protocol);
+    sSendRF.send(Valor, _tamanhorf);
     server.send(200, "text/html", "ok");
   }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void trataDevice(String (&Devices)[20])
 {
   SPIFFS.begin();
@@ -8412,7 +8424,7 @@ void limpadevice()
 }
 
 */
-# 1124 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+# 1124 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void ultimodisp()
 {
   //const char* www_username = www_username2.c_str();
@@ -8529,7 +8541,7 @@ void gravanot2(String Valor)
     notificar = false;
   }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\skeleton.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\skeleton.ino"
 String vskeleton()
 {
   String html = ".container {";
@@ -9006,7 +9018,7 @@ String vskeleton5()
 
   return html;
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sms.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\sms.ino"
 void sendSMS(int numSensor) {
     WiFiClient cliente;
     SPIFFS.begin();
@@ -9162,7 +9174,7 @@ String consultasms2()
 
   return Texto+"|"+Numeros;
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\update.ino"
 void executeupdate()
 {
   //const char* www_username = www_username2.c_str();
@@ -9308,7 +9320,7 @@ void readlog()
     server.send(200, "text/html", "ok");
   }
 }
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+# 1 "f:\\Desenvolvimento\\keepin\\firmware16\\webconfig.ino"
 void configuracao() {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
@@ -9320,7 +9332,7 @@ void configuracao() {
 /*
 
 */
-# 11 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+# 11 "f:\\Desenvolvimento\\keepin\\firmware16\\webconfig.ino"
   SPIFFS.begin();
   //SPIFFS.remove("/index.html");
   File f = SPIFFS.open("/index.html", "r");

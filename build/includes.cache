@@ -2,475 +2,475 @@
   {
     "Sourcefile": null,
     "Include": "",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\cores\\esp8266"
+    "Includepath": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\cores\\esp8266"
   },
   {
     "Sourcefile": null,
     "Include": "",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\variants\\nodemcu"
+    "Includepath": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\variants\\nodemcu"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "ESP8266WiFi.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src"
+    "Includepath": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "ESP8266HTTPClient.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266HTTPClient\\src"
+    "Includepath": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266HTTPClient\\src"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "ESP8266WebServer.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WebServer\\src"
+    "Includepath": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WebServer\\src"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "Wire.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\Wire"
+    "Includepath": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\Wire"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "RtcDateTime.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\Rtc\\src"
+    "Includepath": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\Rtc\\src"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "PCF8583.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\PCF8583"
+    "Includepath": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\PCF8583"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "pcf8574_esp.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\PCF8574"
+    "Includepath": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\PCF8574"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "ESP8266httpUpdate.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266httpUpdate\\src"
+    "Includepath": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266httpUpdate\\src"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "Seguranca.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\seguranca"
+    "Includepath": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\seguranca"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "IRremoteESP8266.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src"
+    "Includepath": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "RCSwitch.h",
-    "Includepath": "C:\\Users\\leoaa\\OneDrive\\Documentos\\Arduino\\libraries\\rc-switch"
+    "Includepath": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\rcswitch"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "ArduinoJson.h",
-    "Includepath": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ArduinoJson\\src"
+    "Includepath": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\ArduinoJson\\src"
   },
   {
-    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Sourcefile": "f:\\Desenvolvimento\\keepin\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\BearSSLHelpers.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\BearSSLHelpers.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\CertStoreBearSSL.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\CertStoreBearSSL.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\ESP8266WiFi.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\ESP8266WiFi.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiAP.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiAP.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiGeneric.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiGeneric.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiMulti.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiMulti.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiSTA-WPS.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiSTA-WPS.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiSTA.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiSTA.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiScan.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\ESP8266WiFiScan.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\WiFiClient.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\WiFiClient.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\WiFiClientSecureAxTLS.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\WiFiClientSecureAxTLS.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\WiFiClientSecureBearSSL.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\WiFiClientSecureBearSSL.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\WiFiServer.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\WiFiServer.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\WiFiServerSecureAxTLS.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\WiFiServerSecureAxTLS.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\WiFiServerSecureBearSSL.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\WiFiServerSecureBearSSL.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WiFi\\src\\WiFiUdp.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WiFi\\src\\WiFiUdp.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266HTTPClient\\src\\ESP8266HTTPClient.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266HTTPClient\\src\\ESP8266HTTPClient.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266WebServer\\src\\detail\\mimetable.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266WebServer\\src\\detail\\mimetable.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\Wire\\Wire.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\Wire\\Wire.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\Rtc\\src\\RtcDateTime.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\Rtc\\src\\RtcDateTime.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\Rtc\\src\\RtcUtility.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\Rtc\\src\\RtcUtility.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\PCF8583\\PCF8583.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\PCF8583\\PCF8583.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\PCF8574\\pcf8574_esp.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\PCF8574\\pcf8574_esp.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\ESP8266httpUpdate\\src\\ESP8266httpUpdate.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\libraries\\ESP8266httpUpdate\\src\\ESP8266httpUpdate.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\seguranca\\Seguranca.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\seguranca\\Seguranca.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\IRac.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\IRac.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\IRrecv.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\IRrecv.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\IRsend.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\IRsend.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\IRtext.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\IRtext.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\IRtimer.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\IRtimer.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\IRutils.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\IRutils.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Aiwa.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Aiwa.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Amcor.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Amcor.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Argo.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Argo.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Carrier.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Carrier.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Coolix.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Coolix.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Daikin.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Daikin.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Denon.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Denon.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Dish.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Dish.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Electra.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Electra.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Fujitsu.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Fujitsu.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_GICable.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_GICable.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_GlobalCache.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_GlobalCache.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Goodweather.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Goodweather.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Gree.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Gree.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Haier.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Haier.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Hitachi.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Hitachi.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Inax.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Inax.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_JVC.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_JVC.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Kelvinator.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Kelvinator.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_LG.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_LG.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Lasertag.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Lasertag.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Lego.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Lego.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Lutron.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Lutron.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_MWM.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_MWM.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Magiquest.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Magiquest.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Midea.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Midea.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Mitsubishi.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Mitsubishi.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_MitsubishiHeavy.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_MitsubishiHeavy.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_NEC.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_NEC.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Neoclima.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Neoclima.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Nikai.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Nikai.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Panasonic.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Panasonic.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Pioneer.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Pioneer.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Pronto.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Pronto.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_RC5_RC6.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_RC5_RC6.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_RCMM.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_RCMM.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Samsung.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Samsung.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Sanyo.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Sanyo.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Sharp.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Sharp.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Sherwood.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Sherwood.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Sony.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Sony.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Tcl.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Tcl.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Teco.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Teco.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Toshiba.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Toshiba.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Trotec.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Trotec.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Vestel.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Vestel.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Whirlpool.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Whirlpool.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\libraries\\IRremoteESP8266\\src\\ir_Whynter.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\IRremoteESP8266\\src\\ir_Whynter.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "C:\\Users\\leoaa\\OneDrive\\Documentos\\Arduino\\libraries\\rc-switch\\RCSwitch.cpp",
+    "Sourcefile": "C:\\Users\\Fernando\\Documents\\Arduino\\libraries\\rcswitch\\RCSwitch.cpp",
     "Include": "",
     "Includepath": null
   }
