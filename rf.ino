@@ -12,9 +12,11 @@ void getRF()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "*");
+  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");  
   tamanhoRF = -1;
+  gProtocoloRF = -1;
   codigoRF = "-1";
+
 }
 
 void habRF()
