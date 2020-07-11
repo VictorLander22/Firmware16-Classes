@@ -189,7 +189,7 @@ int rxRF = 12;
 int txRF = 15;
 //boolean enReadRF = false;
 int tamanhoRF = -1;
-gProtocoloRF
+int gProtocoloRF = 1;
 String codigoRF = "-1";
 boolean SensorRFAlterado = true;
 String SensoresRF[30] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
