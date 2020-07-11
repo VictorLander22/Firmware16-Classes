@@ -424,19 +424,19 @@ String vNormalize();
 void configRF();
 #line 8 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 void getRF();
-#line 26 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
+#line 22 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 void habRF();
-#line 37 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
+#line 33 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 void gravarf();
-#line 69 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
+#line 65 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 void trataRF();
-#line 105 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
+#line 101 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 boolean verificaSensoresRF();
-#line 553 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
+#line 549 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 void consultaSensorRF();
-#line 598 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
+#line 594 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 void ultimodisprf();
-#line 613 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
+#line 609 "f:\\Desenvolvimento\\keepin\\firmware16\\rf.ino"
 void sendRFp();
 #line 43 "f:\\Desenvolvimento\\keepin\\firmware16\\sensores.ino"
 void trataSensores();
@@ -6386,10 +6386,6 @@ void getRF()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  Serial.println("enviando rf");
-  Serial.println("Valor: " + codigoRF);
-  Serial.println("Tamanho: " + String(tamanhoRF));
-  Serial.println("Protocolo: " + String(gProtocoloRF));
   server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");  
   tamanhoRF = -1;
   gProtocoloRF = -1;
