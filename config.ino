@@ -479,7 +479,7 @@ void lerConfiguracao()
   {
     AlowApi = false;
     f = SPIFFS.open("/alowapi.txt", "w");
-    f.println("0|");
+    f.println("1|");
     f.close();
   }
 
