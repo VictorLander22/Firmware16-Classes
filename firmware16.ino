@@ -207,7 +207,8 @@ int Buzzer = 3;
 // ----         Dados Firebase      ----- //
 //#define FIREBASE_HOST "automacao-6cdcc.firebaseio.com"
 //#define FIREBASE_AUTH "m7WSNbRjPJck9YhLE9AdaFKRtnG6U7ENDiUA3IUF"
-int vchipId = 0;
+//int vchipId = 0;
+String vchipId;
 bool chipAtivo = true;
 int nCiclos = 0;
 // ----         Fim Dados Firebase      ----- //
@@ -232,13 +233,18 @@ void setup(void)
   Serial.begin(115200);
   //ConfigAuth();
 
-  Serial.println("");
-  Serial.println("Keepin Firmware: " + String(Placa_Version));
+  log("");
+  log("Keepin Firmware: " + String(Placa_Version));
+
+  vchipId = WiFi.macAddress();
+  vchipId.replace(":","");
+  log("Keepin ID: " + vchipId);
 
   configIR();
 
   lerConfiguracao();
 
+  millisAtual = millis();
   lastDebounceTime = millisAtual;
 
   //pinMode(LedWiFI, OUTPUT);
@@ -395,31 +401,8 @@ void setup(void)
   Memoria();
   CarregaEntradas();
 
-  /*
-  Rtc.chip1 = 225;
-  Rtc.chip2 = 130;
-  Rtc.set_chip1();
-  Rtc.set_chip2();
-  Rtc.get_chip1();
-  Rtc.get_chip2();
-  Serial.println(String(Rtc.chip1));
-  Serial.println(String(Rtc.chip2));
-  */
 
-  // Inicializa Fireabase
-  vchipId = ESP.getChipId();
-  //Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-  //Firebase.setString("chip_", "ok");
-  //Firebase.setString("chip_" + String(vchipId)+"/chip", String(vchipId));
-  // set string value
-  //  Firebase.setString("message", "hello world");
-  // handle error
-  //if (Firebase.failed()) {
-  //Serial.print("setting /message failed:");
-  //Serial.println(Firebase.error());
-  //return;
-  //}
-  //delay(1000);
+
 }
 
 void loop(void)
@@ -681,21 +664,5 @@ void loop(void)
       }
     }
   }
-  // firebase - Caso o valor seja falso, o sistema será bloqueado;
-  // String textValorSeguranca = String(Firebase.getString("chip_" + String(vchipId)+"/chip"));
-  // Serial.println(Firebase.getString("chip"));
-  //Serial.println(String(vchipId));
-  //if (textValorSeguranca == "")
-  //{
-  //Serial.println("Retorno texto: " + textValorPortao);
-  //Firebase.setBool("chip_" + String(vchipId)+"/ativo", true);
-  //Firebase.setString("chip_" + String(vchipId)+"/chip", String(vchipId));
-  //}
-  //else
-  //{
-  //chipAtivo = Firebase.getBool("chip_" + String(vchipId)+"/ativo");
-  //}
 
-  //  Serial.println("memoria livre:");
-  //  Serial.println(system_get_free_heap_size());
 }

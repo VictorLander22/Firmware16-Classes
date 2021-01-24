@@ -33,7 +33,7 @@ void retornachip()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", String(ESP.getChipId()));
+  server.send(200, "text/html", vchipId);
 }
 
 void controle()

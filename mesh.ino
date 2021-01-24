@@ -192,13 +192,13 @@ void conectar() {
          
           Serial.print("Setting soft-AP ... ");
           Serial.println("idencitifcador");
-          int chipId = ESP.getChipId();
-          String NomeRede = "KEEPIN_" + String(chipId);
+          //int chipId = ESP.getChipId();
+          String NomeRede = "KEEPIN_" + vchipId;
           Serial.println(NomeRede);
           const char *nRede = NomeRede.c_str();
           Serial.println(nRede);
           
-//          Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
+          //Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
 
           if (! WiFi.softAP(nRede, vSenhaAP.c_str())) {
             wifireset2();
@@ -256,8 +256,8 @@ void conectar() {
 
     Serial.print("Setting soft-AP ... ");
     Serial.println("idencitifcador");
-    int chipId = ESP.getChipId();
-    String NomeRede = "KEEPIN_" + String(chipId);
+    //int chipId = ESP.getChipId();
+    String NomeRede = "KEEPIN_" + vchipId;
     Serial.println(NomeRede);
     const char *nRede = NomeRede.c_str();
     Serial.println(nRede);
@@ -269,7 +269,6 @@ void conectar() {
     Serial.print("Soft-AP IP address = ");
     Serial.println(WiFi.softAPIP());
     IpDispositivo = local_IP;
-
   }
   
 }

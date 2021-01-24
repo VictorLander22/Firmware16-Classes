@@ -208,7 +208,8 @@ int Buzzer = 3;
 // ----         Dados Firebase      ----- //
 //#define FIREBASE_HOST "automacao-6cdcc.firebaseio.com"
 //#define FIREBASE_AUTH "m7WSNbRjPJck9YhLE9AdaFKRtnG6U7ENDiUA3IUF"
-int vchipId = 0;
+//int vchipId = 0;
+String vchipId;
 bool chipAtivo = true;
 int nCiclos = 0;
 // ----         Fim Dados Firebase      ----- //
@@ -228,9 +229,9 @@ long lastCnTime = -1;
 //   CLOUD ///
 bool usaCloud = false;
 
-#line 230 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 231 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void setup(void);
-#line 425 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 408 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void loop(void);
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
 void about();
@@ -264,6 +265,8 @@ void apiativo();
 void apiconfig();
 #line 366 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
 void alterasenhapi();
+#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\auxfunction.ino"
+void log(String msg);
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
 void gravacena();
 #line 45 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
@@ -368,11 +371,11 @@ void CarregaEntradas();
 void chamaddns();
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
 bool ConfigEN();
-#line 27 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+#line 26 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
 bool ConfigEP();
-#line 53 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+#line 51 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
 bool resetIntNormal();
-#line 69 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+#line 67 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
 bool resetIntPulsado();
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
 void configIR();
@@ -410,13 +413,13 @@ uint64_t getUInt64fromHex(char const *str);
 void leituraUDP();
 #line 124 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
 void conectar();
-#line 442 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+#line 441 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
 void listawifi();
-#line 458 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+#line 457 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
 void listawifi2();
-#line 464 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+#line 463 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
 void gravasenhawifi();
-#line 506 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
+#line 505 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
 void gravasenhahttp();
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\normalize.ino"
 String vNormalize();
@@ -518,19 +521,24 @@ void gravahtml();
 void testes2();
 #line 142 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
 void carregaDadosHTML();
-#line 230 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 231 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void setup(void)
 {
   Serial.begin(115200);
   //ConfigAuth();
 
-  Serial.println("");
-  Serial.println("Keepin Firmware: " + String(Placa_Version));
+  log("");
+  log("Keepin Firmware: " + String(Placa_Version));
+
+  vchipId = WiFi.macAddress();
+  vchipId.replace(":","");
+  log("Keepin ID: " + vchipId);
 
   configIR();
 
   lerConfiguracao();
 
+  millisAtual = millis();
   lastDebounceTime = millisAtual;
 
   //pinMode(LedWiFI, OUTPUT);
@@ -687,31 +695,8 @@ void setup(void)
   Memoria();
   CarregaEntradas();
 
-  /*
-  Rtc.chip1 = 225;
-  Rtc.chip2 = 130;
-  Rtc.set_chip1();
-  Rtc.set_chip2();
-  Rtc.get_chip1();
-  Rtc.get_chip2();
-  Serial.println(String(Rtc.chip1));
-  Serial.println(String(Rtc.chip2));
-  */
 
-  // Inicializa Fireabase
-  vchipId = ESP.getChipId();
-  //Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-  //Firebase.setString("chip_", "ok");
-  //Firebase.setString("chip_" + String(vchipId)+"/chip", String(vchipId));
-  // set string value
-  //  Firebase.setString("message", "hello world");
-  // handle error
-  //if (Firebase.failed()) {
-  //Serial.print("setting /message failed:");
-  //Serial.println(Firebase.error());
-  //return;
-  //}
-  //delay(1000);
+
 }
 
 void loop(void)
@@ -973,23 +958,7 @@ void loop(void)
       }
     }
   }
-  // firebase - Caso o valor seja falso, o sistema será bloqueado;
-  // String textValorSeguranca = String(Firebase.getString("chip_" + String(vchipId)+"/chip"));
-  // Serial.println(Firebase.getString("chip"));
-  //Serial.println(String(vchipId));
-  //if (textValorSeguranca == "")
-  //{
-  //Serial.println("Retorno texto: " + textValorPortao);
-  //Firebase.setBool("chip_" + String(vchipId)+"/ativo", true);
-  //Firebase.setString("chip_" + String(vchipId)+"/chip", String(vchipId));
-  //}
-  //else
-  //{
-  //chipAtivo = Firebase.getBool("chip_" + String(vchipId)+"/ativo");
-  //}
 
-  //  Serial.println("memoria livre:");
-  //  Serial.println(system_get_free_heap_size());
 }
 
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
@@ -2014,6 +1983,10 @@ void alterasenhapi() {
   }
     
 }
+#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\auxfunction.ino"
+void log(String msg){
+    Serial.println(msg);
+}
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
 void gravacena()
 {
@@ -2474,7 +2447,7 @@ void sendCloud()
 
   String dataPost = "";
   dataPost = "{";
-  dataPost = dataPost + "\"idchip\": \"" + String(ESP.getChipId()) + "\",";
+  dataPost = dataPost + "\"idchip\": \"" + vchipId + "\",";
   dataPost = dataPost + "\"SD1\": \"" + retornaValorCloud(sChip1[7]) + "\",";
   dataPost = dataPost + "\"SD2\": \"" + retornaValorCloud(sChip1[6]) + "\",";
   dataPost = dataPost + "\"SD3\": \"" + retornaValorCloud(sChip1[5]) + "\",";
@@ -3505,7 +3478,7 @@ void retornachip()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", String(ESP.getChipId()));
+  server.send(200, "text/html", vchipId);
 }
 
 void controle()
@@ -4087,24 +4060,23 @@ void chamaddns() {
 
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
 bool ConfigEN() {
-    int chipId = ESP.getChipId();
-    String texto = "1|6|1|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "2|6|2|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "3|6|3|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "4|6|4|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "5|6|5|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "6|6|6|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "7|6|7|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "8|6|8|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
+    String texto = "1|6|1|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "2|6|2|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "3|6|3|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "4|6|4|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "5|6|5|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "6|6|6|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "7|6|7|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "8|6|8|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
 
-    texto += "9|6|9|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "10|6|10|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "11|6|11|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "12|6|12|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "13|6|13|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "14|6|14|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "15|6|15|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "16|6|16|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|*";
+    texto += "9|6|9|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "10|6|10|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "11|6|11|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "12|6|12|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "13|6|13|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "14|6|14|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "15|6|15|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "16|6|16|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|*";
 
     gravasensor2(texto);
 
@@ -4113,24 +4085,23 @@ bool ConfigEN() {
 }
 
 bool ConfigEP() {
-    int chipId = ESP.getChipId();
-    String texto = "1|5|1|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "2|5|2|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "3|5|3|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "4|5|4|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "5|5|5|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "6|5|6|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "7|5|7|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "8|5|8|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
+    String texto = "1|5|1|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "2|5|2|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "3|5|3|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "4|5|4|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "5|5|5|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "6|5|6|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "7|5|7|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "8|5|8|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
 
-    texto += "9|5|9|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "10|5|10|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "11|5|11|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "12|5|12|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "13|5|13|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "14|5|14|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "15|5|15|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|";
-    texto += "16|5|16|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+String(chipId)+"|0|0|0|0|0|*";
+    texto += "9|5|9|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "10|5|10|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "11|5|11|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "12|5|12|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "13|5|13|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "14|5|14|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "15|5|15|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
+    texto += "16|5|16|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|*";
 
     gravasensor2(texto);
 
@@ -5772,13 +5743,13 @@ void conectar() {
          
           Serial.print("Setting soft-AP ... ");
           Serial.println("idencitifcador");
-          int chipId = ESP.getChipId();
-          String NomeRede = "KEEPIN_" + String(chipId);
+          //int chipId = ESP.getChipId();
+          String NomeRede = "KEEPIN_" + vchipId;
           Serial.println(NomeRede);
           const char *nRede = NomeRede.c_str();
           Serial.println(nRede);
           
-//          Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
+          //Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
 
           if (! WiFi.softAP(nRede, vSenhaAP.c_str())) {
             wifireset2();
@@ -5836,8 +5807,8 @@ void conectar() {
 
     Serial.print("Setting soft-AP ... ");
     Serial.println("idencitifcador");
-    int chipId = ESP.getChipId();
-    String NomeRede = "KEEPIN_" + String(chipId);
+    //int chipId = ESP.getChipId();
+    String NomeRede = "KEEPIN_" + vchipId;
     Serial.println(NomeRede);
     const char *nRede = NomeRede.c_str();
     Serial.println(nRede);
@@ -5849,7 +5820,6 @@ void conectar() {
     Serial.print("Soft-AP IP address = ");
     Serial.println(WiFi.softAPIP());
     IpDispositivo = local_IP;
-
   }
   
 }

@@ -69,7 +69,7 @@ void sendCloud()
 
   String dataPost = "";
   dataPost = "{";
-  dataPost = dataPost + "\"idchip\": \"" + String(ESP.getChipId()) + "\",";
+  dataPost = dataPost + "\"idchip\": \"" + vchipId + "\",";
   dataPost = dataPost + "\"SD1\": \"" + retornaValorCloud(sChip1[7]) + "\",";
   dataPost = dataPost + "\"SD2\": \"" + retornaValorCloud(sChip1[6]) + "\",";
   dataPost = dataPost + "\"SD3\": \"" + retornaValorCloud(sChip1[5]) + "\",";
