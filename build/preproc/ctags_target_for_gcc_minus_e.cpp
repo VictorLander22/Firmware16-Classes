@@ -37,6 +37,7 @@ bool g_pulsoHabilita[16];
 unsigned long g_tempoInicioPulso[16];
 unsigned long millisAtual;
 unsigned long millisDebug;
+unsigned long millisMqttReconnect;
 
 File UploadFile;
 
@@ -278,110 +279,20 @@ void setup(void)
 
   IniciaRTC();
 
-  //seg.gravar("keepin", "keepin");
-
-  //verificaArquivos(); // limpa o arquivo da agenda.
-
-  // para sensor ultrasonico
-  /// pinMode(led, OUTPUT);
-  ///pinMode(led2, INPUT);
-  ///pinMode(BUILTIN_LED, OUTPUT);
-
   conectar();
 
   // Wait for connection
   Serial.println("");
   Serial.print("Connected to ");
-  ///  Serial.println(ssid);
+
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
-  //  if (MDNS.begin("esp8266")) {
-  //    Serial.println("MDNS responder started");
-  //  }
 
   lastWifiTime = millisAtual;
   //lastPulso = millisAtual;
 
   //ArduinoOTA.begin();
-
-  server.on("/", configuracao);
-  server.on("/grava", grava);
-  server.on("/ler", ler);
-  server.on("/config", configuracao);
-  server.on("/gravarwifi", gravawifi);
-  server.on("/gravasenhawifi", gravasenhawifi);
-  server.on("/gravasenhahttp", gravasenhahttp);
-  server.on("/reset", wifireset);
-  server.on("/reiniciar", reiniciar);
-  server.on("/valida", valida);
-  server.on("/controle", controle);
-  server.on("/situacao", situacao);
-  server.on("/chipid", retornachip);
-  server.on("/chamaddns", chamaddns);
-  //server.on("/mesh", mesh);
-  //server.on("/consultamesh", meshconsulta);
-  server.on("/consultaagenda", conagenda);
-  server.on("/gravaragenda", gravaragenda);
-  server.on("/atualizahora", atualizahora);
-  server.on("/lersensores", lersensores);
-  server.on("/gravasensor", gravasensor);
-  server.on("/consultasensor", consensor);
-  server.on("/gravadevice", gravadevice);
-  server.on("/buscadevice", buscadevice);
-  server.on("/executeupdate", executeupdate);
-  server.on("/executeupdatebeta", executeupdateBeta);
-  server.on("/versao", versao);
-  server.on("/link", linkversao);
-  server.on("/link", linkversaoBeta);
-  //server.on("/limpadevice", limpadevice);
-  server.on("/ultimodisparo", ultimodisp);
-  server.on("/buscaNotificar", buscaNotificar);
-  server.on("/gravanot", gravanot);
-  server.on("/gravasms", gravasms);
-  server.on("/consultasms", consultasms);
-  server.on("/wifi", valorwifi);
-  server.on("/listawifi", listawifi);
-  server.on("/listawifi2", listawifi2);
-  //IR
-  server.on("/getir", getIR);
-  server.on("/sendir", sendir);
-  server.on("/habir", habir);
-  //RF
-  server.on("/habrf", habRF);
-  server.on("/getrf", getRF);
-  server.on("/gravarf", gravarf);
-  server.on("/ultimodisparorf", ultimodisprf);
-  server.on("/sendrf", sendRFp);
-  server.on("/modelo", fmodelo);
-  server.on("/memoria", fMemoria);
-  server.on("/html", gravahtml);
-  //server.on("/teste", testes2);
-  server.on("/api", api);
-  server.on("/apiativo", apiativo);
-  server.on("/apiconfig", apiconfig);
-  server.on("/alterasenhapi", alterasenhapi);
-  server.on("/about", about);
-  server.on("/gravacena", gravacena);
-  server.on("/log", readlog);
-  server.on("/gravacloud", GravaCloud);
-  server.on("/dirarquivos", dirarquivos);
-  server.on("/downloadfile", File_Download);
-  server.on("/uploadfile", File_Upload);
-  server.on(
-      "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
-  server.on("/deletefile", File_Delete);
-  //server.on("/cloud", cloud);
-  //  server.on("/sendcloud", sendCloud);
-
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works as well");
-  });
-
-  server.onNotFound(handleNotFound);
-
-  server.begin();
-  Serial.println("HTTP server started");
+  ConfigurarWebServer();
 
   Udp.begin(localUdpPort);
   Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
@@ -401,8 +312,7 @@ void setup(void)
 
   Memoria();
   CarregaEntradas();
-
-
+  MqttSetup();
 
 }
 
@@ -512,7 +422,7 @@ void loop(void)
       Serial.println(fs_info.totalBytes);
 
     */
-# 507 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+# 417 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
       nCiclos = 0;
       Minuto = HorarioAtual.Minute();
 
@@ -631,63 +541,12 @@ void loop(void)
     //FIM RF
 
     checkCena();
+    MqttLoop();
 
-    /* teste para pegar o id do dispositivo (1 - android 2- iphone para enviar mensagem push notification)
+    ResetSaidasPulsadas();
 
-  String reg = "";
-
-  for (int i = 0; i <= 9; i++)
-
-  {
-
-    reg = String(Devices[i]);
-
-
-
-    if (reg.length() > 10)
-
-    {  
-
-      Serial.println(reg.substring(0,1));
-
-      Serial.println(reg.substring(1));
-
-      Serial.println(reg);
-
-      delay(20000);
-
-    }
-
-  }
-
-  */
-# 642 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
     //Logica para resete de entrada pulsada
-    for (int iPorta = 0; iPorta <= 15; iPorta++)
-    {
-      if (g_pulsoHabilita[iPorta])
-      {
-        // proteção no caso de variavel estourar
-        if (millisAtual < g_tempoInicioPulso[iPorta])
-        {
-          g_tempoInicioPulso[iPorta] = 0;
-        }
-        else if (millisAtual > g_tempoInicioPulso[iPorta] + 500)
-        {
-          g_pulsoHabilita[iPorta] = false;
-          if (iPorta < 8)
-          {
-            chip1.write(iPorta, 0x1);
-          }
-          else
-          {
-            chip2.write(iPorta - 8, 0x1);
-          }
-        }
-      }
-    }
   }
-
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
 void about() {
@@ -1737,10 +1596,6 @@ void alterasenhapi() {
     server.send(200, "text/html", "-1");
   }
 
-}
-# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\auxfunction.ino"
-void log(String msg){
-    Serial.println(msg);
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
 void gravacena()
@@ -2894,7 +2749,7 @@ void lerConfiguracao()
   {
     AlowApi = false;
     f = SPIFFS.open("/alowapi.txt", "w");
-    f.println("0|");
+    f.println("1|");
     f.close();
   }
 
@@ -3977,6 +3832,120 @@ bool resetIntPulsado ()
     else
     {
         return false;
+    }
+}
+# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
+void log(String msg)
+{
+    Serial.println(msg);
+}
+
+void ConfigurarWebServer(void)
+{
+    server.on("/", configuracao);
+    server.on("/grava", grava);
+    server.on("/ler", ler);
+    server.on("/config", configuracao);
+    server.on("/gravarwifi", gravawifi);
+    server.on("/gravasenhawifi", gravasenhawifi);
+    server.on("/gravasenhahttp", gravasenhahttp);
+    server.on("/reset", wifireset);
+    server.on("/reiniciar", reiniciar);
+    server.on("/valida", valida);
+    server.on("/controle", controle);
+    server.on("/situacao", situacao);
+    server.on("/chipid", retornachip);
+    server.on("/chamaddns", chamaddns);
+    //server.on("/mesh", mesh);
+    //server.on("/consultamesh", meshconsulta);
+    server.on("/consultaagenda", conagenda);
+    server.on("/gravaragenda", gravaragenda);
+    server.on("/atualizahora", atualizahora);
+    server.on("/lersensores", lersensores);
+    server.on("/gravasensor", gravasensor);
+    server.on("/consultasensor", consensor);
+    server.on("/gravadevice", gravadevice);
+    server.on("/buscadevice", buscadevice);
+    server.on("/executeupdate", executeupdate);
+    server.on("/executeupdatebeta", executeupdateBeta);
+    server.on("/versao", versao);
+    server.on("/link", linkversao);
+    server.on("/link", linkversaoBeta);
+    //server.on("/limpadevice", limpadevice);
+    server.on("/ultimodisparo", ultimodisp);
+    server.on("/buscaNotificar", buscaNotificar);
+    server.on("/gravanot", gravanot);
+    server.on("/gravasms", gravasms);
+    server.on("/consultasms", consultasms);
+    server.on("/wifi", valorwifi);
+    server.on("/listawifi", listawifi);
+    server.on("/listawifi2", listawifi2);
+    //IR
+    server.on("/getir", getIR);
+    server.on("/sendir", sendir);
+    server.on("/habir", habir);
+    //RF
+    server.on("/habrf", habRF);
+    server.on("/getrf", getRF);
+    server.on("/gravarf", gravarf);
+    server.on("/ultimodisparorf", ultimodisprf);
+    server.on("/sendrf", sendRFp);
+    server.on("/modelo", fmodelo);
+    server.on("/memoria", fMemoria);
+    server.on("/html", gravahtml);
+    //server.on("/teste", testes2);
+    server.on("/api", api);
+    server.on("/apiativo", apiativo);
+    server.on("/apiconfig", apiconfig);
+    server.on("/alterasenhapi", alterasenhapi);
+    server.on("/about", about);
+    server.on("/gravacena", gravacena);
+    server.on("/log", readlog);
+    server.on("/gravacloud", GravaCloud);
+    server.on("/dirarquivos", dirarquivos);
+    server.on("/downloadfile", File_Download);
+    server.on("/uploadfile", File_Upload);
+    server.on(
+        "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
+    server.on("/deletefile", File_Delete);
+    //server.on("/cloud", cloud);
+    //  server.on("/sendcloud", sendCloud);
+
+    server.on("/inline", []() {
+        server.send(200, "text/plain", "this works as well");
+    });
+
+    server.onNotFound(handleNotFound);
+
+    server.begin();
+
+    Serial.println("HTTP server started");
+}
+
+void ResetSaidasPulsadas()
+{
+    for (int iPorta = 0; iPorta <= 15; iPorta++)
+    {
+        if (g_pulsoHabilita[iPorta])
+        {
+            // proteção no caso de variavel estourar
+            if (millisAtual < g_tempoInicioPulso[iPorta])
+            {
+                g_tempoInicioPulso[iPorta] = 0;
+            }
+            else if (millisAtual >= g_tempoInicioPulso[iPorta] + 500)
+            {
+                g_pulsoHabilita[iPorta] = false;
+                if (iPorta < 8)
+                {
+                    chip1.write(iPorta, 0x1);
+                }
+                else
+                {
+                    chip2.write(iPorta - 8, 0x1);
+                }
+            }
+        }
     }
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
@@ -6383,6 +6352,150 @@ void gravasenhahttp()
       server.send(200, "text/html", "-1");
     }
 
+}
+# 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+/*
+
+ * uMQTTBroker demo for Arduino (C++-style)
+
+ * 
+
+ * The program defines a custom broker class with callbacks, 
+
+ * starts it, subscribes locally to anything, and publishs a topic every second.
+
+ * Try to connect from a remote client and publish something - the console will show this as well.
+
+ */
+# 8 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+# 9 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino" 2
+# 10 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino" 2
+# 11 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino" 2
+
+bool WiFiAP = false; // Do yo want the ESP as AP?
+const char *mqtt_server = "168.138.146.38";
+const char *mqtt_server_user = "keepinadm";
+const char *mqtt_server_userpw = "leozao";
+
+//long lastMsg = 0;
+//char msg[50];
+//int value = 0;
+
+String idChip = "";
+const char *mqttTopicoCloud;
+const char *mqttTopicoCloudRet;
+String str = "";
+String strRet = "";
+String *clientestr;
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+// recebido mqtt pela cloud
+void callback(char *topic, byte *payload, unsigned int length)
+{
+    String strRec = "";
+    char data_str[length + 1];
+    ets_memcpy(data_str, payload, length);
+    data_str[length] = '\0';
+
+    strRec = (String)data_str;
+
+    Serial.println("mqttcloud: " + String(topic) + "-" + (String)data_str);
+
+    String str = "Recibido Cloud: " + strRec;
+    const char *cloudStr = str.c_str();
+
+    client.publish(mqttTopicoCloudRet, cloudStr);
+
+}
+/*
+
+ * WiFi init stuff
+
+ */
+# 53 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+void MqttCloudReconnect()
+{
+    // Loop until we're reconnected
+    Serial.println("Iniciando MQTT connection...");
+
+    if (!client.connected())
+    {
+        Serial.print("Attempting MQTT connection...");
+        // Create a random client ID
+        String clientId = "ESP8266Client-";
+        clientId += String(random(0xffff), 16);
+        // Attempt to connect
+        if (client.connect(clientId.c_str(), mqtt_server_user, mqtt_server_userpw))
+        {
+            Serial.println("connected");
+            // Once connected, publish an announcement...
+            client.publish("outTopic", "hello world");
+            // ... and resubscribe
+            client.subscribe(mqttTopicoCloud);
+
+            Serial.println("WiFi connected");
+            Serial.println("IP address: " + WiFi.localIP().toString());
+        }
+        else
+        {
+            Serial.print("failed, rc=");
+            Serial.print(client.state());
+            Serial.println(" try again in 5 seconds");
+            // Wait 5 seconds before retrying
+            //delay(5000);
+        }
+    }
+}
+
+void MqttSetup()
+{
+    Serial.println();
+    Serial.println();
+
+    idChip = WiFi.macAddress();
+    idChip.replace(":", "");
+
+    str = "keepin/placas/" + vchipId + "/cloud";
+    strRet = str + "/ret";
+    mqttTopicoCloud = str.c_str();
+    mqttTopicoCloudRet = strRet.c_str();
+
+    Serial.println(mqtt_server);
+    client.setServer(mqtt_server, 1883);
+    client.setCallback(callback);
+    client.setBufferSize(2048);
+    Serial.println(String(client.getBufferSize()));
+    Serial.println("Id Chip: " + idChip);
+
+    Serial.println("Subscribe cloud: " + (String)mqttTopicoCloud);
+}
+
+void MqttLoop()
+{
+    /*
+
+ * Publish the counter value as String
+
+ */
+# 116 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+    if (!client.connected() && (tipoWifiAtual!=2) && ((millisAtual>=millisMqttReconnect) || (millisAtual<millisMqttReconnect)))
+    {
+        millisMqttReconnect=millisAtual+5000;
+        MqttCloudReconnect();
+    }
+    client.loop();
+
+    //snprintf(msg, 50, "hello world #%ld", value++);
+
+    //Serial.println("Passou");
+    //myBroker.publish(mqttTopicoLocal, (String)counter++);
+
+    //client.publish(mqttTopicoCloud, msg);
+
+    // wait a second
+    //delay(1000);
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\normalize.ino"
 String vNormalize() {

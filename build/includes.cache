@@ -71,6 +71,11 @@
   },
   {
     "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
+    "Include": "PubSubClient.h",
+    "Includepath": "C:\\Users\\leoaa\\OneDrive\\Documentos\\Arduino\\libraries\\pubsubclient-2.8\\src"
+  },
+  {
+    "Sourcefile": "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\build\\sketch\\firmware16.ino.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -476,6 +481,11 @@
   },
   {
     "Sourcefile": "C:\\Users\\leoaa\\OneDrive\\Documentos\\Arduino\\libraries\\rcswitch\\RCSwitch.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\leoaa\\OneDrive\\Documentos\\Arduino\\libraries\\pubsubclient-2.8\\src\\PubSubClient.cpp",
     "Include": "",
     "Includepath": null
   }
