@@ -126,6 +126,20 @@ void trataSensores()
       broadcastIp[3] = 255;
     }
 
+    if (subnet[0] == 255 && subnet[1] == 255 && subnet[2] == 255) {
+      broadcastIp[0] = IpDispositivo[0];
+      broadcastIp[1] = IpDispositivo[1];
+      broadcastIp[2] = IpDispositivo[2];
+      broadcastIp[3] = 255;
+    }
+
+    if (subnet[0] == 255 && subnet[1] == 255 && subnet[2] == 0) {
+      broadcastIp[0] = IpDispositivo[0];
+      broadcastIp[1] = IpDispositivo[1];
+      broadcastIp[2] = 255;
+      broadcastIp[3] = 255;
+    }
+
     //Serial.println(Contador);
     //    Contador = 0;
     Udp.beginPacketMulticast(broadcastIp, localUdpPort, IpDispositivo);
