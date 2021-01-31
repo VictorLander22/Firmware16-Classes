@@ -36,6 +36,7 @@ bool g_pulsoHabilita[16];
 unsigned long g_tempoInicioPulso[16];
 unsigned long millisAtual;
 unsigned long millisDebug;
+unsigned long millisMqttReconnect;
 
 File UploadFile;
 
@@ -310,6 +311,10 @@ void setup(void)
 
   Memoria();
   CarregaEntradas();
+<<<<<<< HEAD
+=======
+  MqttSetup();
+>>>>>>> mqtt
 
 }
 
@@ -530,47 +535,10 @@ void loop(void)
     //FIM RF
 
     checkCena();
+    MqttLoop();
 
-    /* teste para pegar o id do dispositivo (1 - android 2- iphone para enviar mensagem push notification)
-  String reg = "";
-  for (int i = 0; i <= 9; i++)
-  {
-    reg = String(Devices[i]);
-
-    if (reg.length() > 10)
-    {  
-      Serial.println(reg.substring(0,1));
-      Serial.println(reg.substring(1));
-      Serial.println(reg);
-      delay(20000);
-    }
-  }
-  */
+    ResetSaidasPulsadas();
 
     //Logica para resete de entrada pulsada
-    for (int iPorta = 0; iPorta <= 15; iPorta++)
-    {
-      if (g_pulsoHabilita[iPorta])
-      {
-        // proteção no caso de variavel estourar
-        if (millisAtual < g_tempoInicioPulso[iPorta])
-        {
-          g_tempoInicioPulso[iPorta] = 0;
-        }
-        else if (millisAtual > g_tempoInicioPulso[iPorta] + 500)
-        {
-          g_pulsoHabilita[iPorta] = false;
-          if (iPorta < 8)
-          {
-            chip1.write(iPorta, HIGH);
-          }
-          else
-          {
-            chip2.write(iPorta - 8, HIGH);
-          }
-        }
-      }
-    }
   }
-
 }

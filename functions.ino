@@ -1,8 +1,18 @@
+<<<<<<< HEAD
 void log(String msg){
     Serial.println(msg);
 }
 
 void ConfigurarWebServer(void){
+=======
+void log(String msg)
+{
+    Serial.println(msg);
+}
+
+void ConfigurarWebServer(void)
+{
+>>>>>>> mqtt
     server.on("/", configuracao);
     server.on("/grava", grava);
     server.on("/ler", ler);
@@ -81,4 +91,34 @@ void ConfigurarWebServer(void){
     server.begin();
 
     Serial.println("HTTP server started");
+<<<<<<< HEAD
+=======
+}
+
+void ResetSaidasPulsadas()
+{
+    for (int iPorta = 0; iPorta <= 15; iPorta++)
+    {
+        if (g_pulsoHabilita[iPorta])
+        {
+            // proteção no caso de variavel estourar
+            if (millisAtual < g_tempoInicioPulso[iPorta])
+            {
+                g_tempoInicioPulso[iPorta] = 0;
+            }
+            else if (millisAtual >= g_tempoInicioPulso[iPorta] + 500)
+            {
+                g_pulsoHabilita[iPorta] = false;
+                if (iPorta < 8)
+                {
+                    chip1.write(iPorta, HIGH);
+                }
+                else
+                {
+                    chip2.write(iPorta - 8, HIGH);
+                }
+            }
+        }
+    }
+>>>>>>> mqtt
 }
