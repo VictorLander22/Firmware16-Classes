@@ -228,6 +228,8 @@ long lastCnTime = -1;
 
 //   CLOUD ///
 bool usaCloud = false;
+char *msgMqtt;
+bool newMqttMsg;
 
 void setup(void)
 {

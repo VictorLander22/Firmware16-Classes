@@ -6,7 +6,7 @@
  * Try to connect from a remote client and publish something - the console will show this as well.
  */
 #include <string>
-#include <ESP8266WiFi.h>
+//#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
 bool WiFiAP = false; // Do yo want the ESP as AP?
@@ -37,6 +37,9 @@ void callback(char *topic, byte *payload, unsigned int length)
     data_str[length] = '\0';
     
     strRec = (String)data_str;
+    
+    msgMqtt = data_str;
+    newMqttMsg = true;
 
     Serial.println("mqttcloud: " + String(topic) + "-" + (String)data_str);
 
@@ -44,7 +47,8 @@ void callback(char *topic, byte *payload, unsigned int length)
     const char *cloudStr = str.c_str();
 
     client.publish(mqttTopicoCloudRet, cloudStr);
-
+    
+    api();
 }
 /*
  * WiFi init stuff
@@ -113,10 +117,55 @@ void MqttLoop()
  * Publish the counter value as String
  */
 
-    if (!client.connected() && (tipoWifiAtual!=2) && ((millisAtual>=millisMqttReconnect) || (millisAtual<millisMqttReconnect)))
+    if (!client.connected() && (tipoWifiAtual != 2) && ((millisAtual >= millisMqttReconnect) || (millisAtual < millisMqttReconnect)))
     {
-        millisMqttReconnect=millisAtual+5000;
+        millisMqttReconnect = millisAtual + 5000;
         MqttCloudReconnect();
     }
     client.loop();
+}
+
+String MqttArg(char *msg, char *pkey)
+{
+    char *pch;
+    char *lch;
+
+    char key[] = "";
+    int plen, llen;
+
+    strcat(key, pkey);
+    strcat(key, "=");
+
+    pch = strstr(msg, key);
+
+    if (pch != NULL)
+    {
+
+        pch = strstr(msg, key) + strlen(key);
+
+        plen = strlen(pch);
+
+        lch = strchr(pch, '&');
+
+        if (lch == NULL)
+        {
+            lch = strchr(pch, '\0');
+            llen = 0;
+        }
+        llen = strlen(lch);
+    }
+    else
+        plen = 0;
+
+    char strcp[(plen - llen)];
+
+    if (pch != NULL)
+    {
+        String msgtrata = pch;
+        msgtrata.remove(plen - llen);
+
+        return msgtrata;
+    }
+    else
+        return "";
 }

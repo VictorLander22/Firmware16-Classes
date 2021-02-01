@@ -229,6 +229,8 @@ long lastCnTime = -1;
 
 //   CLOUD ///
 bool usaCloud = false;
+char *msgMqtt;
+bool newMqttMsg;
 
 void setup(void)
 {
@@ -422,7 +424,7 @@ void loop(void)
       Serial.println(fs_info.totalBytes);
 
     */
-# 417 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+# 419 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
       nCiclos = 0;
       Minuto = HorarioAtual.Minute();
 
@@ -1181,21 +1183,48 @@ String RetornaData(const RtcDateTime& dt)
     return datestring;
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
-void api() {
-//  const char* www_username = www_username2.c_str();
-//  const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+void api()
+{
+    String vPassApi, action, apiPort, apiSource, valueApi, typeApi;
+    bool isPost = false;
 
-    String vPassApi = server.arg("pw");
-    vPassApi.toLowerCase();
+    if (!newMqttMsg)
+    {
+        if (!server.authenticate(www_username, www_password))
+            return server.requestAuthentication();
+        isPost = true;
+        vPassApi = server.arg("pw");
+        vPassApi.toLowerCase();
+        action = server.arg("a");
+        apiPort = server.arg("p");
+        apiSource = server.arg("s");
+        //Serial.println(apiSource);
+    }
+    else{
+        newMqttMsg = false;
+        isPost = false;
+        vPassApi = MqttArg(msgMqtt,"pw");
+        vPassApi.toLowerCase();
+        Serial.print("vPassApi: ");
+        log(vPassApi);
+
+        action = MqttArg(msgMqtt,"a");
+        Serial.print("action: ");
+        log(action);
+
+        apiPort = MqttArg(msgMqtt,"p");
+        Serial.print("apiPort: ");
+        log(apiPort);
+
+        apiSource = MqttArg(msgMqtt,"s");
+        Serial.print("apiSource: ");
+        log(apiSource);
+    }
+
 
     if (AlowApi == true && vPassApi == ApiPass)
+
     {
-        String action = server.arg("a");
-        String apiPort = server.arg("p");
-        String apiSource = server.arg("s");
-        Serial.println(apiSource);
         // consulta
         if (action == "q")
         {
@@ -1232,58 +1261,72 @@ void api() {
                     sDados2 = '0' + sDados2;
                 }
 
-
-
-                for (int i = 0; i < 8; i++) {
-                    if (sDados1[i] == '0') {
+                for (int i = 0; i < 8; i++)
+                {
+                    if (sDados1[i] == '0')
+                    {
                         sDados1[i] = '1';
                     }
-                    else {
+                    else
+                    {
                         sDados1[i] = '0';
                     }
                 }
 
-                for (int i = 0; i < 8; i++) {
-                    if (sDados2[i] == '0') {
+                for (int i = 0; i < 8; i++)
+                {
+                    if (sDados2[i] == '0')
+                    {
                         sDados2[i] = '1';
                     }
-                    else {
+                    else
+                    {
                         sDados2[i] = '0';
                     }
                 }
 
-
-
-                server.send(200, "text/html", sDados2+sDados1);
+                if (isPost) server.send(200, "text/html", sDados2 + sDados1);
             }
             else
             {
                 if (apiSource == "o")
                 {
-                    if (LePorta(apiPort.toInt()-1) == 0x1)
+                    if (LePorta(apiPort.toInt() - 1) == 0x1)
                     {
-                        server.send(200, "text/html", "1");
-                    } else
+                        if (isPost) server.send(200, "text/html", "1");
+                    }
+                    else
                     {
-                        server.send(200, "text/html", "0");
+                        if (isPost) server.send(200, "text/html", "0");
                     }
                 }
                 else
                 {
-                    if (LeSensor(apiPort.toInt()-1) == 0x1)
+                    if (LeSensor(apiPort.toInt() - 1) == 0x1)
                     {
-                        server.send(200, "text/html", "1");
-                    } else
+                        if (isPost) server.send(200, "text/html", "1");
+                    }
+                    else
                     {
-                        server.send(200, "text/html", "0");
+                        if (isPost) server.send(200, "text/html", "0");
                     }
                 }
             }
         }
         else if (action == "a") // ação
         {
-            String valueApi = server.arg("v");
-            String typeApi = server.arg("t");
+            Serial.println("entrei na api action a");
+            if (isPost)
+            {
+                valueApi = server.arg("v");
+                typeApi = server.arg("t");
+            }
+            else{
+                valueApi = MqttArg(msgMqtt,"v");
+                typeApi = MqttArg(msgMqtt,"t");
+            }
+
+
             if (apiPort == "a") // todos
             {
                 if (apiSource == "o") // saidas
@@ -1298,7 +1341,7 @@ void api() {
                             Rtc.set_chip2();
                             chip1.write8(255);
                             chip2.write8(255);
-                            server.send(200, "text/html", "1");
+                            if (isPost) server.send(200, "text/html", "1");
                         }
                         else if (typeApi == "p")
                         {
@@ -1308,15 +1351,14 @@ void api() {
                             Rtc.set_chip2();
                             chip1.write8(255);
                             chip2.write8(255);
-                            server.send(200, "text/html", "1");
+                            if (isPost) server.send(200, "text/html", "1");
                         }
                         else
                         {
-                            server.send(200, "text/html", "-1");
+                            if (isPost) server.send(200, "text/html", "-1");
                         }
                     }
-                    else
-                    if (valueApi == "1")
+                    else if (valueApi == "1")
                     {
                         if (typeApi == "n")
                         {
@@ -1326,7 +1368,7 @@ void api() {
                             Rtc.set_chip2();
                             chip1.write8(0);
                             chip2.write8(0);
-                            server.send(200, "text/html", "1");
+                            if (isPost) server.send(200, "text/html", "1");
                         }
                         else if (typeApi == "p")
                         {
@@ -1341,21 +1383,21 @@ void api() {
                             Rtc.chip2 = 255;
                             Rtc.set_chip1();
                             Rtc.set_chip2();
-                            server.send(200, "text/html", "1");
+                            if (isPost) server.send(200, "text/html", "1");
                         }
                         else
                         {
-                            server.send(200, "text/html", "-1");
+                            if (isPost) server.send(200, "text/html", "-1");
                         }
                     }
                     else
                     {
-                        server.send(200, "text/html", "-1");
+                        if (isPost) server.send(200, "text/html", "-1");
                     }
                 }
                 else
                 {
-                    server.send(200, "text/html", "-1");
+                    if (isPost) server.send(200, "text/html", "-1");
                 }
             }
             else // porta
@@ -1366,51 +1408,50 @@ void api() {
                     {
                         if (valueApi == "0") // desliga
                         {
-                            LigaDesliga(apiPort.toInt()-1, 0x0, "", 0);
-                            server.send(200, "text/html", "1");
+                            LigaDesliga(apiPort.toInt() - 1, 0x0, "", 0);
+                            if (isPost) server.send(200, "text/html", "1");
                         }
                         else if (valueApi == "1") // Liga
                         {
-                            LigaDesliga(apiPort.toInt()-1, 0x1, "", 0);
-                            server.send(200, "text/html", "1");
+                            LigaDesliga(apiPort.toInt() - 1, 0x1, "", 0);
+                            if (isPost) server.send(200, "text/html", "1");
                         }
                         else
                         {
-                            server.send(200, "text/html", "-1");
+                            if (isPost) server.send(200, "text/html", "-1");
                         }
                     }
                     else if (typeApi == "p") // pulsado
                     {
                         if (valueApi == "0") // desliga
                         {
-                            LigaDesliga(apiPort.toInt()-1, 0x0, "", 1);
-                            server.send(200, "text/html", "1");
+                            LigaDesliga(apiPort.toInt() - 1, 0x0, "", 1);
+                            if (isPost) server.send(200, "text/html", "1");
                         }
                         else if (valueApi == "1") // Liga
                         {
-                            LigaDesliga(apiPort.toInt()-1, 0x1, "", 1);
-                            server.send(200, "text/html", "1");
+                            LigaDesliga(apiPort.toInt() - 1, 0x1, "", 1);
+                            if (isPost) server.send(200, "text/html", "1");
                         }
                         else
                         {
-                            server.send(200, "text/html", "-1");
+                            if (isPost) server.send(200, "text/html", "-1");
                         }
                     }
                     else
                     {
-                        server.send(200, "text/html", "-1");
+                        if (isPost) server.send(200, "text/html", "-1");
                     }
                 }
                 else
                 {
-                    server.send(200, "text/html", "-1");
+                    if (isPost) server.send(200, "text/html", "-1");
                 }
-
             }
         }
         else
-        // Infravermelho
-        if (action == "i")
+            // Infravermelho
+            if (action == "i")
         {
             Serial.println("api infravermelho");
             String vModel1 = server.arg("m1");
@@ -1459,48 +1500,53 @@ void api() {
                 delay(300);
                 sendirAPI(qtde4.toInt(), vModel4.toInt(), Comando4, Comando42, vp4.toInt());
             }
-            server.send(200, "text/html", "1");
-       }
+            if (isPost) server.send(200, "text/html", "1");
+        }
         else
-        // Cenas
-        if (action == "c")
+            // Cenas
+            if (action == "c")
         {
             Serial.println("api cenas");
-            String valueApi = server.arg("v");
+            if (isPost) String valueApi = server.arg("v");
+            else String valueApi = MqttArg(msgMqtt,"v");
             triggerCena(valueApi);
-            server.send(200, "text/html", "1");
-       }
-       else if (action == "l") // linha de ação 
-       {
-            for (int i = 1; i <= apiPort.length(); i++ )
+            if (isPost) server.send(200, "text/html", "1");
+        }
+        else if (action == "l") // linha de ação
+        {
+            for (int i = 1; i <= apiPort.length(); i++)
             {
-                int posicaoPorta = i-1;
-                if (posicaoPorta <= 15) {
-                    if (apiPort[posicaoPorta] == '0') {
+                int posicaoPorta = i - 1;
+                if (posicaoPorta <= 15)
+                {
+                    if (apiPort[posicaoPorta] == '0')
+                    {
                         // desliga
                         LigaDesliga(posicaoPorta, 0x0, "", 0);
-                    } else if (apiPort[posicaoPorta] == '1') {
+                    }
+                    else if (apiPort[posicaoPorta] == '1')
+                    {
                         // liga
                         LigaDesliga(posicaoPorta, 0x1, "", 0);
                     }
+                }
+            }
 
-               }
-           }
-
-            server.send(200, "text/html", "1");
-       }
+            if (isPost) server.send(200, "text/html", "1");
+        }
     }
     else
     {
-        server.send(200, "text/html", "-1");
+        if (isPost) server.send(200, "text/html", "-1");
     }
 }
 
-void apiativo() {
-//  const char* www_username = www_username2.c_str();
-//  const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+void apiativo()
+{
+    //  const char* www_username = www_username2.c_str();
+    //  const char* www_password = www_password2.c_str();
+    if (!server.authenticate(www_username, www_password))
+        return server.requestAuthentication();
 
     if (AlowApi == true)
     {
@@ -1512,11 +1558,12 @@ void apiativo() {
     }
 }
 
-void apiconfig() {
-//  const char* www_username = www_username2.c_str();
-//  const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+void apiconfig()
+{
+    //  const char* www_username = www_username2.c_str();
+    //  const char* www_password = www_password2.c_str();
+    if (!server.authenticate(www_username, www_password))
+        return server.requestAuthentication();
 
     String vSenha = server.arg("s");
     String vApi = server.arg("v");
@@ -1526,15 +1573,17 @@ void apiconfig() {
         SPIFFS.begin();
 
         File f = SPIFFS.open("/alowapi.txt", "w");
-        f.println(vApi+"|");
+        f.println(vApi + "|");
         f.close();
 
         SPIFFS.end();
 
-        if (vApi == "1") {
+        if (vApi == "1")
+        {
             AlowApi = true;
         }
-        else if (vApi == "0") {
+        else if (vApi == "0")
+        {
             AlowApi = false;
         }
 
@@ -1546,56 +1595,57 @@ void apiconfig() {
     }
 }
 
-void alterasenhapi() {
-//  const char* www_username = www_username2.c_str();
-//  const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+void alterasenhapi()
+{
+    //  const char* www_username = www_username2.c_str();
+    //  const char* www_password = www_password2.c_str();
+    if (!server.authenticate(www_username, www_password))
+        return server.requestAuthentication();
 
-  String vSenha = String(server.arg("s"));
-  String req = server.arg("v");
-  String CurrentPass = server.arg("a");
+    String vSenha = String(server.arg("s"));
+    String req = server.arg("v");
+    String CurrentPass = server.arg("a");
 
-  if (vSenha == Senha)
-  {
-    if (req == "")
+    if (vSenha == Senha)
     {
-      req = "12345678"; // se não houver registro, vai para o padrão
+        if (req == "")
+        {
+            req = "12345678"; // se não houver registro, vai para o padrão
+        }
+
+        MD5Builder md5;
+        md5.begin();
+        md5.add(req);
+        md5.calculate();
+        req = md5.toString();
+
+        md5.begin();
+        md5.add(CurrentPass);
+        md5.calculate();
+        CurrentPass = md5.toString();
+
+        if (ApiPass == CurrentPass)
+        {
+
+            SPIFFS.begin();
+            File f = SPIFFS.open("/apipass.txt", "w");
+
+            f.println(req + "|");
+            f.close();
+
+            SPIFFS.end();
+            ApiPass = req;
+            server.send(200, "text/html", "ok");
+        }
+        else
+        {
+            server.send(200, "text/html", "-1");
+        }
     }
-
-    MD5Builder md5;
-    md5.begin();
-    md5.add(req);
-    md5.calculate();
-    req = md5.toString();
-
-
-
-    md5.begin();
-    md5.add(CurrentPass);
-    md5.calculate();
-    CurrentPass = md5.toString();
-
-    if (ApiPass == CurrentPass) {
-
-      SPIFFS.begin();
-      File f = SPIFFS.open("/apipass.txt", "w");
-
-      f.println(req+"|");
-      f.close();
-
-      SPIFFS.end();
-      ApiPass = req;
-      server.send(200, "text/html", "ok");
+    else
+    {
+        server.send(200, "text/html", "-1");
     }
-    else {
-      server.send(200, "text/html", "-1");
-    }
-  }
-  else {
-    server.send(200, "text/html", "-1");
-  }
-
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
 void gravacena()
@@ -6367,7 +6417,7 @@ void gravasenhahttp()
  */
 # 8 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
 # 9 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino" 2
-# 10 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino" 2
+//#include <ESP8266WiFi.h>
 # 11 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino" 2
 
 bool WiFiAP = false; // Do yo want the ESP as AP?
@@ -6399,6 +6449,9 @@ void callback(char *topic, byte *payload, unsigned int length)
 
     strRec = (String)data_str;
 
+    msgMqtt = data_str;
+    newMqttMsg = true;
+
     Serial.println("mqttcloud: " + String(topic) + "-" + (String)data_str);
 
     String str = "Recibido Cloud: " + strRec;
@@ -6406,13 +6459,14 @@ void callback(char *topic, byte *payload, unsigned int length)
 
     client.publish(mqttTopicoCloudRet, cloudStr);
 
+    api();
 }
 /*
 
  * WiFi init stuff
 
  */
-# 53 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+# 57 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
 void MqttCloudReconnect()
 {
     // Loop until we're reconnected
@@ -6477,13 +6531,58 @@ void MqttLoop()
  * Publish the counter value as String
 
  */
-# 116 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
-    if (!client.connected() && (tipoWifiAtual!=2) && ((millisAtual>=millisMqttReconnect) || (millisAtual<millisMqttReconnect)))
+# 120 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+    if (!client.connected() && (tipoWifiAtual != 2) && ((millisAtual >= millisMqttReconnect) || (millisAtual < millisMqttReconnect)))
     {
-        millisMqttReconnect=millisAtual+5000;
+        millisMqttReconnect = millisAtual + 5000;
         MqttCloudReconnect();
     }
     client.loop();
+}
+
+String MqttArg(char *msg, char *pkey)
+{
+    char *pch;
+    char *lch;
+
+    char key[] = "";
+    int plen, llen;
+
+    strcat(key, pkey);
+    strcat(key, "=");
+
+    pch = strstr(msg, key);
+
+    if (pch != __null)
+    {
+
+        pch = strstr(msg, key) + strlen(key);
+
+        plen = strlen(pch);
+
+        lch = strchr(pch, '&');
+
+        if (lch == __null)
+        {
+            lch = strchr(pch, '\0');
+            llen = 0;
+        }
+        llen = strlen(lch);
+    }
+    else
+        plen = 0;
+
+    char strcp[(plen - llen)];
+
+    if (pch != __null)
+    {
+        String msgtrata = pch;
+        msgtrata.remove(plen - llen);
+
+        return msgtrata;
+    }
+    else
+        return "";
 }
 # 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\normalize.ino"
 String vNormalize() {
