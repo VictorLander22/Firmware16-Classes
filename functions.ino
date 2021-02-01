@@ -1,18 +1,8 @@
-<<<<<<< HEAD
 void log(String msg){
     Serial.println(msg);
 }
 
 void ConfigurarWebServer(void){
-=======
-void log(String msg)
-{
-    Serial.println(msg);
-}
-
-void ConfigurarWebServer(void)
-{
->>>>>>> mqtt
     server.on("/", configuracao);
     server.on("/grava", grava);
     server.on("/ler", ler);
@@ -91,8 +81,6 @@ void ConfigurarWebServer(void)
     server.begin();
 
     Serial.println("HTTP server started");
-<<<<<<< HEAD
-=======
 }
 
 void ResetSaidasPulsadas()
@@ -120,5 +108,4 @@ void ResetSaidasPulsadas()
             }
         }
     }
->>>>>>> mqtt
 }

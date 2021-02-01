@@ -232,11 +232,7 @@ bool usaCloud = false;
 
 #line 232 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
 void setup(void);
-<<<<<<< HEAD
-#line 316 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
-=======
 #line 318 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
->>>>>>> mqtt
 void loop(void);
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
 void about();
@@ -270,13 +266,6 @@ void apiativo();
 void apiconfig();
 #line 366 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
 void alterasenhapi();
-<<<<<<< HEAD
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\auxfunction.ino"
-void log(String msg);
-#line 5 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\auxfunction.ino"
-void ConfigurarWebServer(void);
-=======
->>>>>>> mqtt
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
 void gravacena();
 #line 45 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
@@ -389,9 +378,9 @@ bool resetIntNormal();
 bool resetIntPulsado();
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
 void log(String msg);
-#line 6 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
+#line 5 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
 void ConfigurarWebServer(void);
-#line 88 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
+#line 86 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
 void ResetSaidasPulsadas();
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
 void configIR();
@@ -628,10 +617,7 @@ void setup(void)
 
   Memoria();
   CarregaEntradas();
-<<<<<<< HEAD
-=======
   MqttSetup();
->>>>>>> mqtt
 
 }
 
@@ -1882,94 +1868,6 @@ void alterasenhapi() {
   }
     
 }
-<<<<<<< HEAD
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\auxfunction.ino"
-void log(String msg){
-    Serial.println(msg);
-}
-
-void ConfigurarWebServer(void){
-    server.on("/", configuracao);
-    server.on("/grava", grava);
-    server.on("/ler", ler);
-    server.on("/config", configuracao);
-    server.on("/gravarwifi", gravawifi);
-    server.on("/gravasenhawifi", gravasenhawifi);
-    server.on("/gravasenhahttp", gravasenhahttp);
-    server.on("/reset", wifireset);
-    server.on("/reiniciar", reiniciar);
-    server.on("/valida", valida);
-    server.on("/controle", controle);
-    server.on("/situacao", situacao);
-    server.on("/chipid", retornachip);
-    server.on("/chamaddns", chamaddns);
-    //server.on("/mesh", mesh);
-    //server.on("/consultamesh", meshconsulta);
-    server.on("/consultaagenda", conagenda);
-    server.on("/gravaragenda", gravaragenda);
-    server.on("/atualizahora", atualizahora);
-    server.on("/lersensores", lersensores);
-    server.on("/gravasensor", gravasensor);
-    server.on("/consultasensor", consensor);
-    server.on("/gravadevice", gravadevice);
-    server.on("/buscadevice", buscadevice);
-    server.on("/executeupdate", executeupdate);
-    server.on("/executeupdatebeta", executeupdateBeta);
-    server.on("/versao", versao);
-    server.on("/link", linkversao);
-    server.on("/link", linkversaoBeta);
-    //server.on("/limpadevice", limpadevice);
-    server.on("/ultimodisparo", ultimodisp);
-    server.on("/buscaNotificar", buscaNotificar);
-    server.on("/gravanot", gravanot);
-    server.on("/gravasms", gravasms);
-    server.on("/consultasms", consultasms);
-    server.on("/wifi", valorwifi);
-    server.on("/listawifi", listawifi);
-    server.on("/listawifi2", listawifi2);
-    //IR
-    server.on("/getir", getIR);
-    server.on("/sendir", sendir);
-    server.on("/habir", habir);
-    //RF
-    server.on("/habrf", habRF);
-    server.on("/getrf", getRF);
-    server.on("/gravarf", gravarf);
-    server.on("/ultimodisparorf", ultimodisprf);
-    server.on("/sendrf", sendRFp);
-    server.on("/modelo", fmodelo);
-    server.on("/memoria", fMemoria);
-    server.on("/html", gravahtml);
-    //server.on("/teste", testes2);
-    server.on("/api", api);
-    server.on("/apiativo", apiativo);
-    server.on("/apiconfig", apiconfig);
-    server.on("/alterasenhapi", alterasenhapi);
-    server.on("/about", about);
-    server.on("/gravacena", gravacena);
-    server.on("/log", readlog);
-    server.on("/gravacloud", GravaCloud);
-    server.on("/dirarquivos", dirarquivos);
-    server.on("/downloadfile", File_Download);
-    server.on("/uploadfile", File_Upload);
-    server.on(
-        "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
-    server.on("/deletefile", File_Delete);
-    //server.on("/cloud", cloud);
-    //  server.on("/sendcloud", sendCloud);
-
-    server.on("/inline", []() {
-        server.send(200, "text/plain", "this works as well");
-    });
-
-    server.onNotFound(handleNotFound);
-
-    server.begin();
-
-    Serial.println("HTTP server started");
-}
-=======
->>>>>>> mqtt
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
 void gravacena()
 {
@@ -4125,13 +4023,11 @@ bool resetIntPulsado ()
     }
 }
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
-void log(String msg)
-{
+void log(String msg){
     Serial.println(msg);
 }
 
-void ConfigurarWebServer(void)
-{
+void ConfigurarWebServer(void){
     server.on("/", configuracao);
     server.on("/grava", grava);
     server.on("/ler", ler);
@@ -6335,16 +6231,6 @@ void MqttLoop()
         MqttCloudReconnect();
     }
     client.loop();
-
-    //snprintf(msg, 50, "hello world #%ld", value++);
-
-    //Serial.println("Passou");
-    //myBroker.publish(mqttTopicoLocal, (String)counter++);
-
-    //client.publish(mqttTopicoCloud, msg);
-
-    // wait a second
-    //delay(1000);
 }
 
 #line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\normalize.ino"

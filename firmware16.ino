@@ -311,10 +311,7 @@ void setup(void)
 
   Memoria();
   CarregaEntradas();
-<<<<<<< HEAD
-=======
   MqttSetup();
->>>>>>> mqtt
 
 }
 
