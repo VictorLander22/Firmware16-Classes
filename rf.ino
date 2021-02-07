@@ -12,11 +12,10 @@ void getRF()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");  
+  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
   tamanhoRF = -1;
   gProtocoloRF = -1;
   codigoRF = "-1";
-
 }
 
 void habRF()
@@ -618,12 +617,57 @@ void sendRFp()
   unsigned long _protocol = strtoul(server.arg("p").c_str(), NULL, 10);
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {      
+  if (Senha == "kdi9e")
+  {
     Serial.println("Valor: " + String(Valor));
     Serial.println("Tamanho: " + String(_tamanhorf));
     Serial.println("Protocolo: " + String(_protocol));
     sSendRF.setProtocol(_protocol);
-    sSendRF.send(Valor, _tamanhorf);   
+    sSendRF.send(Valor, _tamanhorf);
     server.send(200, "text/html", "ok");
+  }
+}
+
+void LoopRF()
+{
+  if (mySwitch.available())
+  {
+    //Serial.println("sinal de radio detectado");
+    //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
+    if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
+    {
+      rfmilis = millisAtual;
+      for (int i = 0; i < 30; i++)
+      {
+        ultimoEstadoRF[i] = LOW;
+      }
+    }
+    int value = mySwitch.getReceivedValue();
+
+    if (value == 0)
+    {
+      Serial.print("Unknown encoding");
+    }
+    else
+    {
+      //    tone(Buzzer, 4000, 800);
+      Serial.print("Received ");
+      codigoRF = mySwitch.getReceivedValue();
+      ultimoDisparoRF = codigoRF;
+      Serial.print(mySwitch.getReceivedValue());
+      Serial.print(" / ");
+      Serial.print(mySwitch.getReceivedBitlength());
+      tamanhoRF = mySwitch.getReceivedBitlength();
+      Serial.print("bit ");
+      Serial.print("Protocol: ");
+      Serial.println(mySwitch.getReceivedProtocol());
+      gProtocoloRF = mySwitch.getReceivedProtocol();
+      trataRF();
+    }
+    mySwitch.resetAvailable();
+
+    //delay(300);
+    //    noTone(Buzzer);
+    //  enReadRF = false;
   }
 }

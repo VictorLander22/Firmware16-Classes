@@ -1091,3 +1091,24 @@ uint64_t getUInt64fromHex(char const *str)
 //
 //    return accumulator;
 //}
+
+void LoopIR()
+{
+  if (enReadIR)
+  {
+    if (irrecv.decode(&results))
+    {
+      Serial.print(resultToHumanReadableBasic(&results));
+      dumpCode(&results);
+      dumpInfo(&results);
+      Serial.println(""); // Blank line between entries
+      //tone(Buzzer, 4000, 800);
+      chip3.write(Buzzer, HIGH);
+      delay(300);
+      chip3.write(Buzzer, LOW);
+      //noTone(Buzzer);
+      enReadIR = false;
+      irrecv.resume();
+    }
+  }
+}

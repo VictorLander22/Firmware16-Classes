@@ -6,7 +6,8 @@
                 "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.7.4\\libraries\\**",
                 "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
                 "C:\\Users\\leoaa\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\**",
-                "C:\\Users\\leoaa\\OneDrive\\Documentos\\Arduino\\**"
+                "C:\\Users\\leoaa\\OneDrive\\Documentos\\Arduino\\**",
+                "C:\\dev\\keepin\\firmware16"
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",

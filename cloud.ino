@@ -265,3 +265,21 @@ String retornaValorCloud(char val)
     return "false";
   }
 }
+
+void LoopCloud()
+{
+  // só acessa o cloud se estiver marcado para usar.
+  if (usaCloud == true)
+  {
+    if (HorarioAtual.Second() % 5 == 0 && ConsultouCloud == false)
+    {
+      ConsultouCloud = true;
+      //      Serial.println("Segundo Atual: " + String(HorarioAtual.Second()));
+      sendCloud();
+    }
+    else if (HorarioAtual.Second() % 5 != 0 && ConsultouCloud == true)
+    {
+      ConsultouCloud = false;
+    }
+  }
+}

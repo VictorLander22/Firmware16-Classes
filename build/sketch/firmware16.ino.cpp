@@ -1,544 +1,333 @@
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
-#include <user_interface.h>
-//#ifndef UNIT_TEST
 #include <Arduino.h>
-//#endif
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <ESP8266WebServer.h>
-#include <FS.h>
-#include <WiFiUdp.h>
-//#include <ESP8266WiFiMesh.h>
-#include <pgmspace.h>
-#include <Wire.h> // must be included here so that Arduino library object file references work
-#include <RtcDateTime.h>
-#include <PCF8583.h>
-#include <pcf8574_esp.h>
-#include <ESP8266httpUpdate.h>
-//#include <ArduinoOTA.h>
-#include <Seguranca.h>
-//IR
-#include <IRremoteESP8266.h>
-#include <IRrecv.h>
-#include <IRsend.h>
-#include <IRutils.h>
-//RF
-#include <RCSwitch.h>
-//FIREBASE
-//#include <FirebaseArduino.h>
-//#include <FirebaseCloudMessaging.h>
-#include <ArduinoJson.h>
+#line 1 "c:\\dev\\keepin\\firmware16\\firmware16.ino"
+#define Placa_Version "2,37"
 
-#define Placa_Version "2,36"
+#include "globalvar.h"
 
-//Declarações Globais - Leo
-
-bool g_pulsoHabilita[16];
-unsigned long g_tempoInicioPulso[16];
-unsigned long millisAtual;
-unsigned long millisDebug;
-unsigned long millisMqttReconnect;
-
-File UploadFile;
-
-//String CloudAddress = "http://keepin.com.br/api/"";
-//Const CloudAddress = "http://192.168.15.16:4000/";
-
-//Fim Declarações Globais - Leo
-
-Seguranca seg;
-String usuario1 = seg.retornaUsuario();
-String senha1 = seg.retornaSenha();
-
-const char *www_username = usuario1.c_str();
-const char *www_password = senha1.c_str();
-
-String TipoMemoria = "1";
-String vListaWifi = "";
-
-String vssid = "";
-String vpass = "";
-String vip = "";
-String vmask = "";
-String vgateway = "";
-
-String vConfigWIFI = "";
-long lastWifiTime;
-//long lastPulso;
-int tipoWifiAtual;
-
-//MySQL_Connection conn(&cliente);
-
-//int tempoatual;
-IPAddress DNS1(8, 8, 8, 8);
-IPAddress DNS2(4, 4, 4, 4);
-String vSenhaAP = "12345678";
-
-TwoWire portawire;
-PCF857x chip1(0x21, &portawire);
-PCF857x chip2(0x22, &portawire);
-PCF857x chip3(0x25, &portawire);
-PCF857x sensor1(0x23, &portawire);
-PCF857x sensor2(0x24, &portawire);
-
-String s2Sensor1 = "";
-String s2Sensor2 = "";
-
-int buttonState = 13;
-int counter = 0;
-int counterRTC = 0;
-boolean AgendaAlterada = true;
-String Agendas[6] = {"", "", "", "", "", ""};
-
-boolean SensorAlterado = true;
-String Sensores[16] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-String nomeSensores[16] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-boolean msgDisparada[16] = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
-String ultimoDisparo = "";
-boolean notificar = false;
-boolean enviarsms = false;
-boolean estadoAtual[16] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW};
-boolean ultimoEstado[16] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW};
-
-//debounce
-long lastDebounceTime = 0;
-long debounceDelay = 150;
-long rfDelay = 1000;
-
-boolean DeviceAlterado = true;
-//String Devices[20];
-
-//RtcDateTime ultimaconsulta;
-int Minuto = -1;
-int Segundo = -1;
-bool ConsultouCloud = false;
-
-int correct_address = 0;
-PCF8583 Rtc(0xA0);
-
-IPAddress IpDispositivo;
-
-unsigned int request_i = 0;
-unsigned int response_i = 0;
-
-//String manageRequest(String request);
-
-//ESP8266WiFiMesh mesh_node = ESP8266WiFiMesh(ESP.getChipId(), manageRequest);
-
-//String mesh_sIP = "";
-//String mesh_Porta = "";
-//String mesh_funcao = "";
-//String mesh_ChipId = "";
-//String mesh_Tipo = "";
-//String mesh_Senha = "";
-
-//int LedWiFI = 14;
-//int LedVerde = 12;
-//int LedAmarelo = 15; //14;
-
-const int LedWiFI = 4;
-const int LedVerde = 5;
-const int LedAmarelo = 6; //14;
-const int LedGeral = 7;
-
-//UDP
-WiFiUDP Udp;
-unsigned int localUdpPort = 4210;
-char incomingPacket[255];
-//FIM UDP
-
-IPAddress local_IP(192, 168, 4, 1);
-IPAddress gateway(192, 168, 4, 1);
-IPAddress subnet(255, 255, 255, 0);
-
-ESP8266WebServer server(80);
-
-int contadorled = 0;
-
-unsigned long starTime = 0;   // Use unsigned long when dealing with millisAtual
-unsigned long interval = 500; // 1000 millis = 1 second
-//unsigned long Contador = 0;
-
-//Dispositivos
-String Senha = "kdi9e";
-
-//   IR   //
-uint16_t RECV_PIN = 14;
-uint16_t CAPTURE_BUFFER_SIZE = 1024;
-const uint16_t kMinUnknownSize = 12;
-//#define TIMEOUT 15U
-#if DECODE_AC
-const uint8_t TIMEOUT = 50;
-#else
-const uint8_t TIMEOUT = 15;
-#endif
-//#define TIMEOUT 15U
-IRrecv irrecv(RECV_PIN, CAPTURE_BUFFER_SIZE, TIMEOUT, true);
-decode_results results;
-irparams_t save;
-int tamanho = -1;
-String codigoIR = "-1";
-//uint16_t rawData[500] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-IRsend irsend(16);
-boolean enReadIR = false;
-int Modelo = 0;
-//   IR   //
-
-//   RF  //
-RCSwitch mySwitch = RCSwitch();
-RCSwitch sSendRF = RCSwitch();
-int rxRF = 12;
-int txRF = 15;
-//boolean enReadRF = false;
-int tamanhoRF = -1;
-int gProtocoloRF = 1;
-String codigoRF = "-1";
-boolean SensorRFAlterado = true;
-String SensoresRF[30] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-boolean sensorRFDisparado = false;
-int numSensorDisparado = -1;
-String ultimoDisparoRF = "";
-boolean estadoAtualRF[30] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW};
-boolean ultimoEstadoRF[30] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW};
-boolean msgDisparadaRF[30] = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
-int numSensorMSG = 0;
-long rfmilis = 0;
-//   RF  //
-int Buzzer = 3;
-
-// ----         Dados Firebase      ----- //
-//#define FIREBASE_HOST "automacao-6cdcc.firebaseio.com"
-//#define FIREBASE_AUTH "m7WSNbRjPJck9YhLE9AdaFKRtnG6U7ENDiUA3IUF"
-//int vchipId = 0;
-String vchipId;
-bool chipAtivo = true;
-int nCiclos = 0;
-// ----         Fim Dados Firebase      ----- //
-
-// --- API ///
-bool AlowApi = false;
-String ApiPass = "12345678";
-int memorialivre = 0;
-
-//   CENAS   //
-bool cenaExecucao = false;
-String ArqCena = "";
-int cenaPAtual = 0;
-int cenaPTotal = 0;
-long lastCnTime = -1;
-
-//   CLOUD ///
-bool usaCloud = false;
-char *msgMqtt;
-bool newMqttMsg;
-
-#line 234 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+//########################################################################################################################################################
+#line 6 "c:\\dev\\keepin\\firmware16\\firmware16.ino"
 void setup(void);
-#line 320 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 88 "c:\\dev\\keepin\\firmware16\\firmware16.ino"
 void loop(void);
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\about.ino"
 void about();
-#line 8 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 7 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 void agenda();
-#line 16 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 15 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 void verificaArquivos();
-#line 29 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 30 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 void verificaAgenda();
-#line 380 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 405 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 void atualizahora();
-#line 412 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 437 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 String consultaAgenda(int id);
-#line 438 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 463 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 void consultaAgenda2();
-#line 493 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 517 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 void conagenda();
-#line 514 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 539 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 void gravaragenda();
-#line 543 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 571 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 void gravaragenda2();
-#line 566 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
-void printDateTime(const RtcDateTime& dt);
-#line 583 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
-String RetornaData(const RtcDateTime& dt);
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
+#line 595 "c:\\dev\\keepin\\firmware16\\agenda.ino"
+void printDateTime(const RtcDateTime &dt);
+#line 611 "c:\\dev\\keepin\\firmware16\\agenda.ino"
+String RetornaData(const RtcDateTime &dt);
+#line 627 "c:\\dev\\keepin\\firmware16\\agenda.ino"
+void LoopAgenda();
+#line 1 "c:\\dev\\keepin\\firmware16\\api.ino"
 void api();
-#line 359 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
+#line 359 "c:\\dev\\keepin\\firmware16\\api.ino"
 void apiativo();
-#line 376 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
+#line 376 "c:\\dev\\keepin\\firmware16\\api.ino"
 void apiconfig();
-#line 413 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
+#line 413 "c:\\dev\\keepin\\firmware16\\api.ino"
 void alterasenhapi();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\cenas.ino"
 void gravacena();
-#line 45 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
+#line 45 "c:\\dev\\keepin\\firmware16\\cenas.ino"
 void lerArquivo(String id);
-#line 68 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
+#line 68 "c:\\dev\\keepin\\firmware16\\cenas.ino"
 void triggerCena(String arq);
-#line 76 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
+#line 76 "c:\\dev\\keepin\\firmware16\\cenas.ino"
 void checkCena();
-#line 170 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
+#line 170 "c:\\dev\\keepin\\firmware16\\cenas.ino"
 void executaCena(String comandoCena);
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cloud.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\cloud.ino"
 void cloud();
-#line 39 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cloud.ino"
+#line 39 "c:\\dev\\keepin\\firmware16\\cloud.ino"
 void sendCloud();
-#line 257 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cloud.ino"
+#line 257 "c:\\dev\\keepin\\firmware16\\cloud.ino"
 String retornaValorCloud(char val);
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 269 "c:\\dev\\keepin\\firmware16\\cloud.ino"
+void LoopCloud();
+#line 1 "c:\\dev\\keepin\\firmware16\\config.ino"
 void reiniciar();
-#line 13 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 13 "c:\\dev\\keepin\\firmware16\\config.ino"
 String wifiPadrao();
-#line 26 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 26 "c:\\dev\\keepin\\firmware16\\config.ino"
 String pegaSSID();
-#line 37 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 37 "c:\\dev\\keepin\\firmware16\\config.ino"
 String pegaPassword();
-#line 48 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 48 "c:\\dev\\keepin\\firmware16\\config.ino"
 String pegaIP();
-#line 59 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 59 "c:\\dev\\keepin\\firmware16\\config.ino"
 String pegaMask();
-#line 70 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 70 "c:\\dev\\keepin\\firmware16\\config.ino"
 String pegaGateway();
-#line 81 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 81 "c:\\dev\\keepin\\firmware16\\config.ino"
 void setWifiPadrao(String valor);
-#line 98 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 98 "c:\\dev\\keepin\\firmware16\\config.ino"
 void configuracao2();
-#line 135 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 135 "c:\\dev\\keepin\\firmware16\\config.ino"
 void wifireset();
-#line 146 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 146 "c:\\dev\\keepin\\firmware16\\config.ino"
 void wifireset2();
-#line 190 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 190 "c:\\dev\\keepin\\firmware16\\config.ino"
 void gravawifi();
-#line 305 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 305 "c:\\dev\\keepin\\firmware16\\config.ino"
 int retornaPorta(int vporta);
-#line 317 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 317 "c:\\dev\\keepin\\firmware16\\config.ino"
 void IniciaRTC();
-#line 328 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 328 "c:\\dev\\keepin\\firmware16\\config.ino"
 RtcDateTime carregaHora();
-#line 337 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 337 "c:\\dev\\keepin\\firmware16\\config.ino"
 void valorwifi();
-#line 350 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 350 "c:\\dev\\keepin\\firmware16\\config.ino"
 void fmodelo();
-#line 360 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 360 "c:\\dev\\keepin\\firmware16\\config.ino"
 String lerMemoria();
-#line 371 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 371 "c:\\dev\\keepin\\firmware16\\config.ino"
 void Memoria();
-#line 396 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 396 "c:\\dev\\keepin\\firmware16\\config.ino"
 void fMemoria();
-#line 439 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 439 "c:\\dev\\keepin\\firmware16\\config.ino"
 void lerConfiguracao();
-#line 528 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 528 "c:\\dev\\keepin\\firmware16\\config.ino"
 void GravaCloud();
-#line 580 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 580 "c:\\dev\\keepin\\firmware16\\config.ino"
 void dirarquivos();
-#line 660 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 660 "c:\\dev\\keepin\\firmware16\\config.ino"
 void File_Download();
-#line 698 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 698 "c:\\dev\\keepin\\firmware16\\config.ino"
 void File_Upload();
-#line 712 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 712 "c:\\dev\\keepin\\firmware16\\config.ino"
 void handleFileUpload();
-#line 771 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+#line 771 "c:\\dev\\keepin\\firmware16\\config.ino"
 void File_Delete();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void executaPulso(int porta);
-#line 15 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 15 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void parseBytes(const char *str, char sep, byte *bytes, int maxBytes, int base);
-#line 29 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 29 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void retornachip();
-#line 39 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 39 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void controle();
-#line 81 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 81 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void situacao();
-#line 113 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 113 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void grava();
-#line 134 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 134 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void valida();
-#line 145 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 145 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void ler();
-#line 160 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 160 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void handleNotFound();
-#line 180 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 180 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo);
-#line 217 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 217 "c:\\dev\\keepin\\firmware16\\controles.ino"
 int LePorta(int vPorta);
-#line 243 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 243 "c:\\dev\\keepin\\firmware16\\controles.ino"
 int LeSensor(int vPorta);
-#line 269 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 269 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void ApagaPortas();
-#line 295 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 295 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void Inverte(int vPorta);
-#line 341 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 341 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void CarregaEntradas();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ddns.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\ddns.ino"
 void chamaddns();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\fab.ino"
 bool ConfigEN();
-#line 26 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+#line 26 "c:\\dev\\keepin\\firmware16\\fab.ino"
 bool ConfigEP();
-#line 51 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+#line 51 "c:\\dev\\keepin\\firmware16\\fab.ino"
 bool resetIntNormal();
-#line 67 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+#line 67 "c:\\dev\\keepin\\firmware16\\fab.ino"
 bool resetIntPulsado();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\functions.ino"
 void log(String msg);
-#line 5 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
+#line 6 "c:\\dev\\keepin\\firmware16\\functions.ino"
 void ConfigurarWebServer(void);
-#line 86 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
+#line 88 "c:\\dev\\keepin\\firmware16\\functions.ino"
 void ResetSaidasPulsadas();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 115 "c:\\dev\\keepin\\firmware16\\functions.ino"
+void LoopResetFabrica();
+#line 141 "c:\\dev\\keepin\\firmware16\\functions.ino"
+void LoopLedStatus();
+#line 176 "c:\\dev\\keepin\\firmware16\\functions.ino"
+void LoopLedRunning();
+#line 1 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void configIR();
-#line 17 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 17 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void encoding(decode_results *results);
-#line 117 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 117 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void dumpInfo(decode_results *results);
-#line 144 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 144 "c:\\dev\\keepin\\firmware16\\ir.ino"
 uint16_t getCookedLength(decode_results *results);
-#line 158 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 158 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void dumpRaw(decode_results *results);
-#line 189 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 189 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void dumpCode(decode_results *results);
-#line 322 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 322 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void getIR();
-#line 334 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 334 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void sendir();
-#line 368 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 368 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vModelo, int q);
-#line 661 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 661 "c:\\dev\\keepin\\firmware16\\ir.ino"
 int retornaPorIRS(int PortaIRS);
-#line 744 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 744 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void habir();
-#line 759 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 759 "c:\\dev\\keepin\\firmware16\\ir.ino"
 char hexCharToBin(char c);
-#line 772 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 772 "c:\\dev\\keepin\\firmware16\\ir.ino"
 unsigned long long hexStrToULL(char *string);
-#line 786 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 786 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void configuraPortaIR(int PortIR2);
-#line 838 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 838 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt);
-#line 1056 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+#line 1056 "c:\\dev\\keepin\\firmware16\\ir.ino"
 uint64_t getUInt64fromHex(char const *str);
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\leituras.ino"
+#line 1095 "c:\\dev\\keepin\\firmware16\\ir.ino"
+void LoopIR();
+#line 1 "c:\\dev\\keepin\\firmware16\\leituras.ino"
 void leituraUDP();
-#line 124 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
-void conectar();
-#line 441 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
-void listawifi();
-#line 457 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
-void listawifi2();
-#line 463 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
-void gravasenhawifi();
-#line 505 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
-void gravasenhahttp();
-#line 32 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+#line 32 "c:\\dev\\keepin\\firmware16\\mqtt.ino"
 void callback(char *topic, byte *payload, unsigned int length);
-#line 57 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+#line 57 "c:\\dev\\keepin\\firmware16\\mqtt.ino"
 void MqttCloudReconnect();
-#line 91 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+#line 91 "c:\\dev\\keepin\\firmware16\\mqtt.ino"
 void MqttSetup();
-#line 114 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+#line 114 "c:\\dev\\keepin\\firmware16\\mqtt.ino"
 void MqttLoop();
-#line 128 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+#line 128 "c:\\dev\\keepin\\firmware16\\mqtt.ino"
 String MqttArg(char *msg, char *pkey);
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\normalize.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\normalize.ino"
 String vNormalize();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 124 "c:\\dev\\keepin\\firmware16\\rede.ino"
+void conectar();
+#line 439 "c:\\dev\\keepin\\firmware16\\rede.ino"
+void listawifi();
+#line 455 "c:\\dev\\keepin\\firmware16\\rede.ino"
+void listawifi2();
+#line 461 "c:\\dev\\keepin\\firmware16\\rede.ino"
+void gravasenhawifi();
+#line 506 "c:\\dev\\keepin\\firmware16\\rede.ino"
+void gravasenhahttp();
+#line 571 "c:\\dev\\keepin\\firmware16\\rede.ino"
+void LoopReconexao();
+#line 1 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void configRF();
-#line 8 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 8 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void getRF();
-#line 22 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 21 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void habRF();
-#line 33 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 32 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void gravarf();
-#line 65 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 64 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void trataRF();
-#line 101 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 100 "c:\\dev\\keepin\\firmware16\\rf.ino"
 boolean verificaSensoresRF();
-#line 549 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 548 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void consultaSensorRF();
-#line 594 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 593 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void ultimodisprf();
-#line 609 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 608 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void sendRFp();
-#line 43 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 631 "c:\\dev\\keepin\\firmware16\\rf.ino"
+void LoopRF();
+#line 43 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void trataSensores();
-#line 187 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 187 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void sendDataToFirebase(String MSG, int numSen, String vTag);
-#line 279 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 279 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void lersensores();
-#line 302 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 302 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void gravasensor();
-#line 354 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 354 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void gravasensor2(String Valor);
-#line 372 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 372 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 boolean verificaSensores(int nsensor, String vsAtual);
-#line 963 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 963 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void consultaSensor();
-#line 1033 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1033 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 String lerSensor();
-#line 1044 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1044 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void consensor();
-#line 1064 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1064 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void gravadevice();
-#line 1096 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1096 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void buscadevice();
-#line 1138 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1138 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void ultimodisp();
-#line 1153 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1153 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void retornaNotificar();
-#line 1168 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1168 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void buscaNotificar();
-#line 1187 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1187 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void gravanot();
-#line 1227 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+#line 1227 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void gravanot2(String Valor);
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\skeleton.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\skeleton.ino"
 String vskeleton();
-#line 103 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\skeleton.ino"
+#line 103 "c:\\dev\\keepin\\firmware16\\skeleton.ino"
 String vskeleton2();
-#line 203 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\skeleton.ino"
+#line 203 "c:\\dev\\keepin\\firmware16\\skeleton.ino"
 String vskeleton3();
-#line 304 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\skeleton.ino"
+#line 304 "c:\\dev\\keepin\\firmware16\\skeleton.ino"
 String vskeleton4();
-#line 403 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\skeleton.ino"
+#line 403 "c:\\dev\\keepin\\firmware16\\skeleton.ino"
 String vskeleton5();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sms.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\sms.ino"
 void sendSMS(int numSensor);
-#line 48 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sms.ino"
+#line 48 "c:\\dev\\keepin\\firmware16\\sms.ino"
 void gravasms();
-#line 86 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sms.ino"
+#line 86 "c:\\dev\\keepin\\firmware16\\sms.ino"
 void gravasms2(String Texto, String Numeros);
-#line 109 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sms.ino"
+#line 109 "c:\\dev\\keepin\\firmware16\\sms.ino"
 void consultasms();
-#line 141 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sms.ino"
+#line 141 "c:\\dev\\keepin\\firmware16\\sms.ino"
 String consultasms2();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\update.ino"
 void executeupdate();
-#line 32 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+#line 32 "c:\\dev\\keepin\\firmware16\\update.ino"
 void executeupdateBeta();
-#line 63 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+#line 63 "c:\\dev\\keepin\\firmware16\\update.ino"
 void versao();
-#line 73 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+#line 73 "c:\\dev\\keepin\\firmware16\\update.ino"
 void linkversao();
-#line 83 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+#line 83 "c:\\dev\\keepin\\firmware16\\update.ino"
 void linkversaoBeta();
-#line 94 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+#line 94 "c:\\dev\\keepin\\firmware16\\update.ino"
 void logData(String dados);
-#line 111 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+#line 111 "c:\\dev\\keepin\\firmware16\\update.ino"
 void readlog();
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\webconfig.ino"
 void configuracao();
-#line 29 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+#line 29 "c:\\dev\\keepin\\firmware16\\webconfig.ino"
 String htmlconfig1();
-#line 42 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+#line 42 "c:\\dev\\keepin\\firmware16\\webconfig.ino"
 String htmlconfig2();
-#line 49 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+#line 49 "c:\\dev\\keepin\\firmware16\\webconfig.ino"
 String htmlconfig3();
-#line 104 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+#line 104 "c:\\dev\\keepin\\firmware16\\webconfig.ino"
 void gravahtml();
-#line 136 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+#line 136 "c:\\dev\\keepin\\firmware16\\webconfig.ino"
 void testes2();
-#line 142 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+#line 142 "c:\\dev\\keepin\\firmware16\\webconfig.ino"
 void carregaDadosHTML();
-#line 234 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\firmware16.ino"
+#line 6 "c:\\dev\\keepin\\firmware16\\firmware16.ino"
 void setup(void)
 {
   Serial.begin(115200);
@@ -548,7 +337,7 @@ void setup(void)
   log("Keepin Firmware: " + String(Placa_Version));
 
   vchipId = WiFi.macAddress();
-  vchipId.replace(":","");
+  vchipId.replace(":", "");
   log("Keepin ID: " + vchipId);
 
   configIR();
@@ -558,22 +347,12 @@ void setup(void)
   millisAtual = millis();
   lastDebounceTime = millisAtual;
 
-  //pinMode(LedWiFI, OUTPUT);
-  //pinMode(LedVerde, OUTPUT);
-  //pinMode(LedAmarelo, OUTPUT);
-
-  //digitalWrite(LedWiFI, LOW);
-  //digitalWrite(LedVerde, LOW);
-  //digitalWrite(LedAmarelo, LOW);
-
   //tempoatual = millisAtual;
   starTime = millisAtual;
   rfmilis = millisAtual;
 
   configRF();
 
-  //pinMode(buttonState, OUTPUT);
-  //digitalWrite(buttonState, LOW);
   pinMode(buttonState, INPUT);
 
   Wire.begin(5, 4);
@@ -584,6 +363,7 @@ void setup(void)
   chip3.begin();
   sensor1.begin();
   sensor2.begin();
+
   ApagaPortas();
 
   IniciaRTC();
@@ -613,7 +393,7 @@ void setup(void)
   Serial.println("Motivo Reset: ");
   Serial.println(Razao);
 
-  retornaNotificar;
+  retornaNotificar();
 
   Serial.println("Notificar: " + String(notificar));
 
@@ -623,147 +403,36 @@ void setup(void)
   CarregaEntradas();
   MqttSetup();
 
+  log("Informações");
+  Serial.setDebugOutput(true);
+  system_print_meminfo();
+  Serial.setDebugOutput(false);
 }
 
+//########################################################################################################################################################
 void loop(void)
 {
 
-  //Serial.println(chip3.read8());
   //Serial.println(String(Rtc.alarm_minute));
   nCiclos++;
 
   millisAtual = millis();
 
-  if (chipAtivo == true)
+  if (chipAtivo == true) //Verifica se o chip é reconhecido com um chip válido
   {
+    LoopLedStatus();
 
-    if (chip3.read(LedWiFI) == LOW)
-    {
-      int32_t rssi;
+    LoopReconexao();
 
-      //      chip3.write(LedAmarelo, LOW);
-      if (WiFi.status() == WL_CONNECTED)
-      {
-        if (vConfigWIFI == "0")
-        {
-          lastWifiTime = millisAtual;
-        }
-        rssi = WiFi.RSSI();
-        //Serial.println(String(rssi));
-
-        if (rssi >= -65)
-        {
-          chip3.write(LedVerde, LOW);
-          chip3.write(LedAmarelo, HIGH);
-        }
-        else if (rssi < -65 && rssi >= -100)
-        {
-          chip3.write(LedVerde, HIGH);
-          chip3.write(LedAmarelo, LOW);
-        }
-        else
-        {
-          chip3.write(LedVerde, HIGH);
-          chip3.write(LedAmarelo, HIGH);
-        }
-      }
-    }
-
-    // reconexao
-    if ((vConfigWIFI == "0" && WiFi.status() != WL_CONNECTED) || (vConfigWIFI == "0" && tipoWifiAtual == 2))
-    {
-      if ((millisAtual - lastWifiTime) >= 300000)
-      {
-        conectar();
-        lastWifiTime = millisAtual;
-      }
-    }
-
-    // valida IP Reconexao
-    if ((vConfigWIFI == "0" && tipoWifiAtual != 2 && WiFi.localIP() != local_IP))
-    {
-      conectar();
-    }
-
-    //Serial.println("Tempo: " + String(millisAtual - tempoatual));
-
-    //Serial.println(String(sensor1.read8(), BIN));
-    //Serial.println(sensor1.read(0));
-    RtcDateTime HorarioAtual;
     HorarioAtual = carregaHora();
 
-    // só acessa o cloud se estiver marcado para usar.
-    if (usaCloud == true)
-    {
-      if (HorarioAtual.Second() % 5 == 0 && ConsultouCloud == false)
-      {
-        ConsultouCloud = true;
-        //      Serial.println("Segundo Atual: " + String(HorarioAtual.Second()));
-        sendCloud();
-      }
-      else if (HorarioAtual.Second() % 5 != 0 && ConsultouCloud == true)
-      {
-        ConsultouCloud = false;
-      }
-    }
+    LoopCloud();
 
-    if (HorarioAtual.Minute() != Minuto)
-    {
-      Serial.println("Ciclos por segundos: " + String(nCiclos / 60));
-      Serial.println("Ciclos por minuto: " + String(nCiclos));
-      memorialivre = system_get_free_heap_size();
-      Serial.println("memoria livre: " + String(memorialivre));
+    LoopAgenda();
 
-      /* // verifica memoria utilizada no spiff e a memoria total
-      SPIFFS.begin();
-      FSInfo fs_info;
-      SPIFFS.info(fs_info);
-      SPIFFS.end();
+    LoopLedRunning();
 
-      Serial.println(fs_info.usedBytes);
-      Serial.println(fs_info.totalBytes);
-    */
-
-      nCiclos = 0;
-      Minuto = HorarioAtual.Minute();
-
-      char time[50];
-      sprintf(time, "%02d/%02d/%02d %02d:%02d:%02d", HorarioAtual.Day(), HorarioAtual.Month(), HorarioAtual.Year(), HorarioAtual.Hour(), HorarioAtual.Minute(), HorarioAtual.Second());
-      Serial.println(time);
-
-      agenda();
-    }
-
-    //  if (HorarioAtual.Second() != Segundo)
-    if (Segundo == -1 || (millisAtual - Segundo) > 200)
-    {
-      Segundo = millisAtual;
-      //Segundo = HorarioAtual.Second();
-      chip3.write(LedGeral, !chip3.read(LedGeral));
-    }
-
-    int ValorbuttonState = digitalRead(buttonState);
-
-    if (ValorbuttonState == HIGH)
-    {
-      if (resetIntPulsado() == true)
-      {
-        ConfigEP();
-        //Serial.println("reset pulsado");
-      }
-      else if (resetIntNormal() == true)
-      {
-        ConfigEN();
-        //Serial.println("reset normal");
-      }
-      else
-      {
-        //Serial.print("reset ligado: ");
-        //Serial.println(digitalRead(buttonState));
-        wifireset2();
-        ESP.restart();
-      }
-    }
+    LoopResetFabrica();
 
     //ArduinoOTA.handle();
     server.handleClient();
@@ -773,126 +442,64 @@ void loop(void)
 
     trataSensores();
 
-    // IR
-    if (enReadIR)
-    {
-      if (irrecv.decode(&results))
-      {
-        Serial.print(resultToHumanReadableBasic(&results));
-        dumpCode(&results);
-        dumpInfo(&results);
-        Serial.println(""); // Blank line between entries
-        //tone(Buzzer, 4000, 800);
-        chip3.write(Buzzer, HIGH);
-        delay(300);
-        chip3.write(Buzzer, LOW);
-        //noTone(Buzzer);
-        enReadIR = false;
-        irrecv.resume();
-      }
-    }
+    LoopIR();
 
-    // FIM IR
-
-    //RF
-    //  if (enReadRF)
-    //  {
-    if (mySwitch.available())
-    {
-      //Serial.println("sinal de radio detectado");
-      //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
-      if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
-      {
-        rfmilis = millisAtual;
-        for (int i = 0; i < 30; i++)
-        {
-          ultimoEstadoRF[i] = LOW;
-        }
-      }
-      int value = mySwitch.getReceivedValue();
-
-      if (value == 0)
-      {
-        Serial.print("Unknown encoding");
-      }
-      else
-      {
-        //    tone(Buzzer, 4000, 800);
-        Serial.print("Received ");
-        codigoRF = mySwitch.getReceivedValue();
-        ultimoDisparoRF = codigoRF;
-        Serial.print(mySwitch.getReceivedValue());
-        Serial.print(" / ");
-        Serial.print(mySwitch.getReceivedBitlength());
-        tamanhoRF = mySwitch.getReceivedBitlength();
-        Serial.print("bit ");
-        Serial.print("Protocol: ");
-        Serial.println(mySwitch.getReceivedProtocol());
-        gProtocoloRF = mySwitch.getReceivedProtocol();
-        trataRF();
-      }
-      mySwitch.resetAvailable();
-
-      //delay(300);
-      //    noTone(Buzzer);
-      //  enReadRF = false;
-    }
-
-    //  }
-    //FIM RF
+    LoopRF();
 
     checkCena();
+
     MqttLoop();
 
     ResetSaidasPulsadas();
-
-    //Logica para resete de entrada pulsada
   }
 }
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\about.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\about.ino"
 void about() {
     server.send(200, "text/html", "<html><body><h1>Desenvolvido por:</h1><p>Fernando Leal</p><p>Julio Valadares</p><p>Leonardo Aquino</p><p><a href=\"http://www.keepin.com.br\">www.keepin.com.br</a></p></body></html>");
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\agenda.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\agenda.ino"
 // CONNECTIONS:
 // DS3231 SDA --> SDA
 // DS3231 SCL --> SCL
 // DS3231 VCC --> 3.3v or 5v
 // DS3231 GND --> GND
 
-
-void agenda () 
+void agenda()
 {
-      
-    Serial.println("Consultado agenda...");
-  
-    verificaAgenda();
+
+  Serial.println("Consultado agenda...");
+
+  verificaAgenda();
 }
 
-void verificaArquivos() {
+void verificaArquivos()
+{
 
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "w");
-     
-  if (!f) {
+
+  if (!f)
+  {
     SPIFFS.format();
     File f = SPIFFS.open("/agenda.txt", "w");
   }
-  f.close();    
-  SPIFFS.end(); 
+  f.close();
+  SPIFFS.end();
 }
 
-void verificaAgenda() {
+void verificaAgenda()
+{
   for (int i = 1; i <= 6; i++)
   {
-    if (AgendaAlterada) {
+    if (AgendaAlterada)
+    {
       AgendaAlterada = false;
       //consultaAgenda(i);
       consultaAgenda2();
     }
     //String texto = consultaAgenda(i);
-    String texto = Agendas[i-1];
+    String texto = Agendas[i - 1];
     texto.trim();
 
     String Data = "";
@@ -915,112 +522,113 @@ void verificaAgenda() {
     int i3 = 1;
     int qtdeTexto = texto.length();
     //separa dados nas variaveis
-    for (int i2 = 0; i2 <= qtdeTexto-1; i2++)
+    for (int i2 = 0; i2 <= qtdeTexto - 1; i2++)
     {
-      if (texto[i2] != '|' && i3 <= 16  && texto != "")
-      { 
+      if (texto[i2] != '|' && i3 <= 16 && texto != "")
+      {
         if (i3 == 1)
-        {       
+        {
           Data += texto[i2];
-        }        
+        }
 
         if (i3 == 2)
-        {       
+        {
           HoraI += texto[i2];
-        }        
+        }
 
         if (i3 == 3)
-        {       
+        {
           HoraF += texto[i2];
-        }        
+        }
 
         if (i3 == 4)
-        {       
+        {
           Seg += texto[i2];
-        }        
+        }
 
         if (i3 == 5)
-        {       
+        {
           Ter += texto[i2];
-        }        
+        }
 
         if (i3 == 6)
-        {       
+        {
           Qua += texto[i2];
-        }        
+        }
 
         if (i3 == 7)
-        {       
+        {
           Qui += texto[i2];
-        }    
+        }
 
         if (i3 == 8)
-        {       
+        {
           Sex += texto[i2];
-        }        
+        }
 
         if (i3 == 9)
-        {       
+        {
           Sab += texto[i2];
-        }        
+        }
 
         if (i3 == 10)
-        {       
+        {
           Dom += texto[i2];
-        }        
+        }
 
         if (i3 == 11)
-        {       
+        {
           Tipo += texto[i2];
-        }        
-       
+        }
+
         if (i3 == 12)
-        {       
+        {
           Porta += texto[i2];
-        }        
-        
+        }
+
         if (i3 == 13)
-        {       
+        {
           Ativo += texto[i2];
-        }        
-        
+        }
+
         if (i3 == 14)
-        {       
+        {
           ECena += texto[i2];
-        }        
+        }
 
         if (i3 == 15)
-        {       
+        {
           CenaLiga += texto[i2];
-        }        
+        }
 
         if (i3 == 16)
-        {       
+        {
           CenaDesliga += texto[i2];
-        }        
-      }      
+        }
+      }
       else
       {
         i3++;
       }
-      
+
     } // fim separar dados
 
-/*     Serial.println(texto);
+    /*     Serial.println(texto);
     Serial.println("Agenda Ativa: " + Ativo);
     Serial.println("Agenda é Cena: " + ECena);
     Serial.println("Agenda Cena Liga: " + CenaLiga);
     Serial.println("Agenda Cena Desliga: " + CenaDesliga);
  */
 
-    if (i == 3) {
+    if (i == 3)
+    {
       //Serial.println("Ativo: " + Ativo + " Tipo: " + Tipo);
     }
 
     // Verifica se a agenda está ativa
     if (Ativo == "1")
     {
-      //pinMode(retornaPorta(Porta.toInt()), OUTPUT);               
+      //pinMode(retornaPorta(Porta.toInt()), OUTPUT);
       RtcDateTime now;
       now = carregaHora();
       // Se tipo é 1
@@ -1034,38 +642,43 @@ void verificaAgenda() {
         HoraAgora += "0" + String(now.Minute());
       else
         HoraAgora += String(now.Minute());
-      
+
       String DataAgora = "";
-      if (now.Day() < 10) {
+      if (now.Day() < 10)
+      {
         DataAgora += "0" + String(now.Day()) + "/";
       }
       else
       {
-        DataAgora += String(now.Day()) + "/";        
+        DataAgora += String(now.Day()) + "/";
       }
-      if (now.Month() < 10) {
+      if (now.Month() < 10)
+      {
         DataAgora += "0" + String(now.Month()) + "/";
       }
       else
       {
-        DataAgora += String(now.Month()) + "/";        
+        DataAgora += String(now.Month()) + "/";
       }
       DataAgora += String(now.Year());
       String DiaSemanaAgora = String(now.DayOfWeek());
       int EstadoPorta = LOW;
-      if (Porta != "") {
+      if (Porta != "")
+      {
         EstadoPorta = LePorta(retornaPorta(Porta.toInt()));
       }
 
-      String ValorAgendaDesligada = Data+ "|" + HoraI + "|" +HoraF+ "|" +Seg+ "|" +Ter+ "|" +Qua+ "|" +Qui+ "|" +Sex+ "|" +Sab+ "|" +Dom+ "|" +Tipo+ "|" + Porta + "|0|"+ ECena + "|" + CenaLiga + "|" + CenaDesliga + "|" ;
+      String ValorAgendaDesligada = Data + "|" + HoraI + "|" + HoraF + "|" + Seg + "|" + Ter + "|" + Qua + "|" + Qui + "|" + Sex + "|" + Sab + "|" + Dom + "|" + Tipo + "|" + Porta + "|0|" + ECena + "|" + CenaLiga + "|" + CenaDesliga + "|";
       //Serial.println(HoraAgora);
-      if (Tipo == "1")  // apenas uma vez
+      if (Tipo == "1") // apenas uma vez
       {
         //Serial.println("Agenda tipo 1 encontrada");
         if ((HoraAgora == HoraI) && (ECena == "1"))
         {
           triggerCena(CenaLiga);
-        } else {
+        }
+        else
+        {
           if ((HoraAgora == HoraI) && (EstadoPorta == LOW))
           {
             //digitalWrite(retornaPorta(Porta.toInt()), 1);
@@ -1073,33 +686,39 @@ void verificaAgenda() {
           }
         }
 
-        if ((HoraAgora == HoraF) && (ECena == "1")) {
-          if (CenaDesliga != ""){
+        if ((HoraAgora == HoraF) && (ECena == "1"))
+        {
+          if (CenaDesliga != "")
+          {
             triggerCena(CenaDesliga);
           }
-          Agendas[i-1] = ValorAgendaDesligada;
-          Serial.println(Agendas[i-1]);
-          gravaragenda2();   
-
-        } else {
+          Agendas[i - 1] = ValorAgendaDesligada;
+          Serial.println(Agendas[i - 1]);
+          gravaragenda2();
+        }
+        else
+        {
           if ((HoraAgora == HoraF) && (EstadoPorta == HIGH))
           {
             // deslita e desativa agenda
             //digitalWrite(retornaPorta(Porta.toInt()), 0);
-            LigaDesliga(retornaPorta(Porta.toInt()), LOW, "", 0); 
+            LigaDesliga(retornaPorta(Porta.toInt()), LOW, "", 0);
 
-            Agendas[i-1] = ValorAgendaDesligada;
-            Serial.println(Agendas[i-1]);
-            gravaragenda2();   
+            Agendas[i - 1] = ValorAgendaDesligada;
+            Serial.println(Agendas[i - 1]);
+            gravaragenda2();
           }
         }
       }
-      if (Tipo == "2")  // todos os dias
+      if (Tipo == "2") // todos os dias
       {
         //Serial.println("Agenda tipo 2 encontrada");
-        if ((HoraAgora == HoraI) && (ECena == "1")) {
+        if ((HoraAgora == HoraI) && (ECena == "1"))
+        {
           triggerCena(CenaLiga);
-        } else {
+        }
+        else
+        {
           if ((HoraAgora == HoraI) && (EstadoPorta == LOW))
           {
             //digitalWrite(retornaPorta(Porta.toInt()), 1);
@@ -1107,27 +726,34 @@ void verificaAgenda() {
           }
         }
 
-        if ((HoraAgora == HoraF) && (ECena == "1")) {
-          if (CenaDesliga != ""){
+        if ((HoraAgora == HoraF) && (ECena == "1"))
+        {
+          if (CenaDesliga != "")
+          {
             triggerCena(CenaDesliga);
           }
-        } else {
+        }
+        else
+        {
           if ((HoraAgora == HoraF) && (EstadoPorta == HIGH))
           {
             // desgita
-            //digitalWrite(retornaPorta(Porta.toInt()), 0);         
+            //digitalWrite(retornaPorta(Porta.toInt()), 0);
             LigaDesliga(retornaPorta(Porta.toInt()), LOW, "", 0);
           }
         }
       }
-      if (Tipo == "3")  // data específica
+      if (Tipo == "3") // data específica
       {
         //Serial.println("Agenda tipo 3 encontrada");
         //Serial.println("Data Agora: " + DataAgora);
         //Serial.println("Data: " + Data);
-        if ((HoraAgora == HoraI) && (ECena == "1") && (DataAgora == Data)) {
+        if ((HoraAgora == HoraI) && (ECena == "1") && (DataAgora == Data))
+        {
           triggerCena(CenaLiga);
-        } else {
+        }
+        else
+        {
 
           if ((HoraAgora == HoraI) && (EstadoPorta == LOW) && (DataAgora == Data))
           {
@@ -1136,26 +762,30 @@ void verificaAgenda() {
           }
         }
 
-        if ((HoraAgora == HoraF) && (ECena == "1") && (DataAgora == Data)) {
-          if (CenaDesliga != ""){
+        if ((HoraAgora == HoraF) && (ECena == "1") && (DataAgora == Data))
+        {
+          if (CenaDesliga != "")
+          {
             triggerCena(CenaDesliga);
           }
-          Agendas[i-1] = ValorAgendaDesligada;
-          gravaragenda2();            
-        } else {
+          Agendas[i - 1] = ValorAgendaDesligada;
+          gravaragenda2();
+        }
+        else
+        {
           if ((HoraAgora == HoraF) && (EstadoPorta == HIGH) && (DataAgora == Data))
           {
             // desliga e desativa agenda
             //digitalWrite(retornaPorta(Porta.toInt()), 0);
             LigaDesliga(retornaPorta(Porta.toInt()), LOW, "", 0);
 
-            Agendas[i-1] = ValorAgendaDesligada;
-            gravaragenda2();            
+            Agendas[i - 1] = ValorAgendaDesligada;
+            gravaragenda2();
           }
-        }          
-      } 
+        }
+      }
 
-      if (Tipo == "4")  // dia da semana
+      if (Tipo == "4") // dia da semana
       {
         boolean EDiaSemana = 0;
 
@@ -1163,33 +793,27 @@ void verificaAgenda() {
         {
           EDiaSemana = true;
         }
-        else
-        if ((Ter == "1") && (DiaSemanaAgora == "2"))
+        else if ((Ter == "1") && (DiaSemanaAgora == "2"))
         {
           EDiaSemana = true;
         }
-        else
-        if ((Qua == "1") && (DiaSemanaAgora == "3"))
+        else if ((Qua == "1") && (DiaSemanaAgora == "3"))
         {
           EDiaSemana = true;
         }
-        else
-        if ((Qui == "1") && (DiaSemanaAgora == "4"))
+        else if ((Qui == "1") && (DiaSemanaAgora == "4"))
         {
           EDiaSemana = true;
         }
-        else
-        if ((Sex == "1") && (DiaSemanaAgora == "5"))
+        else if ((Sex == "1") && (DiaSemanaAgora == "5"))
         {
           EDiaSemana = true;
         }
-        else
-        if ((Sab == "1") && (DiaSemanaAgora == "6"))
+        else if ((Sab == "1") && (DiaSemanaAgora == "6"))
         {
           EDiaSemana = true;
         }
-        else
-        if ((Dom == "1") && (DiaSemanaAgora == "0"))
+        else if ((Dom == "1") && (DiaSemanaAgora == "0"))
         {
           EDiaSemana = true;
         }
@@ -1197,64 +821,69 @@ void verificaAgenda() {
         {
           EDiaSemana = false;
         }
-        
+
         //Serial.println("Agenda tipo 4 encontrada");
-        //Serial.println("Valor EdiaSemana = " + String(EDiaSemana));                                                                                                                                                  
-        //Serial.println("Valor DiaSemanaAgora = " + String(DiaSemanaAgora));                                                                                                                                                  
+        //Serial.println("Valor EdiaSemana = " + String(EDiaSemana));
+        //Serial.println("Valor DiaSemanaAgora = " + String(DiaSemanaAgora));
         //Serial.println("Porta: " + Porta);
         //domingo
         //if (EDiaSemana == 1)
-          //Serial.println("Vai rodar");
-          
-        if ((HoraAgora == HoraI) && (ECena == "1") && (EDiaSemana == 1) ) {
+        //Serial.println("Vai rodar");
+
+        if ((HoraAgora == HoraI) && (ECena == "1") && (EDiaSemana == 1))
+        {
           triggerCena(CenaLiga);
-        } else {
-          if ((HoraAgora == HoraI) && (EstadoPorta == LOW) && (EDiaSemana == 1) )
+        }
+        else
+        {
+          if ((HoraAgora == HoraI) && (EstadoPorta == LOW) && (EDiaSemana == 1))
           {
             //digitalWrite(retornaPorta(Porta.toInt()), 1);
             LigaDesliga(retornaPorta(Porta.toInt()), HIGH, "", 0);
           }
         }
-        if ((HoraAgora == HoraF) && (ECena == "1") && (EDiaSemana == 1) ) {
-          if (CenaDesliga != ""){
+        if ((HoraAgora == HoraF) && (ECena == "1") && (EDiaSemana == 1))
+        {
+          if (CenaDesliga != "")
+          {
             triggerCena(CenaDesliga);
           }
-        } else {
-          if ((HoraAgora == HoraF) && (EstadoPorta == HIGH) && (EDiaSemana == 1) )
+        }
+        else
+        {
+          if ((HoraAgora == HoraF) && (EstadoPorta == HIGH) && (EDiaSemana == 1))
           {
             // desliga e desativa agenda
             //digitalWrite(retornaPorta(Porta.toInt()), 0);
             LigaDesliga(retornaPorta(Porta.toInt()), LOW, "", 0);
           }
         }
-      }                  
-
-      
+      }
     }
   }
 }
 
-void atualizahora() {
+void atualizahora()
+{
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-  
-  int vHora = server.arg("h").toInt();  
+
+  int vHora = server.arg("h").toInt();
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") 
+  if (Senha == "kdi9e")
   {
     RtcDateTime HoraNova = vHora;
-   
+
     Rtc.year = HoraNova.Year();
-    Rtc.month =HoraNova.Month();
+    Rtc.month = HoraNova.Month();
     Rtc.day = HoraNova.Day();
     Rtc.hour = HoraNova.Hour();
     Rtc.minute = HoraNova.Minute();
     Rtc.second = HoraNova.Second();
-    Rtc.set_time();  
-    
+    Rtc.set_time();
 
     //Serial.println("Hora atualizada com sucesso!");
     printDateTime(HoraNova);
@@ -1266,8 +895,9 @@ void atualizahora() {
   }
 }
 
-String consultaAgenda(int id) {
-/*
+String consultaAgenda(int id)
+{
+  /*
   SPIFFS.begin();
   File f = SPIFFS.open("/ag"+String(id)+".txt", "r");
   String texto = f.readStringUntil('*');
@@ -1283,16 +913,16 @@ String consultaAgenda(int id) {
   File f = SPIFFS.open("/agenda.txt", "r");
   String texto = f.readStringUntil('*');
   f.close();
-  SPIFFS.end();  
+  SPIFFS.end();
 
   //Serial.println("consultando agenda " + String(id));
   //Serial.println(texto);
 
   return texto;
-  
 }
 
-void consultaAgenda2() {
+void consultaAgenda2()
+{
   /*
   SPIFFS.begin();
   for (int i = 1; i <= 6; i++) {
@@ -1306,34 +936,33 @@ void consultaAgenda2() {
   }
   SPIFFS.end();  
   */
-  SPIFFS.begin(); 
+  SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "r");
-  String texto = f.readStringUntil('*'); 
+  String texto = f.readStringUntil('*');
   texto += '*';
   f.close();
-  SPIFFS.end();  
-  
+  SPIFFS.end();
+
   int posicao = 0;
   int contador = 0;
   int i = 0;
   String textoAgenda = "";
 
   if (texto.length() > 13)
-  {  
-    Agendas[i] = "";   
+  {
+    Agendas[i] = "";
     while (texto[posicao] != '*')
     {
       if (texto[posicao] != '|')
       {
         textoAgenda += texto[posicao];
       }
-      else
-      if (texto[posicao] == '|' && contador < 16)
+      else if (texto[posicao] == '|' && contador < 16)
       {
-        contador ++;
+        contador++;
         textoAgenda += texto[posicao];
       }
-      
+
       if (contador == 16)
       {
         Agendas[i] = textoAgenda;
@@ -1341,26 +970,26 @@ void consultaAgenda2() {
         contador = 0;
         i++;
       }
-      posicao ++;
+      posicao++;
     }
   }
 }
 
-
-void conagenda() {
-//  const char* www_username = www_username2.c_str();
-//  const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+void conagenda()
+{
+  //  const char* www_username = www_username2.c_str();
+  //  const char* www_password = www_password2.c_str();
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-  
-  //int idAgenda = server.arg("ag").toInt();  
+
+  //int idAgenda = server.arg("ag").toInt();
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") 
+  if (Senha == "kdi9e")
   {
     //Serial.println("consultando agenda");
     String texto = consultaAgenda(0);
-    server.send(200, "text/html", texto);  
+    server.send(200, "text/html", texto);
   }
   else
   {
@@ -1368,23 +997,26 @@ void conagenda() {
   }
 }
 
-void gravaragenda() {
-//  const char* www_username = www_username2.c_str();
-//  const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+void gravaragenda()
+{
+  //  const char* www_username = www_username2.c_str();
+  //  const char* www_password = www_password2.c_str();
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-  
+
   AgendaAlterada = true;
   //String idAgenda = server.arg("ag");
   String Valor = server.arg("v");
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {  
-    SPIFFS.begin();   
+  if (Senha == "kdi9e")
+  {
+    SPIFFS.begin();
     File f = SPIFFS.open("/agenda.txt", "w");
-     
-    if (!f) {
-      SPIFFS .format();
+
+    if (!f)
+    {
+      SPIFFS.format();
       File f = SPIFFS.open("/agenda.txt", "w");
     }
 
@@ -1394,19 +1026,20 @@ void gravaragenda() {
     //Serial.println("valor salvo na ag"+idAgenda+".txt");
     //Serial.println(Valor);
   }
-  server.send(200, "text/html", "ok"); 
+  server.send(200, "text/html", "ok");
 }
 
-void gravaragenda2() 
+void gravaragenda2()
 {
   String texto = "";
 
   texto += Agendas[0] + Agendas[1] + Agendas[2] + Agendas[3] + Agendas[4] + Agendas[5] + '*';
-  SPIFFS.begin();   
+  SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "w");
-    
-  if (!f) {
-    SPIFFS .format();
+
+  if (!f)
+  {
+    SPIFFS.format();
     File f = SPIFFS.open("/agenda.txt", "w");
   }
 
@@ -1420,42 +1053,58 @@ void gravaragenda2()
 
 #define countof(a) (sizeof(a) / sizeof(a[0]))
 
-void printDateTime(const RtcDateTime& dt)
+void printDateTime(const RtcDateTime &dt)
 {
-    char datestring[20];
+  char datestring[20];
 
-    snprintf_P(datestring, 
-            countof(datestring),
-            PSTR("%02u/%02u/%04u %02u:%02u:%02u"),
-            dt.Day(),
-            dt.Month(),
-            dt.Year(),
-            dt.Hour(),
-            dt.Minute(),
-            dt.Second() );
-    Serial.print(datestring);
+  snprintf_P(datestring,
+             countof(datestring),
+             PSTR("%02u/%02u/%04u %02u:%02u:%02u"),
+             dt.Day(),
+             dt.Month(),
+             dt.Year(),
+             dt.Hour(),
+             dt.Minute(),
+             dt.Second());
+  Serial.print(datestring);
 }
 
-
-String RetornaData(const RtcDateTime& dt)
+String RetornaData(const RtcDateTime &dt)
 {
-    char datestring[20];
+  char datestring[20];
 
-    snprintf_P(datestring, 
-            countof(datestring),
-            PSTR("%02u/%02u/%04u %02u:%02u:%02u"),
-            dt.Day(),
-            dt.Month(),
-            dt.Year(),
-            dt.Hour(),
-            dt.Minute(),
-            dt.Second() );
-    return datestring;
+  snprintf_P(datestring,
+             countof(datestring),
+             PSTR("%02u/%02u/%04u %02u:%02u:%02u"),
+             dt.Day(),
+             dt.Month(),
+             dt.Year(),
+             dt.Hour(),
+             dt.Minute(),
+             dt.Second());
+  return datestring;
 }
 
+void LoopAgenda()
+{
+  if (HorarioAtual.Minute() != Minuto)
+  {
+    Serial.println("Ciclos por segundos: " + String(nCiclos / 60));
+    Serial.println("Ciclos por minuto: " + String(nCiclos));
+    memorialivre = system_get_free_heap_size();
+    Serial.println("memoria livre: " + String(memorialivre));
 
+    nCiclos = 0;
+    Minuto = HorarioAtual.Minute();
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\api.ino"
+    char time[50];
+    sprintf(time, "%02d/%02d/%02d %02d:%02d:%02d", HorarioAtual.Day(), HorarioAtual.Month(), HorarioAtual.Year(), HorarioAtual.Hour(), HorarioAtual.Minute(), HorarioAtual.Second());
+    Serial.println(time);
+
+    agenda();
+  }
+}
+#line 1 "c:\\dev\\keepin\\firmware16\\api.ino"
 void api()
 {
     String vPassApi, action, apiPort, apiSource, valueApi, typeApi;
@@ -1920,7 +1569,7 @@ void alterasenhapi()
         server.send(200, "text/html", "-1");
     }
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cenas.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\cenas.ino"
 void gravacena()
 {
   if (!server.authenticate(www_username, www_password))
@@ -2308,7 +1957,7 @@ void executaCena(String comandoCena)
     cenaPAtual++;
   }
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\cloud.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\cloud.ino"
 void cloud()
 {
   HTTPClient http;
@@ -2576,7 +2225,25 @@ String retornaValorCloud(char val)
     return "false";
   }
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\config.ino"
+
+void LoopCloud()
+{
+  // só acessa o cloud se estiver marcado para usar.
+  if (usaCloud == true)
+  {
+    if (HorarioAtual.Second() % 5 == 0 && ConsultouCloud == false)
+    {
+      ConsultouCloud = true;
+      //      Serial.println("Segundo Atual: " + String(HorarioAtual.Second()));
+      sendCloud();
+    }
+    else if (HorarioAtual.Second() % 5 != 0 && ConsultouCloud == true)
+    {
+      ConsultouCloud = false;
+    }
+  }
+}
+#line 1 "c:\\dev\\keepin\\firmware16\\config.ino"
 void reiniciar()
 {
   //  const char* www_username = www_username2.c_str();
@@ -3375,7 +3042,7 @@ void File_Delete()
   }
   SPIFFS.end();
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\controles.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\controles.ino"
 void executaPulso(int porta)
 {
   if (porta < 8)
@@ -3765,7 +3432,7 @@ void CarregaEntradas()
   }
 }
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ddns.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\ddns.ino"
 void chamaddns() { 
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
@@ -3991,7 +3658,7 @@ void chamaddns() {
 
 
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\fab.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\fab.ino"
 bool ConfigEN() {
     String texto = "1|6|1|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
     texto += "2|6|2|1|"+String(IpDispositivo[0])+"."+String(IpDispositivo[1])+"."+String(IpDispositivo[2])+"."+String(IpDispositivo[3])+"|"+vchipId+"|0|0|0|0|0|";
@@ -4074,119 +3741,193 @@ bool resetIntPulsado ()
         return false;
     }
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\functions.ino"
-void log(String msg){
-    Serial.println(msg);
+#line 1 "c:\\dev\\keepin\\firmware16\\functions.ino"
+void log(String msg)
+{
+  Serial.println(msg);
 }
 
-void ConfigurarWebServer(void){
-    server.on("/", configuracao);
-    server.on("/grava", grava);
-    server.on("/ler", ler);
-    server.on("/config", configuracao);
-    server.on("/gravarwifi", gravawifi);
-    server.on("/gravasenhawifi", gravasenhawifi);
-    server.on("/gravasenhahttp", gravasenhahttp);
-    server.on("/reset", wifireset);
-    server.on("/reiniciar", reiniciar);
-    server.on("/valida", valida);
-    server.on("/controle", controle);
-    server.on("/situacao", situacao);
-    server.on("/chipid", retornachip);
-    server.on("/chamaddns", chamaddns);
-    //server.on("/mesh", mesh);
-    //server.on("/consultamesh", meshconsulta);
-    server.on("/consultaagenda", conagenda);
-    server.on("/gravaragenda", gravaragenda);
-    server.on("/atualizahora", atualizahora);
-    server.on("/lersensores", lersensores);
-    server.on("/gravasensor", gravasensor);
-    server.on("/consultasensor", consensor);
-    server.on("/gravadevice", gravadevice);
-    server.on("/buscadevice", buscadevice);
-    server.on("/executeupdate", executeupdate);
-    server.on("/executeupdatebeta", executeupdateBeta);
-    server.on("/versao", versao);
-    server.on("/link", linkversao);
-    server.on("/link", linkversaoBeta);
-    //server.on("/limpadevice", limpadevice);
-    server.on("/ultimodisparo", ultimodisp);
-    server.on("/buscaNotificar", buscaNotificar);
-    server.on("/gravanot", gravanot);
-    server.on("/gravasms", gravasms);
-    server.on("/consultasms", consultasms);
-    server.on("/wifi", valorwifi);
-    server.on("/listawifi", listawifi);
-    server.on("/listawifi2", listawifi2);
-    //IR
-    server.on("/getir", getIR);
-    server.on("/sendir", sendir);
-    server.on("/habir", habir);
-    //RF
-    server.on("/habrf", habRF);
-    server.on("/getrf", getRF);
-    server.on("/gravarf", gravarf);
-    server.on("/ultimodisparorf", ultimodisprf);
-    server.on("/sendrf", sendRFp);
-    server.on("/modelo", fmodelo);
-    server.on("/memoria", fMemoria);
-    server.on("/html", gravahtml);
-    //server.on("/teste", testes2);
-    server.on("/api", api);
-    server.on("/apiativo", apiativo);
-    server.on("/apiconfig", apiconfig);
-    server.on("/alterasenhapi", alterasenhapi);
-    server.on("/about", about);
-    server.on("/gravacena", gravacena);
-    server.on("/log", readlog);
-    server.on("/gravacloud", GravaCloud);
-    server.on("/dirarquivos", dirarquivos);
-    server.on("/downloadfile", File_Download);
-    server.on("/uploadfile", File_Upload);
-    server.on(
-        "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
-    server.on("/deletefile", File_Delete);
-    //server.on("/cloud", cloud);
-    //  server.on("/sendcloud", sendCloud);
+void ConfigurarWebServer(void)
+{
+  server.on("/", configuracao);
+  server.on("/grava", grava);
+  server.on("/ler", ler);
+  server.on("/config", configuracao);
+  server.on("/gravarwifi", gravawifi);
+  server.on("/gravasenhawifi", gravasenhawifi);
+  server.on("/gravasenhahttp", gravasenhahttp);
+  server.on("/reset", wifireset);
+  server.on("/reiniciar", reiniciar);
+  server.on("/valida", valida);
+  server.on("/controle", controle);
+  server.on("/situacao", situacao);
+  server.on("/chipid", retornachip);
+  server.on("/chamaddns", chamaddns);
+  //server.on("/mesh", mesh);
+  //server.on("/consultamesh", meshconsulta);
+  server.on("/consultaagenda", conagenda);
+  server.on("/gravaragenda", gravaragenda);
+  server.on("/atualizahora", atualizahora);
+  server.on("/lersensores", lersensores);
+  server.on("/gravasensor", gravasensor);
+  server.on("/consultasensor", consensor);
+  server.on("/gravadevice", gravadevice);
+  server.on("/buscadevice", buscadevice);
+  server.on("/executeupdate", executeupdate);
+  server.on("/executeupdatebeta", executeupdateBeta);
+  server.on("/versao", versao);
+  server.on("/link", linkversao);
+  server.on("/link", linkversaoBeta);
+  //server.on("/limpadevice", limpadevice);
+  server.on("/ultimodisparo", ultimodisp);
+  server.on("/buscaNotificar", buscaNotificar);
+  server.on("/gravanot", gravanot);
+  server.on("/gravasms", gravasms);
+  server.on("/consultasms", consultasms);
+  server.on("/wifi", valorwifi);
+  server.on("/listawifi", listawifi);
+  server.on("/listawifi2", listawifi2);
+  //IR
+  server.on("/getir", getIR);
+  server.on("/sendir", sendir);
+  server.on("/habir", habir);
+  //RF
+  server.on("/habrf", habRF);
+  server.on("/getrf", getRF);
+  server.on("/gravarf", gravarf);
+  server.on("/ultimodisparorf", ultimodisprf);
+  server.on("/sendrf", sendRFp);
+  server.on("/modelo", fmodelo);
+  server.on("/memoria", fMemoria);
+  server.on("/html", gravahtml);
+  //server.on("/teste", testes2);
+  server.on("/api", api);
+  server.on("/apiativo", apiativo);
+  server.on("/apiconfig", apiconfig);
+  server.on("/alterasenhapi", alterasenhapi);
+  server.on("/about", about);
+  server.on("/gravacena", gravacena);
+  server.on("/log", readlog);
+  server.on("/gravacloud", GravaCloud);
+  server.on("/dirarquivos", dirarquivos);
+  server.on("/downloadfile", File_Download);
+  server.on("/uploadfile", File_Upload);
+  server.on(
+      "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
+  server.on("/deletefile", File_Delete);
+  //server.on("/cloud", cloud);
+  //  server.on("/sendcloud", sendCloud);
 
-    server.on("/inline", []() {
-        server.send(200, "text/plain", "this works as well");
-    });
+  server.on("/inline", []() {
+    server.send(200, "text/plain", "this works as well");
+  });
 
-    server.onNotFound(handleNotFound);
+  server.onNotFound(handleNotFound);
 
-    server.begin();
+  server.begin();
 
-    Serial.println("HTTP server started");
+  Serial.println("HTTP server started");
 }
 
 void ResetSaidasPulsadas()
 {
-    for (int iPorta = 0; iPorta <= 15; iPorta++)
+  for (int iPorta = 0; iPorta <= 15; iPorta++)
+  {
+    if (g_pulsoHabilita[iPorta])
     {
-        if (g_pulsoHabilita[iPorta])
+      // proteção no caso de variavel estourar
+      if (millisAtual < g_tempoInicioPulso[iPorta])
+      {
+        g_tempoInicioPulso[iPorta] = 0;
+      }
+      else if (millisAtual >= g_tempoInicioPulso[iPorta] + 500)
+      {
+        g_pulsoHabilita[iPorta] = false;
+        if (iPorta < 8)
         {
-            // proteção no caso de variavel estourar
-            if (millisAtual < g_tempoInicioPulso[iPorta])
-            {
-                g_tempoInicioPulso[iPorta] = 0;
-            }
-            else if (millisAtual >= g_tempoInicioPulso[iPorta] + 500)
-            {
-                g_pulsoHabilita[iPorta] = false;
-                if (iPorta < 8)
-                {
-                    chip1.write(iPorta, HIGH);
-                }
-                else
-                {
-                    chip2.write(iPorta - 8, HIGH);
-                }
-            }
+          chip1.write(iPorta, HIGH);
         }
+        else
+        {
+          chip2.write(iPorta - 8, HIGH);
+        }
+      }
     }
+  }
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\ir.ino"
+
+void LoopResetFabrica()
+{
+  int ValorbuttonState = digitalRead(buttonState);
+
+  if (ValorbuttonState == HIGH)
+  {
+    if (resetIntPulsado() == true)
+    {
+      ConfigEP();
+      //Serial.println("reset pulsado");
+    }
+    else if (resetIntNormal() == true)
+    {
+      ConfigEN();
+      //Serial.println("reset normal");
+    }
+    else
+    {
+      //Serial.print("reset ligado: ");
+      //Serial.println(digitalRead(buttonState));
+      wifireset2();
+      ESP.restart();
+    }
+  }
+}
+
+void LoopLedStatus()
+{
+  if (chip3.read(LedWiFI) == LOW)
+  {
+    int32_t rssi;
+
+    //      chip3.write(LedAmarelo, LOW);
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      if (vConfigWIFI == "0")
+      {
+        lastWifiTime = millisAtual;
+      }
+      rssi = WiFi.RSSI();
+      //Serial.println(String(rssi));
+
+      if (rssi >= -65)
+      {
+        chip3.write(LedVerde, LOW);
+        chip3.write(LedAmarelo, HIGH);
+      }
+      else if (rssi < -65 && rssi >= -100)
+      {
+        chip3.write(LedVerde, HIGH);
+        chip3.write(LedAmarelo, LOW);
+      }
+      else
+      {
+        chip3.write(LedVerde, HIGH);
+        chip3.write(LedAmarelo, HIGH);
+      }
+    }
+  }
+}
+
+void LoopLedRunning()
+{
+  //  if (HorarioAtual.Second() != Segundo)
+  if (Segundo == -1 || (millisAtual - Segundo) > 200)
+  {
+    Segundo = millisAtual;
+    //Segundo = HorarioAtual.Second();
+    chip3.write(LedGeral, !chip3.read(LedGeral));
+  }
+}
+#line 1 "c:\\dev\\keepin\\firmware16\\ir.ino"
 void configIR()
 {
 
@@ -5280,7 +5021,28 @@ uint64_t getUInt64fromHex(char const *str)
 //
 //    return accumulator;
 //}
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\leituras.ino"
+
+void LoopIR()
+{
+  if (enReadIR)
+  {
+    if (irrecv.decode(&results))
+    {
+      Serial.print(resultToHumanReadableBasic(&results));
+      dumpCode(&results);
+      dumpInfo(&results);
+      Serial.println(""); // Blank line between entries
+      //tone(Buzzer, 4000, 800);
+      chip3.write(Buzzer, HIGH);
+      delay(300);
+      chip3.write(Buzzer, LOW);
+      //noTone(Buzzer);
+      enReadIR = false;
+      irrecv.resume();
+    }
+  }
+}
+#line 1 "c:\\dev\\keepin\\firmware16\\leituras.ino"
 void leituraUDP()
 {
 
@@ -5593,575 +5355,7 @@ int packetSize = Udp.parsePacket();
 
 
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mesh.ino"
-/*
-void mesh() {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-//if(!server.authenticate(www_username, www_password))
-    //return server.requestAuthentication();
-  
-  // get the value of request argument "state" and convert it to an int
-  int state = server.arg("state").toInt();
-
-    String sIP = server.arg("ip");
-    String Senha = server.arg("s");
-    int Porta = server.arg("p").toInt();
-    String funcao = server.arg("f");
-    int IdChip = server.arg("c").toInt();
-    String Tipo = server.arg("t");
-    IPAddress Destino;
-
-
-
-  server.send(200, "text/plain", String("LED is now "));
-  WiFi.disconnect(); 
-  conectarmesh();
-      
-  Serial.println("");
-  if ((state != 1) and (state != 0)){
-    /* Scan for other nodes and send them a message */
-    /*
-    char request[60];
-    char MeshNode[60];
-
-    sprintf(MeshNode, "Mesh_Node%d", state);
-    
-    Serial.println("Entrou...");  
-    Serial.print("Tentdo encontrar ");
-    Serial.println(MeshNode);
-    server.send(200, "text/plain", String("LED is now ") + ((state)));
-
-
-    
-    String Texto = sIP + "|" + String(Porta) + "|" + funcao + "|" + String(IdChip)+"|"+Tipo+"|"+Senha+"|";
-    
-    sprintf(request, Texto.c_str(), request_i++, ESP.getChipId());
-    
-    //mesh_node.attemptScan(request);
-    mesh_node.attemptScanNodeSend(MeshNode,request);
-    delay(1000);
-    
-    Serial.println("Saiu..");
-        
-    Serial.println(WiFi.status());
-    //if (WiFi.status()== 3) {
-      WiFi.disconnect();
-      Serial.println(WiFi.status());
-    //};
-    //if (WiFi.status()!= WL_CONNECTED){
-    // Connect to WiFi network
-    server.send(200, "text/plain", String("LED is now ") + ((state)));
-    conectar();
-    //ESP.restart();
-  }
-  else if (state == 1){
-    /* Scan for other nodes and send them a message */
-    /*
-    char request[60];
-    Serial.println("Entrou...");
-    Serial.println("Tentdo encontrar *");
-    server.send(200, "text/plain", String("LED is now ") + ((state)));
-
-    String Texto = sIP + "|" + String(Porta) + "|" + funcao + "|" + String(IdChip)+"|"+Tipo+"|";
-    
-    sprintf(request, Texto.c_str(), request_i++, ESP.getChipId());
-    mesh_node.attemptScan(request);
-    //mesh_node.attemptScanNodeSend("Mesh_Node1026892",request);
-    delay(1000);
-    
-    Serial.println("Saiu..");
-    
-
-    
-    Serial.println(WiFi.status());
-    //if (WiFi.status()== 3) {
-      WiFi.disconnect();
-      Serial.println(WiFi.status());
-    //};
-    //if (WiFi.status()!= WL_CONNECTED){
-      // Connect to WiFi network
-    server.send(200, "text/plain", String("LED is now ") + ((state)));
-    conectar();
-    //ESP.restart();
-   };
-
-  server.send(200, "text/plain", String("LED is now ") + ((state)));
-
-}
-
-
-void meshconsulta() {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  //if(!server.authenticate(www_username, www_password))
-    //return server.requestAuthentication();
-  
-  // get the value of request argument "state" and convert it to an int
-
-  String sIP = server.arg("ip");
-  String Senha = server.arg("s");
-  int Porta = server.arg("p").toInt();
-  String funcao = server.arg("f");
-  int IdChip = server.arg("c").toInt();
-  String Tipo = server.arg("t");
-
-  if ((IdChip == mesh_ChipId.toInt()) && (mesh_Tipo=="R"))
-  {
-    server.send(200, "text/plain", mesh_funcao);
-  }
-  else
-  {
-    server.send(200, "text/plain", "-1");
-  }
-}
-
-*/
-void conectar() {
-  WiFi.disconnect();   
-  WiFi.softAPdisconnect(); 
-
-  String retorno = wifiPadrao();
-  vConfigWIFI = retorno;
-  
-  Serial.println("Valor de retorno: " + retorno);
-  if (retorno == "0")
-  {
-    WiFi.mode(WIFI_STA);
-    listawifi();          
-    tipoWifiAtual = 1;
-    String ssid_STR = pegaSSID();
-    const char *ssid = ssid_STR.c_str();
-    
-
-    String password_STR = pegaPassword();
-    const char* password = password_STR.c_str();
-
-    String ip_STR = pegaIP();
-    const char* ipStr = ip_STR.c_str();
-    byte ip2[4];
-    parseBytes(ipStr, ',', ip2, 4, 10);   
-    IPAddress ip(ip2);
-
-    String mask_STR = pegaMask();
-    const char* maskStr = mask_STR.c_str();
-    byte mask2[4];
-    parseBytes(maskStr, ',', mask2, 4, 10);   
-    IPAddress subnet(mask2); // set gateway to match your network
-
-    String gateway_STR = pegaGateway();
-    const char* gatewayStr = gateway_STR.c_str();
-    byte gateway2[4];
-    parseBytes(gatewayStr, ',', gateway2, 4, 10);      
-    IPAddress gateway(gateway2); 
-
-    IPAddress dns(8,8,8,8);
-
-
-    Serial.println(ip);
-    Serial.println(gateway);
-    Serial.println(subnet);
-    Serial.println(ssid);
-    Serial.println(password);
-
-    IpDispositivo = ip;
-
-    local_IP = ip;
-    
-    WiFi.config(ip, gateway, subnet, DNS1, DNS2);
-    WiFi.begin(ssid, password);
-    Serial.println("");
-    counter = 0;
-    while (WiFi.status() != WL_CONNECTED) {
-      if(counter > 20){
-          WiFi.mode(WIFI_AP);
-          tipoWifiAtual = 2;
-          listawifi();          
-          chip3.write(LedWiFI, HIGH);  
-          Serial.println("Rede não localizada");    
-          IPAddress local_IP(192,168,4,1);
-          IPAddress gateway(192,168,4,1);
-          IPAddress subnet(255,255,255,0);
-        
-          Serial.print("Setting soft-AP configuration ... ");
-          Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
-         
-          Serial.print("Setting soft-AP ... ");
-          Serial.println("idencitifcador");
-          //int chipId = ESP.getChipId();
-          String NomeRede = "KEEPIN_" + vchipId;
-          Serial.println(NomeRede);
-          const char *nRede = NomeRede.c_str();
-          Serial.println(nRede);
-          
-          //Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
-
-          if (! WiFi.softAP(nRede, vSenhaAP.c_str())) {
-            wifireset2();
-          }
-               
-          Serial.print("Soft-AP IP address = ");
-          Serial.println(WiFi.softAPIP());  
-          IpDispositivo = local_IP;
-
-          break;
-          
-      }      
-      else
-      {
-        chip3.write(LedWiFI, LOW); 
-        ///mesh_node.begin();        
-      }
-
-      delay(500);
-      Serial.print(".");
-      counter++;
-
-      int ValorbuttonState = digitalRead(buttonState);
-
-      if (ValorbuttonState == HIGH) {
-        Serial.print("resetando");
-        WiFi.disconnect();
-        wifireset2();
-        ESP.restart();
-      }
-      
-    }
-    //Verifica o nivel do sinal wifi
-    //int32_t rssi = getRSSI(SSID);
-    
-  }
-  else
-  {
-    WiFi.mode(WIFI_AP);
-    tipoWifiAtual = 2;
-    chip3.write(LedWiFI, HIGH);  
-
-    Serial.println();
-
-    listawifi();
-    Serial.println(vListaWifi);
-
-
-    IPAddress local_IP(192,168,4,1);
-    IPAddress gateway(192,168,4,1);
-    IPAddress subnet(255,255,255,0);
-
-    Serial.print("Setting soft-AP configuration ... ");
-    Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
-
-    Serial.print("Setting soft-AP ... ");
-    Serial.println("idencitifcador");
-    //int chipId = ESP.getChipId();
-    String NomeRede = "KEEPIN_" + vchipId;
-    Serial.println(NomeRede);
-    const char *nRede = NomeRede.c_str();
-    Serial.println(nRede);
-    
-    if (! WiFi.softAP(nRede, vSenhaAP.c_str())) {
-      wifireset2();
-    }
-
-    Serial.print("Soft-AP IP address = ");
-    Serial.println(WiFi.softAPIP());
-    IpDispositivo = local_IP;
-  }
-  
-}
-
-/*
-void conectarmesh()
-{
-  WiFi.disconnect();    
-  
-  String retorno = wifiPadrao();
-
-          Serial.println("Rede não localizada");    
-          IPAddress local_IP(192,168,4,1);
-          IPAddress gateway(192,168,4,1);
-          IPAddress subnet(255,255,0,0);
-
-          IPAddress mesh_ip(0,0,0,0);
-          IPAddress mesh_gateway(0,0,0,0);
-          IPAddress mesh_subnet(0,0,0,0);
-          
-          
-          WiFi.config(mesh_ip, mesh_gateway, mesh_subnet);
-
-
-          Serial.print("Setting soft-AP configuration ... ");
-          Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
-      
-          Serial.print("Setting soft-AP ... ");
-          Serial.println("idencitifcador");
-          int chipId = ESP.getChipId();
-          String NomeRede = "ESP_" + String(chipId);
-          Serial.println(NomeRede);
-          const char *nRede = NomeRede.c_str();
-          Serial.println(nRede);
-          
-          Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
-      
-          Serial.print("Soft-AP IP address = ");
-          Serial.println(WiFi.softAPIP());  
-          IpDispositivo = local_IP;
-  
-}
-*/
-
-
-/*
-String manageRequest(String request)
-{
-  mesh_sIP = "";
-  mesh_Porta = "";
-  mesh_funcao = "";
-  mesh_ChipId = "";
-  mesh_Tipo = "";
-  mesh_Senha = "";  
-  /* Print out received message */\
-  /*
-  Serial.print("received: ");
-  Serial.println(request);
-
-    int i2 = 0;
-   
-    for (int i = 0; i < 255; i++) 
-    {
-      if (request[i] != '|' && i2 <= 5)
-      { 
-        if (i2 == 0)
-        {       
-          mesh_sIP += request[i];
-        }
-
-        if (i2 == 1)
-        {       
-          mesh_Porta += request[i];
-        }
-        if (i2 == 2)
-        {       
-          mesh_funcao += request[i];
-        }
-        if (i2 == 3)
-        {       
-          mesh_ChipId += request[i];
-        }    
-        if (i2 == 4)
-        {       
-          mesh_Tipo += request[i];
-        }        
-        if (i2 == 5)
-        {       
-          mesh_Senha += request[i];
-        }        
-            
-      }      
-      else
-      {
-        i2++;
-      }
-    }
-    Serial.println("");
-    Serial.println("IP: " + mesh_sIP);
-    Serial.println("Porta: " + mesh_Porta);
-    Serial.println("Funcao: " + mesh_funcao);
-    Serial.println("ChipId: " + mesh_ChipId);
-    Serial.println("Tipo: " + mesh_Tipo);
-
-    String Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
-
-  /* return a string to send back */
-  /*
-  char response[60];
-
-  if (mesh_Senha == "kdi9e")
-  {
-
-    mesh_Porta = String(retornaPorta(mesh_Porta.toInt()));
-    if (mesh_Porta != "")
-      //pinMode(mesh_Porta.toInt(), OUTPUT);          
-    
-//    if (mesh_Porta.toInt() == 1)
-//    {
-//      mesh_Porta = "14";
-//    }
-
-      if ((mesh_Tipo == "E") && (mesh_ChipId.toInt() == ESP.getChipId()))
-      {
-        if (mesh_funcao=="true")
-        {
-          //digitalWrite(mesh_Porta.toInt(), 1);
-          LigaDesliga(mesh_Porta.toInt(), HIGH, "", 0);
-          mesh_funcao = "true";
-          mesh_Tipo = "R";
-          Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
-          Serial.println("led ligado UDP");        
-          sprintf(response, Texto.c_str(), response_i++, ESP.getChipId());
-          return response;
-          
-        }
-        else 
-        {
-          //digitalWrite(mesh_Porta.toInt(), 0);
-          LigaDesliga(mesh_Porta.toInt(), LOW, "", 0);
-          Serial.println("led 1 desligado UDP");      
-          mesh_Tipo = "R";
-          mesh_funcao = "false";
-          Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
-          sprintf(response, Texto.c_str(), response_i++, ESP.getChipId());
-          return response;          
-        }
-      }
-      else
-      if ((mesh_Tipo == "C") && (mesh_ChipId.toInt() == ESP.getChipId())){
-        if (LePorta(mesh_Porta.toInt()) == HIGH) {
-          mesh_funcao = "true";
-          mesh_Tipo = "R";
-          Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
-          sprintf(response, Texto.c_str(), response_i++, ESP.getChipId());
-          return response;          
-        }
-//        else
-        //{
-//          mesh_Tipo = "R";
-  //        mesh_funcao = "false";
-    //      Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
-      //    sprintf(response, Texto.c_str(), response_i++, ESP.getChipId());
-        //  return response;          
-        //}
-      }
-   }
-}
-*/
-void listawifi()
-{
- 
-  Serial.println("consultou");
-  int numberOfNetworks = WiFi.scanNetworks();
-  vListaWifi = "";
-
-  for(int i =0; i<numberOfNetworks; i++)
-  {
-      vListaWifi += WiFi.SSID(i);
-      vListaWifi += "|";
-  }  
-  vListaWifi += "*";
-  server.send(200, "text/html", vListaWifi);  
-}
-
-void listawifi2()
-{
-  
-  server.send(200, "text/html", vListaWifi);  
-}
-
-void gravasenhawifi()
-{
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-
-  String vSenha = String(server.arg("s"));
-  String req = server.arg("v");
-  String CurrentPass = server.arg("a");
-
-  if (vSenha == Senha)
-  {
-    if (req == "")
-    {
-      req = "12345678";  // se não houver registro, vai para o padrão
-    } 
-    
-    if (vSenhaAP == CurrentPass) {
-
-      SPIFFS.begin();
-      File f = SPIFFS.open("/senhaap.txt", "w");
-      
-      f.println(req+"|");
-      f.close();
-      
-      SPIFFS.end();    
-      vSenhaAP = req;
-      server.send(200, "text/html", "ok");
-      Serial.println("Alterado: " + vSenhaAP);
-    }
-    else {
-      server.send(200, "text/html", "-1");                   
-      Serial.println("Senha invalida: Atual = " + vSenhaAP + " Informada: " + CurrentPass);
-    }
-  }
-  else {
-    Serial.println("erro de senha de comunicacao: Senha Registrada: " + Senha + " senha enviada: " + vSenha);
-    server.send(200, "text/html", "-1");       
-  }
-}
-
-void gravasenhahttp()
-{
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-
-    String vSenha = server.arg("s");
-    String vreq = server.arg("v");
-    String CurrentPass = server.arg("a");
-    String vUsuarioAntigo = server.arg("ua");
-    String vUsuariohttp = server.arg("u");
-
-    if (vSenha == Senha)
-    {
-      if (vreq == "" || vreq == " ")
-      {
-        vreq = "keepin";  // se não houver registro, vai para o padrão
-      } 
-
-      if (vUsuariohttp == "" || vUsuariohttp == " ")
-      {
-        vUsuariohttp = "keepin"; // se não houver usuario vai para o padrao
-      }
-      
-      if (senha1 == CurrentPass && vUsuarioAntigo == usuario1) {
-
-        seg.gravar(vUsuariohttp, vreq);
-        /*
-        SPIFFS.begin();
-        //senha
-        File f = SPIFFS.open("/httppass.txt", "w");
-        
-        f.println(vreq+"|");
-//        f.println("keepin|");
-        f.close();
-
-        //Usuario
-        f = SPIFFS.open("/httpuser.txt", "w");
-        
-//        f.println("keepin|");
-        f.println(vUsuariohttp+"|");
-        f.close();  
-
-        Serial.println("req: " + vreq);
-        Serial.println("usuario: " + vUsuariohttp);
-        SPIFFS.end();    
-        */
-        Serial.println("Reiniciando sistema depois de alterar http senha");
-        server.send(200, "text/html", "ok");
-        delay(500);
-        ESP.restart();
-      }
-      else {
-        server.send(200, "text/html", "-1");   
-      }
-    } 
-    else {
-      server.send(200, "text/html", "-1");       
-    }
-  
-}
-
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\mqtt.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\mqtt.ino"
 /*
  * uMQTTBroker demo for Arduino (C++-style)
  * 
@@ -6333,7 +5527,7 @@ String MqttArg(char *msg, char *pkey)
     else
         return "";
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\normalize.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\normalize.ino"
 String vNormalize() { 
   String html = "html {";
   html += "    font-family: sans-serif;";
@@ -6558,7 +5752,596 @@ String vNormalize() {
   return html;
 }  
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\rf.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\rede.ino"
+/*
+void mesh() {
+  //const char* www_username = www_username2.c_str();
+  //const char* www_password = www_password2.c_str();
+//if(!server.authenticate(www_username, www_password))
+    //return server.requestAuthentication();
+  
+  // get the value of request argument "state" and convert it to an int
+  int state = server.arg("state").toInt();
+
+    String sIP = server.arg("ip");
+    String Senha = server.arg("s");
+    int Porta = server.arg("p").toInt();
+    String funcao = server.arg("f");
+    int IdChip = server.arg("c").toInt();
+    String Tipo = server.arg("t");
+    IPAddress Destino;
+
+
+
+  server.send(200, "text/plain", String("LED is now "));
+  WiFi.disconnect(); 
+  conectarmesh();
+      
+  Serial.println("");
+  if ((state != 1) and (state != 0)){
+    /* Scan for other nodes and send them a message */
+/*
+    char request[60];
+    char MeshNode[60];
+
+    sprintf(MeshNode, "Mesh_Node%d", state);
+    
+    Serial.println("Entrou...");  
+    Serial.print("Tentdo encontrar ");
+    Serial.println(MeshNode);
+    server.send(200, "text/plain", String("LED is now ") + ((state)));
+
+
+    
+    String Texto = sIP + "|" + String(Porta) + "|" + funcao + "|" + String(IdChip)+"|"+Tipo+"|"+Senha+"|";
+    
+    sprintf(request, Texto.c_str(), request_i++, ESP.getChipId());
+    
+    //mesh_node.attemptScan(request);
+    mesh_node.attemptScanNodeSend(MeshNode,request);
+    delay(1000);
+    
+    Serial.println("Saiu..");
+        
+    Serial.println(WiFi.status());
+    //if (WiFi.status()== 3) {
+      WiFi.disconnect();
+      Serial.println(WiFi.status());
+    //};
+    //if (WiFi.status()!= WL_CONNECTED){
+    // Connect to WiFi network
+    server.send(200, "text/plain", String("LED is now ") + ((state)));
+    conectar();
+    //ESP.restart();
+  }
+  else if (state == 1){
+    /* Scan for other nodes and send them a message */
+/*
+    char request[60];
+    Serial.println("Entrou...");
+    Serial.println("Tentdo encontrar *");
+    server.send(200, "text/plain", String("LED is now ") + ((state)));
+
+    String Texto = sIP + "|" + String(Porta) + "|" + funcao + "|" + String(IdChip)+"|"+Tipo+"|";
+    
+    sprintf(request, Texto.c_str(), request_i++, ESP.getChipId());
+    mesh_node.attemptScan(request);
+    //mesh_node.attemptScanNodeSend("Mesh_Node1026892",request);
+    delay(1000);
+    
+    Serial.println("Saiu..");
+    
+
+    
+    Serial.println(WiFi.status());
+    //if (WiFi.status()== 3) {
+      WiFi.disconnect();
+      Serial.println(WiFi.status());
+    //};
+    //if (WiFi.status()!= WL_CONNECTED){
+      // Connect to WiFi network
+    server.send(200, "text/plain", String("LED is now ") + ((state)));
+    conectar();
+    //ESP.restart();
+   };
+
+  server.send(200, "text/plain", String("LED is now ") + ((state)));
+
+}
+
+
+void meshconsulta() {
+  //const char* www_username = www_username2.c_str();
+  //const char* www_password = www_password2.c_str();
+  //if(!server.authenticate(www_username, www_password))
+    //return server.requestAuthentication();
+  
+  // get the value of request argument "state" and convert it to an int
+
+  String sIP = server.arg("ip");
+  String Senha = server.arg("s");
+  int Porta = server.arg("p").toInt();
+  String funcao = server.arg("f");
+  int IdChip = server.arg("c").toInt();
+  String Tipo = server.arg("t");
+
+  if ((IdChip == mesh_ChipId.toInt()) && (mesh_Tipo=="R"))
+  {
+    server.send(200, "text/plain", mesh_funcao);
+  }
+  else
+  {
+    server.send(200, "text/plain", "-1");
+  }
+}
+
+*/
+void conectar()
+{
+  WiFi.disconnect();
+  WiFi.softAPdisconnect();
+
+  String retorno = wifiPadrao();
+  vConfigWIFI = retorno;
+
+  Serial.println("Valor de retorno: " + retorno);
+  if (retorno == "0")
+  {
+    WiFi.mode(WIFI_STA);
+    listawifi();
+    tipoWifiAtual = 1;
+    String ssid_STR = pegaSSID();
+    const char *ssid = ssid_STR.c_str();
+
+    String password_STR = pegaPassword();
+    const char *password = password_STR.c_str();
+
+    String ip_STR = pegaIP();
+    const char *ipStr = ip_STR.c_str();
+    byte ip2[4];
+    parseBytes(ipStr, ',', ip2, 4, 10);
+    IPAddress ip(ip2);
+
+    String mask_STR = pegaMask();
+    const char *maskStr = mask_STR.c_str();
+    byte mask2[4];
+    parseBytes(maskStr, ',', mask2, 4, 10);
+    IPAddress subnet(mask2); // set gateway to match your network
+
+    String gateway_STR = pegaGateway();
+    const char *gatewayStr = gateway_STR.c_str();
+    byte gateway2[4];
+    parseBytes(gatewayStr, ',', gateway2, 4, 10);
+    IPAddress gateway(gateway2);
+
+    IPAddress dns(8, 8, 8, 8);
+
+    Serial.println(ip);
+    Serial.println(gateway);
+    Serial.println(subnet);
+    Serial.println(ssid);
+    Serial.println(password);
+
+    IpDispositivo = ip;
+
+    local_IP = ip;
+
+    WiFi.config(ip, gateway, subnet, DNS1, DNS2);
+    WiFi.begin(ssid, password);
+    Serial.println("");
+    counter = 0;
+    while (WiFi.status() != WL_CONNECTED)
+    {
+      if (counter > 20)
+      {
+        WiFi.mode(WIFI_AP);
+        tipoWifiAtual = 2;
+        listawifi();
+        chip3.write(LedWiFI, HIGH);
+        Serial.println("Rede não localizada");
+        IPAddress local_IP(192, 168, 4, 1);
+        IPAddress gateway(192, 168, 4, 1);
+        IPAddress subnet(255, 255, 255, 0);
+
+        Serial.print("Setting soft-AP configuration ... ");
+        Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+
+        Serial.print("Setting soft-AP ... ");
+        Serial.println("idencitifcador");
+        //int chipId = ESP.getChipId();
+        String NomeRede = "KEEPIN_" + vchipId;
+        Serial.println(NomeRede);
+        const char *nRede = NomeRede.c_str();
+        Serial.println(nRede);
+
+        //Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
+
+        if (!WiFi.softAP(nRede, vSenhaAP.c_str()))
+        {
+          wifireset2();
+        }
+
+        Serial.print("Soft-AP IP address = ");
+        Serial.println(WiFi.softAPIP());
+        IpDispositivo = local_IP;
+
+        break;
+      }
+      else
+      {
+        chip3.write(LedWiFI, LOW);
+        ///mesh_node.begin();
+      }
+
+      delay(500);
+      Serial.print(".");
+      counter++;
+
+      int ValorbuttonState = digitalRead(buttonState);
+
+      if (ValorbuttonState == HIGH)
+      {
+        Serial.print("resetando");
+        WiFi.disconnect();
+        wifireset2();
+        ESP.restart();
+      }
+    }
+    //Verifica o nivel do sinal wifi
+    //int32_t rssi = getRSSI(SSID);
+  }
+  else
+  {
+    WiFi.mode(WIFI_AP);
+    tipoWifiAtual = 2;
+    chip3.write(LedWiFI, HIGH);
+
+    Serial.println();
+
+    listawifi();
+    Serial.println(vListaWifi);
+
+    IPAddress local_IP(192, 168, 4, 1);
+    IPAddress gateway(192, 168, 4, 1);
+    IPAddress subnet(255, 255, 255, 0);
+
+    Serial.print("Setting soft-AP configuration ... ");
+    Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+
+    Serial.print("Setting soft-AP ... ");
+    Serial.println("idencitifcador");
+    //int chipId = ESP.getChipId();
+    String NomeRede = "KEEPIN_" + vchipId;
+    Serial.println(NomeRede);
+    const char *nRede = NomeRede.c_str();
+    Serial.println(nRede);
+
+    if (!WiFi.softAP(nRede, vSenhaAP.c_str()))
+    {
+      wifireset2();
+    }
+
+    Serial.print("Soft-AP IP address = ");
+    Serial.println(WiFi.softAPIP());
+    IpDispositivo = local_IP;
+  }
+}
+
+/*
+void conectarmesh()
+{
+  WiFi.disconnect();    
+  
+  String retorno = wifiPadrao();
+
+          Serial.println("Rede não localizada");    
+          IPAddress local_IP(192,168,4,1);
+          IPAddress gateway(192,168,4,1);
+          IPAddress subnet(255,255,0,0);
+
+          IPAddress mesh_ip(0,0,0,0);
+          IPAddress mesh_gateway(0,0,0,0);
+          IPAddress mesh_subnet(0,0,0,0);
+          
+          
+          WiFi.config(mesh_ip, mesh_gateway, mesh_subnet);
+
+
+          Serial.print("Setting soft-AP configuration ... ");
+          Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+      
+          Serial.print("Setting soft-AP ... ");
+          Serial.println("idencitifcador");
+          int chipId = ESP.getChipId();
+          String NomeRede = "ESP_" + String(chipId);
+          Serial.println(NomeRede);
+          const char *nRede = NomeRede.c_str();
+          Serial.println(nRede);
+          
+          Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
+      
+          Serial.print("Soft-AP IP address = ");
+          Serial.println(WiFi.softAPIP());  
+          IpDispositivo = local_IP;
+  
+}
+*/
+
+/*
+String manageRequest(String request)
+{
+  mesh_sIP = "";
+  mesh_Porta = "";
+  mesh_funcao = "";
+  mesh_ChipId = "";
+  mesh_Tipo = "";
+  mesh_Senha = "";  
+  /* Print out received message */
+/*
+  Serial.print("received: ");
+  Serial.println(request);
+
+    int i2 = 0;
+   
+    for (int i = 0; i < 255; i++) 
+    {
+      if (request[i] != '|' && i2 <= 5)
+      { 
+        if (i2 == 0)
+        {       
+          mesh_sIP += request[i];
+        }
+
+        if (i2 == 1)
+        {       
+          mesh_Porta += request[i];
+        }
+        if (i2 == 2)
+        {       
+          mesh_funcao += request[i];
+        }
+        if (i2 == 3)
+        {       
+          mesh_ChipId += request[i];
+        }    
+        if (i2 == 4)
+        {       
+          mesh_Tipo += request[i];
+        }        
+        if (i2 == 5)
+        {       
+          mesh_Senha += request[i];
+        }        
+            
+      }      
+      else
+      {
+        i2++;
+      }
+    }
+    Serial.println("");
+    Serial.println("IP: " + mesh_sIP);
+    Serial.println("Porta: " + mesh_Porta);
+    Serial.println("Funcao: " + mesh_funcao);
+    Serial.println("ChipId: " + mesh_ChipId);
+    Serial.println("Tipo: " + mesh_Tipo);
+
+    String Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
+
+  /* return a string to send back */
+/*
+  char response[60];
+
+  if (mesh_Senha == "kdi9e")
+  {
+
+    mesh_Porta = String(retornaPorta(mesh_Porta.toInt()));
+    if (mesh_Porta != "")
+      //pinMode(mesh_Porta.toInt(), OUTPUT);          
+    
+//    if (mesh_Porta.toInt() == 1)
+//    {
+//      mesh_Porta = "14";
+//    }
+
+      if ((mesh_Tipo == "E") && (mesh_ChipId.toInt() == ESP.getChipId()))
+      {
+        if (mesh_funcao=="true")
+        {
+          //digitalWrite(mesh_Porta.toInt(), 1);
+          LigaDesliga(mesh_Porta.toInt(), HIGH, "", 0);
+          mesh_funcao = "true";
+          mesh_Tipo = "R";
+          Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
+          Serial.println("led ligado UDP");        
+          sprintf(response, Texto.c_str(), response_i++, ESP.getChipId());
+          return response;
+          
+        }
+        else 
+        {
+          //digitalWrite(mesh_Porta.toInt(), 0);
+          LigaDesliga(mesh_Porta.toInt(), LOW, "", 0);
+          Serial.println("led 1 desligado UDP");      
+          mesh_Tipo = "R";
+          mesh_funcao = "false";
+          Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
+          sprintf(response, Texto.c_str(), response_i++, ESP.getChipId());
+          return response;          
+        }
+      }
+      else
+      if ((mesh_Tipo == "C") && (mesh_ChipId.toInt() == ESP.getChipId())){
+        if (LePorta(mesh_Porta.toInt()) == HIGH) {
+          mesh_funcao = "true";
+          mesh_Tipo = "R";
+          Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
+          sprintf(response, Texto.c_str(), response_i++, ESP.getChipId());
+          return response;          
+        }
+//        else
+        //{
+//          mesh_Tipo = "R";
+  //        mesh_funcao = "false";
+    //      Texto = mesh_sIP + "|" + mesh_Porta + "|" + mesh_funcao + "|" + mesh_ChipId+"|"+mesh_Tipo+"|"+mesh_Senha+"|";
+      //    sprintf(response, Texto.c_str(), response_i++, ESP.getChipId());
+        //  return response;          
+        //}
+      }
+   }
+}
+*/
+void listawifi()
+{
+
+  Serial.println("consultou");
+  int numberOfNetworks = WiFi.scanNetworks();
+  vListaWifi = "";
+
+  for (int i = 0; i < numberOfNetworks; i++)
+  {
+    vListaWifi += WiFi.SSID(i);
+    vListaWifi += "|";
+  }
+  vListaWifi += "*";
+  server.send(200, "text/html", vListaWifi);
+}
+
+void listawifi2()
+{
+
+  server.send(200, "text/html", vListaWifi);
+}
+
+void gravasenhawifi()
+{
+  //const char* www_username = www_username2.c_str();
+  //const char* www_password = www_password2.c_str();
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  String vSenha = String(server.arg("s"));
+  String req = server.arg("v");
+  String CurrentPass = server.arg("a");
+
+  if (vSenha == Senha)
+  {
+    if (req == "")
+    {
+      req = "12345678"; // se não houver registro, vai para o padrão
+    }
+
+    if (vSenhaAP == CurrentPass)
+    {
+
+      SPIFFS.begin();
+      File f = SPIFFS.open("/senhaap.txt", "w");
+
+      f.println(req + "|");
+      f.close();
+
+      SPIFFS.end();
+      vSenhaAP = req;
+      server.send(200, "text/html", "ok");
+      Serial.println("Alterado: " + vSenhaAP);
+    }
+    else
+    {
+      server.send(200, "text/html", "-1");
+      Serial.println("Senha invalida: Atual = " + vSenhaAP + " Informada: " + CurrentPass);
+    }
+  }
+  else
+  {
+    Serial.println("erro de senha de comunicacao: Senha Registrada: " + Senha + " senha enviada: " + vSenha);
+    server.send(200, "text/html", "-1");
+  }
+}
+
+void gravasenhahttp()
+{
+  //const char* www_username = www_username2.c_str();
+  //const char* www_password = www_password2.c_str();
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  String vSenha = server.arg("s");
+  String vreq = server.arg("v");
+  String CurrentPass = server.arg("a");
+  String vUsuarioAntigo = server.arg("ua");
+  String vUsuariohttp = server.arg("u");
+
+  if (vSenha == Senha)
+  {
+    if (vreq == "" || vreq == " ")
+    {
+      vreq = "keepin"; // se não houver registro, vai para o padrão
+    }
+
+    if (vUsuariohttp == "" || vUsuariohttp == " ")
+    {
+      vUsuariohttp = "keepin"; // se não houver usuario vai para o padrao
+    }
+
+    if (senha1 == CurrentPass && vUsuarioAntigo == usuario1)
+    {
+
+      seg.gravar(vUsuariohttp, vreq);
+      /*
+        SPIFFS.begin();
+        //senha
+        File f = SPIFFS.open("/httppass.txt", "w");
+        
+        f.println(vreq+"|");
+//        f.println("keepin|");
+        f.close();
+
+        //Usuario
+        f = SPIFFS.open("/httpuser.txt", "w");
+        
+//        f.println("keepin|");
+        f.println(vUsuariohttp+"|");
+        f.close();  
+
+        Serial.println("req: " + vreq);
+        Serial.println("usuario: " + vUsuariohttp);
+        SPIFFS.end();    
+        */
+      Serial.println("Reiniciando sistema depois de alterar http senha");
+      server.send(200, "text/html", "ok");
+      delay(500);
+      ESP.restart();
+    }
+    else
+    {
+      server.send(200, "text/html", "-1");
+    }
+  }
+  else
+  {
+    server.send(200, "text/html", "-1");
+  }
+}
+
+void LoopReconexao()
+{
+  // reconexao
+  if ((vConfigWIFI == "0" && WiFi.status() != WL_CONNECTED) || (vConfigWIFI == "0" && tipoWifiAtual == 2))
+  {
+    if ((millisAtual - lastWifiTime) >= 300000)
+    {
+      conectar();
+      lastWifiTime = millisAtual;
+    }
+  }
+
+  // valida IP Reconexao
+  if ((vConfigWIFI == "0" && tipoWifiAtual != 2 && WiFi.localIP() != local_IP))
+  {
+    conectar();
+  }
+}
+#line 1 "c:\\dev\\keepin\\firmware16\\rf.ino"
 void configRF()
 {
   mySwitch.enableReceive(rxRF);
@@ -6573,11 +6356,10 @@ void getRF()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");  
+  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
   tamanhoRF = -1;
   gProtocoloRF = -1;
   codigoRF = "-1";
-
 }
 
 void habRF()
@@ -7179,17 +6961,61 @@ void sendRFp()
   unsigned long _protocol = strtoul(server.arg("p").c_str(), NULL, 10);
   String Senha = server.arg("k");
 
-  if (Senha == "kdi9e") {      
+  if (Senha == "kdi9e")
+  {
     Serial.println("Valor: " + String(Valor));
     Serial.println("Tamanho: " + String(_tamanhorf));
     Serial.println("Protocolo: " + String(_protocol));
     sSendRF.setProtocol(_protocol);
-    sSendRF.send(Valor, _tamanhorf);   
+    sSendRF.send(Valor, _tamanhorf);
     server.send(200, "text/html", "ok");
   }
 }
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sensores.ino"
+void LoopRF()
+{
+  if (mySwitch.available())
+  {
+    //Serial.println("sinal de radio detectado");
+    //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
+    if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
+    {
+      rfmilis = millisAtual;
+      for (int i = 0; i < 30; i++)
+      {
+        ultimoEstadoRF[i] = LOW;
+      }
+    }
+    int value = mySwitch.getReceivedValue();
+
+    if (value == 0)
+    {
+      Serial.print("Unknown encoding");
+    }
+    else
+    {
+      //    tone(Buzzer, 4000, 800);
+      Serial.print("Received ");
+      codigoRF = mySwitch.getReceivedValue();
+      ultimoDisparoRF = codigoRF;
+      Serial.print(mySwitch.getReceivedValue());
+      Serial.print(" / ");
+      Serial.print(mySwitch.getReceivedBitlength());
+      tamanhoRF = mySwitch.getReceivedBitlength();
+      Serial.print("bit ");
+      Serial.print("Protocol: ");
+      Serial.println(mySwitch.getReceivedProtocol());
+      gProtocoloRF = mySwitch.getReceivedProtocol();
+      trataRF();
+    }
+    mySwitch.resetAvailable();
+
+    //delay(300);
+    //    noTone(Buzzer);
+    //  enReadRF = false;
+  }
+}
+#line 1 "c:\\dev\\keepin\\firmware16\\sensores.ino"
 void trataDevice(String (&Devices)[20])
 {
   SPIFFS.begin();
@@ -8444,7 +8270,7 @@ void gravanot2(String Valor)
   }
 }
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\skeleton.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\skeleton.ino"
 String vskeleton()
 {
   String html = ".container {";
@@ -8921,7 +8747,7 @@ String vskeleton5()
 
   return html;
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\sms.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\sms.ino"
 void sendSMS(int numSensor) {
     WiFiClient cliente;
     SPIFFS.begin();   
@@ -9079,7 +8905,7 @@ String consultasms2()
 }
 
 
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\update.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\update.ino"
 void executeupdate()
 {
   //const char* www_username = www_username2.c_str();
@@ -9225,7 +9051,7 @@ void readlog()
     server.send(200, "text/html", "ok");
   }
 }
-#line 1 "d:\\Automação\\0-Projetos\\111101 - Keepin - Residencial\\3-Programas\\firmware16\\webconfig.ino"
+#line 1 "c:\\dev\\keepin\\firmware16\\webconfig.ino"
 void configuracao() {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
