@@ -183,3 +183,16 @@ void LoopLedRunning()
     chip3.write(LedGeral, !chip3.read(LedGeral));
   }
 }
+
+byte *conv4Bytes(uint32_t f1)
+{
+  byte *fb = (byte *)&f1;
+  return fb;
+}
+
+uint32_t convUint32(byte *d)
+{
+  uint32_t adc_value;
+  adc_value = *((long *)d);
+  return adc_value;
+}
