@@ -25,44 +25,47 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include <Arduino.h>
 #include <Wire.h>
 #include "PCF8583.h"
 
-namespace {
-  bool IsLeapYear(int year) {
+namespace
+{
+  bool IsLeapYear(int year)
+  {
     return !(year % 400) || ((year % 100) && !(year % 4));
   }
 
-  byte DayOfWeek(const PCF8583 &now) {
+  byte DayOfWeek(const PCF8583 &now)
+  {
     static char PROGMEM MonthTable[24] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5, -1, 2, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
-    byte y = now.year % 100, c = 6 - 2 * ((now.year / 100) % 4); 
+    byte y = now.year % 100, c = 6 - 2 * ((now.year / 100) % 4);
     return (now.day + pgm_read_byte_near(MonthTable + IsLeapYear(now.year) * 12 + now.month - 1) + y + (y / 4) + c) % 7;
   }
-}
+} // namespace
 
 // provide device address as a full 8 bit address (like the datasheet)
-PCF8583::PCF8583(int device_address) {
-  address = device_address >> 1;  // convert to 7 bit so Wire doesn't choke
+PCF8583::PCF8583(int device_address)
+{
+  address = device_address >> 1; // convert to 7 bit so Wire doesn't choke
   //Wire.begin(5, 4);
 }
 
-// initialization 
+// initialization
 void PCF8583::init()
 {
 
-Wire.beginTransmission(address);
-Wire.write(0x00);
-Wire.write(0x04);   // Set alarm on int\ will turn to vcc
-Wire.endTransmission();
-
+  Wire.beginTransmission(address);
+  Wire.write(0x00);
+  Wire.write(0x04); // Set alarm on int\ will turn to vcc
+  Wire.endTransmission();
 }
 
-void PCF8583::get_time(){
+void PCF8583::get_time()
+{
 
   Wire.beginTransmission(address);
-  Wire.write(0xC0);   // stop counting, don't mask
+  Wire.write(0xC0); // stop counting, don't mask
   Wire.endTransmission();
 
   Wire.beginTransmission(address);
@@ -72,12 +75,12 @@ void PCF8583::get_time(){
 
   second = bcd_to_byte(Wire.read());
   minute = bcd_to_byte(Wire.read());
-  hour   = bcd_to_byte(Wire.read());
+  hour = bcd_to_byte(Wire.read());
   byte incoming = Wire.read(); // year/date counter
-  day    = bcd_to_byte(incoming & 0x3f);
-  year   = (int)((incoming >> 6) & 0x03);      // it will only hold 4 years...
+  day = bcd_to_byte(incoming & 0x3f);
+  year = (int)((incoming >> 6) & 0x03); // it will only hold 4 years...
   incoming = Wire.read();
-  month  = bcd_to_byte(incoming & 0x1f);
+  month = bcd_to_byte(incoming & 0x1f);
   dow = incoming >> 5;
 
   //  but that's not all - we need to find out what the base year is
@@ -93,18 +96,19 @@ void PCF8583::get_time(){
   year = year + year_base;
 }
 
-
 void PCF8583::set_time()
- {
+{
 
-  if (!IsLeapYear(year) && 2 == month && 29 == day) {
+  if (!IsLeapYear(year) && 2 == month && 29 == day)
+  {
     month = 3;
     day = 1;
   }
 
   // Attempt to find the previous leap year
   year_base = year - year % 4;
-  if (!IsLeapYear(year_base)) {
+  if (!IsLeapYear(year_base))
+  {
     // Not a leap year (new century), make sure the calendar won't use a 29 days February.
     year_base = year - 1;
   }
@@ -112,7 +116,7 @@ void PCF8583::set_time()
   dow = DayOfWeek(*this);
 
   Wire.beginTransmission(address);
-  Wire.write(0xC0);   // stop counting, don't mask
+  Wire.write(0xC0); // stop counting, don't mask
   Wire.endTransmission();
 
   Wire.beginTransmission(address);
@@ -129,120 +133,56 @@ void PCF8583::set_time()
   Wire.write(year_base >> 8);
   Wire.write(year_base & 0x00ff);
   Wire.endTransmission();
-  
-  init(); // re set the control/status register to 0x04
 
-  }
+  init(); // re set the control/status register to 0x04
+}
 
 //Get the alarm at 0x09 adress
 void PCF8583::get_alarm()
 {
-Wire.beginTransmission(address);
-Wire.write(0x0A); // Set the register pointer to (0x0A) 
-Wire.endTransmission();
+  Wire.beginTransmission(address);
+  Wire.write(0x0A); // Set the register pointer to (0x0A)
+  Wire.endTransmission();
 
-Wire.requestFrom(address, 4); // Read 4 values 
+  Wire.requestFrom(address, 4); // Read 4 values
 
-alarm_second = bcd_to_byte(Wire.read());
-alarm_minute = bcd_to_byte(Wire.read());
-alarm_hour   = bcd_to_byte(Wire.read());
+  alarm_second = bcd_to_byte(Wire.read());
+  alarm_minute = bcd_to_byte(Wire.read());
+  alarm_hour = bcd_to_byte(Wire.read());
 
-Wire.beginTransmission(address);
-Wire.write(0x0E); 
-Wire.endTransmission();
+  Wire.beginTransmission(address);
+  Wire.write(0x0E);
+  Wire.endTransmission();
 
-Wire.requestFrom(address, 1); // Read weekday value 
+  Wire.requestFrom(address, 1); // Read weekday value
 
-alarm_day = bcd_to_byte(Wire.read());
+  alarm_day = bcd_to_byte(Wire.read());
 }
 
 //Set a daily alarm
 void PCF8583::set_daily_alarm()
 {
-Wire.beginTransmission(address);
-Wire.write(0x08); 
-Wire.write(0x90);  // daily alarm set 
-Wire.endTransmission();
+  Wire.beginTransmission(address);
+  Wire.write(0x08);
+  Wire.write(0x90); // daily alarm set
+  Wire.endTransmission();
 
-Wire.beginTransmission(address);
-Wire.write(0x09); // Set the register pointer to (0x09)
-Wire.write(0x00); // Set 00 at milisec 
-Wire.write(int_to_bcd(alarm_second));
-Wire.write(int_to_bcd(alarm_minute));
-Wire.write(int_to_bcd(alarm_hour));
-Wire.write(0x00); // Set 00 at day 
-Wire.endTransmission();
+  Wire.beginTransmission(address);
+  Wire.write(0x09); // Set the register pointer to (0x09)
+  Wire.write(0x00); // Set 00 at milisec
+  Wire.write(int_to_bcd(alarm_second));
+  Wire.write(int_to_bcd(alarm_minute));
+  Wire.write(int_to_bcd(alarm_hour));
+  Wire.write(0x00); // Set 00 at day
+  Wire.endTransmission();
 }
 
-
-void PCF8583::set_chip1()
+int PCF8583::bcd_to_byte(byte bcd)
 {
-	Wire.beginTransmission(address);
-	Wire.write(0x0F); 
-	if (chip1 > 156)
-	{
-		Wire.write(int_to_bcd(156));
-		Wire.write(int_to_bcd(chip1-156));
-	}
-	else
-	{
-		Wire.write(int_to_bcd(chip1));
-		Wire.write(int_to_bcd(0));
-	}
-	Wire.endTransmission();
-}
-
-void PCF8583::get_chip1()
-{
-Wire.beginTransmission(address);
-Wire.write(0x0F); // Set the register pointer to (0x0A) 
-Wire.endTransmission();
-
-Wire.requestFrom(address, 2); // Read 4 values 
-
-chip1 =  bcd_to_byte(Wire.read());
-chip1 +=  bcd_to_byte(Wire.read());
-
-}
-
-
-void PCF8583::set_chip2()
-{
-	Wire.beginTransmission(address);
-	Wire.write(0x3F); 
-	if (chip2 > 156)
-	{
-		Wire.write(int_to_bcd(156));
-		Wire.write(int_to_bcd(chip2-156));
-	}
-	else
-	{
-		Wire.write(int_to_bcd(chip2));
-		Wire.write(int_to_bcd(0));
-	}
-	Wire.endTransmission();
-}
-
-void PCF8583::get_chip2()
-{
-Wire.beginTransmission(address);
-Wire.write(0x3F); // Set the register pointer to (0x0A) 
-Wire.endTransmission();
-
-Wire.requestFrom(address, 2); // Read 4 values 
-
-chip2 =  bcd_to_byte(Wire.read());
-chip2 +=  bcd_to_byte(Wire.read());
-
-}
-
-
-
-int PCF8583::bcd_to_byte(byte bcd){
   return ((bcd >> 4) * 10) + (bcd & 0x0f);
 }
 
-byte PCF8583::int_to_bcd(int in){
+byte PCF8583::int_to_bcd(int in)
+{
   return ((in / 10) << 4) + (in % 10);
 }
-

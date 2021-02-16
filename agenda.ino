@@ -628,7 +628,7 @@ void LoopAgenda()
 {
   if (HorarioAtual.Minute() != Minuto)
   {
-    Serial.println("Ciclos por segundos: " + String(nCiclos / 60));
+    Serial.println("\nCiclos por segundos: " + String(nCiclos / 60));
     Serial.println("Ciclos por minuto: " + String(nCiclos));
     memorialivre = system_get_free_heap_size();
     Serial.println("memoria livre: " + String(memorialivre));

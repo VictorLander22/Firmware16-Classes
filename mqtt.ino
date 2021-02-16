@@ -10,9 +10,10 @@
 #include <PubSubClient.h>
 
 bool WiFiAP = false; // Do yo want the ESP as AP?
-const char *mqtt_server = "168.138.146.38";
+//const char *mqtt_server = "168.138.146.38";
+const char *mqtt_server = "cloudmqtt.keepin.com.br";
 const char *mqtt_server_user = "keepinadm";
-const char *mqtt_server_userpw = "leozao";
+const char *mqtt_server_userpw = "Keepin@2020@Cloud";
 
 //long lastMsg = 0;
 //char msg[50];
@@ -91,12 +92,8 @@ void MqttCloudReconnect()
 void MqttSetup()
 {
     Serial.println();
-    Serial.println();
-
-    idChip = WiFi.macAddress();
-    idChip.replace(":", "");
-
-    str = "keepin/placas/" + vchipId + "/cloud";
+    
+    str = "keepin/placas/" + gchipId + "/cloud";
     strRet = str + "/ret";
     mqttTopicoCloud = str.c_str();
     mqttTopicoCloudRet = strRet.c_str();
@@ -105,8 +102,7 @@ void MqttSetup()
     client.setServer(mqtt_server, 1883);
     client.setCallback(callback);
     client.setBufferSize(2048);
-    Serial.println(String(client.getBufferSize()));
-    Serial.println("Id Chip: " + idChip);
+    Serial.println("Id Chip: " + gchipId);
 
     Serial.println("Subscribe cloud: " + (String)mqttTopicoCloud);
 }
@@ -117,9 +113,9 @@ void MqttLoop()
  * Publish the counter value as String
  */
 
-    if (!client.connected() && (tipoWifiAtual != 2) && ((millisAtual >= millisMqttReconnect) || (millisAtual < millisMqttReconnect)))
+    if (!client.connected() && (tipoWifiAtual != 2) && ((millisAtual >= millisMqttReconnect)))
     {
-        millisMqttReconnect = millisAtual + 5000;
+        millisMqttReconnect = millisAtual + 30000;
         MqttCloudReconnect();
     }
     client.loop();

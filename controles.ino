@@ -36,6 +36,16 @@ void retornachip()
   server.send(200, "text/html", vchipId);
 }
 
+void RetornaChipMac()
+{
+  //const char* www_username = www_username2.c_str();
+  //const char* www_password = www_password2.c_str();
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  server.send(200, "text/html", gchipId);
+}
+
 void controle()
 {
   //const char* www_username = www_username2.c_str();
@@ -199,14 +209,15 @@ void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
       chip2.write(vPorta - 8, vFuncao);
     }
 
-    //if (TipoMemoria == "1")
-    //{
-    Rtc.chip1 = String(chip1.read8()).toInt();
-    Rtc.chip2 = String(chip2.read8()).toInt();
-
-    Rtc.set_chip1();
-    Rtc.set_chip2();
-    //}
+    if (TipoMemoria)
+    {
+      //Rtc.chip1 = String(chip1.read8()).toInt();
+      //Rtc.chip2 = String(chip2.read8()).toInt();
+      memRtc.outValues = chip2.read8() << 8 | chip1.read8();
+      memRtc.setOutputs();
+      //Rtc.set_chip1();
+      //Rtc.set_chip2();
+    }
   }
   else //pulsado
   {
@@ -303,26 +314,15 @@ void Inverte(int vPorta)
     chip2.write(vPorta - 8, !chip2.read(vPorta - 8));
   }
 
-  //if (TipoMemoria == "1")
-  //{
-  /*
-    SPIFFS.begin();
-    File f = SPIFFS.open("/dm1.txt", "w");
-    f.println(String(chip1.read8())+"|");
-    f.close();
-
-    f = SPIFFS.open("/dm2.txt", "w");
-    f.println(String(chip2.read8())+"|");
-    f.close();
-
-    SPIFFS.end();       
-    */
-  Rtc.chip1 = String(chip1.read8()).toInt();
-  Rtc.chip2 = String(chip2.read8()).toInt();
-
-  Rtc.set_chip1();
-  Rtc.set_chip2();
-  //}
+  if (TipoMemoria)
+  {
+    memRtc.outValues = chip2.read8() << 8 | chip1.read8();
+    memRtc.setOutputs();
+    //Rtc.chip1 = String(chip1.read8()).toInt();
+    //Rtc.chip2 = String(chip2.read8()).toInt();
+    //Rtc.set_chip1();
+    //Rtc.set_chip2();
+  }
 }
 /*
 // Return RSSI or 0 if target SSID not found

@@ -141,60 +141,10 @@ void testes2()
 
 void carregaDadosHTML()
 {
-  SPIFFS.begin();
-  File f = SPIFFS.open("/ssid.txt", "r");
-  if (!f) {
-    vssid = "";
-  }
-  else
-  {  
-    vssid = f.readStringUntil('|');
-  }
-  f.close();
-
-  f = SPIFFS.open("/pass.txt", "r");
-  if (!f) {
-    vpass = "";
-  }
-  else
-  {  
-    vpass = f.readStringUntil('|');
-  }
-  f.close();
-  
-  f = SPIFFS.open("/ip.txt", "r");
-  if (!f) {
-    vip = "";
-  }
-  else
-  {    
-    vip = f.readStringUntil('|');
-  }
-  vip.replace(",", ".");
-  f.close();
-
-  f = SPIFFS.open("/mask.txt", "r");
-  if (!f) {
-    vmask = "";
-  }
-  else
-  {    
-    vmask = f.readStringUntil('|');
-  }
-  vmask.replace(",", ".");
-  f.close();
-  
-  f = SPIFFS.open("/gateway.txt", "r");
-  if (!f) {
-    vgateway = "";
-  }
-  else
-  {     
-    vgateway = f.readStringUntil('|');
-  }
-  vgateway.replace(",", ".");
-  f.close();
-
-  SPIFFS.end();
-  
+  DevSet.getDeviceSettings();
+  vssid = DevSet.wifiSSID;
+  vpass = DevSet.wifiPwd;
+  vip = DevSet.numberToIpString(DevSet.wifiIP);
+  vmask = DevSet.numberToIpString(DevSet.wifiMSK);
+  vgateway = DevSet.numberToIpString(DevSet.wifiGTW);
 }

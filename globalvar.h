@@ -29,13 +29,20 @@
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
 
-//Declarações Globais - Leo
+#include "src\KPDeviceSetting.h"
+#include "src\KPPCF8583Class.h"
+
+String vchipId;
+String gchipId;
+bool chipAtivo = true;
+int nCiclos = 0;
 
 bool g_pulsoHabilita[16];
 unsigned long g_tempoInicioPulso[16];
 unsigned long millisAtual;
 unsigned long millisDebug;
 unsigned long millisMqttReconnect;
+unsigned long millisNetworkScan;
 
 File UploadFile;
 
@@ -51,7 +58,7 @@ String senha1 = seg.retornaSenha();
 const char *www_username = usuario1.c_str();
 const char *www_password = senha1.c_str();
 
-String TipoMemoria = "1";
+bool TipoMemoria = true;
 String vListaWifi = "";
 
 String vssid = "";
@@ -60,10 +67,11 @@ String vip = "";
 String vmask = "";
 String vgateway = "";
 
-String vConfigWIFI = "";
-long lastWifiTime;
+bool vConfigWIFI = false;
+unsigned long millisWifiLed;
 //long lastPulso;
 int tipoWifiAtual;
+int scanningWifi;
 
 //MySQL_Connection conn(&cliente);
 
@@ -72,12 +80,14 @@ IPAddress DNS1(8, 8, 8, 8);
 IPAddress DNS2(4, 4, 4, 4);
 String vSenhaAP = "12345678";
 
-TwoWire portawire;
-PCF857x chip1(0x21, &portawire);
-PCF857x chip2(0x22, &portawire);
-PCF857x chip3(0x25, &portawire);
-PCF857x sensor1(0x23, &portawire);
-PCF857x sensor2(0x24, &portawire);
+//Congiguração chips I2C
+PCF857x chip1(0x21, &Wire);
+PCF857x chip2(0x22, &Wire);
+PCF857x chip3(0x25, &Wire);
+PCF857x sensor1(0x23, &Wire);
+PCF857x sensor2(0x24, &Wire);
+PCF8583 Rtc(0xA0);
+KPPCF8583Class memRtc(0xA0);
 
 String s2Sensor1 = "";
 String s2Sensor2 = "";
@@ -99,47 +109,31 @@ boolean estadoAtual[16] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW
 boolean ultimoEstado[16] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW};
 
 //debounce
-long lastDebounceTime = 0;
-long debounceDelay = 150;
-long rfDelay = 1000;
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 150;
+unsigned long rfDelay = 1000;
 
 boolean DeviceAlterado = true;
 //String Devices[20];
 
 //RtcDateTime ultimaconsulta;
 int Minuto = -1;
-int Segundo = -1;
+unsigned long millisLedRunning = 0;
 bool ConsultouCloud = false;
 
 RtcDateTime HorarioAtual;
 
 int correct_address = 0;
-PCF8583 Rtc(0xA0);
 
 IPAddress IpDispositivo;
 
 unsigned int request_i = 0;
 unsigned int response_i = 0;
 
-//String manageRequest(String request);
-
-//ESP8266WiFiMesh mesh_node = ESP8266WiFiMesh(ESP.getChipId(), manageRequest);
-
-//String mesh_sIP = "";
-//String mesh_Porta = "";
-//String mesh_funcao = "";
-//String mesh_ChipId = "";
-//String mesh_Tipo = "";
-//String mesh_Senha = "";
-
-//int LedWiFI = 14;
-//int LedVerde = 12;
-//int LedAmarelo = 15; //14;
-
-const int LedWiFI = 4;
-const int LedVerde = 5;
-const int LedAmarelo = 6; //14;
-const int LedGeral = 7;
+const int LedWifiConnected = 4;
+const int LedWifiHI = 5;
+const int LedWifiLOW = 6; //14;
+const int LedRunning = 7;
 
 //UDP
 WiFiUDP Udp;
@@ -202,7 +196,7 @@ boolean estadoAtualRF[30] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, L
 boolean ultimoEstadoRF[30] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW};
 boolean msgDisparadaRF[30] = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
 int numSensorMSG = 0;
-long rfmilis = 0;
+unsigned long rfmilis = 0;
 //   RF  //
 int Buzzer = 3;
 
@@ -210,9 +204,6 @@ int Buzzer = 3;
 //#define FIREBASE_HOST "automacao-6cdcc.firebaseio.com"
 //#define FIREBASE_AUTH "m7WSNbRjPJck9YhLE9AdaFKRtnG6U7ENDiUA3IUF"
 //int vchipId = 0;
-String vchipId;
-bool chipAtivo = true;
-int nCiclos = 0;
 // ----         Fim Dados Firebase      ----- //
 
 // --- API ///
@@ -225,9 +216,16 @@ bool cenaExecucao = false;
 String ArqCena = "";
 int cenaPAtual = 0;
 int cenaPTotal = 0;
-long lastCnTime = -1;
+unsigned long lastCnTime = -1;
 
 //   CLOUD ///
 bool usaCloud = false;
 char *msgMqtt;
 bool newMqttMsg;
+
+//EEPROM//
+KPDeviceSettingClass DevSet;
+byte *ipTemp;
+byte ipConfigTemp[4];
+
+//RTC//

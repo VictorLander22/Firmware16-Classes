@@ -7,32 +7,11 @@ void setup(void)
 {
   Serial.begin(115200);
   //ConfigAuth();
-
-  log("");
-  log("Keepin Firmware: " + String(Placa_Version));
-
-  vchipId = WiFi.macAddress();
-  vchipId.replace(":", "");
-  log("Keepin ID: " + vchipId);
-
-  configIR();
-
-  lerConfiguracao();
-
-  millisAtual = millis();
-  lastDebounceTime = millisAtual;
-
-  //tempoatual = millisAtual;
-  starTime = millisAtual;
-  rfmilis = millisAtual;
-
-  configRF();
-
-  pinMode(buttonState, INPUT);
-
   Wire.begin(5, 4);
-  //portawire.begin(5, 4);
-  portawire.setClock(100000L);
+  Wire.setClock(100000L);
+  delay(100); //Wait to start I2C transmission
+  Serial.println();
+  IniciaRTC();
   chip1.begin();
   chip2.begin();
   chip3.begin();
@@ -41,43 +20,85 @@ void setup(void)
 
   ApagaPortas();
 
-  IniciaRTC();
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  delay(2000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
+
+  String Razao = ESP.getResetReason();
+  Serial.print("Motivo Reset: ");
+  Serial.println(Razao);
+
+  //Set chip id
+  vchipId = ESP.getChipId();
+  gchipId = WiFi.macAddress();
+  gchipId.replace(":", "");
+
+  Serial.println();
+  log("Keepin Firmware: " + String(Placa_Version));
+  log("Keepin ID: " + vchipId);
+  log("Keepin MAC: " + gchipId);
+
+  //Reset mode
+  if (digitalRead(buttonState))
+  {
+    Serial.println();
+    log("Factory reset\n");
+    DevSet.factoryReset();
+    //wifireset2();
+  }
+  else
+  {
+    Serial.println();
+    log("Simple restart\n");
+  }
+
+  DevSet.verifyEEPROM();
+  DevSet.getDeviceSettings();
+  DevSet.showVariables();
+
+  configIR();
+
+  lerConfiguracao();
+
+  millisAtual = millis();
+  lastDebounceTime = millisAtual;
+  starTime = millisAtual;
+  rfmilis = millisAtual;
+  millisWifiLed = millisAtual;
+
+  configRF();
+
+  //verificar se ha necessidade de colocar um delay aqui para evitar dos relés abrirem e fecharem muito rapido
+  Memoria();
+
+  scanningWifi = WiFi.scanNetworks();
+  //WiFi.scanNetworksAsync(prinScanResult);
+  Serial.printf("\nAvailable Wifi: %d\n", scanningWifi);
 
   conectar();
 
   // Wait for connection
-  Serial.println("");
   Serial.print("Connected to ");
 
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  lastWifiTime = millisAtual;
   //lastPulso = millisAtual;
 
   //ArduinoOTA.begin();
   ConfigurarWebServer();
-
-  Udp.begin(localUdpPort);
-  Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
-
   //Serial.println("Mesh ativo " + String(ESP.getChipId()));
-
-  String Razao = ESP.getResetReason();
-
-  Serial.println("Motivo Reset: ");
-  Serial.println(Razao);
 
   retornaNotificar();
 
   Serial.println("Notificar: " + String(notificar));
 
-  TipoMemoria = "1"; //lerMemoria();
-
-  Memoria();
   CarregaEntradas();
+
   MqttSetup();
 
+  Udp.begin(localUdpPort);
+  Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
 }
 
 //########################################################################################################################################################
@@ -105,9 +126,6 @@ void loop(void)
 
     LoopResetFabrica();
 
-    //ArduinoOTA.handle();
-    server.handleClient();
-
     //mesh_node.acceptRequest();
     leituraUDP();
 
@@ -122,5 +140,9 @@ void loop(void)
     MqttLoop();
 
     ResetSaidasPulsadas();
+
+    MillisResets();
+
+    server.handleClient();
   }
 }

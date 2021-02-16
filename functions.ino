@@ -18,6 +18,7 @@ void ConfigurarWebServer(void)
   server.on("/controle", controle);
   server.on("/situacao", situacao);
   server.on("/chipid", retornachip);
+  server.on("/chipmac", RetornaChipMac);
   server.on("/chamaddns", chamaddns);
   //server.on("/mesh", mesh);
   //server.on("/consultamesh", meshconsulta);
@@ -41,7 +42,7 @@ void ConfigurarWebServer(void)
   server.on("/gravasms", gravasms);
   server.on("/consultasms", consultasms);
   server.on("/wifi", valorwifi);
-  server.on("/listawifi", listawifi);
+  server.on("/listawifi", WifiNetworkScan);
   server.on("/listawifi2", listawifi2);
   //IR
   server.on("/getir", getIR);
@@ -78,6 +79,8 @@ void ConfigurarWebServer(void)
     server.send(200, "text/plain", "this works as well");
   });
 
+  server.on("/teste", teste);
+
   server.onNotFound(handleNotFound);
 
   server.begin();
@@ -91,12 +94,7 @@ void ResetSaidasPulsadas()
   {
     if (g_pulsoHabilita[iPorta])
     {
-      // proteção no caso de variavel estourar
-      if (millisAtual < g_tempoInicioPulso[iPorta])
-      {
-        g_tempoInicioPulso[iPorta] = 0;
-      }
-      else if (millisAtual >= g_tempoInicioPulso[iPorta] + 500)
+      if (millisAtual >= g_tempoInicioPulso[iPorta] + 500)
       {
         g_pulsoHabilita[iPorta] = false;
         if (iPorta < 8)
@@ -114,73 +112,71 @@ void ResetSaidasPulsadas()
 
 void LoopResetFabrica()
 {
-  int ValorbuttonState = digitalRead(buttonState);
+  //int ValorbuttonState = digitalRead(buttonState);
 
-  if (ValorbuttonState == HIGH)
+  if (digitalRead(buttonState))
   {
-    if (resetIntPulsado() == true)
-    {
-      ConfigEP();
-      //Serial.println("reset pulsado");
-    }
-    else if (resetIntNormal() == true)
-    {
-      ConfigEN();
-      //Serial.println("reset normal");
-    }
-    else
-    {
-      //Serial.print("reset ligado: ");
-      //Serial.println(digitalRead(buttonState));
-      wifireset2();
-      ESP.restart();
-    }
-  }
+    ESP.restart();
+  };
+  // {
+  //   if (resetIntPulsado() == true)
+  //   {
+  //     ConfigEP();
+  //     //Serial.println("reset pulsado");
+  //   }
+  //   else if (resetIntNormal() == true)s
+  //   {
+  //     ConfigEN();
+  //     //Serial.println("reset normal");
+  //   }
+  //   else
+  //   {
+  //     //Serial.print("reset ligado: ");
+  //     //Serial.println(digitalRead(buttonState));
+  //     wifireset2();
+  //     ESP.restart();
+  //   }
+  // }
 }
 
 void LoopLedStatus()
 {
-  if (chip3.read(LedWiFI) == LOW)
+
+  if (WiFi.getMode() == 1 && millisAtual > millisWifiLed)
   {
     int32_t rssi;
-
-    //      chip3.write(LedAmarelo, LOW);
-    if (WiFi.status() == WL_CONNECTED)
+    chip3.write(LedWifiConnected, LOW);
+    if (!vConfigWIFI)
     {
-      if (vConfigWIFI == "0")
-      {
-        lastWifiTime = millisAtual;
-      }
-      rssi = WiFi.RSSI();
-      //Serial.println(String(rssi));
+      millisWifiLed = millisAtual + 2000;
+    }
+    rssi = WiFi.RSSI();
+    //Serial.println(String(rssi));
 
-      if (rssi >= -65)
-      {
-        chip3.write(LedVerde, LOW);
-        chip3.write(LedAmarelo, HIGH);
-      }
-      else if (rssi < -65 && rssi >= -100)
-      {
-        chip3.write(LedVerde, HIGH);
-        chip3.write(LedAmarelo, LOW);
-      }
-      else
-      {
-        chip3.write(LedVerde, HIGH);
-        chip3.write(LedAmarelo, HIGH);
-      }
+    if (rssi >= -65)
+    {
+      chip3.write(LedWifiHI, LOW);
+      chip3.write(LedWifiLOW, HIGH);
+    }
+    else if (rssi < -65 && rssi >= -100)
+    {
+      chip3.write(LedWifiHI, HIGH);
+      chip3.write(LedWifiLOW, LOW);
+    }
+    else
+    {
+      chip3.write(LedWifiHI, HIGH);
+      chip3.write(LedWifiLOW, HIGH);
     }
   }
 }
 
 void LoopLedRunning()
 {
-  //  if (HorarioAtual.Second() != Segundo)
-  if (Segundo == -1 || (millisAtual - Segundo) > 200)
+  if (millisAtual > millisLedRunning)
   {
-    Segundo = millisAtual;
-    //Segundo = HorarioAtual.Second();
-    chip3.write(LedGeral, !chip3.read(LedGeral));
+    millisLedRunning = millisAtual + 200;
+    chip3.write(LedRunning, !chip3.read(LedRunning));
   }
 }
 
@@ -195,4 +191,23 @@ uint32_t convUint32(byte *d)
   uint32_t adc_value;
   adc_value = *((long *)d);
   return adc_value;
+}
+
+void MillisResets()
+{
+  if (millisAtual == 0)
+  {
+    millisDebug = 0;
+    millisMqttReconnect = 0;
+    millisNetworkScan = 0;
+    lastCnTime = 0;
+    rfmilis = 0;
+    millisWifiLed = 0;
+    lastDebounceTime = 0;
+    millisLedRunning = 0;
+    for (uint8_t iPorta = 0; iPorta <= 15; iPorta++)
+    {
+      g_tempoInicioPulso[iPorta] = 0;
+    }
+  }
 }

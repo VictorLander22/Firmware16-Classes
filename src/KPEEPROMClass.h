@@ -1,24 +1,24 @@
 /*
 *****************************************************************************
-* EEPROMCtrlr
+* KPEEPROMClass
 * Keepin - Leonardo Aquino
 * Controle de escrita e leitura da EEPROM
 * v1.0 - Implementação
 *****************************************************************************
 */
 
-#ifndef EEPROMCTRL_H
-#define EEPROMCTRL_H
+#ifndef KPEEPROMClass_H
+#define KPEEPROMClass_H
 
 // Bibliotecas
 
 #include "EEPROM.h"
 //#include "TimeLib.h"
 
-class EEPROMCtrl : public EEPROMClass
+class KPEEPROMClass : public EEPROMClass
 {
 public:
-  EEPROMCtrl();
+  KPEEPROMClass();
   using EEPROMClass::begin;
   using EEPROMClass::commit;
   using EEPROMClass::end;

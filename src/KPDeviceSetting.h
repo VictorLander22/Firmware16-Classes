@@ -7,56 +7,63 @@
 *****************************************************************************
 */
 
-#ifndef SETCTRL_H
-#define SETCTRL_H
+#ifndef KPSETCTRL_H
+#define KPSETCTRL_H
 
 // Bibliotecas
 
-#include "EEPROMCtrl.h"
+#include "KPEEPROMClass.h"
 #include "TimeLib.h"
 
-class DeviceSettingClass : public EEPROMCtrl
+class KPDeviceSettingClass : private KPEEPROMClass
 {
 public:
   // Variaveis de configuração da memoria - quantidade de bytes disponiveis para alocação
 
   //Variaveis de configuração - inicialização e padrão de fábrica
 
-  uint8_t config = 3; //b0:AllowApi, b1:UsaCloud, b2:wifiPadrao, ..
-  String wifiSSID;
-  ; //Limit 35 bytes;
-  String wifiPwd;
-  ; //Limit 35 bytes;
+  uint8_t mode; //b0:AllowApi, b1:UsaCloud, b2:wifiPadrao, b3:TipoMemoria ..
+  String wifiSSID;  //Limit 35 bytes;
+  String wifiPwd;   //Limit 35 bytes;
   uint32_t wifiIP;
   uint32_t wifiMSK;
   uint32_t wifiGTW;
 
   String apiPwd; ///Limit 35 bytes;
 
-  String apWifiSSID;               //Limit 35 bytes;
-  String apWifiPwd;                //Limit 35 bytes;
-  uint32_t apWifiIP;  
+  String apWifiSSID; //Limit 35 bytes;
+  String apWifiPwd;  //Limit 35 bytes;
+  uint32_t apWifiIP;
   uint32_t apWifiMSK;
   uint32_t apWifiGTW;
 
-  DeviceSettingClass();
+  KPDeviceSettingClass();
 
   // void begin();
-  void saveConfig();
-  void saveWifi();
-  void saveApWifiPwd();
-  void saveApiPwd();
-  void loadConfig();
+  void verifyEEPROM();
+  void setMode();
+  void setWifi();
+  void setApWifiPwd();
+  void setApiPwd();
+  void getDeviceSettings();
+  void factoryReset();
 
   void setAPWifiSSID(String s);
 
+  uint32_t ipStringToNumber(const char *sIp);
+  String numberToIpString(uint32_t numIp);
+
+  void showVariables();
   String getAPWifiSSID();
   String dateTimeStr(const time_t &t);
   uint32_t getMemSize();
 
+  byte *conv4Bytes(uint32_t f1);
+  uint32_t convUint32(byte *d);
+
 private:
-  const byte CFG_CONFIG = 0;
-  const byte CFG_WIFISSID = CFG_CONFIG + 1;
+  const byte CFG_MODE = 0;
+  const byte CFG_WIFISSID = CFG_MODE + 1;
   const byte CFG_WIFIPWD = CFG_WIFISSID + 35;
   const byte CFG_WIFIIP = CFG_WIFIPWD + 35;
   const byte CFG_WIFIMSK = CFG_WIFIIP + 4;
@@ -64,6 +71,9 @@ private:
   const byte CFG_APIPWD = CFG_WIFIGTW + 4;
   const byte CFG_APWIFIPWD = CFG_APIPWD + 35;
   const word CFG_TOTAL = CFG_APWIFIPWD + 35;
+
+  void _factoryDefault();
+
 };
 
 #endif
