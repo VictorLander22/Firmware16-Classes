@@ -414,6 +414,7 @@ void atualizahora()
 
   if (Senha == "kdi9e")
   {
+    server.send(200, "text/html", "ok");
     RtcDateTime HoraNova = vHora;
 
     Rtc.year = HoraNova.Year();
@@ -426,8 +427,7 @@ void atualizahora()
 
     //Serial.println("Hora atualizada com sucesso!");
     printDateTime(HoraNova);
-    server.send(200, "text/html", "ok");
-  }
+    }
   else
   {
     server.send(200, "text/html", "-1");

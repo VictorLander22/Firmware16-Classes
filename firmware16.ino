@@ -6,7 +6,6 @@
 void setup(void)
 {
   Serial.begin(115200);
-  //ConfigAuth();
   Wire.begin(5, 4);
   Wire.setClock(100000L);
   delay(100); //Wait to start I2C transmission
@@ -17,13 +16,11 @@ void setup(void)
   chip3.begin();
   sensor1.begin();
   sensor2.begin();
-
   ApagaPortas();
 
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(2000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
-
   String Razao = ESP.getResetReason();
   Serial.print("Motivo Reset: ");
   Serial.println(Razao);
@@ -51,12 +48,11 @@ void setup(void)
     Serial.println();
     log("Simple restart\n");
   }
-
   DevSet.verifyEEPROM();
   DevSet.getDeviceSettings();
   DevSet.showVariables();
 
-  configIR();
+  configIR(); //consome 2K da ram 20000
 
   lerConfiguracao();
 
@@ -72,22 +68,17 @@ void setup(void)
   Memoria();
 
   scanningWifi = WiFi.scanNetworks();
+
   //WiFi.scanNetworksAsync(prinScanResult);
   Serial.printf("\nAvailable Wifi: %d\n", scanningWifi);
 
-  conectar();
-
+  conectar(); //consome 1K da ram 19000
   // Wait for connection
   Serial.print("Connected to ");
-
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  //lastPulso = millisAtual;
-
-  //ArduinoOTA.begin();
-  ConfigurarWebServer();
-  //Serial.println("Mesh ativo " + String(ESP.getChipId()));
+  ConfigurarWebServer(); //consome 6.2K da ram 13500
 
   retornaNotificar();
 
@@ -95,7 +86,7 @@ void setup(void)
 
   CarregaEntradas();
 
-  MqttSetup();
+  MqttSetup(); //consome 2k da ram 11400
 
   Udp.begin(localUdpPort);
   Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
