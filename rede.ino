@@ -118,6 +118,7 @@ void gravasenhawifi()
     if (vSenhaAP == CurrentPass)
     {
 
+      server.send(200, "text/html", "ok");
       SPIFFS.begin();
       File f = SPIFFS.open("/senhaap.txt", "w");
 
@@ -126,7 +127,7 @@ void gravasenhawifi()
 
       SPIFFS.end();
       vSenhaAP = req;
-      server.send(200, "text/html", "ok");
+
       Serial.println("Alterado: " + vSenhaAP);
     }
     else
@@ -137,8 +138,8 @@ void gravasenhawifi()
   }
   else
   {
-    Serial.println("erro de senha de comunicacao: Senha Registrada: " + Senha + " senha enviada: " + vSenha);
     server.send(200, "text/html", "-1");
+    Serial.println("erro de senha de comunicacao: Senha Registrada: " + Senha + " senha enviada: " + vSenha);
   }
 }
 
@@ -169,10 +170,10 @@ void gravasenhahttp()
 
     if (senha1 == CurrentPass && vUsuarioAntigo == usuario1)
     {
-
+      server.send(200, "text/html", "ok");
       seg.gravar(vUsuariohttp, vreq);
       Serial.println("Reiniciando sistema depois de alterar http senha");
-      server.send(200, "text/html", "ok");
+
       delay(500);
       ESP.restart();
     }
@@ -202,6 +203,7 @@ void gravawifi()
   //  const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
+  server.send(200, "text/html", "ok");
 
   String wifiSSID = server.arg("txtnomerede");
   String wifiPWD = server.arg("txtsenha");
@@ -219,8 +221,6 @@ void gravawifi()
   DevSet.showVariables();
 
   gravahtml();
-
-  server.send(200, "text/html", "ok");
 }
 
 void wifiConectSTA()

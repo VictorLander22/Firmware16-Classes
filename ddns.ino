@@ -1,9 +1,10 @@
-void chamaddns() { 
+void chamaddns()
+{
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if(!server.authenticate(www_username, www_password))
+  if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-  
+
   String sIP = server.arg("ip");
   String Senha = server.arg("s");
   int Porta = server.arg("p").toInt();
@@ -12,17 +13,18 @@ void chamaddns() {
   String Tipo = server.arg("t");
   String Nome = server.arg("n");
   int Tipoa = server.arg("pu").toInt();
-  
+
   IPAddress Destino;
 
   Destino.fromString(sIP);
 
-  if (Destino != IpDispositivo) {
-    
+  if (Destino != IpDispositivo)
+  {
+
     if (Senha == "kdi9e")
     {
-      char  replyPacekt[255] = "";       
-      String Texto = sIP + "|" + String(Porta) + "|" + funcao + "|" + String(IdChip)+"|"+Tipo+"|";
+      char replyPacekt[255] = "";
+      String Texto = sIP + "|" + String(Porta) + "|" + funcao + "|" + String(IdChip) + "|" + Tipo + "|";
 
       if (Tipo == "A" || Tipo == "G")
       {
@@ -30,7 +32,7 @@ void chamaddns() {
       }
       else if (Tipo == "B")
       {
-        Texto += server.arg("j") + "|"+server.arg("b")+"|";        
+        Texto += server.arg("j") + "|" + server.arg("b") + "|";
       }
       else if (Tipo == "E" || Tipo == "X")
       {
@@ -40,10 +42,9 @@ void chamaddns() {
       {
         Texto += "n|n|";
       }
-       
-        
+
       Texto.toCharArray(replyPacekt, 255);
-      
+
       Serial.println("enviado comando UDP");
       Serial.println(Texto);
       Udp.beginPacket(Destino, localUdpPort);
@@ -52,11 +53,11 @@ void chamaddns() {
 
       if (Tipo == "E")
       {
-        //server.send(200, "text/html", "ok");      
+        //server.send(200, "text/html", "ok");
       }
       else
       {
-         //server.send(200, "text/html", "ok");      
+        //server.send(200, "text/html", "ok");
       }
     }
   }
@@ -65,56 +66,52 @@ void chamaddns() {
     Porta = retornaPorta(Porta);
     if (Porta >= 0)
     {
-      if (Senha == "kdi9e") 
+      if (Senha == "kdi9e")
       {
         if (Tipo == "E")
         {
-          if (funcao=="true")
+          if (funcao == "true")
           {
-            //digitalWrite(Porta, 1);
+            server.send(200, "text/html", "ok");
             LigaDesliga(Porta, HIGH, Nome, Tipoa);
-            Serial.println("led 1 ligado");        
-            server.send(200, "text/html", "ok");
+            Serial.println("led 1 ligado");
           }
-          else 
+          else
           {
-            //digitalWrite(Porta, 0);
-            LigaDesliga(Porta, LOW, Nome, Tipoa);
-            Serial.println("led 1 desligado");      
             server.send(200, "text/html", "ok");
+            LigaDesliga(Porta, LOW, Nome, Tipoa);
+            Serial.println("led 1 desligado");
           }
         }
-        else
-        if (Tipo == "C")
+        else if (Tipo == "C")
         {
-          if (LePorta(Porta) == HIGH) 
+          if (LePorta(Porta) == HIGH)
           {
             server.send(200, "text/html", "true");
-          } 
+          }
           else
           {
             server.send(200, "text/html", "false");
-          }            
+          }
         }
-        else
-        if (Tipo == "S")
+        else if (Tipo == "S")
         {
           if (ultimoDisparo == "")
           {
             String sSensor1 = String(sensor1.read8(), BIN);
             String sSensor2 = String(sensor2.read8(), BIN);
-          
+
             while (sSensor1.length() < 8)
             {
-              sSensor1 = '0' + sSensor1;  
+              sSensor1 = '0' + sSensor1;
             }
-          
+
             while (sSensor2.length() < 8)
             {
-              sSensor2 = '0' + sSensor2;  
+              sSensor2 = '0' + sSensor2;
             }
-          
-            server.send(200, "text/html", sSensor1 + sSensor2); 
+
+            server.send(200, "text/html", sSensor1 + sSensor2);
           }
           else
           {
@@ -123,26 +120,26 @@ void chamaddns() {
         }
         else if (Tipo == "N")
         {
-            server.send(200, "text/html", String(notificar));          
+          server.send(200, "text/html", String(notificar));
         }
         else if (Tipo == "A")
         {
+          server.send(200, "text/html", "ok");
           String Texto = server.arg("j");
           gravasensor2(Texto);
-          server.send(200, "text/html", "ok");                    
         }
         else if (Tipo == "G")
         {
           String Texto = server.arg("j");
-// liberar depois que colocar o arquivo de RF          gravarf2(Texto);
-          server.send(200, "text/html", "ok");                    
+          // liberar depois que colocar o arquivo de RF          gravarf2(Texto);
+          server.send(200, "text/html", "ok");
         }
         else if (Tipo == "B")
         {
+          server.send(200, "text/html", "ok");
           String Texto = server.arg("j");
           String Telef = server.arg("b");
           gravasms2(Texto, Telef);
-          server.send(200, "text/html", "ok");
         }
         else if (Tipo == "D")
         {
@@ -150,27 +147,27 @@ void chamaddns() {
         }
         else if (Tipo == "F")
         {
+          server.send(200, "text/html", "ok");
           String Valor = server.arg("j");
           gravanot2(Valor);
-          server.send(200, "text/html", "ok");          
         }
         else if (Tipo == "I")
         {
-          Inverte(Porta);                
-        }     
-        else if (Tipo == "H")  
+          Inverte(Porta);
+        }
+        else if (Tipo == "H")
         {
           String sSensor1 = String(sensor1.read8(), BIN);
           String sSensor2 = String(sensor2.read8(), BIN);
 
           while (sSensor1.length() < 8)
           {
-            sSensor1 = '0' + sSensor1;  
+            sSensor1 = '0' + sSensor1;
           }
 
           while (sSensor2.length() < 8)
           {
-            sSensor2 = '0' + sSensor2;  
+            sSensor2 = '0' + sSensor2;
           }
 
           if (DeviceAlterado)
@@ -183,42 +180,37 @@ void chamaddns() {
 
           while (sChip1.length() < 8)
           {
-            sChip1 = '0' + sChip1;  
+            sChip1 = '0' + sChip1;
           }
 
           while (sChip2.length() < 8)
           {
-            sChip2 = '0' + sChip2;  
+            sChip2 = '0' + sChip2;
           }
 
           // separa os valores ligos no array
           String valorSensores[16] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
           int posicaoSensor;
 
-
-          
           for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
           {
-            valorSensores[posicaoSensor] = sSensor1.substring(7-posicaoSensor, 8-posicaoSensor);
+            valorSensores[posicaoSensor] = sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor);
           }
 
           for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
           {
-            valorSensores[posicaoSensor+8] = sSensor2.substring(7-posicaoSensor, 8-posicaoSensor);
+            valorSensores[posicaoSensor + 8] = sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor);
           }
 
           int32_t rssi;
           rssi = WiFi.RSSI();
-          char  replyPacekt[255] = "";  
-          String valSensores = sSensor1 + sSensor2;    
-          valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) +"." + String(IpDispositivo[3]) + "|" + valSensores+"|" + sChip1+sChip2+"|"+rssi+"*";
+          char replyPacekt[255] = "";
+          String valSensores = sSensor1 + sSensor2;
+          valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + rssi + "*";
           valSensores.toCharArray(replyPacekt, 255);
-          server.send(200, "text/html", replyPacekt);          
-
+          server.send(200, "text/html", replyPacekt);
         }
       }
     }
   }
 }
-
-

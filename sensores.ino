@@ -126,14 +126,16 @@ void trataSensores()
       broadcastIp[3] = 255;
     }
 
-    if (subnet[0] == 255 && subnet[1] == 255 && subnet[2] == 255) {
+    if (subnet[0] == 255 && subnet[1] == 255 && subnet[2] == 255)
+    {
       broadcastIp[0] = IpDispositivo[0];
       broadcastIp[1] = IpDispositivo[1];
       broadcastIp[2] = IpDispositivo[2];
       broadcastIp[3] = 255;
     }
 
-    if (subnet[0] == 255 && subnet[1] == 255 && subnet[2] == 0) {
+    if (subnet[0] == 255 && subnet[1] == 255 && subnet[2] == 0)
+    {
       broadcastIp[0] = IpDispositivo[0];
       broadcastIp[1] = IpDispositivo[1];
       broadcastIp[2] = 255;
@@ -305,7 +307,7 @@ void gravasensor()
   //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-
+  server.send(200, "text/html", "ok");
   //String idAgenda = server.arg("ag");
   String Valor = server.arg("s");
   String Senha = server.arg("k");
@@ -346,7 +348,7 @@ void gravasensor()
     //Serial.println("valor salvo na ag"+idAgenda+".txt");
     Serial.println(Valor);
   }
-  server.send(200, "text/html", "ok");
+
   SensorAlterado = true;
   consultaSensor();
 }
@@ -1067,7 +1069,7 @@ void gravadevice()
   //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-
+  server.send(200, "text/html", "ok");
   String Valor = server.arg("d");
   String Senha = server.arg("k");
 
@@ -1089,8 +1091,6 @@ void gravadevice()
     DeviceAlterado = true;
     Serial.println("gravado device");
   }
-
-  server.send(200, "text/html", "ok");
 }
 
 void buscadevice()
@@ -1190,7 +1190,7 @@ void gravanot()
   //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-
+  server.send(200, "text/html", "ok");
   String Valor = server.arg("v");
   String Senha = server.arg("k");
 
@@ -1220,8 +1220,6 @@ void gravanot()
       notificar = false;
     }
   }
-
-  server.send(200, "text/html", "ok");
 }
 
 void gravanot2(String Valor)

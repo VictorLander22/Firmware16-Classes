@@ -35,6 +35,7 @@ void gravarf()
   //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
+  server.send(200, "text/html", "ok");
 
   SensorRFAlterado = true;
   //String idAgenda = server.arg("ag");
@@ -58,7 +59,6 @@ void gravarf()
     SPIFFS.end();
   }
   consultaSensorRF();
-  server.send(200, "text/html", "ok");
 }
 
 void trataRF()
@@ -611,7 +611,7 @@ void sendRFp()
   //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-
+  server.send(200, "text/html", "ok");
   unsigned long Valor = strtoul(server.arg("c").c_str(), NULL, 10);
   unsigned long _tamanhorf = strtoul(server.arg("t").c_str(), NULL, 10);
   unsigned long _protocol = strtoul(server.arg("p").c_str(), NULL, 10);
@@ -619,12 +619,12 @@ void sendRFp()
 
   if (Senha == "kdi9e")
   {
+
     Serial.println("Valor: " + String(Valor));
     Serial.println("Tamanho: " + String(_tamanhorf));
     Serial.println("Protocolo: " + String(_protocol));
     sSendRF.setProtocol(_protocol);
     sSendRF.send(Valor, _tamanhorf);
-    server.send(200, "text/html", "ok");
   }
 }
 

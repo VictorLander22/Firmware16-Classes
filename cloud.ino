@@ -1,5 +1,6 @@
 void cloud()
 {
+  server.send(200, "text/html", "ok");
   HTTPClient http;
   http.begin("http://cloud.keepin.com.br/api/control/3");
   int httpCode = http.GET();
@@ -32,8 +33,6 @@ void cloud()
     Serial.println(ED1);
     Serial.println(ED3);
   }
-
-  server.send(200, "text/html", "ok");
 }
 
 void sendCloud()

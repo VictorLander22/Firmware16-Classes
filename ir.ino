@@ -338,6 +338,8 @@ void sendir()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
+  server.send(200, "text/html", "ok");
+
   String S = server.arg("s");
   int QtdeBit = 12;
   int PortaIRS = server.arg("p").toInt();
@@ -362,7 +364,6 @@ void sendir()
 
     Serial.println("Enviado IR");
   }
-  server.send(200, "text/html", "ok");
 }
 
 void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vModelo, int q)
@@ -747,13 +748,12 @@ void habir()
   //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-
+  server.send(200, "text/html", "ok");
   irrecv.resume();
   irrecv.resume();
   irrecv.resume();
 
   enReadIR = true;
-  server.send(200, "text/html", "ok");
 }
 
 char hexCharToBin(char c)

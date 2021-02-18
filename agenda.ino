@@ -543,6 +543,8 @@ void gravaragenda()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
+  server.send(200, "text/html", "ok");
+
   AgendaAlterada = true;
   //String idAgenda = server.arg("ag");
   String Valor = server.arg("v");
@@ -565,7 +567,6 @@ void gravaragenda()
     //Serial.println("valor salvo na ag"+idAgenda+".txt");
     //Serial.println(Valor);
   }
-  server.send(200, "text/html", "ok");
 }
 
 void gravaragenda2()

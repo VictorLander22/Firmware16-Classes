@@ -54,6 +54,8 @@ void controle()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
+  server.send(200, "text/html", "ok");
+
   String p = server.arg("p");
   String k = server.arg("k");
   String f = server.arg("f");
@@ -85,7 +87,6 @@ void controle()
         Serial.println("led 1 desligado - Porta: " + String(porta));
       }
     }
-  server.send(200, "text/html", "ok");
 }
 
 void situacao()

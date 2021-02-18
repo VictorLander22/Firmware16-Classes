@@ -3,6 +3,8 @@ void gravacena()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
+  server.send(200, "text/html", "ok");
+
   String Senha = server.arg("k");
 
   if (Senha == "kdi9e")
@@ -34,7 +36,6 @@ void gravacena()
 
     SPIFFS.end();
     //lerArquivo(IdCena);
-    server.send(200, "text/html", "ok");
   }
   else
   {
@@ -114,7 +115,7 @@ void checkCena()
         Serial.println("Executar cena: " + Comando);
         executaCena(Comando);
         //Serial.println("Exceutou cena primeiro");
-            }
+      }
       else
       {
         Serial.println("Cena atual: " + String(cenaPAtual));

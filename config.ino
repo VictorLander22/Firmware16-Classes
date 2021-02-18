@@ -297,6 +297,8 @@ void fMemoria()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
+  server.send(200, "text/html", "ok");
+
   if (server.arg("m") == "1")
   {
     bitWrite(DevSet.mode, 0, true);
@@ -317,7 +319,6 @@ void fMemoria()
     memRtc.outValues = 255 << 8 | 255;
     memRtc.setOutputs();
   }
-  server.send(200, "text/html", "ok");
 }
 
 void lerConfiguracao()
@@ -348,6 +349,8 @@ void GravaCloud()
     String req = server.arg("v");
     if (func == "w")
     {
+      server.send(200, "text/html", "1");
+
       SPIFFS.begin();
 
       File f = SPIFFS.open("/cloud.txt", "w");
@@ -363,7 +366,6 @@ void GravaCloud()
       {
         usaCloud = false;
       }
-      server.send(200, "text/html", "1");
     }
     else if (func == "r")
     {
