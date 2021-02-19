@@ -409,8 +409,9 @@ void atualizahora()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  int vHora = server.arg("h").toInt();
+  uint32_t vHora = server.arg("h").toInt();
   String Senha = server.arg("k");
+  Serial.println(vHora);
 
   if (Senha == "kdi9e")
   {
@@ -427,7 +428,7 @@ void atualizahora()
 
     //Serial.println("Hora atualizada com sucesso!");
     printDateTime(HoraNova);
-    }
+  }
   else
   {
     server.send(200, "text/html", "-1");

@@ -1,12 +1,13 @@
-void configuracao() {
+void configuracao()
+{
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-    if(!server.authenticate(www_username, www_password))
-      return server.requestAuthentication();
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
 
-//  WiFiClient client = server.client();
+  //  WiFiClient client = server.client();
 
-/*
+  /*
 */
   SPIFFS.begin();
   //SPIFFS.remove("/index.html");
@@ -20,13 +21,13 @@ void configuracao() {
   }
 
   server.streamFile(f, "text/html");
-//  server.send(200, "text/html", String(f.size()));
+  //  server.send(200, "text/html", String(f.size()));
 
   f.close();
   SPIFFS.end();
 }
 
-String htmlconfig1 ()
+String htmlconfig1()
 {
   String buf = "<!DOCTYPE html>";
   buf += "<html lang=\"pt-br\">";
@@ -59,28 +60,28 @@ String htmlconfig3()
   buf += "        <div class=\"row\">";
   buf += "            <div class=\"one column\"></div>";
   buf += "            <div class=\"ten columns\">";
-//  buf += "                <h5><strong>Informe as configurações de rede</strong></h5>";
+  //  buf += "                <h5><strong>Informe as configurações de rede</strong></h5>";
   buf += "                <form action=\"gravarwifi\" method=\"GET\">";
   buf += "            </div>";
   buf += "            <div class=\"ten columns\">";
   buf += "                <label for=\"txtnomerede\">Nome da rede wifi:</label>";
-  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtnomerede\" name=\"txtnomerede\" value=\""+vssid+"\" placeholder=\"Nome da rede (SSID)\" />";
+  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtnomerede\" name=\"txtnomerede\" value=\"" + vssid + "\" placeholder=\"Nome da rede (SSID)\" />";
   buf += "            </div>";
   buf += "            <div class=\"ten columns\">";
   buf += "                <label for=\"txtsenha\">Senha da rede wifi:</label>";
-  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtsenha\" name=\"txtsenha\" value=\""+vpass+"\" placeholder=\"Senha da rede wifi\" />";
+  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtsenha\" name=\"txtsenha\" value=\"" + vpass + "\" placeholder=\"Senha da rede wifi\" />";
   buf += "            </div>";
   buf += "            <div class=\"ten columns\">";
   buf += "                <label for=\"txtip\">Ip:</label>";
-  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtip\" name=\"txtip\" value=\""+vip+"\" placeholder=\"Endereço de IP\" />";
+  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtip\" name=\"txtip\" value=\"" + vip + "\" placeholder=\"Endereço de IP\" />";
   buf += "            </div>";
   buf += "            <div class=\"ten columns\">";
   buf += "                <label for=\"txtmascara\">Mascara de sub-rede:</label>";
-  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtmascara\" name=\"txtmascara\" value=\""+vmask+"\" placeholder=\"Mascara da sub-rede\" />";
+  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtmascara\" name=\"txtmascara\" value=\"" + vmask + "\" placeholder=\"Mascara da sub-rede\" />";
   buf += "            </div>";
   buf += "            <div class=\"ten columns\">";
   buf += "                <label for=\"txtgateway\">Gateway:</label>";
-  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtgateway\" name=\"txtgateway\" value=\""+vgateway+"\" placeholder=\"Endereço do Gateway\" />";
+  buf += "                <input type=\"text\" class=\"u-full-width\" id=\"txtgateway\" name=\"txtgateway\" value=\"" + vgateway + "\" placeholder=\"Endereço do Gateway\" />";
   buf += "            </div>";
   buf += "            <div class=\"ten columns\">";
   buf += "                <button type=\"submit\" class=\"button-primary u-full-width\">Gravar</button>";
@@ -96,7 +97,7 @@ String htmlconfig3()
   buf += "    </div>";
   buf += "    </div>";
   buf += "</body>";
-  buf += "</html>"; 
+  buf += "</html>";
 
   return buf;
 }
@@ -106,18 +107,18 @@ void gravahtml()
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
   //if(!server.authenticate(www_username, www_password))
-    //return server.requestAuthentication();
-  
+  //return server.requestAuthentication();
+
   carregaDadosHTML();
 
   SPIFFS.begin();
   File f = SPIFFS.open("/index.html", "w");
-   
-  if (!f) {
-    SPIFFS .format();
+
+  if (!f)
+  {
+    SPIFFS.format();
     File f = SPIFFS.open("/index.html", "w");
   }
-
 
   f.println(htmlconfig1());
   f.println(vNormalize());
@@ -127,7 +128,7 @@ void gravahtml()
   f.println(vskeleton3());
   f.println(vskeleton4());
   f.println(vskeleton5());
-  f.println(htmlconfig3());  
+  f.println(htmlconfig3());
   //f.println("#fimarq#");
   f.close();
   SPIFFS.end();
@@ -136,7 +137,7 @@ void gravahtml()
 void testes2()
 {
   carregaDadosHTML();
-  server.send(200, "text/html", htmlconfig3());  
+  server.send(200, "text/html", htmlconfig3());
 }
 
 void carregaDadosHTML()
@@ -147,4 +148,49 @@ void carregaDadosHTML()
   vip = DevSet.numberToIpString(DevSet.wifiIP);
   vmask = DevSet.numberToIpString(DevSet.wifiMSK);
   vgateway = DevSet.numberToIpString(DevSet.wifiGTW);
+}
+
+void handleHtmlConfig()
+{
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  SPIFFS.begin();
+  File file = SPIFFS.open(F("/teste.html"), "r");
+
+  if (file)
+  {
+    file.setTimeout(100);
+    String s = file.readString();
+    file.close();
+    // Atualiza conteúdo dinâmico
+    s.replace(F("#ssid#"), DevSet.wifiSSID.c_str());
+    s.replace(F("#pwd#"), DevSet.wifiPwd.c_str());
+    s.replace(F("#ip#"), DevSet.numberToIpString(DevSet.wifiIP).c_str());
+    s.replace(F("#msk#"), DevSet.numberToIpString(DevSet.wifiMSK).c_str());
+    s.replace(F("#gtw#"), DevSet.numberToIpString(DevSet.wifiGTW).c_str());
+
+    // Envia dados
+    server.send(200, F("text/html"), s);
+    log("Home - Cliente: " + ipStr(server.client().remoteIP()) +
+        (server.uri() != "/" ? " [" + server.uri() + "]" : ""));
+  }
+  else
+  {
+    server.send(500, F("text/plain"), F("Home - ERROR 500"));
+    log(F("Home - ERRO lendo arquivo"));
+  }
+  SPIFFS.end();
+}
+
+String ipStr(const IPAddress &ip)
+{
+  // Retorna IPAddress em formato "n.n.n.n"
+  String sFn = "";
+  for (byte bFn = 0; bFn < 3; bFn++)
+  {
+    sFn += String((ip >> (8 * bFn)) & 0xFF) + ".";
+  }
+  sFn += String(((ip >> 8 * 3)) & 0xFF);
+  return sFn;
 }

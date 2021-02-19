@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0"><title>Keepin</title><style>
+span{display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:bold; font-family:Arial;}
+#content{border:solid 1px black;border-radius:5px;flex:1;align-items:center;justify-content:center;padding:20px;margin:0 20px 0 20px;border-radius:10;background-color:#f8f8f8;}
+input{height:25px;font-size:18px;font-family:Arial;}
+label{margin-top:10px;margin-bottom:5px;font-size:20px;font-weight:bold;font-family:Arial;}
+button{margin-top:10px;height:30px;border:solid 1px rgb(102,102,102);border-radius:5px;color:black;background-color:aquamarine;font-size:20px;font-family:Arial;}
+a{margin-top:10px;height:30px;border:solid 1px rgb(102,102,102);border-radius:5px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:black;background-color:aquamarine;font-size:20px;font-family:Arial;}
+form div{display:flex;flex-direction:column;}
+</style></head><body><span>Configuração da rede</span><br>
+<div id="content"><form action="gravarwifi"><div>
+<label for="txtnomerede">SSID</label><input required type="text" name="txtnomerede" value="#ssid#">
+<label for="txtsenha">Password</label><input required type="password" name="txtsenha" value="#pwd#">
+<label for="txtip">IP</label><input required pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" type="text" name="txtip" value="#ip#">
+<label for="txtmascara">Máscara</label><input required pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" type="text" name="txtmascara" value="#msk#">
+<label for="txtgateway">Gateway</label><input required pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" type="text" name="txtgateway" value="#gtw#">
+<button type="submit" formmethod="GET">Gravar</button>
+<a href="reiniciar">Reiniciar</a>
+<a href="reset">Configuração Fábrica</a>
+<a href="executeupdate?s=kdi9e">Atualizar Firmware</a>
+</div></form></div></body></html>

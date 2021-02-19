@@ -134,26 +134,13 @@ void configuracao2()
 
 void wifireset()
 {
-  //  const char* www_username = www_username2.c_str();
-  //  const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   server.send(200, "text/html", "ESP resetado");
-  //wifireset2();
   DevSet.factoryReset();
+  ESP.restart();
 }
-
-// void wifireset2()
-// {
-//   SPIFFS.begin();
-//   File f = SPIFFS.open("/wifipadrao.txt", "w");
-
-//   if (!f)
-//   {
-//     SPIFFS.format();
-//     File f = SPIFFS.open("/wifipadrao.txt", "w");
-//   }
 
 //   String req = "1|";
 

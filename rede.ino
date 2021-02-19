@@ -203,8 +203,8 @@ void gravawifi()
   //  const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
-  server.send(200, "text/html", "ok");
-
+  //server.send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>alert('Configuração salva.');history.back()</script></html>"));
+  server.send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
   String wifiSSID = server.arg("txtnomerede");
   String wifiPWD = server.arg("txtsenha");
   const char *wifiIP = server.arg("txtip").c_str();
@@ -217,7 +217,7 @@ void gravawifi()
   DevSet.wifiMSK = DevSet.ipStringToNumber(wifiMSK);
   DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
   DevSet.setWifi();
-  log("New WIFI Settings");
+  log(F("New WIFI Settings"));
   DevSet.showVariables();
 
   gravahtml();
@@ -225,7 +225,7 @@ void gravawifi()
 
 void wifiConectSTA()
 {
-  Serial.println("\nWifi trying conection in: STA MODE");
+  Serial.println(F("\nWifi trying conection in: STA MODE"));
   WiFi.mode(WIFI_STA);
   tipoWifiAtual = 1;
   const char *ssid = DevSet.wifiSSID.c_str();

@@ -74,6 +74,7 @@ void ConfigurarWebServer(void)
   server.on("/deletefile", File_Delete);
   //server.on("/cloud", cloud);
   //  server.on("/sendcloud", sendCloud);
+  server.on("/testehtml", handleHtmlConfig);
 
   server.on("/inline", []() {
     server.send(200, "text/plain", "this works as well");
