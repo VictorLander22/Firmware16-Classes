@@ -5,7 +5,9 @@ void log(String msg)
 
 void ConfigurarWebServer(void)
 {
-  server.on("/", configuracao);
+  //server.on("/", configuracao);
+  //server.on("/", handleHtmlConfig);
+  server.on("/", handleHtmlConfig);
   server.on("/grava", grava);
   server.on("/ler", ler);
   server.on("/config", configuracao);

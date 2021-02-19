@@ -31,6 +31,7 @@
 
 #include "src\KPDeviceSetting.h"
 #include "src\KPPCF8583Class.h"
+#include "src\indexhtml.h"
 
 String vchipId;
 String gchipId;

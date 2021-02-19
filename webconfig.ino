@@ -152,35 +152,44 @@ void carregaDadosHTML()
 
 void handleHtmlConfig()
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  server.send_P(200, "text/html", defaultpage);
+  // if (!server.authenticate(www_username, www_password))
+  //   return server.requestAuthentication();
 
-  SPIFFS.begin();
-  File file = SPIFFS.open(F("/teste.html"), "r");
+  // SPIFFS.begin();
+  // File file = SPIFFS.open(F("/teste.html"), "r");
 
-  if (file)
-  {
-    file.setTimeout(100);
-    String s = file.readString();
-    file.close();
-    // Atualiza conteúdo dinâmico
-    s.replace(F("#ssid#"), DevSet.wifiSSID.c_str());
-    s.replace(F("#pwd#"), DevSet.wifiPwd.c_str());
-    s.replace(F("#ip#"), DevSet.numberToIpString(DevSet.wifiIP).c_str());
-    s.replace(F("#msk#"), DevSet.numberToIpString(DevSet.wifiMSK).c_str());
-    s.replace(F("#gtw#"), DevSet.numberToIpString(DevSet.wifiGTW).c_str());
+  // if (file)
+  // {
+  // file.setTimeout(100);
+  // String s = file.readString();
+  // file.close();
 
-    // Envia dados
-    server.send(200, F("text/html"), s);
-    log("Home - Cliente: " + ipStr(server.client().remoteIP()) +
-        (server.uri() != "/" ? " [" + server.uri() + "]" : ""));
-  }
-  else
-  {
-    server.send(500, F("text/plain"), F("Home - ERROR 500"));
-    log(F("Home - ERRO lendo arquivo"));
-  }
-  SPIFFS.end();
+  // Atualiza conteúdo dinâmico
+  // s.replace(F("#ssid#"), DevSet.wifiSSID.c_str());
+  // s.replace(F("#pwd#"), DevSet.wifiPwd.c_str());
+  // s.replace(F("#ip#"), DevSet.numberToIpString(DevSet.wifiIP).c_str());
+  // s.replace(F("#msk#"), DevSet.numberToIpString(DevSet.wifiMSK).c_str());
+  // s.replace(F("#gtw#"), DevSet.numberToIpString(DevSet.wifiGTW).c_str());
+
+  // defaultpage.replace(F("#defaultpagesid#"), DevSet.wifiSSID.c_str());
+  // defaultpage.replace(F("#pwd#"), DevSet.wifiPwd.c_str());
+  // defaultpage.replace(F("#ip#"), DevSet.numberToIpString(DevSet.wifiIP).c_str());
+  // defaultpage.replace(F("#msk#"), DevSet.numberToIpString(DevSet.wifiMSK).c_str());
+  // defaultpage.replace(F("#gtw#"), DevSet.numberToIpString(DevSet.wifiGTW).c_str());
+
+  // Envia dados
+  //server.send(200, F("text/html"), s);
+  //return defaultpage;
+  //   log("Home - Cliente: " + ipStr(server.client().remoteIP()) +
+  //       (server.uri() != "/" ? " [" + server.uri() + "]" : ""));
+  // }
+  // else
+  // {
+  //   server.send(500, F("text/plain"), F("Home - ERROR 500"));
+  //   log(F("Home - ERRO lendo arquivo"));
+  // }
+  // SPIFFS.end();
 }
 
 String ipStr(const IPAddress &ip)
