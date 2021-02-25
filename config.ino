@@ -129,7 +129,7 @@ void configuracao2()
   f.close();
 
   SPIFFS.end();
-  configuracao();
+  //configuracao();
 }
 
 void wifireset()
@@ -203,7 +203,7 @@ void IniciaRTC()
     memRtc.outValues = 255 << 8 | 255;
     memRtc.setOutputs();
 
-    log("Set Date");
+    Serial.println(F("Set Date"));
     Rtc.get_time();
     Serial.printf("%02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
     Serial.println();

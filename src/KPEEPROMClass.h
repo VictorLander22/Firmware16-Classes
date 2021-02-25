@@ -24,21 +24,21 @@ public:
   using EEPROMClass::end;
 
   //Funções para leitura da EEPROM
-  int8_t getEEPROMInt8(byte offset);
-  uint8_t getEEPROMUInt8(byte offset);
-  int16_t getEEPROMInt16(byte offset);
-  uint16_t getEEPROMUInt16(byte offset);
-  int32_t getEEPROMInt32(byte offset);
-  uint32_t getEEPROMUInt32(byte offset);
-  String getEEPROMString(byte offset, word memSize);
+  int8_t getEEPROMInt8(int offset);
+  uint8_t getEEPROMUInt8(int offset);
+  int16_t getEEPROMInt16(int offset);
+  uint16_t getEEPROMUInt16(int offset);
+  int32_t getEEPROMInt32(int offset);
+  uint32_t getEEPROMUInt32(int offset);
+  String getEEPROMString(int offset, word memSize);
   //Funções para gravação na EEPROM
-  void setEEPROMInt8(byte offset, int8_t v);
-  void setEEPROMInt8(byte offset, uint8_t v);
-  void setEEPROMInt16(byte offset, int16_t v);
-  void setEEPROMInt16(byte offset, uint16_t v);
-  void setEEPROMInt32(byte offset, int32_t v);
-  void setEEPROMInt32(byte offset, uint32_t v);
-  void setEEPROMString(byte offset, String s);
+  void setEEPROMInt8(int offset, int8_t v);
+  void setEEPROMInt8(int offset, uint8_t v);
+  void setEEPROMInt16(int offset, int16_t v);
+  void setEEPROMInt16(int offset, uint16_t v);
+  void setEEPROMInt32(int offset, int32_t v);
+  void setEEPROMInt32(int offset, uint32_t v);
+  void setEEPROMString(int offset, String s);
 };
 
 #endif

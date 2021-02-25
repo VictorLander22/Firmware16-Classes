@@ -22,9 +22,9 @@ public:
 
   //Variaveis de configuração - inicialização e padrão de fábrica
 
-  uint8_t mode; //b0:AllowApi, b1:UsaCloud, b2:wifiPadrao, b3:TipoMemoria ..
-  String wifiSSID;  //Limit 35 bytes;
-  String wifiPwd;   //Limit 35 bytes;
+  uint8_t mode;    //b0:AllowApi, b1:UsaCloud, b2:wifiPadrao, b3:TipoMemoria ..
+  String wifiSSID; //Limit 35 bytes;
+  String wifiPwd;  //Limit 35 bytes;
   uint32_t wifiIP;
   uint32_t wifiMSK;
   uint32_t wifiGTW;
@@ -36,6 +36,8 @@ public:
   uint32_t apWifiIP;
   uint32_t apWifiMSK;
   uint32_t apWifiGTW;
+
+  int8_t utcConfig;
 
   KPDeviceSettingClass();
 
@@ -70,10 +72,10 @@ private:
   const byte CFG_WIFIGTW = CFG_WIFIMSK + 4;
   const byte CFG_APIPWD = CFG_WIFIGTW + 4;
   const byte CFG_APWIFIPWD = CFG_APIPWD + 35;
-  const word CFG_TOTAL = CFG_APWIFIPWD + 35;
+  const byte CFG_UTC = CFG_APWIFIPWD + 35;
+  const word CFG_TOTAL = CFG_UTC + 1;
 
   void _factoryDefault();
-
 };
 
 #endif

@@ -1,4 +1,7 @@
 
+#define espMemory 52696
+#define ntpServer "pool.ntp.org"
+
 #include <user_interface.h>
 //#ifndef UNIT_TEST
 #include <Arduino.h>
@@ -16,7 +19,6 @@
 #include <pcf8574_esp.h>
 #include <ESP8266httpUpdate.h>
 //#include <ArduinoOTA.h>
-#include <Seguranca.h>
 //IR
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
@@ -28,10 +30,12 @@
 //#include <FirebaseArduino.h>
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
+#include <NTPClient.h>
 
 #include "src\KPDeviceSetting.h"
 #include "src\KPPCF8583Class.h"
-#include "src\indexhtml.h"
+#include "src\webpage.h"
+#include "src\seguranca\Seguranca.h"
 
 String vchipId;
 String gchipId;

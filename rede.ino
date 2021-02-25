@@ -217,10 +217,10 @@ void gravawifi()
   DevSet.wifiMSK = DevSet.ipStringToNumber(wifiMSK);
   DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
   DevSet.setWifi();
-  log(F("New WIFI Settings"));
+  Serial.println(F("New WIFI Settings"));
   DevSet.showVariables();
 
-  gravahtml();
+  //gravahtml();
 }
 
 void wifiConectSTA()

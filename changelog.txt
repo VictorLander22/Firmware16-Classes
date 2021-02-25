@@ -1,4 +1,8 @@
 #########################################################
+2,38 - Leonardo Aquino
+- Alteração do html e webconfig
+
+#########################################################
 2,37 - Leonardo Aquino
 - Escrita e leitura da memoria ROM pra armazenamento de dados
     Toda leitura de inicilização foi migrada do arquivo txt para area de memoria ROM

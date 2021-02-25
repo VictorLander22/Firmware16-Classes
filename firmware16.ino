@@ -31,22 +31,22 @@ void setup(void)
   gchipId.replace(":", "");
 
   Serial.println();
-  log("Keepin Firmware: " + String(Placa_Version));
-  log("Keepin ID: " + vchipId);
-  log("Keepin MAC: " + gchipId);
+  Serial.println("Keepin Firmware: " + String(Placa_Version));
+  Serial.println("Keepin ID: " + vchipId);
+  Serial.println("Keepin MAC: " + gchipId);
 
   //Reset mode
   if (digitalRead(buttonState))
   {
     Serial.println();
-    log("Factory reset\n");
+    Serial.println(F("Factory reset\n"));
     DevSet.factoryReset();
     //wifireset2();
   }
   else
   {
     Serial.println();
-    log("Simple restart\n");
+    Serial.println(F("Simple restart\n"));
   }
   DevSet.verifyEEPROM();
   DevSet.getDeviceSettings();
@@ -135,5 +135,9 @@ void loop(void)
     MillisResets();
 
     server.handleClient();
+
+    //showDateTime();
+
+    FreeMemory(F("loop()"));
   }
 }

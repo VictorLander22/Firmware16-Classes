@@ -17,9 +17,11 @@ void KPDeviceSettingClass::_factoryDefault()
   apiPwd = "25d55ad283aa400af464c76d713c07ad"; ///Limit 35 bytes;
   apWifiSSID = "KEEPIN_" + chipMac;            //Limit 35 bytes;
   apWifiPwd = "12345678";                      //Limit 35 bytes;
-  apWifiIP = 17082560;                       //192.168.4.1
-  apWifiMSK = 16777215;                      //255.255.255.0
-  apWifiGTW = 17082560;                      //192.168.4.1
+  apWifiIP = 17082560;                         //192.168.4.1
+  apWifiMSK = 16777215;                        //255.255.255.0
+  apWifiGTW = 17082560;                        //192.168.4.1
+
+  utcConfig = -3;
 }
 
 void KPDeviceSettingClass::setMode()
@@ -38,6 +40,7 @@ void KPDeviceSettingClass::setWifi()
   KPEEPROMClass::setEEPROMInt32(CFG_WIFIIP, wifiIP);
   KPEEPROMClass::setEEPROMInt32(CFG_WIFIMSK, wifiMSK);
   KPEEPROMClass::setEEPROMInt32(CFG_WIFIGTW, wifiGTW);
+  KPEEPROMClass::setEEPROMInt8(CFG_UTC, utcConfig);
   KPEEPROMClass::end();
 }
 
@@ -66,6 +69,7 @@ void KPDeviceSettingClass::getDeviceSettings()
   wifiGTW = KPEEPROMClass::getEEPROMUInt32(CFG_WIFIGTW);
   apiPwd = KPEEPROMClass::getEEPROMString(CFG_APIPWD, CFG_TOTAL);
   apWifiPwd = KPEEPROMClass::getEEPROMString(CFG_APWIFIPWD, CFG_TOTAL);
+  utcConfig = KPEEPROMClass::getEEPROMUInt8(CFG_UTC);
 
   KPEEPROMClass::end();
 }
@@ -92,7 +96,7 @@ void KPDeviceSettingClass::showVariables()
   Serial.println(wifiSSID);
   Serial.print("Wifi PWD  = ");
   Serial.println(wifiPwd);
-  
+
   Serial.print("Wifi IP   = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(wifiIP));
   Serial.printf(" (%u)\n", wifiIP);
@@ -104,7 +108,6 @@ void KPDeviceSettingClass::showVariables()
   Serial.print("Wifi GTW  = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(wifiGTW));
   Serial.printf(" (%u)\n", wifiGTW);
-
 
   Serial.println("\nAP MODE - Wifi Configuration");
   Serial.print("Wifi SSID = ");
@@ -124,6 +127,8 @@ void KPDeviceSettingClass::showVariables()
   Serial.print("Wifi GTW  = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(apWifiGTW));
   Serial.printf(" (%u)\n", apWifiGTW);
+
+  Serial.printf("UTC  =  (%d)\n", utcConfig);
 }
 
 uint32_t KPDeviceSettingClass::getMemSize()
@@ -179,12 +184,12 @@ uint32_t KPDeviceSettingClass::convUint32(byte *d)
 }
 
 void KPDeviceSettingClass::verifyEEPROM()
-{ 
+{
   KPEEPROMClass::begin(CFG_TOTAL);
   uint16_t pwd = getEEPROMUInt16(CFG_APWIFIPWD);
   KPEEPROMClass::end();
   Serial.print("EEPROM Status: ");
-  if (pwd==65535) //if eeprom never used
+  if (pwd == 65535) //if eeprom never used
   {
     Serial.println("Factory reset");
     wifiSSID = "";
@@ -194,11 +199,11 @@ void KPDeviceSettingClass::verifyEEPROM()
     wifiGTW = 0;
     KPDeviceSettingClass::factoryReset();
   }
-  else{
+  else
+  {
     Serial.println("OK");
   }
 }
-
 
 String KPDeviceSettingClass::dateTimeStr(const time_t &t)
 {

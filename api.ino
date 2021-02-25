@@ -22,19 +22,19 @@ void api()
     vPassApi = MqttArg(msgMqtt, "pw");
     vPassApi.toLowerCase();
     Serial.print("vPassApi: ");
-    log(vPassApi);
+    Serial.println(vPassApi);
 
     action = MqttArg(msgMqtt, "a");
     Serial.print("action: ");
-    log(action);
+    Serial.println(action);
 
     apiPort = MqttArg(msgMqtt, "p");
     Serial.print("apiPort: ");
-    log(apiPort);
+    Serial.println(apiPort);
 
     apiSource = MqttArg(msgMqtt, "s");
     Serial.print("apiSource: ");
-    log(apiSource);
+    Serial.println(apiSource);
   }
 
   if (AlowApi == true && vPassApi == ApiPass)
@@ -156,7 +156,7 @@ void api()
             {
               //Rtc.chip1 = 255;
               //Rtc.chip2 = 255;
-              //log("vou gravar");
+              //Serial.println("vou gravar");
               //Rtc.set_chip1();
               //Rtc.set_chip2();
 

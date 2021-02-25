@@ -9,12 +9,22 @@ void teste()
   Serial.println(WiFi.getPhyMode());
 }
 
-void FreeMemory()
+void showDateTime()
 {
-  static unsigned long last = millis();
-  if (millis() - last > 3000)
+  Serial.printf("Data hora: %u/%u/%u %u:%u:%u\n", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
+  delay(200);
+}
+
+void FreeMemory(String functionName)
+{
+  static unsigned long millisFreeMemory = millis();
+  if ((millis() > millisFreeMemory) || (millis() == 0))
   {
-    last = millis();
-    Serial.printf("[MAIN] Free heap: %d bytes\n", ESP.getFreeHeap());
+    Serial.print(functionName);
+    Serial.print(F(" Aloc: "));
+    Serial.print((espMemory - ESP.getFreeHeap()));
+    Serial.print(F(" Livre: "));
+    Serial.println(ESP.getFreeHeap());
+    millisFreeMemory = millis() + 2000;
   }
 }
