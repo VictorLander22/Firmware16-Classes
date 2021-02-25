@@ -1,14 +1,3 @@
-void reiniciar()
-{
-  //  const char* www_username = www_username2.c_str();
-  //  const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-
-  server.send(200, "text/html", "ok");
-  delay(1000);
-  ESP.restart();
-}
 
 String wifiPadrao()
 {

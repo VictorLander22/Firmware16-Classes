@@ -221,3 +221,28 @@ const char webAbout[] PROGMEM = R"===(
 <html><body><h1>Desenvolvido por:</h1><p>Leonardo Aquino</p><p>Julio Valadares</p><p>Vinícus Aquino</p><p>Breno Aquino</p>
 <p><a href=\"http://www.keepin.com.br\">www.keepin.com.br</a></p></body></html>"
 )===";
+
+const char webRestart[] PROGMEM = R"===(
+<h1>
+  Redirecting to #newip# after <span id="countdown">20</span> seconds
+</h1>
+<script type="text/javascript">
+    // Total seconds to wait
+    var seconds = 20;
+    
+    function countdown() {
+        seconds = seconds - 1;
+        if (seconds < 0) {
+            // Chnage your redirection link here
+            window.location = "http://#newip#";
+        } else {
+            // Update remaining seconds
+            document.getElementById("countdown").innerHTML = seconds;
+            // Count down using javascript
+            window.setTimeout("countdown()", 1000);
+        }
+    }
+    // Run countdown function
+    countdown();
+</script>
+)===";
