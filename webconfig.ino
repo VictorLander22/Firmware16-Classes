@@ -1,62 +1,3 @@
-void handleHtmlConfig()
-{
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  String defaultPage(FPSTR(webDefaultPage));
-  defaultPage.replace("#ipfixo#", "true");
-  defaultPage.replace("#utc#", String(DevSet.utcConfig));
-  defaultPage.replace("#ssid#", DevSet.wifiSSID);
-  defaultPage.replace("#pwd#", DevSet.wifiPwd);
-  defaultPage.replace("#ip#", DevSet.numberToIpString(DevSet.wifiIP));
-  defaultPage.replace("#msk#", DevSet.numberToIpString(DevSet.wifiMSK));
-  defaultPage.replace("#gtw#", DevSet.numberToIpString(DevSet.wifiGTW));
-
-  server.send_P(200, "text/html", defaultPage.c_str());
-}
-
-void about()
-{
-  server.send_P(200, "text/html", webAbout);
-}
-
-void reiniciar()
-{
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-
-  String restartPage(FPSTR(webRestart));
-  restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-  server.send_P(200, "text/html", restartPage.c_str());
-
-  //  server.send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
-  delay(500);
-  ESP.restart();
-}
-
-void gravawifi()
-{
-
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
-  String wifiSSID = server.arg("txtnomerede");
-  String wifiPWD = server.arg("txtsenha");
-  const char *wifiIP = server.arg("txtip").c_str();
-  const char *wifiMSK = server.arg("txtmascara").c_str();
-  const char *wifiGTW = server.arg("txtgateway").c_str();
-  bitWrite(DevSet.mode, 2, 0); //wifiPadrao
-  DevSet.wifiSSID = wifiSSID;
-  DevSet.wifiPwd = wifiPWD;
-  DevSet.wifiIP = DevSet.ipStringToNumber(wifiIP);
-  DevSet.wifiMSK = DevSet.ipStringToNumber(wifiMSK);
-  DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
-  DevSet.setWifi();
-  Serial.println(F("New WIFI Settings"));
-  DevSet.showVariables();
-
-  //gravahtml();
-}
-
 void ConfigurarWebServer(void)
 {
   server.on("/", handleHtmlConfig);
@@ -134,7 +75,7 @@ void ConfigurarWebServer(void)
     server.send(200, "text/plain", "this works as well");
   });
 
-  server.on("/teste", teste);
+  server.on("/teste", redirectPage);
 
   server.onNotFound(handleNotFound);
 
@@ -154,3 +95,65 @@ void ConfigurarWebServer(void)
 //   sFn += String(((ip >> 8 * 3)) & 0xFF);
 //   return sFn;
 // }.
+
+void handleHtmlConfig()
+{
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+  String defaultPage(FPSTR(webDefaultPage));
+  defaultPage.replace("#ipfixo#", "true");
+  defaultPage.replace("#utc#", String(DevSet.utcConfig));
+  defaultPage.replace("#ssid#", DevSet.wifiSSID);
+  defaultPage.replace("#pwd#", DevSet.wifiPwd);
+  defaultPage.replace("#ip#", DevSet.numberToIpString(DevSet.wifiIP));
+  defaultPage.replace("#msk#", DevSet.numberToIpString(DevSet.wifiMSK));
+  defaultPage.replace("#gtw#", DevSet.numberToIpString(DevSet.wifiGTW));
+
+  server.send_P(200, "text/html", defaultPage.c_str());
+}
+
+void about()
+{
+  server.send_P(200, "text/html", webAbout);
+}
+
+void reiniciar()
+{
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+
+  String restartPage(FPSTR(webRestart));
+  restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
+  server.send_P(200, "text/html", restartPage.c_str());
+  delay(500);
+  ESP.restart();
+}
+
+void gravawifi()
+{
+
+  if (!server.authenticate(www_username, www_password))
+    return server.requestAuthentication();
+  server.send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
+  String wifiSSID = server.arg("txtnomerede");
+  String wifiPWD = server.arg("txtsenha");
+  const char *wifiIP = server.arg("txtip").c_str();
+  const char *wifiMSK = server.arg("txtmascara").c_str();
+  const char *wifiGTW = server.arg("txtgateway").c_str();
+  bitWrite(DevSet.mode, 2, 0); //wifiPadrao
+  DevSet.wifiSSID = wifiSSID;
+  DevSet.wifiPwd = wifiPWD;
+  DevSet.wifiIP = DevSet.ipStringToNumber(wifiIP);
+  DevSet.wifiMSK = DevSet.ipStringToNumber(wifiMSK);
+  DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
+  DevSet.setWifi();
+  Serial.println(F("New WIFI Settings"));
+  DevSet.showVariables();
+
+  //gravahtml();
+}
+
+void redirectPage()
+{
+  server.send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + WiFi.localIP().toString() + "\")</script></html>");
+}

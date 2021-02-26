@@ -631,8 +631,10 @@ void sendRFp()
 void LoopRF()
 {
   if (mySwitch.available())
+
   {
-    //Serial.println("sinal de radio detectado");
+
+    Serial.println("sinal de radio detectado");
     //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
     if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
     {

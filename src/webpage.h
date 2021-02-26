@@ -55,11 +55,12 @@ const char webDefaultPage[] PROGMEM = R"===(
       height: 25px;
       font-size: 18px;
       font-family: Arial;
+      margin-bottom: 5px;
     }
 
     label {
-      margin-top: 10px;
-      margin-bottom: 5px;
+      margin-top: 7px;
+      margin-bottom: 2px;
       font-size: 20px;
       font-weight: bold;
       font-family: Arial;
@@ -109,9 +110,12 @@ const char webDefaultPage[] PROGMEM = R"===(
     }
 
     #check span {
-      margin-top: 5px;
       font-weight: 100;
       font-size: 20px;
+    }
+
+    #check input {
+      margin-bottom: 4px;
     }
 
     #title span {
@@ -198,13 +202,13 @@ const char webDefaultPage[] PROGMEM = R"===(
           <input type="radio" name="ipfixo" onclick="isFixIp()" value="1" id="fixo"><span>Estático</span>
         </label>
         <input required pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-          type="text" name="txtip" id="ip" value="#ip#"><br>
+          type="text" name="txtip" id="ip" value="#ip#">
         <label for="txtmascara">Máscara</label><input required
           pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" type="text"
-          name="txtmascara" id="msk" value="#msk#"><br>
+          name="txtmascara" id="msk" value="#msk#">
         <label for="txtgateway">Gateway</label><input required
           pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" type="text"
-          name="txtgateway" id="gtw" value="#gtw#"><br>
+          name="txtgateway" id="gtw" value="#gtw#">
         <button type="submit" formmethod="GET">Gravar</button>
         <a href="reiniciar">Reiniciar</a>
         <a href="reset">Configuração Fábrica</a>
@@ -235,6 +239,7 @@ const char webRestart[] PROGMEM = R"===(
         if (seconds < 0) {
             // Chnage your redirection link here
             window.location = "http://#newip#";
+
         } else {
             // Update remaining seconds
             document.getElementById("countdown").innerHTML = seconds;
