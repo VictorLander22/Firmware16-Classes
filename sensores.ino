@@ -4,7 +4,7 @@ void trataDevice(String (&Devices)[20])
   File f = SPIFFS.open("/device.txt", "r");
 
   String valorDevice = f.readStringUntil('*');
-  //Serial.println(valorDevice);
+  //if (DEBUG_ON) Serial.println(valorDevice);
   f.close();
   SPIFFS.end();
 
@@ -36,7 +36,8 @@ void trataDevice(String (&Devices)[20])
       }
     }
   }
-  Serial.println(valorDevice);
+  if (DEBUG_ON)
+    Serial.println(valorDevice);
   DeviceAlterado = false;
 }
 
@@ -91,8 +92,8 @@ void trataSensores()
   // fim separação dos valroes lidos
 
   //sensor1.write(7, LOW);
-  //Serial.println(sSensor1);
-  //Serial.println(String(sensor1.read(7)));
+  //if (DEBUG_ON) Serial.println(sSensor1);
+  //if (DEBUG_ON) Serial.println(String(sensor1.read(7)));
 
   unsigned long currenTime = millisAtual;
   //Contador += 1;
@@ -111,7 +112,7 @@ void trataSensores()
     String valSensores = sSensor1 + sSensor2;
     valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + rssi + "*";
     valSensores.toCharArray(replyPacekt, 255);
-    //Serial.println(valSensores);
+    //if (DEBUG_ON) Serial.println(valSensores);
     IPAddress broadcastIp = IpDispositivo;
     broadcastIp[0] = 255;
     broadcastIp[1] = 255;
@@ -142,7 +143,7 @@ void trataSensores()
       broadcastIp[3] = 255;
     }
 
-    //Serial.println(Contador);
+    //if (DEBUG_ON) Serial.println(Contador);
     //    Contador = 0;
     Udp.beginPacketMulticast(broadcastIp, localUdpPort, IpDispositivo);
     //Udp.beginPacket(broadcastIp, localUdpPort);
@@ -180,7 +181,8 @@ void trataSensores()
         }
         ultimoDisparo = sSensor1 + sSensor2;
         limparUltimoDisparo = 0;
-        Serial.println("Sensor disparado");
+        if (DEBUG_ON)
+          Serial.println("Sensor disparado");
       }
     }
   }
@@ -204,12 +206,13 @@ void sendDataToFirebase(String MSG, int numSen, String vTag)
 
     if (reg.length() > 10)
     {
-      //Serial.println(reg.substring(0,1));
-      //Serial.println(reg.substring(1));
+      //if (DEBUG_ON) Serial.println(reg.substring(0,1));
+      //if (DEBUG_ON) Serial.println(reg.substring(1));
       String data = "";
       if (reg.substring(0, 1) == "2")
       {
-        Serial.println("Iphone");
+        if (DEBUG_ON)
+          Serial.println("Iphone");
         data = "{";
         data = data + "\"to\": \"" + reg.substring(1) + "\",";
         data = data + "\"notification\": {";
@@ -246,11 +249,13 @@ void sendDataToFirebase(String MSG, int numSen, String vTag)
         data = data + "}";
         data = data + " }";
       }
-      Serial.println("Send data...");
+      if (DEBUG_ON)
+        Serial.println("Send data...");
       //      if (cliente.connect("fcm.googleapis.com", 80)) {
       if (cliente.connect("cloud.fcleal.com.br", 80))
       {
-        Serial.println("Connected to the server..");
+        if (DEBUG_ON)
+          Serial.println("Connected to the server..");
         //        cliente.println("POST /fcm/send HTTP/1.1");
         cliente.println("POST /api/keepin/fcm HTTP/1.1");
         cliente.println("Authorization: key=" + serve + "");
@@ -262,15 +267,19 @@ void sendDataToFirebase(String MSG, int numSen, String vTag)
         cliente.print("\n");
         cliente.print(data);
       }
-      Serial.println("Data sent...Reading response..");
+      if (DEBUG_ON)
+        Serial.println("Data sent...Reading response..");
       while (cliente.available())
       {
         char c = cliente.read();
-        Serial.print(c);
+        if (DEBUG_ON)
+          Serial.print(c);
       }
-      Serial.println("Finished!");
+      if (DEBUG_ON)
+        Serial.println("Finished!");
       cliente.flush();
-      Serial.println(data);
+      if (DEBUG_ON)
+        Serial.println(data);
       msgDisparada[numSen] = true;
       msgDisparadaRF[numSen] = true;
     }
@@ -345,8 +354,9 @@ void gravasensor()
     f.close();
     nf.close();
     SPIFFS.end();
-    //Serial.println("valor salvo na ag"+idAgenda+".txt");
-    Serial.println(Valor);
+    //if (DEBUG_ON) Serial.println("valor salvo na ag"+idAgenda+".txt");
+    if (DEBUG_ON)
+      Serial.println(Valor);
   }
 
   SensorAlterado = true;
@@ -507,12 +517,12 @@ boolean verificaSensores(int nsensor, String vsAtual)
 
   if (nsensor == 3)
   {
-    //Serial.println(Funcao);
-    //Serial.print("estadoAtual: ");
-    //Serial.println(estadoAtual[nsensor]);
+    //if (DEBUG_ON) Serial.println(Funcao);
+    //if (DEBUG_ON) Serial.print("estadoAtual: ");
+    //if (DEBUG_ON) Serial.println(estadoAtual[nsensor]);
     //       ultimoEstado[nsensor] = estadoAtual[nsensor];
-    //Serial.print("ultimoEstado: ");
-    //      Serial.println(ultimoEstado[nsensor]);
+    //if (DEBUG_ON) Serial.print("ultimoEstado: ");
+    //      if (DEBUG_ON) Serial.println(ultimoEstado[nsensor]);
   }
 
   ////
@@ -536,7 +546,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
 
       if ((millisAtual - inicioAcionado[nsensor] > 1300) && (vDisparadoSensor[nsensor] == false))
       {
-        Serial.println("maior que 2 segundos"); /// acionamento 2
+        if (DEBUG_ON)
+          Serial.println("maior que 2 segundos"); /// acionamento 2
         inicioAcionado[nsensor] = 0;
         vDisparadoSensor[nsensor] = true;
 
@@ -576,7 +587,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|I|";
           }
           Texto.toCharArray(replyPacekt, 255);
-          Serial.println("enviado comando UDP");
+          if (DEBUG_ON)
+            Serial.println("enviado comando UDP");
           Udp.beginPacket(Destino, localUdpPort);
           Udp.write(replyPacekt);
           Udp.endPacket();
@@ -585,7 +597,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
       }
       else if (vDisparadoSensor[nsensor] == false)
       {
-        Serial.println("Menor que 2 segundos");
+        if (DEBUG_ON)
+          Serial.println("Menor que 2 segundos");
         inicioAcionado[nsensor] = 0;
         vDisparadoSensor[nsensor] = true;
 
@@ -621,7 +634,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
           }
           Texto.toCharArray(replyPacekt, 255);
-          Serial.println("enviado comando UDP");
+          if (DEBUG_ON)
+            Serial.println("enviado comando UDP");
           Udp.beginPacket(Destino, localUdpPort);
           Udp.write(replyPacekt);
           Udp.endPacket();
@@ -639,7 +653,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
 
     if ((millisAtual - inicioAcionado[nsensor] > 1300) && (vDisparadoSensor[nsensor] == false))
     {
-      Serial.println("maior que 2 segundos");
+      if (DEBUG_ON)
+        Serial.println("maior que 2 segundos");
       inicioAcionado[nsensor] = 0;
       vDisparadoSensor[nsensor] = true;
 
@@ -679,7 +694,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
           Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|I|";
         }
         Texto.toCharArray(replyPacekt, 255);
-        Serial.println("enviado comando UDP");
+        if (DEBUG_ON)
+          Serial.println("enviado comando UDP");
         Udp.beginPacket(Destino, localUdpPort);
         Udp.write(replyPacekt);
         Udp.endPacket();
@@ -713,9 +729,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
       {
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|true|" + String(vChip) + "|E|0|";
-        Serial.println(Texto);
+        if (DEBUG_ON)
+          Serial.println(Texto);
         Texto.toCharArray(replyPacekt, 255);
-        Serial.println("enviado comando UDP");
+        if (DEBUG_ON)
+          Serial.println("enviado comando UDP");
         Udp.beginPacket(Destino, localUdpPort);
         Udp.write(replyPacekt);
         Udp.endPacket();
@@ -745,7 +763,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|0|";
         Texto.toCharArray(replyPacekt, 255);
-        Serial.println("enviado comando UDP");
+        if (DEBUG_ON)
+          Serial.println("enviado comando UDP");
         Udp.beginPacket(Destino, localUdpPort);
         Udp.write(replyPacekt);
         Udp.endPacket();
@@ -783,7 +802,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            Serial.println("enviado comando UDP");
+            if (DEBUG_ON)
+              Serial.println("enviado comando UDP");
             Udp.beginPacket(Destino, localUdpPort);
             Udp.write(replyPacekt);
             Udp.endPacket();
@@ -816,7 +836,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            Serial.println("enviado comando UDP");
+            if (DEBUG_ON)
+              Serial.println("enviado comando UDP");
             Udp.beginPacket(Destino, localUdpPort);
             Udp.write(replyPacekt);
             Udp.endPacket();
@@ -861,7 +882,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
         Texto.toCharArray(replyPacekt, 255);
-        Serial.println("enviado comando UDP");
+        if (DEBUG_ON)
+          Serial.println("enviado comando UDP");
         Udp.beginPacket(Destino, localUdpPort);
         Udp.write(replyPacekt);
         Udp.endPacket();
@@ -909,7 +931,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            Serial.println("enviado comando UDP");
+            if (DEBUG_ON)
+              Serial.println("enviado comando UDP");
             Udp.beginPacket(Destino, localUdpPort);
             Udp.write(replyPacekt);
             Udp.endPacket();
@@ -1089,7 +1112,8 @@ void gravadevice()
     f.close();
     SPIFFS.end();
     DeviceAlterado = true;
-    Serial.println("gravado device");
+    if (DEBUG_ON)
+      Serial.println("gravado device");
   }
 }
 
@@ -1209,7 +1233,8 @@ void gravanot()
 
     f.close();
     SPIFFS.end();
-    Serial.println("gravado notificacao");
+    if (DEBUG_ON)
+      Serial.println("gravado notificacao");
 
     if (Valor == "true")
     {
@@ -1238,7 +1263,8 @@ void gravanot2(String Valor)
 
   f.close();
   SPIFFS.end();
-  Serial.println("gravado notificacao");
+  if (DEBUG_ON)
+    Serial.println("gravado notificacao");
 
   if (Valor == "true")
   {

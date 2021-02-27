@@ -1,17 +1,23 @@
 void teste()
 {
   server.send(200, "text/html", "OK");
-  Serial.println(WiFi.status());
-  Serial.println(WiFi.softAPIP());
-  Serial.println(WiFi.localIP());
-  Serial.println(WiFi.getMode());
+  if (DEBUG_ON)
+    Serial.println(WiFi.status());
+  if (DEBUG_ON)
+    Serial.println(WiFi.softAPIP());
+  if (DEBUG_ON)
+    Serial.println(WiFi.localIP());
+  if (DEBUG_ON)
+    Serial.println(WiFi.getMode());
   //WiFiPhyMode_t mode;
-  Serial.println(WiFi.getPhyMode());
+  if (DEBUG_ON)
+    Serial.println(WiFi.getPhyMode());
 }
 
 void showDateTime()
 {
-  Serial.printf("Data hora: %u/%u/%u %u:%u:%u\n", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
+  if (DEBUG_ON)
+    Serial.printf("Data hora: %u/%u/%u %u:%u:%u\n", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
   delay(200);
 }
 
@@ -25,6 +31,6 @@ void FreeMemory(String functionName)
     Serial.print((espMemory - ESP.getFreeHeap()));
     Serial.print(F(" Livre: "));
     Serial.println(ESP.getFreeHeap());
-    millisFreeMemory = millis() + 2000;
+    millisFreeMemory = millis() + 3000;
   }
 }

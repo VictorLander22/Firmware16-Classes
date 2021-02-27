@@ -17,20 +17,20 @@ void leituraUDP()
 
   if (packetSize > 16)
   {
-    //Serial.println(cabecalho.substring(0,7));
+    //if (DEBUG_ON) Serial.println(cabecalho.substring(0,7));
     if (cabecalho.substring(0, 7) == "2934d04")
     {
-      //Serial.println("cabeçalho");
-      //Serial.println(cabecalho);
-      //Serial.println("2934d03" + cabecalho.substring(7));
+      //if (DEBUG_ON) Serial.println("cabeçalho");
+      //if (DEBUG_ON) Serial.println(cabecalho);
+      //if (DEBUG_ON) Serial.println("2934d03" + cabecalho.substring(7));
       server.send(200, "text/html", "2934d03" + cabecalho.substring(7));
     }
     else
     {
 
       // receive incoming UDP packets
-      //    Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
-      //    Serial.printf("UDP packet contents: %s\n", incomingPacket);
+      //    if (DEBUG_ON) Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
+      //    if (DEBUG_ON) Serial.printf("UDP packet contents: %s\n", incomingPacket);
 
       String sIP = "";
       String Porta = "";
@@ -80,12 +80,12 @@ void leituraUDP()
           i2++;
         }
       }
-      //    Serial.println("");
-      //Serial.println("IP: " + sIP);
-      //Serial.println("Porta: " + Porta);
-      //Serial.println("Funcao: " + funcao);
-      //Serial.println("ChipId: " + ChipId);
-      //Serial.println("Tipo: " + Tipo);
+      //    if (DEBUG_ON) Serial.println("");
+      //if (DEBUG_ON) Serial.println("IP: " + sIP);
+      //if (DEBUG_ON) Serial.println("Porta: " + Porta);
+      //if (DEBUG_ON) Serial.println("Funcao: " + funcao);
+      //if (DEBUG_ON) Serial.println("ChipId: " + ChipId);
+      //if (DEBUG_ON) Serial.println("Tipo: " + Tipo);
       IPAddress Destino;
       Destino.fromString(sIP);
 
@@ -106,13 +106,15 @@ void leituraUDP()
           {
             //digitalWrite(Porta.toInt(), 1);
             LigaDesliga(Porta.toInt(), HIGH, "", Texto.toInt());
-            Serial.println("led ligado UDP");
+            if (DEBUG_ON)
+              Serial.println("led ligado UDP");
           }
           else
           {
             //digitalWrite(Porta.toInt(), 0);
             LigaDesliga(Porta.toInt(), LOW, "", Texto.toInt());
-            Serial.println("led 1 desligado UDP");
+            if (DEBUG_ON)
+              Serial.println("led 1 desligado UDP");
           }
         }
         else if (Tipo == "C")
@@ -128,7 +130,8 @@ void leituraUDP()
             String Texto = String(ipRetorno[0]) + "." + String(ipRetorno[1]) + "." + String(ipRetorno[2]) + "." + String(ipRetorno[3]) + "|" + Porta + "|" + funcao + "|" + ChipId + "|" + Tipo + "|";
             Texto.toCharArray(replyPacekt, 255);
 
-            Serial.println("enviado comando UDP");
+            if (DEBUG_ON)
+              Serial.println("enviado comando UDP");
             Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
             Udp.write(replyPacekt);
             Udp.endPacket();
@@ -144,7 +147,7 @@ void leituraUDP()
             String Texto = String(ipRetorno[0]) + "." + String(ipRetorno[1]) + "." + String(ipRetorno[2]) + "." + String(ipRetorno[3]) + "|" + Porta + "|" + funcao + "|" + ChipId + "|" + Tipo + "|";
             Texto.toCharArray(replyPacekt, 255);
 
-            //Serial.println("enviado comando UDP");
+            //if (DEBUG_ON) Serial.println("enviado comando UDP");
             Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
             Udp.write(replyPacekt);
             Udp.endPacket();
@@ -274,7 +277,7 @@ void leituraUDP()
           valSensores.toCharArray(replyPacekt, 255);
           //retorna udp
 
-          //Serial.println(Contador);
+          //if (DEBUG_ON) Serial.println(Contador);
           //    Contador = 0;
 
           Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
@@ -289,7 +292,7 @@ void leituraUDP()
         String Texto = "ok";
         Texto.toCharArray(replyPacekt, 255);
 
-        //Serial.println("enviado comando UDP");
+        //if (DEBUG_ON) Serial.println("enviado comando UDP");
         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(replyPacekt);
         Udp.endPacket();

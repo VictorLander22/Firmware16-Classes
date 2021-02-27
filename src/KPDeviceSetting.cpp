@@ -86,53 +86,45 @@ void KPDeviceSettingClass::factoryReset()
 
 void KPDeviceSettingClass::showVariables()
 {
+
   Serial.println("\nDevice Settings");
   Serial.printf("Mode      = AllowApi=%d UsaCloud=%d wifiPadrao=%d TipoMemoria=%d (%d)\n", (bitRead(mode, 0)), (bitRead(mode, 1)), (bitRead(mode, 2)), (bitRead(mode, 3)), mode);
   Serial.print("API PWD   = ");
   Serial.println(apiPwd);
-
   Serial.println("\nSTA MODE - Wifi Configuration");
   Serial.print("Wifi SSID = ");
   Serial.println(wifiSSID);
   Serial.print("Wifi PWD  = ");
   Serial.println(wifiPwd);
-
   Serial.print("Wifi IP   = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(wifiIP));
   Serial.printf(" (%u)\n", wifiIP);
-
   Serial.print("Wifi MSK  = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(wifiMSK));
   Serial.printf(" (%u)\n", wifiMSK);
-
   Serial.print("Wifi GTW  = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(wifiGTW));
   Serial.printf(" (%u)\n", wifiGTW);
-
   Serial.println("\nAP MODE - Wifi Configuration");
   Serial.print("Wifi SSID = ");
   Serial.println(apWifiSSID);
-
   Serial.print("Wifi PWD  = ");
   Serial.println(apWifiPwd);
-
   Serial.print("Wifi IP   = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(apWifiIP));
   Serial.printf(" (%u)\n", apWifiIP);
-
   Serial.print("Wifi MSK  = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(apWifiMSK));
   Serial.printf(" (%u)\n", apWifiMSK);
-
   Serial.print("Wifi GTW  = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(apWifiGTW));
   Serial.printf(" (%u)\n", apWifiGTW);
-
   Serial.printf("UTC  =  (%d)\n", utcConfig);
 }
 
 uint32_t KPDeviceSettingClass::getMemSize()
 {
+
   Serial.println(CFG_TOTAL);
   return CFG_TOTAL;
 }
@@ -188,9 +180,11 @@ void KPDeviceSettingClass::verifyEEPROM()
   KPEEPROMClass::begin(CFG_TOTAL);
   uint16_t pwd = getEEPROMUInt16(CFG_APWIFIPWD);
   KPEEPROMClass::end();
+
   Serial.print("EEPROM Status: ");
   if (pwd == 65535) //if eeprom never used
   {
+
     Serial.println("Factory reset");
     wifiSSID = "";
     wifiPwd = "";
@@ -201,6 +195,7 @@ void KPDeviceSettingClass::verifyEEPROM()
   }
   else
   {
+
     Serial.println("OK");
   }
 }

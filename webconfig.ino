@@ -81,7 +81,8 @@ void ConfigurarWebServer(void)
 
   server.begin();
 
-  Serial.println("HTTP server started");
+  if (DEBUG_ON)
+    Serial.println("HTTP server started");
 }
 
 // String ipStr(const IPAddress &ip)
@@ -147,7 +148,8 @@ void gravawifi()
   DevSet.wifiMSK = DevSet.ipStringToNumber(wifiMSK);
   DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
   DevSet.setWifi();
-  Serial.println(F("New WIFI Settings"));
+  if (DEBUG_ON)
+    Serial.println(F("New WIFI Settings"));
   DevSet.showVariables();
 
   //gravahtml();

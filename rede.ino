@@ -36,7 +36,8 @@ void conectar()
 
         if (digitalRead(buttonState) == HIGH)
         {
-          Serial.print("resetando");
+          if (DEBUG_ON)
+            Serial.print("resetando");
           WiFi.disconnect();
           DevSet.factoryReset();
           ESP.restart();
@@ -44,10 +45,12 @@ void conectar()
 
         delay(400);
         chip3.write(LedWifiConnected, !chip3.read(LedWifiConnected));
-        Serial.print(".");
+        if (DEBUG_ON)
+          Serial.print(".");
         waitingWifi++;
       }
-      Serial.println("");
+      if (DEBUG_ON)
+        Serial.println("");
     }
     else if (WiFi.getMode() < 2)
     {
@@ -77,11 +80,13 @@ void getAvalibleNetwork()
   if (n >= 0)
   {
     //scanningWifi = n;
-    Serial.printf("%d network(s) found\n", n);
+    if (DEBUG_ON)
+      Serial.printf("%d network(s) found\n", n);
     vListaWifi = "";
     for (int i = 0; i < n; i++)
     {
-      Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
+      if (DEBUG_ON)
+        Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
       vListaWifi += WiFi.SSID(i);
       vListaWifi += "|";
     }
@@ -92,7 +97,8 @@ void getAvalibleNetwork()
   {
     millisNetworkScan = millisAtual + 15000;
     //scanningWifi = n;
-    Serial.println("\nNetwork scan started");
+    if (DEBUG_ON)
+      Serial.println("\nNetwork scan started");
     WiFi.scanNetworks(true);
   }
 }
@@ -128,18 +134,21 @@ void gravasenhawifi()
       SPIFFS.end();
       vSenhaAP = req;
 
-      Serial.println("Alterado: " + vSenhaAP);
+      if (DEBUG_ON)
+        Serial.println("Alterado: " + vSenhaAP);
     }
     else
     {
       server.send(200, "text/html", "-1");
-      Serial.println("Senha invalida: Atual = " + vSenhaAP + " Informada: " + CurrentPass);
+      if (DEBUG_ON)
+        Serial.println("Senha invalida: Atual = " + vSenhaAP + " Informada: " + CurrentPass);
     }
   }
   else
   {
     server.send(200, "text/html", "-1");
-    Serial.println("erro de senha de comunicacao: Senha Registrada: " + Senha + " senha enviada: " + vSenha);
+    if (DEBUG_ON)
+      Serial.println("erro de senha de comunicacao: Senha Registrada: " + Senha + " senha enviada: " + vSenha);
   }
 }
 
@@ -172,7 +181,8 @@ void gravasenhahttp()
     {
       server.send(200, "text/html", "ok");
       seg.gravar(vUsuariohttp, vreq);
-      Serial.println("Reiniciando sistema depois de alterar http senha");
+      if (DEBUG_ON)
+        Serial.println("Reiniciando sistema depois de alterar http senha");
 
       delay(500);
       ESP.restart();
@@ -190,16 +200,19 @@ void gravasenhahttp()
 
 void prinScanResult(int networksFound)
 {
-  Serial.printf("%d prinScanResult network(s) found\n", networksFound);
+  if (DEBUG_ON)
+    Serial.printf("%d prinScanResult network(s) found\n", networksFound);
   for (int i = 0; i < networksFound; i++)
   {
-    Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
+    if (DEBUG_ON)
+      Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
   }
 }
 
 void wifiConectSTA()
 {
-  Serial.println(F("\nWifi trying conection in: STA MODE"));
+  if (DEBUG_ON)
+    Serial.println(F("\nWifi trying conection in: STA MODE"));
   WiFi.mode(WIFI_STA);
   tipoWifiAtual = 1;
   const char *ssid = DevSet.wifiSSID.c_str();
@@ -209,11 +222,12 @@ void wifiConectSTA()
   IPAddress gateway(DevSet.wifiGTW);
   IPAddress dns(8, 8, 8, 8);
 
-  Serial.println(ssid);
-  // Serial.println(password);
-  // Serial.println(ip);
-  // Serial.println(subnet);
-  // Serial.println(gateway);
+  if (DEBUG_ON)
+    Serial.println(ssid);
+  // if (DEBUG_ON) Serial.println(password);
+  // if (DEBUG_ON) Serial.println(ip);
+  // if (DEBUG_ON) Serial.println(subnet);
+  // if (DEBUG_ON) Serial.println(gateway);
 
   IpDispositivo = ip;
   local_IP = ip;
@@ -228,9 +242,12 @@ void wifiConectSTA()
 
 void wifiConectAP()
 {
-  Serial.print("Rede não localizada: ");
-  Serial.println(DevSet.wifiSSID);
-  Serial.println("Wifi trying conection in: AP MODE");
+  if (DEBUG_ON)
+    Serial.print("Rede não localizada: ");
+  if (DEBUG_ON)
+    Serial.println(DevSet.wifiSSID);
+  if (DEBUG_ON)
+    Serial.println("Wifi trying conection in: AP MODE");
   WiFi.mode(WIFI_AP);
   tipoWifiAtual = 2;
   //listawifi();
@@ -240,18 +257,24 @@ void wifiConectAP()
   IPAddress gateway(DevSet.apWifiGTW);
   IPAddress subnet(DevSet.apWifiMSK);
 
-  Serial.print("Setting soft-AP configuration ... ");
-  Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+  if (DEBUG_ON)
+    Serial.print("Setting soft-AP configuration ... ");
+  if (DEBUG_ON)
+    Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
-  Serial.print("Setting soft-AP ... ");
-  Serial.println("idencitifcador");
+  if (DEBUG_ON)
+    Serial.print("Setting soft-AP ... ");
+  if (DEBUG_ON)
+    Serial.println("idencitifcador");
   //int chipId = ESP.getChipId();
   String NomeRede = "KEEPIN_" + gchipId;
-  Serial.println(NomeRede);
+  if (DEBUG_ON)
+    Serial.println(NomeRede);
   const char *nRede = NomeRede.c_str();
-  Serial.println(nRede);
+  if (DEBUG_ON)
+    Serial.println(nRede);
 
-  //Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
+  //if (DEBUG_ON) Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
 
   if (!WiFi.softAP(nRede, vSenhaAP.c_str()))
   {
@@ -259,8 +282,10 @@ void wifiConectAP()
     DevSet.factoryReset();
   }
 
-  Serial.print("Soft-AP IP address = ");
-  Serial.println(WiFi.softAPIP());
+  if (DEBUG_ON)
+    Serial.print("Soft-AP IP address = ");
+  if (DEBUG_ON)
+    Serial.println(WiFi.softAPIP());
   IpDispositivo = local_IP;
 
   chip3.write(LedWifiConnected, HIGH);

@@ -32,17 +32,17 @@ void LoopResetFabrica()
   //   if (resetIntPulsado() == true)
   //   {
   //     ConfigEP();
-  //     //Serial.println("reset pulsado");
+  //     //if (DEBUG_ON) Serial.println("reset pulsado");
   //   }
   //   else if (resetIntNormal() == true)s
   //   {
   //     ConfigEN();
-  //     //Serial.println("reset normal");
+  //     //if (DEBUG_ON) Serial.println("reset normal");
   //   }
   //   else
   //   {
-  //     //Serial.print("reset ligado: ");
-  //     //Serial.println(digitalRead(buttonState));
+  //     //if (DEBUG_ON) Serial.print("reset ligado: ");
+  //     //if (DEBUG_ON) Serial.println(digitalRead(buttonState));
   //     wifireset2();
   //     ESP.restart();
   //   }
@@ -61,7 +61,7 @@ void LoopLedStatus()
       millisWifiLed = millisAtual + 2000;
     }
     rssi = WiFi.RSSI();
-    //Serial.println(String(rssi));
+    //if (DEBUG_ON) Serial.println(String(rssi));
 
     if (rssi >= -65)
     {
@@ -127,8 +127,10 @@ void NtpSetDateTimeNTP()
   WiFiUDP ntpUDP;
   NTPClient timeClient(ntpUDP, ntpServer);
 
-  Serial.print("Config UTC: ");
-  Serial.println(DevSet.utcConfig);
+  if (DEBUG_ON)
+    Serial.print("Config UTC: ");
+  if (DEBUG_ON)
+    Serial.println(DevSet.utcConfig);
   const unsigned long initTimeSet = 946684800;
   int8_t tryGetTime = 0;
 
@@ -137,14 +139,16 @@ void NtpSetDateTimeNTP()
   while ((timeClient.getEpochTime() < initTimeSet) && (tryGetTime < 10))
   {
     timeClient.update();
-    Serial.println(timeClient.getEpochTime());
+    if (DEBUG_ON)
+      Serial.println(timeClient.getEpochTime());
     delay(100);
   }
 
   if (timeClient.getEpochTime() > initTimeSet)
   {
     timeClient.setTimeOffset(DevSet.utcConfig * 3600);
-    Serial.println("Atualizado UTC");
+    if (DEBUG_ON)
+      Serial.println("Atualizado UTC");
     RtcDateTime dtNow(timeClient.getEpochTime() - initTimeSet);
     Rtc.year = dtNow.Year();
     Rtc.month = dtNow.Month();
@@ -158,6 +162,8 @@ void NtpSetDateTimeNTP()
   timeClient.end();
 
   Rtc.get_time();
-  Serial.printf("Data e hora ajustados para: %02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
-  Serial.println();
+  if (DEBUG_ON)
+    Serial.printf("Data e hora ajustados para: %02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
+  if (DEBUG_ON)
+    Serial.println();
 }

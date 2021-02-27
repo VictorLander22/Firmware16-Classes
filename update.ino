@@ -6,24 +6,27 @@ void executeupdate()
     return server.requestAuthentication();
 
   server.send(200, "text/html", "ok");
-//http://keepin.com.br/firmware/16/autoresidencial.ino.bin
+  //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
   t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/firmware16.bin");
   //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
 
   switch (ret)
   {
   case HTTP_UPDATE_FAILED:
-    Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    if (DEBUG_ON)
+      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
     //            server.send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
     break;
 
   case HTTP_UPDATE_NO_UPDATES:
-    Serial.println("HTTP_UPDATE_NO_UPDATES");
+    if (DEBUG_ON)
+      Serial.println("HTTP_UPDATE_NO_UPDATES");
     //    server.send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
     break;
 
   case HTTP_UPDATE_OK:
-    Serial.println("ok");
+    if (DEBUG_ON)
+      Serial.println("ok");
     //    server.send(200, "text/html", "HTTP_UPDATE_OK");
     break;
   }
@@ -37,24 +40,27 @@ void executeupdateBeta()
     return server.requestAuthentication();
 
   server.send(200, "text/html", "ok");
-//http://keepin.com.br/firmware/16/autoresidencial.ino.bin
+  //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
   t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/beta/firmware16.bin");
   //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
 
   switch (ret)
   {
   case HTTP_UPDATE_FAILED:
-    Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    if (DEBUG_ON)
+      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
     //            server.send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
     break;
 
   case HTTP_UPDATE_NO_UPDATES:
-    Serial.println("HTTP_UPDATE_NO_UPDATES");
+    if (DEBUG_ON)
+      Serial.println("HTTP_UPDATE_NO_UPDATES");
     //    server.send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
     break;
 
   case HTTP_UPDATE_OK:
-    Serial.println("ok");
+    if (DEBUG_ON)
+      Serial.println("ok");
     //    server.send(200, "text/html", "HTTP_UPDATE_OK");
     break;
   }
@@ -90,7 +96,6 @@ void linkversaoBeta()
   server.send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
 }
 
-
 void logData(String dados)
 {
   RtcDateTime HorarioAtual;
@@ -113,8 +118,10 @@ void readlog()
   SPIFFS.begin();
   String comando = server.arg("c");
 
-  if (comando == "delete") {
-    if (SPIFFS.remove("/log.txt")) {
+  if (comando == "delete")
+  {
+    if (SPIFFS.remove("/log.txt"))
+    {
       SPIFFS.end();
       server.send(200, "text/html", "remove");
     }
@@ -123,15 +130,14 @@ void readlog()
       SPIFFS.end();
       server.send(200, "text/html", "falha");
     }
-
   }
-  else
-  if (comando == "read")
+  else if (comando == "read")
   {
     File f = SPIFFS.open("/log.txt", "r");
     String dados = "<html><body><p><h3><strong>Log</strong></p></h3><br><ul>";
-    while (f.available()){
-        dados = dados + "<li>" + f.readStringUntil('\n') + "</li>";
+    while (f.available())
+    {
+      dados = dados + "<li>" + f.readStringUntil('\n') + "</li>";
     }
     dados = dados + "</ul></body></html>";
     f.close();

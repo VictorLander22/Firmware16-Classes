@@ -50,7 +50,7 @@ void controle()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  //Serial.println("user: " + String(www_username) + " - pass: " + String(www_password));
+  //if (DEBUG_ON) Serial.println("user: " + String(www_username) + " - pass: " + String(www_password));
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -78,13 +78,15 @@ void controle()
       {
         //digitalWrite(porta, 1);
         LigaDesliga(porta, HIGH, Nome, Tipoa);
-        Serial.println("led 1 ligado - Porta: " + String(porta));
+        if (DEBUG_ON)
+          Serial.println("led 1 ligado - Porta: " + String(porta));
       }
       else
       {
         //digitalWrite(porta, 0);
         LigaDesliga(porta, LOW, Nome, Tipoa);
-        Serial.println("led 1 desligado - Porta: " + String(porta));
+        if (DEBUG_ON)
+          Serial.println("led 1 desligado - Porta: " + String(porta));
       }
     }
 }
@@ -150,7 +152,8 @@ void valida()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  server.send(200, "text/html", "16");
+  //server.send(200, "text/html", "16");
+  server.send(200, "text/html", "16|2|16|" + vchipId + "|");
 }
 
 void ler()

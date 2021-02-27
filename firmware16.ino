@@ -6,10 +6,12 @@
 void setup(void)
 {
   Serial.begin(115200);
+  Serial.println();
   Wire.begin(5, 4);
   Wire.setClock(100000L);
-  delay(100); //Wait to start I2C transmission
-  Serial.println();
+  delay(300); //Wait to start I2C transmission
+  if (DEBUG_ON)
+    Serial.println();
   IniciaRTC();
   chip1.begin();
   chip2.begin();
@@ -22,31 +24,41 @@ void setup(void)
   WiFi.disconnect();
   delay(2000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
   String Razao = ESP.getResetReason();
-  Serial.print("Motivo Reset: ");
-  Serial.println(Razao);
+  if (DEBUG_ON)
+    Serial.print("Motivo Reset: ");
+  if (DEBUG_ON)
+    Serial.println(Razao);
 
   //Set chip id
   vchipId = ESP.getChipId();
   gchipId = WiFi.macAddress();
   gchipId.replace(":", "");
 
-  Serial.println();
-  Serial.println("Keepin Firmware: " + String(Placa_Version));
-  Serial.println("Keepin ID: " + vchipId);
-  Serial.println("Keepin MAC: " + gchipId);
+  if (DEBUG_ON)
+    Serial.println();
+  if (DEBUG_ON)
+    Serial.println("Keepin Firmware: " + String(Placa_Version));
+  if (DEBUG_ON)
+    Serial.println("Keepin ID: " + vchipId);
+  if (DEBUG_ON)
+    Serial.println("Keepin MAC: " + gchipId);
 
   //Reset mode
   if (digitalRead(buttonState))
   {
-    Serial.println();
-    Serial.println(F("Factory reset\n"));
+    if (DEBUG_ON)
+      Serial.println();
+    if (DEBUG_ON)
+      Serial.println(F("Factory reset\n"));
     DevSet.factoryReset();
     //wifireset2();
   }
   else
   {
-    Serial.println();
-    Serial.println(F("Simple restart\n"));
+    if (DEBUG_ON)
+      Serial.println();
+    if (DEBUG_ON)
+      Serial.println(F("Simple restart\n"));
   }
   DevSet.verifyEEPROM();
   DevSet.getDeviceSettings();
@@ -70,33 +82,39 @@ void setup(void)
   scanningWifi = WiFi.scanNetworks();
 
   //WiFi.scanNetworksAsync(prinScanResult);
-  Serial.printf("\nAvailable Wifi: %d\n", scanningWifi);
+  if (DEBUG_ON)
+    Serial.printf("\nAvailable Wifi: %d\n", scanningWifi);
 
   conectar(); //consome 1K da ram 19000
   // Wait for connection
-  Serial.print("Connected to ");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  if (DEBUG_ON)
+    Serial.print("Connected to ");
+  if (DEBUG_ON)
+    Serial.print("IP address: ");
+  if (DEBUG_ON)
+    Serial.println(WiFi.localIP());
 
   ConfigurarWebServer(); //consome 6.2K da ram 13500
 
   retornaNotificar();
 
-  Serial.println("Notificar: " + String(notificar));
+  if (DEBUG_ON)
+    Serial.println("Notificar: " + String(notificar));
 
   CarregaEntradas();
 
   MqttSetup(); //consome 2k da ram 11400
 
   Udp.begin(localUdpPort);
-  Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
+  if (DEBUG_ON)
+    Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
 }
 
 //########################################################################################################################################################
 void loop(void)
 {
 
-  //Serial.println(String(Rtc.alarm_minute));
+  //if (DEBUG_ON) Serial.println(String(Rtc.alarm_minute));
   nCiclos++;
 
   millisAtual = millis();

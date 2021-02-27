@@ -4,9 +4,10 @@ void configIR()
   save.rawbuf = new uint16_t[irrecv.getBufSize()];
   if (save.rawbuf == NULL)
   {
-    Serial.printf("Não foi possível alocar %d de tamanho de buffer.\n"
-                  "Try a smaller size for CAPTURE_BUFFER_SIZE.\nRebooting!",
-                  irrecv.getBufSize());
+    if (DEBUG_ON)
+      Serial.printf("Não foi possível alocar %d de tamanho de buffer.\n"
+                    "Try a smaller size for CAPTURE_BUFFER_SIZE.\nRebooting!",
+                    irrecv.getBufSize());
     ESP.restart();
   }
   irrecv.setUnknownThreshold(kMinUnknownSize);
@@ -20,96 +21,119 @@ void encoding(decode_results *results)
   {
   default:
   case UNKNOWN:
-    Serial.print("UNKNOWN");
+    if (DEBUG_ON)
+      Serial.print("UNKNOWN");
     Modelo = 0;
     break;
   case NEC:
-    Serial.print("NEC");
+    if (DEBUG_ON)
+      Serial.print("NEC");
     Modelo = 1;
     break;
   case NEC_LIKE:
-    Serial.print("NEC (non-strict)");
+    if (DEBUG_ON)
+      Serial.print("NEC (non-strict)");
     Modelo = 2;
     break;
   case SONY:
-    Serial.print("SONY");
+    if (DEBUG_ON)
+      Serial.print("SONY");
     Modelo = 3;
     break;
   case RC5:
-    Serial.print("RC5");
+    if (DEBUG_ON)
+      Serial.print("RC5");
     Modelo = 4;
     break;
   case RC5X:
-    Serial.print("RC5X");
+    if (DEBUG_ON)
+      Serial.print("RC5X");
     Modelo = 5;
     break;
   case RC6:
-    Serial.print("RC6");
+    if (DEBUG_ON)
+      Serial.print("RC6");
     Modelo = 6;
     break;
   case RCMM:
-    Serial.print("RCMM");
+    if (DEBUG_ON)
+      Serial.print("RCMM");
     Modelo = 7;
     break;
   case DISH:
-    Serial.print("DISH");
+    if (DEBUG_ON)
+      Serial.print("DISH");
     Modelo = 8;
     break;
   case SHARP:
-    Serial.print("SHARP");
+    if (DEBUG_ON)
+      Serial.print("SHARP");
     Modelo = 9;
     break;
   case JVC:
-    Serial.print("JVC");
+    if (DEBUG_ON)
+      Serial.print("JVC");
     Modelo = 10;
     break;
   case SANYO:
-    Serial.print("SANYO");
+    if (DEBUG_ON)
+      Serial.print("SANYO");
     Modelo = 11;
     break;
   case SANYO_LC7461:
-    Serial.print("SANYO_LC7461");
+    if (DEBUG_ON)
+      Serial.print("SANYO_LC7461");
     Modelo = 12;
     break;
   case MITSUBISHI:
-    Serial.print("MITSUBISHI");
+    if (DEBUG_ON)
+      Serial.print("MITSUBISHI");
     Modelo = 13;
     break;
   case SAMSUNG:
-    Serial.print("SAMSUNG");
+    if (DEBUG_ON)
+      Serial.print("SAMSUNG");
     Modelo = 14;
     break;
   case LG:
-    Serial.print("LG");
+    if (DEBUG_ON)
+      Serial.print("LG");
     Modelo = 15;
     break;
   case WHYNTER:
-    Serial.print("WHYNTER");
+    if (DEBUG_ON)
+      Serial.print("WHYNTER");
     Modelo = 16;
     break;
   case AIWA_RC_T501:
-    Serial.print("AIWA_RC_T501");
+    if (DEBUG_ON)
+      Serial.print("AIWA_RC_T501");
     Modelo = 17;
     break;
   case PANASONIC:
-    Serial.print("PANASONIC");
+    if (DEBUG_ON)
+      Serial.print("PANASONIC");
     Modelo = 18;
     break;
   case DENON:
-    Serial.print("DENON");
+    if (DEBUG_ON)
+      Serial.print("DENON");
     Modelo = 19;
     break;
   case COOLIX:
-    Serial.print("COOLIX");
+    if (DEBUG_ON)
+      Serial.print("COOLIX");
     Modelo = 20;
     break;
   case GREE:
-    Serial.print("GREE");
+    if (DEBUG_ON)
+      Serial.print("GREE");
     Modelo = 21;
     break;
   }
   if (results->repeat)
-    Serial.print(" (Repeat)");
+    if (DEBUG_ON)
+      Serial.print(" (Repeat)");
 }
 
 // Dump out the decode_results structure.
@@ -117,28 +141,33 @@ void encoding(decode_results *results)
 void dumpInfo(decode_results *results)
 {
   if (results->overflow)
-    Serial.printf("WARNING: IR code too big for buffer (>= %d). "
-                  "These results shouldn't be trusted until this is resolved. "
-                  "Edit & increase CAPTURE_BUFFER_SIZE.\n",
-                  CAPTURE_BUFFER_SIZE);
+    if (DEBUG_ON)
+      Serial.printf("WARNING: IR code too big for buffer (>= %d). "
+                    "These results shouldn't be trusted until this is resolved. "
+                    "Edit & increase CAPTURE_BUFFER_SIZE.\n",
+                    CAPTURE_BUFFER_SIZE);
 
   // Show Encoding standard
-  Serial.print("Encoding  : ");
+  if (DEBUG_ON)
+    Serial.print("Encoding  : ");
   encoding(results);
-  Serial.println("");
+  if (DEBUG_ON)
+    Serial.println("");
 
   // Show Code & length
-  Serial.print("Code      : ");
+  if (DEBUG_ON)
+    Serial.print("Code      : ");
   serialPrintUint64(results->value, 16);
 
-  Serial.print(" (");
+  if (DEBUG_ON)
+    Serial.print(" (");
   //if (Modelo == 3 || Modelo == 1 || Modelo == 14)
   if (Modelo > 0 && Modelo < 22)
   {
     tamanho = String(results->bits, DEC).toInt();
   }
-  //  Serial.print(results->bits, DEC);
-  //  Serial.println(" bits)");
+  //  if (DEBUG_ON) Serial.print(results->bits, DEC);
+  //  if (DEBUG_ON) Serial.println(" bits)");
 }
 
 uint16_t getCookedLength(decode_results *results)
@@ -158,9 +187,12 @@ uint16_t getCookedLength(decode_results *results)
 void dumpRaw(decode_results *results)
 {
   // Print Raw data
-  Serial.print("Timing[");
-  Serial.print(results->rawlen - 1, DEC);
-  Serial.println("]: ");
+  if (DEBUG_ON)
+    Serial.print("Timing[");
+  if (DEBUG_ON)
+    Serial.print(results->rawlen - 1, DEC);
+  if (DEBUG_ON)
+    Serial.println("]: ");
 
   for (uint16_t i = 1; i < results->rawlen; i++)
   {
@@ -168,19 +200,25 @@ void dumpRaw(decode_results *results)
       yield(); // Preemptive yield every 100th entry to feed the WDT.
     if (i % 2 == 0)
     { // even
-      Serial.print("-");
+      if (DEBUG_ON)
+        Serial.print("-");
     }
     else
     { // odd
-      Serial.print("   +");
+      if (DEBUG_ON)
+        Serial.print("   +");
     }
-    Serial.printf("%6d", results->rawbuf[i] * RAWTICK);
+    if (DEBUG_ON)
+      Serial.printf("%6d", results->rawbuf[i] * RAWTICK);
     if (i < results->rawlen - 1)
-      Serial.print(", "); // ',' not needed for last one
+      if (DEBUG_ON)
+        Serial.print(", "); // ',' not needed for last one
     if (!(i % 8))
-      Serial.println("");
+      if (DEBUG_ON)
+        Serial.println("");
   }
-  Serial.println(""); // Newline
+  if (DEBUG_ON)
+    Serial.println(""); // Newline
 }
 
 // Dump out the decode_results structure.
@@ -191,12 +229,16 @@ void dumpCode(decode_results *results)
 
   // Start declaration
   String codigoIR2 = "";
-  Serial.print("uint16_t "); // variable type
-  Serial.print("rawData[");  // array name
+  if (DEBUG_ON)
+    Serial.print("uint16_t "); // variable type
+  if (DEBUG_ON)
+    Serial.print("rawData["); // array name
   tamanho = String(getCookedLength(results), DEC).toInt();
-  Serial.print(getCookedLength(results), DEC); // array size
+  if (DEBUG_ON)
+    Serial.print(getCookedLength(results), DEC); // array size
   codigoIR2 = "{";
-  Serial.print("] = {"); // Start declaration
+  if (DEBUG_ON)
+    Serial.print("] = {"); // Start declaration
 
   // Dump data
   for (uint16_t i = 1; i < results->rawlen; i++)
@@ -206,35 +248,42 @@ void dumpCode(decode_results *results)
          usecs > UINT16_MAX;
          usecs -= UINT16_MAX)
     {
-      Serial.printf("%d, 0", UINT16_MAX);
+      if (DEBUG_ON)
+        Serial.printf("%d, 0", UINT16_MAX);
       codigoIR2 += printf("%d, 0", UINT16_MAX);
     }
-    Serial.print(usecs, DEC);
+    if (DEBUG_ON)
+      Serial.print(usecs, DEC);
     codigoIR2 += String(usecs, DEC);
     if (i < results->rawlen - 1)
     {
-      Serial.print(", "); // ',' not needed on last one
+      if (DEBUG_ON)
+        Serial.print(", "); // ',' not needed on last one
       codigoIR2 += ", ";
     }
     if (i % 2 == 0)
     {
-      Serial.print(" "); // Extra if it was even.
+      if (DEBUG_ON)
+        Serial.print(" "); // Extra if it was even.
       codigoIR2 += " ";
     }
   }
 
   // End declaration
-  Serial.print("};"); //
+  if (DEBUG_ON)
+    Serial.print("};"); //
   codigoIR2 += "}";
-  //  Serial.println("tamanho");
-  // Serial.println(String(tamanho));
-  //Serial.println("codigoIR2");
-  //Serial.println(codigoIR2);
+  //  if (DEBUG_ON) Serial.println("tamanho");
+  // if (DEBUG_ON) Serial.println(String(tamanho));
+  //if (DEBUG_ON) Serial.println("codigoIR2");
+  //if (DEBUG_ON) Serial.println(codigoIR2);
 
   // Comment
-  Serial.print("  // ");
+  if (DEBUG_ON)
+    Serial.print("  // ");
   encoding(results);
-  Serial.print(" ");
+  if (DEBUG_ON)
+    Serial.print(" ");
   serialPrintUint64(results->value, HEX);
   //if (Modelo == 3 || Modelo == 1 || Modelo == 14){
   if (Modelo >= 0 && Modelo < 22)
@@ -261,9 +310,10 @@ void dumpCode(decode_results *results)
   */
     codigoIR = "" + uint64ToString(results->value, 16) + "";
   }
-  // Serial.println("CodigoIR: " + codigoIR) ;
+  // if (DEBUG_ON) Serial.println("CodigoIR: " + codigoIR) ;
 
-  Serial.println("Modelo: " + String(Modelo));
+  if (DEBUG_ON)
+    Serial.println("Modelo: " + String(Modelo));
   if (Modelo == 0)
   {
     SPIFFS.begin();
@@ -272,12 +322,15 @@ void dumpCode(decode_results *results)
     rFile.close();
     SPIFFS.end();
 
-    Serial.print("arquivo: ");
-    Serial.println(codigoIR2);
+    if (DEBUG_ON)
+      Serial.print("arquivo: ");
+    if (DEBUG_ON)
+      Serial.println(codigoIR2);
   }
 
   // Newline
-  Serial.println("");
+  if (DEBUG_ON)
+    Serial.println("");
 
   // Now dump "known" codes
   if (results->decode_type != UNKNOWN)
@@ -287,16 +340,23 @@ void dumpCode(decode_results *results)
     // but the address & the command are both 0.
     if (results->address > 0 || results->command > 0)
     {
-      Serial.print("uint32_t address = 0x");
-      Serial.print(results->address, HEX);
-      Serial.println(";");
-      Serial.print("uint32_t command = 0x");
-      Serial.print(results->command, HEX);
-      Serial.println(";");
+      if (DEBUG_ON)
+        Serial.print("uint32_t address = 0x");
+      if (DEBUG_ON)
+        Serial.print(results->address, HEX);
+      if (DEBUG_ON)
+        Serial.println(";");
+      if (DEBUG_ON)
+        Serial.print("uint32_t command = 0x");
+      if (DEBUG_ON)
+        Serial.print(results->command, HEX);
+      if (DEBUG_ON)
+        Serial.println(";");
     }
 
     // All protocols have data
-    Serial.print("uint64_t data = 0x");
+    if (DEBUG_ON)
+      Serial.print("uint64_t data = 0x");
     serialPrintUint64(results->value, 16);
     if (Modelo == 19)
     {
@@ -308,14 +368,15 @@ void dumpCode(decode_results *results)
       //codigoIR = codigoIR.substring(2);
       tamanho = uint64ToString(results->bits).toInt();
 
-      /*      Serial.println("");
-      Serial.print("Codigo 64: ");
-      Serial.println(codigoIR);
+      /*      if (DEBUG_ON) Serial.println("");
+      if (DEBUG_ON) Serial.print("Codigo 64: ");
+      if (DEBUG_ON) Serial.println(codigoIR);
 
-      Serial.print("Tamanho: ");
-      Serial.println(tamanho);*/
+      if (DEBUG_ON) Serial.print("Tamanho: ");
+      if (DEBUG_ON) Serial.println(tamanho);*/
     }
-    Serial.println(";");
+    if (DEBUG_ON)
+      Serial.println(";");
   }
 }
 
@@ -349,11 +410,12 @@ void sendir()
   String Codigo = server.arg("c");
   String Codigo2 = server.arg("c2");
 
-  //  Serial.println(Codigo);
+  //  if (DEBUG_ON) Serial.println(Codigo);
   //rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
   //uint16_t rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
 
-  Serial.println(Codigo + Codigo2);
+  if (DEBUG_ON)
+    Serial.println(Codigo + Codigo2);
 
   if (S == Senha && QtdeBit > 0)
   {
@@ -362,7 +424,8 @@ void sendir()
     Codigo2 = "";
     //PortaIRS = retornaPorIRS(PortaIRS);
 
-    Serial.println("Enviado IR");
+    if (DEBUG_ON)
+      Serial.println("Enviado IR");
   }
 }
 
@@ -380,17 +443,24 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
   {
     IRsend irsend(16, true);
     irsend.begin();
-    Serial.println("Modelo: " + String(vModelo));
-    Serial.print("tamanho: ");
-    Serial.println(String(QtdeBit));
-    Serial.print("Codigo1: ");
-    Serial.println(Codigo);
-    Serial.print("Codigo2: ");
-    Serial.println(Codigo2);
+    if (DEBUG_ON)
+      Serial.println("Modelo: " + String(vModelo));
+    if (DEBUG_ON)
+      Serial.print("tamanho: ");
+    if (DEBUG_ON)
+      Serial.println(String(QtdeBit));
+    if (DEBUG_ON)
+      Serial.print("Codigo1: ");
+    if (DEBUG_ON)
+      Serial.println(Codigo);
+    if (DEBUG_ON)
+      Serial.print("Codigo2: ");
+    if (DEBUG_ON)
+      Serial.println(Codigo2);
     if (vModelo == 1) // NEC
     {
       Codigo = "0x" + Codigo;
-      ///Serial.println(Codigo);
+      ///if (DEBUG_ON) Serial.println(Codigo);
       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
       //uint64_t vCodigo2 = vCodigo;
       //#if SEND_NEC
@@ -400,7 +470,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
     else if (vModelo == 2) // NEC (non-strict)
     {
       Codigo = "0x" + Codigo;
-      ///Serial.println(Codigo);
+      ///if (DEBUG_ON) Serial.println(Codigo);
       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
       //uint64_t vCodigo2 = vCodigo;
       //#if SEND_NEC
@@ -410,7 +480,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
     else if (vModelo == 3) //Sony
     {
       Codigo = "0x" + Codigo;
-      ///Serial.println(Codigo);
+      ///if (DEBUG_ON) Serial.println(Codigo);
       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
       //uint64_t vCodigo2 = vCodigo;
       //#if SEND_SONY
@@ -456,7 +526,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
     else if (vModelo == 9) // SHARP
     {
       Codigo = "0x" + Codigo;
-      ///Serial.println(Codigo);
+      ///if (DEBUG_ON) Serial.println(Codigo);
       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
       //uint64_t vCodigo2 = vCodigo;
       //#if SEND_SHARP
@@ -466,7 +536,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
     else if (vModelo == 10) // JVC
     {
       Codigo = "0x" + Codigo;
-      ///Serial.println(Codigo);
+      ///if (DEBUG_ON) Serial.println(Codigo);
       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
       //uint64_t vCodigo2 = vCodigo;
       //#if SEND_JVC
@@ -486,7 +556,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
         if (vModelo == 14) // SAMSUNG
     {
       Codigo = "0x" + Codigo;
-      ///Serial.println(Codigo);
+      ///if (DEBUG_ON) Serial.println(Codigo);
       //unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16);
       //uint64_t vCodigo2 = vCodigo;
@@ -497,7 +567,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
     else if (vModelo == 15) // LG
     {
       Codigo = "0x" + Codigo;
-      ////Serial.println(Codigo);
+      ////if (DEBUG_ON) Serial.println(Codigo);
       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
       //uint64_t vCodigo2 = vCodigo;
       //#if SEND_LG
@@ -528,8 +598,8 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       //long long unsigned vCodigo = strtoul(Codigo.c_str(), NULL, 16);
       uint64_t vCodigo = getUInt64fromHex(Codigo.c_str());
       irsend.sendDenon(vCodigo, QtdeBit); //kDenon48Bits
-      //Serial.println("DENON OK");
-      //Serial.println(vCodigo);
+      //if (DEBUG_ON) Serial.println("DENON OK");
+      //if (DEBUG_ON) Serial.println(vCodigo);
     }
     else if (vModelo == 20) // COOLIX
     {
@@ -544,10 +614,14 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       Codigo.toUpperCase();
       uint64_t vCodigo = getUInt64fromHex(Codigo.c_str());
       irsend.sendGree(vCodigo, QtdeBit);
-      Serial.println("");
-      Serial.println("GREE");
-      Serial.println("Qtde Bit");
-      Serial.println(QtdeBit);
+      if (DEBUG_ON)
+        Serial.println("");
+      if (DEBUG_ON)
+        Serial.println("GREE");
+      if (DEBUG_ON)
+        Serial.println("Qtde Bit");
+      if (DEBUG_ON)
+        Serial.println(QtdeBit);
     }
     else
     {
@@ -568,8 +642,10 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       while (rFile.available())
       {
         String linhas = rFile.readStringUntil('\n');
-        Serial.println("linhas: ");
-        Serial.print(linhas);
+        if (DEBUG_ON)
+          Serial.println("linhas: ");
+        if (DEBUG_ON)
+          Serial.print(linhas);
 
         for (int i = 1; i <= linhas.length(); i++)
         {
@@ -580,7 +656,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
           else
           {
             rawData[tam2] = CodAtu.toInt();
-            //Serial.println(String(CodAtu.toInt()));
+            //if (DEBUG_ON) Serial.println(String(CodAtu.toInt()));
             tam2++;
             CodAtu = "";
           }
@@ -594,7 +670,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       /*
       Codigo += ",";
 
-      //Serial.println("Codigo Recebido: " + codig);
+      //if (DEBUG_ON) Serial.println("Codigo Recebido: " + codig);
 
       for (int i = 1; i <= Codigo.length(); i++)
       {
@@ -605,7 +681,7 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
         else
         {
           rawData[tam2] = CodAtu.toInt();
-          //Serial.println(String(CodAtu.toInt()));
+          //if (DEBUG_ON) Serial.println(String(CodAtu.toInt()));
           tam2 ++;
           CodAtu = "";
         }
@@ -621,35 +697,36 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
         else
         {
           rawData[tam2] = CodAtu.toInt();
-          //Serial.println(String(CodAtu.toInt()));
+          //if (DEBUG_ON) Serial.println(String(CodAtu.toInt()));
           tam2 ++;
           CodAtu = "";
         }
       }
    */
-      //      Serial.println("Qtde: " + String(QtdeBit));
+      //      if (DEBUG_ON) Serial.println("Qtde: " + String(QtdeBit));
 
       //      for (int i = 0; i <= QtdeBit-1; i++)
       //      {
-      //        Serial.println(String(rawData[i]));
+      //        if (DEBUG_ON) Serial.println(String(rawData[i]));
       //      }
 
       //#if SEND_RAW
       irsend.sendRaw(rawData, QtdeBit, 38);
-      Serial.println("enviado...\n");
+      if (DEBUG_ON)
+        Serial.println("enviado...\n");
       //#endif
 
       /*
       Codigo = "0x" + Codigo;
-      ///Serial.println(Codigo);
+      ///if (DEBUG_ON) Serial.println(Codigo);
       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
       //uint64_t vCodigo2 = vCodigo;
       //#if SEND_NEC
         irsend.sendNEC(vCodigo, 32);      
       //#endif
 
-      Serial.println("Envio IR: " + String(QtdeBit));
-      Serial.println(String(vCodigo));
+      if (DEBUG_ON) Serial.println("Envio IR: " + String(QtdeBit));
+      if (DEBUG_ON) Serial.println(String(vCodigo));
 */
     }
 
@@ -694,7 +771,7 @@ uint16_t converteRAW(String codig, String codig2, int tam)
   int tam2 = 0;
   codig += ",";
 
-  //Serial.println("Codigo Recebido: " + codig);
+  //if (DEBUG_ON) Serial.println("Codigo Recebido: " + codig);
 
   String CodAtu = "";
   for (int i = 1; i <= codig.length(); i++)
@@ -706,7 +783,7 @@ uint16_t converteRAW(String codig, String codig2, int tam)
     else
     {
       rawData[tam2] = CodAtu.toInt();
-      //Serial.println(String(CodAtu.toInt()));
+      //if (DEBUG_ON) Serial.println(String(CodAtu.toInt()));
       tam2 ++;
       CodAtu = "";
     }
@@ -722,7 +799,7 @@ uint16_t converteRAW(String codig, String codig2, int tam)
     else
     {
       rawData[tam2] = CodAtu.toInt();
-      //Serial.println(String(CodAtu.toInt()));
+      //if (DEBUG_ON) Serial.println(String(CodAtu.toInt()));
       tam2 ++;
       CodAtu = "";
     }
@@ -736,7 +813,7 @@ uint16_t converteRAW(String codig, String codig2, int tam)
     Teste += String(rawData[i]) + ",";
   }
   Teste += "}";
-  //Serial.println("O que está gravado: " + Teste);
+  //if (DEBUG_ON) Serial.println("O que está gravado: " + Teste);
   */
 
 //return rawData;
@@ -848,13 +925,13 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
 
   IRsend irsend(16, true);
   irsend.begin();
-  ///    Serial.println("Modelo: " + String(vModelo));
-  ///    Serial.println("tamanho");
-  ///    Serial.println(String(QtdeBit));
+  ///    if (DEBUG_ON) Serial.println("Modelo: " + String(vModelo));
+  ///    if (DEBUG_ON) Serial.println("tamanho");
+  ///    if (DEBUG_ON) Serial.println(String(QtdeBit));
   if (vModelo == 1) // NEC
   {
     vCod = "0x" + vCod;
-    //    Serial.println(vCod);
+    //    if (DEBUG_ON) Serial.println(vCod);
     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
     // uint64_t vCodigo2 = vCodigo;
     //#if SEND_NEC
@@ -864,7 +941,7 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
   else if (vModelo == 2) // NEC (non-strict)
   {
     vCod = "0x" + vCod;
-    ///Serial.println(Codigo);
+    ///if (DEBUG_ON) Serial.println(Codigo);
     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
     //uint64_t vCodigo2 = vCodigo;
     //#if SEND_NEC
@@ -874,7 +951,7 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
   else if (vModelo == 3) //Sony
   {
     vCod = "0x" + vCod;
-    //Serial.println(vCod);
+    //if (DEBUG_ON) Serial.println(vCod);
     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
     // uint64_t vCodigo2 = vCodigo;
     // #if SEND_SONY
@@ -920,7 +997,8 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
   else if (vModelo == 9) // SHARP
   {
     vCod = "0x" + vCod;
-    Serial.println(vCod);
+    if (DEBUG_ON)
+      Serial.println(vCod);
     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
     //  uint64_t vCodigo2 = vCodigo;
     //#if SEND_SHARP
@@ -930,7 +1008,8 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
   else if (vModelo == 10) // JVC
   {
     vCod = "0x" + vCod;
-    Serial.println(vCod);
+    if (DEBUG_ON)
+      Serial.println(vCod);
     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
     // uint64_t vCodigo2 = vCodigo;
     //#if SEND_JVC
@@ -948,7 +1027,8 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
   else if (vModelo == 14) // SAMSUNG
   {
     vCod = "0x" + vCod;
-    Serial.println(vCod);
+    if (DEBUG_ON)
+      Serial.println(vCod);
     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
     //   uint64_t vCodigo2 = vCodigo;
     //#if SEND_SAMSUNG
@@ -958,7 +1038,8 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
   else if (vModelo == 15) // LG
   {
     vCod = "0x" + vCod;
-    Serial.println(vCod);
+    if (DEBUG_ON)
+      Serial.println(vCod);
     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
     //    uint64_t vCodigo2 = vCodigo;
     //#if SEND_LG
@@ -988,7 +1069,7 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
     //irsend.sendDenon((long long unsigned)getUInt64fromHex(vCod.c_str()), QtdeBit);  //kDenon48Bits
     uint64_t vCodigo = getUInt64fromHex(vCod.c_str());
     irsend.sendDenon(vCodigo, QtdeBit); //kDenon48Bits
-                                        //      Serial.println("DENON OK");
+                                        //      if (DEBUG_ON) Serial.println("DENON OK");
   }
   else if (vModelo == 20) // COOLIX
   {
@@ -1023,7 +1104,7 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
     while (rFile.available())
     {
       String linhas = rFile.readStringUntil('\n');
-      //Serial.print(linhas);
+      //if (DEBUG_ON) Serial.print(linhas);
 
       for (int i = 1; i <= linhas.length(); i++)
       {
@@ -1034,7 +1115,7 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
         else
         {
           rawData[tam2] = CodAtu.toInt();
-          //Serial.println(String(CodAtu.toInt()));
+          //if (DEBUG_ON) Serial.println(String(CodAtu.toInt()));
           tam2++;
           CodAtu = "";
         }
@@ -1046,7 +1127,8 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
     SPIFFS.end();
     //#if SEND_RAW
     irsend.sendRaw(rawData, QtdeBit, 38);
-    Serial.println("enviado");
+    if (DEBUG_ON)
+      Serial.println("enviado");
     //#endif
   }
 
@@ -1098,10 +1180,12 @@ void LoopIR()
   {
     if (irrecv.decode(&results))
     {
-      Serial.print(resultToHumanReadableBasic(&results));
+      if (DEBUG_ON)
+        Serial.print(resultToHumanReadableBasic(&results));
       dumpCode(&results);
       dumpInfo(&results);
-      Serial.println(""); // Blank line between entries
+      if (DEBUG_ON)
+        Serial.println(""); // Blank line between entries
       //tone(Buzzer, 4000, 800);
       chip3.write(Buzzer, HIGH);
       delay(300);

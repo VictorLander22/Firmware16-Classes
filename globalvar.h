@@ -37,6 +37,8 @@
 #include "src\webpage.h"
 #include "src\seguranca\Seguranca.h"
 
+const bool DEBUG_ON = false;
+
 String vchipId;
 String gchipId;
 bool chipAtivo = true;

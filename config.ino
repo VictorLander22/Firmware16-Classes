@@ -7,7 +7,8 @@ String wifiPadrao()
 
   f.close();
   SPIFFS.end();
-  Serial.println("wifipadrao: " + texto);
+  if (DEBUG_ON)
+    Serial.println("wifipadrao: " + texto);
 
   return texto;
 }
@@ -192,10 +193,13 @@ void IniciaRTC()
     memRtc.outValues = 255 << 8 | 255;
     memRtc.setOutputs();
 
-    Serial.println(F("Set Date"));
+    if (DEBUG_ON)
+      Serial.println(F("Set Date"));
     Rtc.get_time();
-    Serial.printf("%02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
-    Serial.println();
+    if (DEBUG_ON)
+      Serial.printf("%02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
+    if (DEBUG_ON)
+      Serial.println();
   }
 
   RtcDateTime now;
@@ -251,16 +255,21 @@ void Memoria()
   String retorno = "1"; //lerMemoria();
   if (retorno == "1")
   {
-    Serial.printf("\nSet outputs ON: %d", memRtc.getOutputs());
-    Serial.println();
-    uint16_t outputs = memRtc.outValues;
+
+    if (DEBUG_ON)
+      Serial.printf("\nSet outputs ON: %d", memRtc.getOutputs());
+    if (DEBUG_ON)
+      Serial.println();
+    uint16_t outputs = memRtc.getOutputs();
     chip1.write8(outputs & 0xff);
     chip2.write8((outputs >> 8) & 0xff);
   }
   else
   {
-    Serial.printf("\nSet outputs OFF");
-    Serial.println();
+    if (DEBUG_ON)
+      Serial.printf("\nSet outputs OFF");
+    if (DEBUG_ON)
+      Serial.println();
     chip1.write8(255);
     chip2.write8(255);
   }
@@ -371,17 +380,18 @@ void dirarquivos()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
   SPIFFS.begin();
-  Serial.println("Consultar sistema de arquivos");
+  if (DEBUG_ON)
+    Serial.println("Consultar sistema de arquivos");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next())
   {
     arquivos += dir.fileName();
-    //Serial.print(dir.fileName());
+    //if (DEBUG_ON) Serial.print(dir.fileName());
     if (dir.fileSize())
     {
       File f = dir.openFile("r");
       arquivos += f.size();
-      //Serial.println(f.size());
+      //if (DEBUG_ON) Serial.println(f.size());
       f.close();
     }
     arquivos += "<BR>";
@@ -409,10 +419,11 @@ void File_Download()
   SPIFFS.begin();
   if (SPIFFS.exists(path))
   {
-    Serial.println("Arquivo existe");
+    if (DEBUG_ON)
+      Serial.println("Arquivo existe");
 
     File download = SPIFFS.open(path, "r");
-    //Serial.println(download);
+    //if (DEBUG_ON) Serial.println(download);
     //size_t sent = server.streamFile(file, "text/html");
     //file.close();
 
@@ -427,14 +438,16 @@ void File_Download()
   }
   else
   {
-    Serial.println("Arquivo não existe");
+    if (DEBUG_ON)
+      Serial.println("Arquivo não existe");
   }
   SPIFFS.end();
 }
 
 void File_Upload()
 {
-  Serial.println("File upload stage-1");
+  if (DEBUG_ON)
+    Serial.println("File upload stage-1");
   //append_page_header();
   String webfile = "<h3>Select File to Upload</h3>";
   webfile += "<FORM action='/fupload' method='post' enctype='multipart/form-data'>";
@@ -442,24 +455,29 @@ void File_Upload()
   webfile += "<br><button class='buttons' style='width:10%' type='submit'>Upload File</button><br>";
   webfile += "<a href='/'>[Back]</a><br><br>";
   //append_page_footer();
-  Serial.println("File upload stage-2");
+  if (DEBUG_ON)
+    Serial.println("File upload stage-2");
   server.send(200, "text/html", webfile);
 }
 
 void handleFileUpload()
 { // upload a new file to the Filing system
 
-  Serial.println("File upload stage-3");
+  if (DEBUG_ON)
+    Serial.println("File upload stage-3");
   HTTPUpload &uploadfile = server.upload();
 
   if (uploadfile.status == UPLOAD_FILE_START)
   {
-    Serial.println("File upload stage-4");
+    if (DEBUG_ON)
+      Serial.println("File upload stage-4");
     String filename = uploadfile.filename;
     if (!filename.startsWith("/"))
       filename = "/" + filename;
-    Serial.print("Upload File Name: ");
-    Serial.println(filename);
+    if (DEBUG_ON)
+      Serial.print("Upload File Name: ");
+    if (DEBUG_ON)
+      Serial.println(filename);
 
     SPIFFS.begin();
 
@@ -469,7 +487,8 @@ void handleFileUpload()
   }
   else if (uploadfile.status == UPLOAD_FILE_WRITE)
   {
-    Serial.println("File upload stage-5");
+    if (DEBUG_ON)
+      Serial.println("File upload stage-5");
     if (UploadFile)
     {
       //SPIFFS.begin();
@@ -482,8 +501,10 @@ void handleFileUpload()
     if (UploadFile) // If the file was successfully created
     {
       UploadFile.close(); // Close the file again
-      Serial.print("Upload Size: ");
-      Serial.println(uploadfile.totalSize);
+      if (DEBUG_ON)
+        Serial.print("Upload Size: ");
+      if (DEBUG_ON)
+        Serial.println(uploadfile.totalSize);
 
       //append_page_header();
       String webfile = "<h3>File was successfully uploaded</h3>";
@@ -499,7 +520,8 @@ void handleFileUpload()
   }
   else
   {
-    Serial.println(uploadfile.totalSize);
+    if (DEBUG_ON)
+      Serial.println(uploadfile.totalSize);
     SPIFFS.end();
   }
 }
@@ -519,16 +541,19 @@ void File_Delete()
   SPIFFS.begin();
   if (SPIFFS.exists(path))
   {
-    Serial.println("Arquivo existe");
+    if (DEBUG_ON)
+      Serial.println("Arquivo existe");
     if (SPIFFS.remove(path))
     {
-      Serial.println("Removido");
+      if (DEBUG_ON)
+        Serial.println("Removido");
       server.send(200, "text/html", "Removido");
     }
   }
   else
   {
-    Serial.println("Arquivo não existe");
+    if (DEBUG_ON)
+      Serial.println("Arquivo não existe");
     server.send(200, "text/html", "Não existe");
   }
   SPIFFS.end();

@@ -13,7 +13,8 @@ void gravacena()
     String vTipo = server.arg("t");
     String Valor = server.arg("v");
     String IdCena = server.arg("id");
-    Serial.println(Valor);
+    if (DEBUG_ON)
+      Serial.println(Valor);
     SPIFFS.begin();
 
     if (ia == "1") // inicio de arquivo
@@ -51,19 +52,21 @@ void lerArquivo(String id)
   String linhas;
   //linhas = rFile.readString();
 
-  //Serial.println("linhas das cenas");
+  //if (DEBUG_ON) Serial.println("linhas das cenas");
   int qtde = 0;
   while (rFile.available())
   {
     String linhas = rFile.readStringUntil('\n');
-    Serial.print(linhas);
+    if (DEBUG_ON)
+      Serial.print(linhas);
     qtde++;
   }
 
   rFile.close();
   SPIFFS.end();
-  //Serial.print("qtde de linhas: ");
-  Serial.println(qtde);
+  //if (DEBUG_ON) Serial.print("qtde de linhas: ");
+  if (DEBUG_ON)
+    Serial.println(qtde);
 }
 
 void triggerCena(String arq)
@@ -95,30 +98,34 @@ void checkCena()
         }
         cenaPTotal++;
       }
-      Serial.println("Total cena: " + String(cenaPTotal));
+      if (DEBUG_ON)
+        Serial.println("Total cena: " + String(cenaPTotal));
       cenaPAtual++;
-      Serial.println("Cena atual: " + String(cenaPAtual));
+      if (DEBUG_ON)
+        Serial.println("Cena atual: " + String(cenaPAtual));
 
       rFile.close();
       SPIFFS.end();
     }
     if (cenaPAtual >= 1)
     {
-      //Serial.print("processando cena: ");
-      //Serial.println(cenaPAtual);
+      //if (DEBUG_ON) Serial.print("processando cena: ");
+      //if (DEBUG_ON) Serial.println(cenaPAtual);
 
       if (cenaPAtual == 1)
       {
-        //Serial.print(Comando);
-        //Serial.println("primeiro");
-        //Serial.println("Cena atual: " + String(cenaPAtual));
-        Serial.println("Executar cena: " + Comando);
+        //if (DEBUG_ON) Serial.print(Comando);
+        //if (DEBUG_ON) Serial.println("primeiro");
+        //if (DEBUG_ON) Serial.println("Cena atual: " + String(cenaPAtual));
+        if (DEBUG_ON)
+          Serial.println("Executar cena: " + Comando);
         executaCena(Comando);
-        //Serial.println("Exceutou cena primeiro");
+        //if (DEBUG_ON) Serial.println("Exceutou cena primeiro");
       }
       else
       {
-        Serial.println("Cena atual: " + String(cenaPAtual));
+        if (DEBUG_ON)
+          Serial.println("Cena atual: " + String(cenaPAtual));
         //rFile.seek(0, SeekSet);
 
         SPIFFS.begin();
@@ -127,32 +134,33 @@ void checkCena()
 
         while (rFile.available())
         {
-          //Serial.println("\nInicio While");
-          //Serial.println("conCena while: " + String(conCena));
-          //Serial.println("Cena atual while: " + String(cenaPAtual));
+          //if (DEBUG_ON) Serial.println("\nInicio While");
+          //if (DEBUG_ON) Serial.println("conCena while: " + String(conCena));
+          //if (DEBUG_ON) Serial.println("Cena atual while: " + String(cenaPAtual));
 
           String linhas = rFile.readStringUntil('\n');
 
-          //Serial.println("Codigo lido arquivo: " + linhas + "Posição no arquivo: " + rFile.position());
+          //if (DEBUG_ON) Serial.println("Codigo lido arquivo: " + linhas + "Posição no arquivo: " + rFile.position());
 
           if (conCena == cenaPAtual)
           {
 
             Comando = linhas;
-            //Serial.println("Executar cena while: " + Comando);
-            //Serial.println("Cena atual antes execução: " + String(cenaPAtual));
-            Serial.println("Executar cena: " + Comando);
+            //if (DEBUG_ON) Serial.println("Executar cena while: " + Comando);
+            //if (DEBUG_ON) Serial.println("Cena atual antes execução: " + String(cenaPAtual));
+            if (DEBUG_ON)
+              Serial.println("Executar cena: " + Comando);
             executaCena(Comando);
-            //Serial.println("Cena atual apos execução" + String(cenaPAtual));
+            //if (DEBUG_ON) Serial.println("Cena atual apos execução" + String(cenaPAtual));
             rFile.close();
             SPIFFS.end();
             //conCena = 0;
           }
           conCena++;
 
-          //Serial.println("ConCena fim while: " + String(conCena));
+          //if (DEBUG_ON) Serial.println("ConCena fim while: " + String(conCena));
         }
-        //Serial.println("Sai do while");
+        //if (DEBUG_ON) Serial.println("Sai do while");
       }
     }
 
@@ -160,7 +168,8 @@ void checkCena()
     {
       rFile.close();
       SPIFFS.end();
-      Serial.println("\nfim da cena\n");
+      if (DEBUG_ON)
+        Serial.println("\nfim da cena\n");
       cenaExecucao = false;
       cenaPAtual = 0;
       cenaPTotal = 0;
@@ -170,7 +179,7 @@ void checkCena()
 
 void executaCena(String comandoCena)
 {
-  //Serial.print(comandoCena);
+  //if (DEBUG_ON) Serial.print(comandoCena);
   String cmdChipID;
   String cmdIP;
   String cmdTipo;
@@ -186,7 +195,7 @@ void executaCena(String comandoCena)
 
   for (i = 0; i < comandoCena.length(); i++)
   {
-    //Serial.println("Posicao " + String(i));
+    //if (DEBUG_ON) Serial.println("Posicao " + String(i));
     if (comandoCena[i] != '|' && posicaoi <= posicaof)
     {
       if (posicaoi == 1) // chip id
@@ -277,7 +286,7 @@ void executaCena(String comandoCena)
   Destino.fromString(cmdIP);
   String Texto;
   // comandos
-  //Serial.println("Tipo " + cmdTipo);
+  //if (DEBUG_ON) Serial.println("Tipo " + cmdTipo);
   if (cmdTipo == "1") // Rele
   {
     if (Destino == IpDispositivo)
@@ -311,9 +320,11 @@ void executaCena(String comandoCena)
       {
         Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID) + "|E|1|";
       }
-      Serial.println(Texto);
+      if (DEBUG_ON)
+        Serial.println(Texto);
       Texto.toCharArray(replyPacekt, 255);
-      Serial.println("enviado comando UDP");
+      if (DEBUG_ON)
+        Serial.println("enviado comando UDP");
       Udp.beginPacket(Destino, localUdpPort);
       Udp.write(replyPacekt);
       Udp.endPacket();
@@ -327,15 +338,15 @@ void executaCena(String comandoCena)
     {
       if (lastCnTime == 0 || (millisAtual - lastCnTime >= 300))
       {
-        //Serial.println("CenaAntes " + String(cenaPAtual));
+        //if (DEBUG_ON) Serial.println("CenaAntes " + String(cenaPAtual));
 
         sendIRCMD(cmdAcao, cmdAcao2, cmdQtde.toInt(), cmdPorta.toInt(), cmdModelo.toInt(), cmdQtde.toInt());
         lastCnTime = millisAtual;
         //lastCnTime = millis();
-        //Serial.println("terminou IR");
-        // Serial.println("Cena apos ir " + String(cenaPAtual));
+        //if (DEBUG_ON) Serial.println("terminou IR");
+        // if (DEBUG_ON) Serial.println("Cena apos ir " + String(cenaPAtual));
         cenaPAtual++;
-        // Serial.println("Cena apos ir + 1 " + String(cenaPAtual));
+        // if (DEBUG_ON) Serial.println("Cena apos ir + 1 " + String(cenaPAtual));
         //delay(300);
       }
       else if (millisAtual - lastCnTime < 0)
@@ -350,7 +361,7 @@ void executaCena(String comandoCena)
   }
   else if (cmdTipo == "3") // timer
   {
-    //Serial.println("Entrou no timer " + String(lastCnTime));
+    //if (DEBUG_ON) Serial.println("Entrou no timer " + String(lastCnTime));
     if (lastCnTime <= 0)
     {
       lastCnTime = millisAtual;
@@ -374,7 +385,8 @@ void executaCena(String comandoCena)
     Texto += cmdValorMin + "|n|";
     Texto.toCharArray(replyPacekt, 255);
 
-    Serial.println("enviado comando UDP");
+    if (DEBUG_ON)
+      Serial.println("enviado comando UDP");
     Udp.beginPacket(Destino, localUdpPort);
     Udp.write(replyPacekt);
     Udp.endPacket();

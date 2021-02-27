@@ -16,7 +16,6 @@ class KPDeviceClass
 {
 public:
   KPDeviceClass();
-
 };
 
 #endif

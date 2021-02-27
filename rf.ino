@@ -42,7 +42,8 @@ void gravarf()
   String Valor = server.arg("s");
   String Senha = server.arg("k");
 
-  Serial.println(Valor);
+  if (DEBUG_ON)
+    Serial.println(Valor);
   if (Senha == "kdi9e")
   {
     SPIFFS.begin();
@@ -81,8 +82,8 @@ void trataRF()
   {
     if (msgDisparadaRF[numSensorMSG] == false)
     {
-      //Serial.print("Notificar? ");
-      //Serial.println(notificar);
+      //if (DEBUG_ON) Serial.print("Notificar? ");
+      //if (DEBUG_ON) Serial.println(notificar);
       if (notificar)
       {
         sendDataToFirebase("Sensor " + String(numSensorMSG + 1) + " disparado", numSensorMSG, "2");
@@ -101,7 +102,8 @@ boolean verificaSensoresRF()
 {
   if (SensorRFAlterado)
   {
-    Serial.println(" sensor alterado ");
+    if (DEBUG_ON)
+      Serial.println(" sensor alterado ");
     SensorRFAlterado = false;
     consultaSensorRF();
   }
@@ -297,14 +299,14 @@ boolean verificaSensoresRF()
     }
 
     ////
-    //    Serial.print("Valor Atuacao: ");
-    //  Serial.println(ValorAtuacaoRF);
-    //    Serial.print("Valor vsAtualRF: ");
-    //Serial.println(vsAtualRF);
-    //Serial.print("Valor estadoAtualRF: ");
-    //Serial.println(estadoAtualRF[nsensor]);
-    //Serial.print("Valor ultimoestadorf: ");
-    //Serial.println(ultimoEstadoRF[nsensor]);
+    //    if (DEBUG_ON) Serial.print("Valor Atuacao: ");
+    //  if (DEBUG_ON) Serial.println(ValorAtuacaoRF);
+    //    if (DEBUG_ON) Serial.print("Valor vsAtualRF: ");
+    //if (DEBUG_ON) Serial.println(vsAtualRF);
+    //if (DEBUG_ON) Serial.print("Valor estadoAtualRF: ");
+    //if (DEBUG_ON) Serial.println(estadoAtualRF[nsensor]);
+    //if (DEBUG_ON) Serial.print("Valor ultimoestadorf: ");
+    //if (DEBUG_ON) Serial.println(ultimoEstadoRF[nsensor]);
 
     ///  Reseta os marcadores de acionamento
 
@@ -320,7 +322,7 @@ boolean verificaSensoresRF()
     {
       if (Funcao == "0" || Funcao == "1" || Funcao == "4")
       {
-        //Serial.println("disparou");
+        //if (DEBUG_ON) Serial.println("disparou");
         ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
         msgDisparadaRF[numSensorDisparado] = false;
         valorRetorno = true;
@@ -338,9 +340,11 @@ boolean verificaSensoresRF()
         {
           char replyPacekt[255] = "";
           String Texto = vIPDest + "|" + PortaAparelho + "|true|" + String(vChip) + "|E|";
-          Serial.println(Texto);
+          if (DEBUG_ON)
+            Serial.println(Texto);
           Texto.toCharArray(replyPacekt, 255);
-          Serial.println("enviado comando UDP");
+          if (DEBUG_ON)
+            Serial.println("enviado comando UDP");
           Udp.beginPacket(Destino, localUdpPort);
           Udp.write(replyPacekt);
           Udp.endPacket();
@@ -370,7 +374,8 @@ boolean verificaSensoresRF()
           char replyPacekt[255] = "";
           String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|";
           Texto.toCharArray(replyPacekt, 255);
-          Serial.println("enviado comando UDP");
+          if (DEBUG_ON)
+            Serial.println("enviado comando UDP");
           Udp.beginPacket(Destino, localUdpPort);
           Udp.write(replyPacekt);
           Udp.endPacket();
@@ -410,9 +415,11 @@ boolean verificaSensoresRF()
               lastDebounceTime = millisAtual;
               char replyPacekt[255] = "";
               String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
-              Serial.println(Texto);
+              if (DEBUG_ON)
+                Serial.println(Texto);
               Texto.toCharArray(replyPacekt, 255);
-              Serial.println("enviado comando UDP");
+              if (DEBUG_ON)
+                Serial.println("enviado comando UDP");
               Udp.beginPacket(Destino, localUdpPort);
               Udp.write(replyPacekt);
               Udp.endPacket();
@@ -446,7 +453,8 @@ boolean verificaSensoresRF()
               char replyPacekt[255] = "";
               String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
               Texto.toCharArray(replyPacekt, 255);
-              Serial.println("enviado comando UDP");
+              if (DEBUG_ON)
+                Serial.println("enviado comando UDP");
               Udp.beginPacket(Destino, localUdpPort);
               Udp.write(replyPacekt);
               Udp.endPacket();
@@ -476,7 +484,8 @@ boolean verificaSensoresRF()
               char replyPacekt[255] = "";
               String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
               Texto.toCharArray(replyPacekt, 255);
-              Serial.println("enviado comando UDP");
+              if (DEBUG_ON)
+                Serial.println("enviado comando UDP");
               Udp.beginPacket(Destino, localUdpPort);
               Udp.write(replyPacekt);
               Udp.endPacket();
@@ -506,7 +515,8 @@ boolean verificaSensoresRF()
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
             Texto.toCharArray(replyPacekt, 255);
-            Serial.println("enviado comando UDP");
+            if (DEBUG_ON)
+              Serial.println("enviado comando UDP");
             Udp.beginPacket(Destino, localUdpPort);
             Udp.write(replyPacekt);
             Udp.endPacket();
@@ -551,7 +561,8 @@ void consultaSensorRF()
   File f = SPIFFS.open("/rf.txt", "r");
   String texto = f.readStringUntil('*');
   texto += '*';
-  Serial.println(texto);
+  if (DEBUG_ON)
+    Serial.println(texto);
   f.close();
   SPIFFS.end();
 
@@ -620,9 +631,12 @@ void sendRFp()
   if (Senha == "kdi9e")
   {
 
-    Serial.println("Valor: " + String(Valor));
-    Serial.println("Tamanho: " + String(_tamanhorf));
-    Serial.println("Protocolo: " + String(_protocol));
+    if (DEBUG_ON)
+      Serial.println("Valor: " + String(Valor));
+    if (DEBUG_ON)
+      Serial.println("Tamanho: " + String(_tamanhorf));
+    if (DEBUG_ON)
+      Serial.println("Protocolo: " + String(_protocol));
     sSendRF.setProtocol(_protocol);
     sSendRF.send(Valor, _tamanhorf);
   }
@@ -634,7 +648,8 @@ void LoopRF()
 
   {
 
-    Serial.println("sinal de radio detectado");
+    if (DEBUG_ON)
+      Serial.println("sinal de radio detectado");
     //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
     if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
     {
@@ -648,21 +663,29 @@ void LoopRF()
 
     if (value == 0)
     {
-      Serial.print("Unknown encoding");
+      if (DEBUG_ON)
+        Serial.print("Unknown encoding");
     }
     else
     {
       //    tone(Buzzer, 4000, 800);
-      Serial.print("Received ");
+      if (DEBUG_ON)
+        Serial.print("Received ");
       codigoRF = mySwitch.getReceivedValue();
       ultimoDisparoRF = codigoRF;
-      Serial.print(mySwitch.getReceivedValue());
-      Serial.print(" / ");
-      Serial.print(mySwitch.getReceivedBitlength());
+      if (DEBUG_ON)
+        Serial.print(mySwitch.getReceivedValue());
+      if (DEBUG_ON)
+        Serial.print(" / ");
+      if (DEBUG_ON)
+        Serial.print(mySwitch.getReceivedBitlength());
       tamanhoRF = mySwitch.getReceivedBitlength();
-      Serial.print("bit ");
-      Serial.print("Protocol: ");
-      Serial.println(mySwitch.getReceivedProtocol());
+      if (DEBUG_ON)
+        Serial.print("bit ");
+      if (DEBUG_ON)
+        Serial.print("Protocol: ");
+      if (DEBUG_ON)
+        Serial.println(mySwitch.getReceivedProtocol());
       gProtocoloRF = mySwitch.getReceivedProtocol();
       trataRF();
     }

@@ -13,7 +13,7 @@ void api()
     action = server.arg("a");
     apiPort = server.arg("p");
     apiSource = server.arg("s");
-    //Serial.println(apiSource);
+    //if (DEBUG_ON) Serial.println(apiSource);
   }
   else
   {
@@ -21,20 +21,28 @@ void api()
     isPost = false;
     vPassApi = MqttArg(msgMqtt, "pw");
     vPassApi.toLowerCase();
-    Serial.print("vPassApi: ");
-    Serial.println(vPassApi);
+    if (DEBUG_ON)
+      Serial.print("vPassApi: ");
+    if (DEBUG_ON)
+      Serial.println(vPassApi);
 
     action = MqttArg(msgMqtt, "a");
-    Serial.print("action: ");
-    Serial.println(action);
+    if (DEBUG_ON)
+      Serial.print("action: ");
+    if (DEBUG_ON)
+      Serial.println(action);
 
     apiPort = MqttArg(msgMqtt, "p");
-    Serial.print("apiPort: ");
-    Serial.println(apiPort);
+    if (DEBUG_ON)
+      Serial.print("apiPort: ");
+    if (DEBUG_ON)
+      Serial.println(apiPort);
 
     apiSource = MqttArg(msgMqtt, "s");
-    Serial.print("apiSource: ");
-    Serial.println(apiSource);
+    if (DEBUG_ON)
+      Serial.print("apiSource: ");
+    if (DEBUG_ON)
+      Serial.println(apiSource);
   }
 
   if (AlowApi == true && vPassApi == ApiPass)
@@ -64,8 +72,10 @@ void api()
           sDados2 = "00000000";
         }
 
-        Serial.println("tamanho");
-        Serial.println(sDados1.length());
+        if (DEBUG_ON)
+          Serial.println("tamanho");
+        if (DEBUG_ON)
+          Serial.println(sDados1.length());
         while (sDados1.length() < 8)
         {
           sDados1 = '0' + sDados1;
@@ -156,7 +166,7 @@ void api()
             {
               //Rtc.chip1 = 255;
               //Rtc.chip2 = 255;
-              //Serial.println("vou gravar");
+              //if (DEBUG_ON) Serial.println("vou gravar");
               //Rtc.set_chip1();
               //Rtc.set_chip2();
 
@@ -308,7 +318,8 @@ void api()
         // Infravermelho
         if (action == "i")
     {
-      Serial.println("api infravermelho");
+      if (DEBUG_ON)
+        Serial.println("api infravermelho");
       String vModel1 = server.arg("m1");
       String vModel2 = server.arg("m2");
       String vModel3 = server.arg("m3");
@@ -333,21 +344,24 @@ void api()
       if (vModel1 != "")
       {
         sendirAPI(qtde1.toInt(), vModel1.toInt(), Comando1, Comando12, vp1.toInt());
-        Serial.println("1");
+        if (DEBUG_ON)
+          Serial.println("1");
       }
 
       if (vModel2 != "")
       {
         delay(300);
         sendirAPI(qtde2.toInt(), vModel2.toInt(), Comando2, Comando22, vp2.toInt());
-        Serial.println("2");
+        if (DEBUG_ON)
+          Serial.println("2");
       }
 
       if (vModel3 != "")
       {
         delay(300);
         sendirAPI(qtde3.toInt(), vModel3.toInt(), Comando3, Comando32, vp3.toInt());
-        Serial.println("3");
+        if (DEBUG_ON)
+          Serial.println("3");
       }
 
       if (vModel4 != "")
@@ -362,7 +376,8 @@ void api()
         // Cenas
         if (action == "c")
     {
-      Serial.println("api cenas");
+      if (DEBUG_ON)
+        Serial.println("api cenas");
       if (isPost)
         String valueApi = server.arg("v");
       else
