@@ -42,7 +42,7 @@ void callback(char *topic, byte *payload, unsigned int length)
   msgMqtt = data_str;
   newMqttMsg = true;
 
-  //if (DEBUG_ON)
+  //(!DEBUG_ON) ?:
   Serial.println("mqttcloud: " + String(topic) + "-" + (String)data_str);
 
   String str = "Recibido Cloud: " + strRec;
@@ -59,12 +59,12 @@ void callback(char *topic, byte *payload, unsigned int length)
 void MqttCloudReconnect()
 {
   // Loop until we're reconnected
-  //if (DEBUG_ON)
+  //(!DEBUG_ON) ?:
   Serial.println("Iniciando MQTT connection...");
 
   if (!client.connected())
   {
-    //if (DEBUG_ON)
+    //(!DEBUG_ON) ?:
     Serial.print("Attempting MQTT connection...");
     // Create a random client ID
     String clientId = "ESP8266Client-";
@@ -72,27 +72,27 @@ void MqttCloudReconnect()
     // Attempt to connect
     if (client.connect(clientId.c_str(), mqtt_server_user, mqtt_server_userpw))
     {
-      //if (DEBUG_ON)
+      //(!DEBUG_ON) ?:
       Serial.println("connected");
       // Once connected, publish an announcement...
       client.publish("outTopic", "hello world");
       // ... and resubscribe
       client.subscribe(mqttTopicoCloud);
 
-      //if (DEBUG_ON)
+      //(!DEBUG_ON) ?:
       Serial.println("WiFi connected");
-      //if (DEBUG_ON)
+      //(!DEBUG_ON) ?:
       Serial.println("IP address: " + WiFi.localIP().toString());
 
       NtpSetDateTimeNTP();
     }
     else
     {
-      //if (DEBUG_ON)
+      //(!DEBUG_ON) ?:
       Serial.print("failed, rc=");
-      //if (DEBUG_ON)
+      //(!DEBUG_ON) ?:
       Serial.print(client.state());
-      //if (DEBUG_ON)
+      //(!DEBUG_ON) ?:
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
       //delay(5000);
@@ -102,7 +102,7 @@ void MqttCloudReconnect()
 
 void MqttSetup()
 {
-  //if (DEBUG_ON)
+  //(!DEBUG_ON) ?:
   Serial.println();
 
   str = "keepin/placas/" + gchipId + "/cloud";
@@ -110,15 +110,15 @@ void MqttSetup()
   mqttTopicoCloud = str.c_str();
   mqttTopicoCloudRet = strRet.c_str();
 
-  //if (DEBUG_ON)
+  //(!DEBUG_ON) ?:
   Serial.println(mqtt_server);
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
   client.setBufferSize(2048);
-  //if (DEBUG_ON)
+  //(!DEBUG_ON) ?:
   Serial.println("Id Chip: " + gchipId);
 
-  //if (DEBUG_ON)
+  //(!DEBUG_ON) ?:
   Serial.println("Subscribe cloud: " + (String)mqttTopicoCloud);
 }
 

@@ -28,8 +28,6 @@ void parseBytes(const char *str, char sep, byte *bytes, int maxBytes, int base)
 
 void retornachip()
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -38,8 +36,6 @@ void retornachip()
 
 void RetornaChipMac()
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -50,7 +46,7 @@ void controle()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  //if (DEBUG_ON) Serial.println("user: " + String(www_username) + " - pass: " + String(www_password));
+  //(!DEBUG_ON) ?:   Serial.println("user: " + String(www_username) + " - pass: " + String(www_password));
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -78,15 +74,13 @@ void controle()
       {
         //digitalWrite(porta, 1);
         LigaDesliga(porta, HIGH, Nome, Tipoa);
-        if (DEBUG_ON)
-          Serial.println("led 1 ligado - Porta: " + String(porta));
+        (!DEBUG_ON) ?: Serial.println("led 1 ligado - Porta: " + String(porta));
       }
       else
       {
         //digitalWrite(porta, 0);
         LigaDesliga(porta, LOW, Nome, Tipoa);
-        if (DEBUG_ON)
-          Serial.println("led 1 desligado - Porta: " + String(porta));
+        (!DEBUG_ON) ?: Serial.println("led 1 desligado - Porta: " + String(porta));
       }
     }
 }
@@ -123,27 +117,28 @@ void situacao()
     }
 }
 
-void grava()
-{
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+// void grava()
+// {
+//   //const char* www_username = www_username2.c_str();
+//   //const char* www_password = www_password2.c_str();
+//   if (!server.authenticate(www_username, www_password))
+//     return server.requestAuthentication();
 
-  SPIFFS.begin();
-  File f = SPIFFS.open("/config.txt", "w");
+//   SPIFFS.begin();
+//   File f = SPIFFS.open("/config.txt", "w");
 
-  if (!f)
-  {
-    SPIFFS.format();
-    File f = SPIFFS.open("/config.txt", "w");
-  }
+//   if (!f)
+//   {
+//     SPIFFS.format();
+//     File f = SPIFFS.open("/config.txt", "w");
+//   }
 
-  f.println("IP: teste");
+//   f.println("IP: teste");
 
-  f.close();
-  SPIFFS.end();
-}
+//   f.close();
+//   SPIFFS.end();
+// }
+
 void valida()
 {
 
@@ -156,20 +151,20 @@ void valida()
   server.send(200, "text/html", "16|2|16|" + vchipId + "|");
 }
 
-void ler()
-{
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+// void ler()
+// {
+//   //const char* www_username = www_username2.c_str();
+//   //const char* www_password = www_password2.c_str();
+//   if (!server.authenticate(www_username, www_password))
+//     return server.requestAuthentication();
 
-  SPIFFS.begin();
-  File f = SPIFFS.open("/config.txt", "r");
-  String texto = f.readStringUntil('\n');
-  server.send(200, "text/html", texto);
-  f.close();
-  SPIFFS.end();
-}
+//   SPIFFS.begin();
+//   File f = SPIFFS.open("/config.txt", "r");
+//   String texto = f.readStringUntil('\n');
+//   server.send(200, "text/html", texto);
+//   f.close();
+//   SPIFFS.end();
+// }
 
 void handleNotFound()
 {
@@ -195,32 +190,28 @@ void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
 {
   if (Tipo != 1) //normal
   {
-    if (vFuncao == HIGH)
-    {
-      vFuncao = LOW;
-    }
-    else
-    {
-      vFuncao = HIGH;
-    }
+    // if (vFuncao == HIGH)
+    // {
+    //   vFuncao = LOW;
+    // }
+    // else
+    // {
+    //   vFuncao = HIGH;
+    // }
 
     if (vPorta < 8)
     {
-      chip1.write(vPorta, vFuncao);
+      chip1.write(vPorta, !vFuncao);
     }
     else
     {
-      chip2.write(vPorta - 8, vFuncao);
+      chip2.write(vPorta - 8, !vFuncao);
     }
 
     if (TipoMemoria)
     {
-      //Rtc.chip1 = String(chip1.read8()).toInt();
-      //Rtc.chip2 = String(chip2.read8()).toInt();
       memRtc.outValues = chip2.read8() << 8 | chip1.read8();
       memRtc.setOutputs();
-      //Rtc.set_chip1();
-      //Rtc.set_chip2();
     }
   }
   else //pulsado

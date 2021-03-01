@@ -36,8 +36,7 @@ void conectar()
 
         if (digitalRead(buttonState) == HIGH)
         {
-          if (DEBUG_ON)
-            Serial.print("resetando");
+          (!DEBUG_ON) ?: Serial.print("resetando");
           WiFi.disconnect();
           DevSet.factoryReset();
           ESP.restart();
@@ -45,12 +44,10 @@ void conectar()
 
         delay(400);
         chip3.write(LedWifiConnected, !chip3.read(LedWifiConnected));
-        if (DEBUG_ON)
-          Serial.print(".");
+        (!DEBUG_ON) ?: Serial.print(".");
         waitingWifi++;
       }
-      if (DEBUG_ON)
-        Serial.println("");
+      (!DEBUG_ON) ?: Serial.println("");
     }
     else if (WiFi.getMode() < 2)
     {
@@ -80,13 +77,11 @@ void getAvalibleNetwork()
   if (n >= 0)
   {
     //scanningWifi = n;
-    if (DEBUG_ON)
-      Serial.printf("%d network(s) found\n", n);
+    (!DEBUG_ON) ?: Serial.printf("%d network(s) found\n", n);
     vListaWifi = "";
     for (int i = 0; i < n; i++)
     {
-      if (DEBUG_ON)
-        Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
+      (!DEBUG_ON) ?: Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
       vListaWifi += WiFi.SSID(i);
       vListaWifi += "|";
     }
@@ -97,93 +92,68 @@ void getAvalibleNetwork()
   {
     millisNetworkScan = millisAtual + 15000;
     //scanningWifi = n;
-    if (DEBUG_ON)
-      Serial.println("\nNetwork scan started");
+    (!DEBUG_ON) ?: Serial.println("\nNetwork scan started");
     WiFi.scanNetworks(true);
   }
 }
 
 void gravasenhawifi()
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  String vSenha = String(server.arg("s"));
-  String req = server.arg("v");
-  String CurrentPass = server.arg("a");
-
-  if (vSenha == Senha)
+  if (server.arg("s") == Senha)
   {
-    if (req == "")
-    {
-      req = "12345678"; // se não houver registro, vai para o padrão
-    }
-
-    if (vSenhaAP == CurrentPass)
+    if (vSenhaAP == server.arg("a"))
     {
 
-      server.send(200, "text/html", "ok");
-      SPIFFS.begin();
-      File f = SPIFFS.open("/senhaap.txt", "w");
+      vSenhaAP = server.arg("v");
 
-      f.println(req + "|");
-      f.close();
-
-      SPIFFS.end();
-      vSenhaAP = req;
-
-      if (DEBUG_ON)
-        Serial.println("Alterado: " + vSenhaAP);
+      if (vSenhaAP.length() >= 8)
+      {
+        server.send(200, "text/html", "ok");
+        DevSet.apWifiPwd = vSenhaAP;
+        DevSet.setApWifiPwd();
+        (!DEBUG_ON) ?: Serial.println("Alterado: " + vSenhaAP);
+      }
+      else
+      {
+        server.send(200, "text/html", "-1");
+      }
     }
     else
     {
       server.send(200, "text/html", "-1");
-      if (DEBUG_ON)
-        Serial.println("Senha invalida: Atual = " + vSenhaAP + " Informada: " + CurrentPass);
     }
   }
   else
   {
     server.send(200, "text/html", "-1");
-    if (DEBUG_ON)
-      Serial.println("erro de senha de comunicacao: Senha Registrada: " + Senha + " senha enviada: " + vSenha);
   }
 }
 
 void gravasenhahttp()
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
+  //args - [s=senha padrao] [u=new http user] [v=new http pwd] [ua=old http user] [a=old http pwd]
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  String vSenha = server.arg("s");
-  String vreq = server.arg("v");
-  String CurrentPass = server.arg("a");
-  String vUsuarioAntigo = server.arg("ua");
-  String vUsuariohttp = server.arg("u");
-
-  if (vSenha == Senha)
+  if (server.arg("s") == Senha)
   {
-    if (vreq == "" || vreq == " ")
-    {
-      vreq = "keepin"; // se não houver registro, vai para o padrão
-    }
+    String newHttpUser = server.arg("u");
+    String newHttpPwd = server.arg("v");
 
-    if (vUsuariohttp == "" || vUsuariohttp == " ")
+    if ((newHttpUser.length() >= 4 && newHttpPwd.length() >= 4) && (server.arg("ua") == DevSet.httpUser && server.arg("a") == DevSet.httpPwd))
     {
-      vUsuariohttp = "keepin"; // se não houver usuario vai para o padrao
-    }
+      String restartPage(FPSTR(webRestart));
+      restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
+      server.send_P(200, "text/html", restartPage.c_str());
 
-    if (senha1 == CurrentPass && vUsuarioAntigo == usuario1)
-    {
-      server.send(200, "text/html", "ok");
-      seg.gravar(vUsuariohttp, vreq);
-      if (DEBUG_ON)
-        Serial.println("Reiniciando sistema depois de alterar http senha");
+      DevSet.httpUser = newHttpUser;
+      DevSet.httpPwd = newHttpPwd;
+      DevSet.setHttpSeg();
 
+      (!DEBUG_ON) ?: Serial.println("Reiniciando sistema depois de alterar http senha");
       delay(500);
       ESP.restart();
     }
@@ -198,21 +168,18 @@ void gravasenhahttp()
   }
 }
 
-void prinScanResult(int networksFound)
-{
-  if (DEBUG_ON)
-    Serial.printf("%d prinScanResult network(s) found\n", networksFound);
-  for (int i = 0; i < networksFound; i++)
-  {
-    if (DEBUG_ON)
-      Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
-  }
-}
+// void prinScanResult(int networksFound)
+// {
+//   (!DEBUG_ON) ?: Serial.printf("%d prinScanResult network(s) found\n", networksFound);
+//   for (int i = 0; i < networksFound; i++)
+//   {
+//     (!DEBUG_ON) ?: Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
+//   }
+// }
 
 void wifiConectSTA()
 {
-  if (DEBUG_ON)
-    Serial.println(F("\nWifi trying conection in: STA MODE"));
+  (!DEBUG_ON) ?: Serial.println(F("\nWifi trying conection in: STA MODE"));
   WiFi.mode(WIFI_STA);
   tipoWifiAtual = 1;
   const char *ssid = DevSet.wifiSSID.c_str();
@@ -222,12 +189,11 @@ void wifiConectSTA()
   IPAddress gateway(DevSet.wifiGTW);
   IPAddress dns(8, 8, 8, 8);
 
-  if (DEBUG_ON)
-    Serial.println(ssid);
-  // if (DEBUG_ON) Serial.println(password);
-  // if (DEBUG_ON) Serial.println(ip);
-  // if (DEBUG_ON) Serial.println(subnet);
-  // if (DEBUG_ON) Serial.println(gateway);
+  (!DEBUG_ON) ?: Serial.println(ssid);
+  // (!DEBUG_ON) ?:   Serial.println(password);
+  // (!DEBUG_ON) ?:   Serial.println(ip);
+  // (!DEBUG_ON) ?:   Serial.println(subnet);
+  // (!DEBUG_ON) ?:   Serial.println(gateway);
 
   IpDispositivo = ip;
   local_IP = ip;
@@ -242,12 +208,9 @@ void wifiConectSTA()
 
 void wifiConectAP()
 {
-  if (DEBUG_ON)
-    Serial.print("Rede não localizada: ");
-  if (DEBUG_ON)
-    Serial.println(DevSet.wifiSSID);
-  if (DEBUG_ON)
-    Serial.println("Wifi trying conection in: AP MODE");
+  (!DEBUG_ON) ?: Serial.print("Rede não localizada: ");
+  (!DEBUG_ON) ?: Serial.println(DevSet.wifiSSID);
+  (!DEBUG_ON) ?: Serial.println("Wifi trying conection in: AP MODE");
   WiFi.mode(WIFI_AP);
   tipoWifiAtual = 2;
   //listawifi();
@@ -257,24 +220,18 @@ void wifiConectAP()
   IPAddress gateway(DevSet.apWifiGTW);
   IPAddress subnet(DevSet.apWifiMSK);
 
-  if (DEBUG_ON)
-    Serial.print("Setting soft-AP configuration ... ");
-  if (DEBUG_ON)
-    Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+  (!DEBUG_ON) ?: Serial.print("Setting soft-AP configuration ... ");
+  (!DEBUG_ON) ?: Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
-  if (DEBUG_ON)
-    Serial.print("Setting soft-AP ... ");
-  if (DEBUG_ON)
-    Serial.println("idencitifcador");
+  (!DEBUG_ON) ?: Serial.print("Setting soft-AP ... ");
+  (!DEBUG_ON) ?: Serial.println("idencitifcador");
   //int chipId = ESP.getChipId();
   String NomeRede = "KEEPIN_" + gchipId;
-  if (DEBUG_ON)
-    Serial.println(NomeRede);
+  (!DEBUG_ON) ?: Serial.println(NomeRede);
   const char *nRede = NomeRede.c_str();
-  if (DEBUG_ON)
-    Serial.println(nRede);
+  (!DEBUG_ON) ?: Serial.println(nRede);
 
-  //if (DEBUG_ON) Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
+  //(!DEBUG_ON) ?:   Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
 
   if (!WiFi.softAP(nRede, vSenhaAP.c_str()))
   {
@@ -282,10 +239,8 @@ void wifiConectAP()
     DevSet.factoryReset();
   }
 
-  if (DEBUG_ON)
-    Serial.print("Soft-AP IP address = ");
-  if (DEBUG_ON)
-    Serial.println(WiFi.softAPIP());
+  (!DEBUG_ON) ?: Serial.print("Soft-AP IP address = ");
+  (!DEBUG_ON) ?: Serial.println(WiFi.softAPIP());
   IpDispositivo = local_IP;
 
   chip3.write(LedWifiConnected, HIGH);

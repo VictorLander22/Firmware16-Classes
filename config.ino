@@ -1,125 +1,103 @@
 
-String wifiPadrao()
-{
+void convertConfig()
+{ //converter configurações antigas para salvar na EEPROM
+  File f;
+  String ret;
+
   SPIFFS.begin();
-  File f = SPIFFS.open("/wifipadrao.txt", "r");
-  String texto = f.readStringUntil('|');
 
-  f.close();
-  SPIFFS.end();
-  if (DEBUG_ON)
-    Serial.println("wifipadrao: " + texto);
-
-  return texto;
-}
-
-String pegaSSID()
-{
-  SPIFFS.begin();
-  File f = SPIFFS.open("/ssid.txt", "r");
-  String texto = f.readStringUntil('|');
-  f.close();
-  SPIFFS.end();
-
-  return texto;
-}
-
-String pegaPassword()
-{
-  SPIFFS.begin();
-  File f = SPIFFS.open("/pass.txt", "r");
-  String texto = f.readStringUntil('|');
-  f.close();
-  SPIFFS.end();
-
-  return texto;
-}
-
-String pegaIP()
-{
-  SPIFFS.begin();
-  File f = SPIFFS.open("/ip.txt", "r");
-  String texto = f.readStringUntil('|');
-  f.close();
-  SPIFFS.end();
-
-  return texto;
-}
-
-String pegaMask()
-{
-  SPIFFS.begin();
-  File f = SPIFFS.open("/mask.txt", "r");
-  String texto = f.readStringUntil('|');
-  f.close();
-  SPIFFS.end();
-
-  return texto;
-}
-
-String pegaGateway()
-{
-  SPIFFS.begin();
-  File f = SPIFFS.open("/gateway.txt", "r");
-  String texto = f.readStringUntil('|');
-  f.close();
-  SPIFFS.end();
-
-  return texto;
-}
-
-void setWifiPadrao(String valor)
-{
-  SPIFFS.begin();
-  File f = SPIFFS.open("/wifipadrao.txt", "w");
-
-  if (!f)
+  if (SPIFFS.exists("/index.html"))
   {
-    SPIFFS.format();
-    File f = SPIFFS.open("/wifipadrao.txt", "w");
+
+    if (SPIFFS.exists("/wifipadrao.txt"))
+    {
+      f = SPIFFS.open("/wifipadrao.txt", "r");
+      ret = f.readStringUntil('|');
+      bool wifipadrao = (ret == "0") ? false : true;
+      f.close();
+      SPIFFS.remove("/wifipadrao.txt");
+      bitWrite(DevSet.mode, 2, wifipadrao); //b0:AllowApi, b1:UsaCloud, b2:wifiPadrao, b3:TipoMemoria ..
+    }
+
+    if (SPIFFS.exists("/ssid.txt"))
+    {
+      f = SPIFFS.open("/ssid.txt", "r");
+      ret = f.readStringUntil('|');
+      f.close();
+      SPIFFS.remove("/ssid.txt");
+      DevSet.wifiSSID = ret; //Limit 35 bytes;
+    }
+
+    if (SPIFFS.exists("/pass.txt"))
+    {
+      f = SPIFFS.open("/pass.txt", "r");
+      ret = f.readStringUntil('|');
+      f.close();
+      SPIFFS.remove("/pass.txt");
+      DevSet.wifiPwd = ret; //Limit 35 bytes;
+    }
+
+    if (SPIFFS.exists("/ip.txt"))
+    {
+      f = SPIFFS.open("/ip.txt", "r");
+      ret = f.readStringUntil('|');
+      ret.replace(",", ".");
+      f.close();
+      SPIFFS.remove("/ip.txt");
+      DevSet.wifiIP = DevSet.ipStringToNumber(ret.c_str());
+    }
+
+    if (SPIFFS.exists("/mask.txt"))
+    {
+      f = SPIFFS.open("/mask.txt", "r");
+      ret = f.readStringUntil('|');
+      ret.replace(",", ".");
+      f.close();
+      SPIFFS.remove("/mask.txt");
+      DevSet.wifiMSK = DevSet.ipStringToNumber(ret.c_str());
+    }
+
+    if (SPIFFS.exists("/gateway.txt"))
+    {
+      f = SPIFFS.open("/gateway.txt", "r");
+      ret = f.readStringUntil('|');
+      ret.replace(",", ".");
+      f.close();
+      SPIFFS.remove("/gateway.txt");
+      DevSet.wifiGTW = DevSet.ipStringToNumber(ret.c_str());
+    }
+
+    if (SPIFFS.exists("/httpuser.txt"))
+    {
+      SPIFFS.remove("/httpuser.txt");
+      DevSet.httpUser = "keepin";
+    }
+
+    if (SPIFFS.exists("/httppass.txt"))
+    {
+      SPIFFS.remove("/httppass.txt");
+      DevSet.httpPwd = "keepin";
+    }
+
+    if (SPIFFS.exists("/apipass.txt"))
+      SPIFFS.remove("/apipass.txt");
+
+    if (SPIFFS.exists("/alowapi.txt"))
+      SPIFFS.remove("/alowapi.txt");
+
+    if (SPIFFS.exists("/senhaap.txt"))
+      SPIFFS.remove("/senhaap.txt");
+
+    DevSet.setMode();
+    DevSet.setWifi();
+    DevSet.setApWifiPwd();
+    DevSet.setApiPwd();
+    DevSet.setHttpSeg();
+
+    SPIFFS.remove("/index.html");
   }
 
-  f.println(valor + "|");
-
-  f.close();
   SPIFFS.end();
-}
-
-void configuracao2()
-{
-  /*
-  String ssid = "";
-  String pass = "";
-  String ip = "";
-  String mask = "";
-  String gateway = "";*/
-
-  SPIFFS.begin();
-  File f = SPIFFS.open("/ssid.txt", "r");
-  String ssid = f.readStringUntil('|');
-  f.close();
-
-  f = SPIFFS.open("/pass.txt", "r");
-  String pass = f.readStringUntil('|');
-  f.close();
-
-  f = SPIFFS.open("/ip.txt", "r");
-  String ip = f.readStringUntil('|');
-  ip.replace(",", ".");
-  f.close();
-
-  f = SPIFFS.open("/mask.txt", "r");
-  String mask = f.readStringUntil('|');
-  mask.replace(",", ".");
-  f.close();
-
-  f = SPIFFS.open("/gateway.txt", "r");
-  String gateway = f.readStringUntil('|');
-  gateway.replace(",", ".");
-  f.close();
-
-  SPIFFS.end();
-  //configuracao();
 }
 
 void wifireset()
@@ -131,39 +109,6 @@ void wifireset()
   DevSet.factoryReset();
   ESP.restart();
 }
-
-//   String req = "1|";
-
-//   f.println(req);
-//   f.close();
-
-//   // volta senha padrao do wifi
-//   f = SPIFFS.open("/senhaap.txt", "w");
-
-//   f.println("12345678|");
-//   f.close();
-
-//   // senha API padrao
-//   f = SPIFFS.open("/apipass.txt", "w");
-//   f.println("25d55ad283aa400af464c76d713c07ad|");
-//   f.close();
-
-//   // HTTP usuario
-//   f = SPIFFS.open("/httpuser.txt", "w");
-//   f.println("keepin|");
-//   f.close();
-
-//   // HTTP senha
-//   f = SPIFFS.open("/httppass.txt", "w");
-//   f.println("keepin|");
-//   f.close();
-
-//   SPIFFS.end();
-
-//   ConfigEN(); // configura as entradas como normal
-
-//   //ESP.restart();
-// }
 
 int retornaPorta(int vporta)
 {
@@ -193,13 +138,10 @@ void IniciaRTC()
     memRtc.outValues = 255 << 8 | 255;
     memRtc.setOutputs();
 
-    if (DEBUG_ON)
-      Serial.println(F("Set Date"));
+    (!DEBUG_ON) ?: Serial.println(F("Set Date"));
     Rtc.get_time();
-    if (DEBUG_ON)
-      Serial.printf("%02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
-    if (DEBUG_ON)
-      Serial.println();
+    (!DEBUG_ON) ?: Serial.printf("%02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
+    (!DEBUG_ON) ?: Serial.println();
   }
 
   RtcDateTime now;
@@ -218,8 +160,7 @@ RtcDateTime carregaHora()
 
 void valorwifi()
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
+
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -256,20 +197,16 @@ void Memoria()
   if (retorno == "1")
   {
 
-    if (DEBUG_ON)
-      Serial.printf("\nSet outputs ON: %d", memRtc.getOutputs());
-    if (DEBUG_ON)
-      Serial.println();
+    (!DEBUG_ON) ?: Serial.printf("\nSet outputs ON: %d", memRtc.getOutputs());
+    (!DEBUG_ON) ?: Serial.println();
     uint16_t outputs = memRtc.getOutputs();
     chip1.write8(outputs & 0xff);
     chip2.write8((outputs >> 8) & 0xff);
   }
   else
   {
-    if (DEBUG_ON)
-      Serial.printf("\nSet outputs OFF");
-    if (DEBUG_ON)
-      Serial.println();
+    (!DEBUG_ON) ?: Serial.printf("\nSet outputs OFF");
+    (!DEBUG_ON) ?: Serial.println();
     chip1.write8(255);
     chip2.write8(255);
   }
@@ -326,46 +263,21 @@ void GravaCloud()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  String vSenha = String(server.arg("s"));
-  String func = server.arg("f");
-
-  if (vSenha == Senha)
+  if (server.arg("s") == Senha)
   {
-    String req = server.arg("v");
-    if (func == "w")
+    if (server.arg("f") == "w")
     {
       server.send(200, "text/html", "1");
 
-      SPIFFS.begin();
+      usaCloud = (server.arg("v") == "1") ? true : false;
 
-      File f = SPIFFS.open("/cloud.txt", "w");
-      f.println(req + "|");
-      f.close();
-      SPIFFS.end();
-
-      if (req == "1")
-      {
-        usaCloud = true;
-      }
-      else
-      {
-        usaCloud = false;
-      }
-    }
-    else if (func == "r")
-    {
-      if (usaCloud == true)
-      {
-        server.send(200, "text/html", "1");
-      }
-      else
-      {
-        server.send(200, "text/html", "0");
-      }
+      bitWrite(DevSet.mode, 1, usaCloud);
+      DevSet.setMode();
+      DevSet.showVariables();
     }
     else
     {
-      server.send(200, "text/html", "1");
+      server.send(200, "text/html", (usaCloud) ? "1" : "0");
     }
   }
   else
@@ -380,18 +292,17 @@ void dirarquivos()
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
   SPIFFS.begin();
-  if (DEBUG_ON)
-    Serial.println("Consultar sistema de arquivos");
+  (!DEBUG_ON) ?: Serial.println("Consultar sistema de arquivos");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next())
   {
     arquivos += dir.fileName();
-    //if (DEBUG_ON) Serial.print(dir.fileName());
+    //(!DEBUG_ON) ?:   Serial.print(dir.fileName());
     if (dir.fileSize())
     {
       File f = dir.openFile("r");
       arquivos += f.size();
-      //if (DEBUG_ON) Serial.println(f.size());
+      //(!DEBUG_ON) ?:   Serial.println(f.size());
       f.close();
     }
     arquivos += "<BR>";
@@ -405,8 +316,7 @@ void dirarquivos()
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void File_Download()
-{ // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
-
+{
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -415,17 +325,12 @@ void File_Download()
   if (!path.startsWith("/"))
     path = "/" + path;
 
-  //String path = "/httpuser.txt";
   SPIFFS.begin();
   if (SPIFFS.exists(path))
   {
-    if (DEBUG_ON)
-      Serial.println("Arquivo existe");
+    (!DEBUG_ON) ?: Serial.println("Arquivo existe");
 
     File download = SPIFFS.open(path, "r");
-    //if (DEBUG_ON) Serial.println(download);
-    //size_t sent = server.streamFile(file, "text/html");
-    //file.close();
 
     if (download)
     {
@@ -438,46 +343,37 @@ void File_Download()
   }
   else
   {
-    if (DEBUG_ON)
-      Serial.println("Arquivo não existe");
+    (!DEBUG_ON) ?: Serial.println("Arquivo não existe");
   }
   SPIFFS.end();
 }
 
 void File_Upload()
 {
-  if (DEBUG_ON)
-    Serial.println("File upload stage-1");
-  //append_page_header();
+  (!DEBUG_ON) ?: Serial.println("File upload stage-1");
   String webfile = "<h3>Select File to Upload</h3>";
   webfile += "<FORM action='/fupload' method='post' enctype='multipart/form-data'>";
   webfile += "<input class='buttons' style='width:40%' type='file' name='fupload' id = 'fupload' value=''><br>";
   webfile += "<br><button class='buttons' style='width:10%' type='submit'>Upload File</button><br>";
   webfile += "<a href='/'>[Back]</a><br><br>";
-  //append_page_footer();
-  if (DEBUG_ON)
-    Serial.println("File upload stage-2");
+  (!DEBUG_ON) ?: Serial.println("File upload stage-2");
   server.send(200, "text/html", webfile);
 }
 
 void handleFileUpload()
 { // upload a new file to the Filing system
 
-  if (DEBUG_ON)
-    Serial.println("File upload stage-3");
+  (!DEBUG_ON) ?: Serial.println("File upload stage-3");
   HTTPUpload &uploadfile = server.upload();
 
   if (uploadfile.status == UPLOAD_FILE_START)
   {
-    if (DEBUG_ON)
-      Serial.println("File upload stage-4");
+    (!DEBUG_ON) ?: Serial.println("File upload stage-4");
     String filename = uploadfile.filename;
     if (!filename.startsWith("/"))
       filename = "/" + filename;
-    if (DEBUG_ON)
-      Serial.print("Upload File Name: ");
-    if (DEBUG_ON)
-      Serial.println(filename);
+    (!DEBUG_ON) ?: Serial.print("Upload File Name: ");
+    (!DEBUG_ON) ?: Serial.println(filename);
 
     SPIFFS.begin();
 
@@ -487,12 +383,9 @@ void handleFileUpload()
   }
   else if (uploadfile.status == UPLOAD_FILE_WRITE)
   {
-    if (DEBUG_ON)
-      Serial.println("File upload stage-5");
+    (!DEBUG_ON) ?: Serial.println("File upload stage-5");
     if (UploadFile)
     {
-      //SPIFFS.begin();
-
       UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
     }
   }
@@ -501,10 +394,8 @@ void handleFileUpload()
     if (UploadFile) // If the file was successfully created
     {
       UploadFile.close(); // Close the file again
-      if (DEBUG_ON)
-        Serial.print("Upload Size: ");
-      if (DEBUG_ON)
-        Serial.println(uploadfile.totalSize);
+      (!DEBUG_ON) ?: Serial.print("Upload Size: ");
+      (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
 
       //append_page_header();
       String webfile = "<h3>File was successfully uploaded</h3>";
@@ -520,8 +411,7 @@ void handleFileUpload()
   }
   else
   {
-    if (DEBUG_ON)
-      Serial.println(uploadfile.totalSize);
+    (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
     SPIFFS.end();
   }
 }
@@ -541,19 +431,16 @@ void File_Delete()
   SPIFFS.begin();
   if (SPIFFS.exists(path))
   {
-    if (DEBUG_ON)
-      Serial.println("Arquivo existe");
+    (!DEBUG_ON) ?: Serial.println("Arquivo existe");
     if (SPIFFS.remove(path))
     {
-      if (DEBUG_ON)
-        Serial.println("Removido");
+      (!DEBUG_ON) ?: Serial.println("Removido");
       server.send(200, "text/html", "Removido");
     }
   }
   else
   {
-    if (DEBUG_ON)
-      Serial.println("Arquivo não existe");
+    (!DEBUG_ON) ?: Serial.println("Arquivo não existe");
     server.send(200, "text/html", "Não existe");
   }
   SPIFFS.end();

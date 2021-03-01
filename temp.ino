@@ -1,23 +1,17 @@
 void teste()
 {
   server.send(200, "text/html", "OK");
-  if (DEBUG_ON)
-    Serial.println(WiFi.status());
-  if (DEBUG_ON)
-    Serial.println(WiFi.softAPIP());
-  if (DEBUG_ON)
-    Serial.println(WiFi.localIP());
-  if (DEBUG_ON)
-    Serial.println(WiFi.getMode());
+  (!DEBUG_ON) ?: Serial.println(WiFi.status());
+  (!DEBUG_ON) ?: Serial.println(WiFi.softAPIP());
+  (!DEBUG_ON) ?: Serial.println(WiFi.localIP());
+  (!DEBUG_ON) ?: Serial.println(WiFi.getMode());
   //WiFiPhyMode_t mode;
-  if (DEBUG_ON)
-    Serial.println(WiFi.getPhyMode());
+  (!DEBUG_ON) ?: Serial.println(WiFi.getPhyMode());
 }
 
 void showDateTime()
 {
-  if (DEBUG_ON)
-    Serial.printf("Data hora: %u/%u/%u %u:%u:%u\n", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
+  (!DEBUG_ON) ?: Serial.printf("Data hora: %u/%u/%u %u:%u:%u\n", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
   delay(200);
 }
 
@@ -33,4 +27,10 @@ void FreeMemory(String functionName)
     Serial.println(ESP.getFreeHeap());
     millisFreeMemory = millis() + 3000;
   }
+}
+
+void mostarEEProm()
+{
+  DevSet.getDeviceSettings();
+  DevSet.showVariables();
 }

@@ -20,7 +20,7 @@ bool ConfigEN()
 
   gravasensor2(texto);
 
-  //if (DEBUG_ON) Serial.println(texto);
+  //(!DEBUG_ON) ?:   Serial.println(texto);
   return true;
 }
 
@@ -46,7 +46,7 @@ bool ConfigEP()
 
   gravasensor2(texto);
 
-  //if (DEBUG_ON) Serial.println(texto);
+  //(!DEBUG_ON) ?:   Serial.println(texto);
   return true;
 }
 

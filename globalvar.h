@@ -35,9 +35,9 @@
 #include "src\KPDeviceSetting.h"
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
-#include "src\seguranca\Seguranca.h"
+//#include "src\seguranca\Seguranca.h"
 
-const bool DEBUG_ON = false;
+const bool DEBUG_ON = true;
 
 String vchipId;
 String gchipId;
@@ -58,12 +58,12 @@ File UploadFile;
 
 //Fim Declarações Globais - Leo
 
-Seguranca seg;
-String usuario1 = seg.retornaUsuario();
-String senha1 = seg.retornaSenha();
+//Seguranca seg;
+//String usuario1 = seg.retornaUsuario();
+//String senha1 = seg.retornaSenha();
 
-const char *www_username = usuario1.c_str();
-const char *www_password = senha1.c_str();
+const char *www_username;
+const char *www_password;
 
 bool TipoMemoria = true;
 String vListaWifi = "";

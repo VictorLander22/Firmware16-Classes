@@ -1,8 +1,8 @@
 void ConfigurarWebServer(void)
 {
   server.on("/", handleHtmlConfig);
-  server.on("/grava", grava);
-  server.on("/ler", ler);
+  //server.on("/grava", grava);
+  //server.on("/ler", ler);
   //server.on("/config", configuracao);
   server.on("/gravarwifi", gravawifi);
   server.on("/gravasenhawifi", gravasenhawifi);
@@ -75,14 +75,13 @@ void ConfigurarWebServer(void)
     server.send(200, "text/plain", "this works as well");
   });
 
-  server.on("/teste", redirectPage);
+  server.on("/teste", mostarEEProm);
 
   server.onNotFound(handleNotFound);
 
   server.begin();
 
-  if (DEBUG_ON)
-    Serial.println("HTTP server started");
+  (!DEBUG_ON) ?: Serial.println("HTTP server started");
 }
 
 // String ipStr(const IPAddress &ip)
@@ -148,8 +147,7 @@ void gravawifi()
   DevSet.wifiMSK = DevSet.ipStringToNumber(wifiMSK);
   DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
   DevSet.setWifi();
-  if (DEBUG_ON)
-    Serial.println(F("New WIFI Settings"));
+  (!DEBUG_ON) ?: Serial.println(F("New WIFI Settings"));
   DevSet.showVariables();
 
   //gravahtml();

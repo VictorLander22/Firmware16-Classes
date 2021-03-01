@@ -8,8 +8,7 @@ void cloud()
   if (httpCode > 0)
   {
     payload = http.getString();
-    if (DEBUG_ON)
-      Serial.println(payload);
+    (!DEBUG_ON) ?: Serial.println(payload);
   }
 
   http.end();
@@ -21,8 +20,7 @@ void cloud()
 
   if (!root.success())
   {
-    if (DEBUG_ON)
-      Serial.println("parseObject() failed");
+    (!DEBUG_ON) ?: Serial.println("parseObject() failed");
   }
   else
   {
@@ -31,12 +29,9 @@ void cloud()
     const bool ED1 = root["ed1"];
     const bool ED3 = root["ed3"];
 
-    if (DEBUG_ON)
-      Serial.println(Descricao);
-    if (DEBUG_ON)
-      Serial.println(ED1);
-    if (DEBUG_ON)
-      Serial.println(ED3);
+    (!DEBUG_ON) ?: Serial.println(Descricao);
+    (!DEBUG_ON) ?: Serial.println(ED1);
+    (!DEBUG_ON) ?: Serial.println(ED3);
   }
 }
 
@@ -127,34 +122,31 @@ void sendCloud()
   //http.writeToStream(&Serial);
   payload = http.getString();
   http.end();
-  //if (DEBUG_ON) Serial.println(payload);
-  if (DEBUG_ON)
-    Serial.println("Cloud code: " + String(httpCode));
+  //(!DEBUG_ON) ?:   Serial.println(payload);
+  (!DEBUG_ON) ?: Serial.println("Cloud code: " + String(httpCode));
   if (httpCode == 200 && payload != "[]")
   {
-    //if (DEBUG_ON) Serial.println("Payload: " + payload);
+    //(!DEBUG_ON) ?:   Serial.println("Payload: " + payload);
     DynamicJsonBuffer jsonBuffer(payload.length());
     JsonArray &array1 = jsonBuffer.parseArray(payload);
     //    JsonObject& root = jsonBuffer.parseObject(payload);
 
     if (!array1.success())
     {
-      if (DEBUG_ON)
-        Serial.println("antes");
-      if (DEBUG_ON)
-        Serial.println("parseObject() failed");
+      (!DEBUG_ON) ?: Serial.println("antes");
+      (!DEBUG_ON) ?: Serial.println("parseObject() failed");
     }
     else
     {
-      //if (DEBUG_ON) Serial.println("qtde registros");
-      //if (DEBUG_ON) Serial.println(array1.size());
+      //(!DEBUG_ON) ?:   Serial.println("qtde registros");
+      //(!DEBUG_ON) ?:   Serial.println(array1.size());
 
       for (int indice = 0; indice < array1.size(); indice++)
       {
         //JsonObject& root = jsonBuffer.parseObject(array1[indice]);
 
         //if(!root.success()) {
-        //if (DEBUG_ON) Serial.println("parseObject() failed");
+        //(!DEBUG_ON) ?:   Serial.println("parseObject() failed");
         //}
         //{"tipo":"1","acao":"1","modelo":null,"qtdeBit":null,"porta":3},
         const String tipoJson = array1[indice]["tipo"];
@@ -162,11 +154,11 @@ void sendCloud()
         const String qtdeJson = array1[indice]["qtdeBit"];
         const String modeloJson = array1[indice]["modelo"];
         const String portaJson = array1[indice]["porta"];
-        //if (DEBUG_ON) Serial.println("porta: " + portaJson);
+        //(!DEBUG_ON) ?:   Serial.println("porta: " + portaJson);
 
         if (tipoJson == "1") // saida
         {
-          //if (DEBUG_ON) Serial.println("ligar lampada");
+          //(!DEBUG_ON) ?:   Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
           if (porta >= 0)
@@ -183,7 +175,7 @@ void sendCloud()
         }
         else if (tipoJson == "2") // saida pulsada
         {
-          //if (DEBUG_ON) Serial.println("ligar lampada");
+          //(!DEBUG_ON) ?:   Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
           if (porta >= 0)
@@ -193,7 +185,7 @@ void sendCloud()
         }
         else if (tipoJson == "3") // IR
         {
-          //if (DEBUG_ON) Serial.println("ligar lampada");
+          //(!DEBUG_ON) ?:   Serial.println("ligar lampada");
           int porta = portaJson.toInt();
           porta = retornaPorta(porta);
           if (porta >= 0)
@@ -248,15 +240,14 @@ void sendCloud()
       if (httpCode == 200)
       {
         payload = http.getString();
-        //if (DEBUG_ON) Serial.println(payload);
+        //(!DEBUG_ON) ?:   Serial.println(payload);
       }
     }
     http.end();
   }
   else if (httpCode != 200)
   {
-    if (DEBUG_ON)
-      Serial.println("servidor fora! Code: " + String(httpCode));
+    (!DEBUG_ON) ?: Serial.println("servidor fora! Code: " + String(httpCode));
     http.end();
   }
   cliente.stop();
@@ -282,7 +273,7 @@ void LoopCloud()
     if (HorarioAtual.Second() % 5 == 0 && ConsultouCloud == false)
     {
       ConsultouCloud = true;
-      //      if (DEBUG_ON) Serial.println("Segundo Atual: " + String(HorarioAtual.Second()));
+      //      (!DEBUG_ON) ?:   Serial.println("Segundo Atual: " + String(HorarioAtual.Second()));
       sendCloud();
     }
     else if (HorarioAtual.Second() % 5 != 0 && ConsultouCloud == true)

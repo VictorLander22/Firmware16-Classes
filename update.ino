@@ -13,20 +13,17 @@ void executeupdate()
   switch (ret)
   {
   case HTTP_UPDATE_FAILED:
-    if (DEBUG_ON)
-      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
     //            server.send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
     break;
 
   case HTTP_UPDATE_NO_UPDATES:
-    if (DEBUG_ON)
-      Serial.println("HTTP_UPDATE_NO_UPDATES");
+    (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
     //    server.send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
     break;
 
   case HTTP_UPDATE_OK:
-    if (DEBUG_ON)
-      Serial.println("ok");
+    (!DEBUG_ON) ?: Serial.println("ok");
     //    server.send(200, "text/html", "HTTP_UPDATE_OK");
     break;
   }
@@ -47,20 +44,17 @@ void executeupdateBeta()
   switch (ret)
   {
   case HTTP_UPDATE_FAILED:
-    if (DEBUG_ON)
-      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
     //            server.send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
     break;
 
   case HTTP_UPDATE_NO_UPDATES:
-    if (DEBUG_ON)
-      Serial.println("HTTP_UPDATE_NO_UPDATES");
+    (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
     //    server.send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
     break;
 
   case HTTP_UPDATE_OK:
-    if (DEBUG_ON)
-      Serial.println("ok");
+    (!DEBUG_ON) ?: Serial.println("ok");
     //    server.send(200, "text/html", "HTTP_UPDATE_OK");
     break;
   }

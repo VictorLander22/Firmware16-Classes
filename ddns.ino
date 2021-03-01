@@ -45,10 +45,8 @@ void chamaddns()
 
       Texto.toCharArray(replyPacekt, 255);
 
-      if (DEBUG_ON)
-        Serial.println("enviado comando UDP");
-      if (DEBUG_ON)
-        Serial.println(Texto);
+      (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
+      (!DEBUG_ON) ?: Serial.println(Texto);
       Udp.beginPacket(Destino, localUdpPort);
       Udp.write(replyPacekt);
       Udp.endPacket();
@@ -76,15 +74,13 @@ void chamaddns()
           {
             server.send(200, "text/html", "ok");
             LigaDesliga(Porta, HIGH, Nome, Tipoa);
-            if (DEBUG_ON)
-              Serial.println("led 1 ligado");
+            (!DEBUG_ON) ?: Serial.println("led 1 ligado");
           }
           else
           {
             server.send(200, "text/html", "ok");
             LigaDesliga(Porta, LOW, Nome, Tipoa);
-            if (DEBUG_ON)
-              Serial.println("led 1 desligado");
+            (!DEBUG_ON) ?: Serial.println("led 1 desligado");
           }
         }
         else if (Tipo == "C")

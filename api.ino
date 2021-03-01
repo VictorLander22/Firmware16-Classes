@@ -13,7 +13,7 @@ void api()
     action = server.arg("a");
     apiPort = server.arg("p");
     apiSource = server.arg("s");
-    //if (DEBUG_ON) Serial.println(apiSource);
+    //(!DEBUG_ON) ?:   Serial.println(apiSource);
   }
   else
   {
@@ -21,28 +21,20 @@ void api()
     isPost = false;
     vPassApi = MqttArg(msgMqtt, "pw");
     vPassApi.toLowerCase();
-    if (DEBUG_ON)
-      Serial.print("vPassApi: ");
-    if (DEBUG_ON)
-      Serial.println(vPassApi);
+    (!DEBUG_ON) ?: Serial.print("vPassApi: ");
+    (!DEBUG_ON) ?: Serial.println(vPassApi);
 
     action = MqttArg(msgMqtt, "a");
-    if (DEBUG_ON)
-      Serial.print("action: ");
-    if (DEBUG_ON)
-      Serial.println(action);
+    (!DEBUG_ON) ?: Serial.print("action: ");
+    (!DEBUG_ON) ?: Serial.println(action);
 
     apiPort = MqttArg(msgMqtt, "p");
-    if (DEBUG_ON)
-      Serial.print("apiPort: ");
-    if (DEBUG_ON)
-      Serial.println(apiPort);
+    (!DEBUG_ON) ?: Serial.print("apiPort: ");
+    (!DEBUG_ON) ?: Serial.println(apiPort);
 
     apiSource = MqttArg(msgMqtt, "s");
-    if (DEBUG_ON)
-      Serial.print("apiSource: ");
-    if (DEBUG_ON)
-      Serial.println(apiSource);
+    (!DEBUG_ON) ?: Serial.print("apiSource: ");
+    (!DEBUG_ON) ?: Serial.println(apiSource);
   }
 
   if (AlowApi == true && vPassApi == ApiPass)
@@ -72,10 +64,8 @@ void api()
           sDados2 = "00000000";
         }
 
-        if (DEBUG_ON)
-          Serial.println("tamanho");
-        if (DEBUG_ON)
-          Serial.println(sDados1.length());
+        (!DEBUG_ON) ?: Serial.println("tamanho");
+        (!DEBUG_ON) ?: Serial.println(sDados1.length());
         while (sDados1.length() < 8)
         {
           sDados1 = '0' + sDados1;
@@ -166,7 +156,7 @@ void api()
             {
               //Rtc.chip1 = 255;
               //Rtc.chip2 = 255;
-              //if (DEBUG_ON) Serial.println("vou gravar");
+              //(!DEBUG_ON) ?:   Serial.println("vou gravar");
               //Rtc.set_chip1();
               //Rtc.set_chip2();
 
@@ -318,8 +308,7 @@ void api()
         // Infravermelho
         if (action == "i")
     {
-      if (DEBUG_ON)
-        Serial.println("api infravermelho");
+      (!DEBUG_ON) ?: Serial.println("api infravermelho");
       String vModel1 = server.arg("m1");
       String vModel2 = server.arg("m2");
       String vModel3 = server.arg("m3");
@@ -344,24 +333,21 @@ void api()
       if (vModel1 != "")
       {
         sendirAPI(qtde1.toInt(), vModel1.toInt(), Comando1, Comando12, vp1.toInt());
-        if (DEBUG_ON)
-          Serial.println("1");
+        (!DEBUG_ON) ?: Serial.println("1");
       }
 
       if (vModel2 != "")
       {
         delay(300);
         sendirAPI(qtde2.toInt(), vModel2.toInt(), Comando2, Comando22, vp2.toInt());
-        if (DEBUG_ON)
-          Serial.println("2");
+        (!DEBUG_ON) ?: Serial.println("2");
       }
 
       if (vModel3 != "")
       {
         delay(300);
         sendirAPI(qtde3.toInt(), vModel3.toInt(), Comando3, Comando32, vp3.toInt());
-        if (DEBUG_ON)
-          Serial.println("3");
+        (!DEBUG_ON) ?: Serial.println("3");
       }
 
       if (vModel4 != "")
@@ -376,8 +362,7 @@ void api()
         // Cenas
         if (action == "c")
     {
-      if (DEBUG_ON)
-        Serial.println("api cenas");
+      (!DEBUG_ON) ?: Serial.println("api cenas");
       if (isPost)
         String valueApi = server.arg("v");
       else
@@ -419,8 +404,6 @@ void api()
 
 void apiativo()
 {
-  //  const char* www_username = www_username2.c_str();
-  //  const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -436,34 +419,16 @@ void apiativo()
 
 void apiconfig()
 {
-  //  const char* www_username = www_username2.c_str();
-  //  const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  String vSenha = server.arg("s");
-  String vApi = server.arg("v");
-
-  if (vSenha == Senha)
+  if (server.arg("s") == Senha)
   {
     server.send(200, "text/html", "ok");
 
-    SPIFFS.begin();
-
-    File f = SPIFFS.open("/alowapi.txt", "w");
-    f.println(vApi + "|");
-    f.close();
-
-    SPIFFS.end();
-
-    if (vApi == "1")
-    {
-      AlowApi = true;
-    }
-    else if (vApi == "0")
-    {
-      AlowApi = false;
-    }
+    AlowApi = (server.arg("v") == "1") ? true : false;
+    bitWrite(DevSet.mode, 0, AlowApi);
+    DevSet.setMode();
   }
   else
   {
@@ -473,45 +438,36 @@ void apiconfig()
 
 void alterasenhapi()
 {
-  //  const char* www_username = www_username2.c_str();
-  //  const char* www_password = www_password2.c_str();
+
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
-  String vSenha = String(server.arg("s"));
-  String req = server.arg("v");
-  String CurrentPass = server.arg("a");
-
-  if (vSenha == Senha)
+  if (server.arg("s") == Senha)
   {
-    if (req == "")
-    {
-      req = "12345678"; // se não houver registro, vai para o padrão
-    }
 
     MD5Builder md5;
     md5.begin();
-    md5.add(req);
+    md5.add(server.arg("a"));
     md5.calculate();
-    req = md5.toString();
 
-    md5.begin();
-    md5.add(CurrentPass);
-    md5.calculate();
-    CurrentPass = md5.toString();
-
-    if (ApiPass == CurrentPass)
+    if (ApiPass == md5.toString())
     {
 
       server.send(200, "text/html", "ok");
-      SPIFFS.begin();
-      File f = SPIFFS.open("/apipass.txt", "w");
 
-      f.println(req + "|");
-      f.close();
+      String req = server.arg("v");
+      if (req == "")
+      {
+        req = "12345678"; // se não houver registro, vai para o padrão
+      }
 
-      SPIFFS.end();
-      ApiPass = req;
+      md5.begin();
+      md5.add(req);
+      md5.calculate();
+      ApiPass = md5.toString();
+
+      DevSet.apiPwd = ApiPass;
+      DevSet.setApiPwd();
     }
     else
     {

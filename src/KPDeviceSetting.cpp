@@ -15,13 +15,17 @@ void KPDeviceSettingClass::_factoryDefault()
   mode = 13; //b0:AllowApi=1, b1:UsaCloud=1, b2:wifiPadrao=1, b3:TipoMemoria=1
 
   apiPwd = "25d55ad283aa400af464c76d713c07ad"; ///Limit 35 bytes;
-  apWifiSSID = "KEEPIN_" + chipMac;            //Limit 35 bytes;
-  apWifiPwd = "12345678";                      //Limit 35 bytes;
-  apWifiIP = 17082560;                         //192.168.4.1
-  apWifiMSK = 16777215;                        //255.255.255.0
-  apWifiGTW = 17082560;                        //192.168.4.1
+
+  apWifiSSID = "KEEPIN_" + chipMac; //Limit 35 bytes;
+  apWifiPwd = "12345678";           //Limit 35 bytes;
+  apWifiIP = 17082560;              //192.168.4.1
+  apWifiMSK = 16777215;             //255.255.255.0
+  apWifiGTW = 17082560;             //192.168.4.1
 
   utcConfig = -3;
+
+  httpUser = "keepin"; //Limit 35 bytes;
+  httpPwd = "keepin";  //Limit 35 bytes;
 }
 
 void KPDeviceSettingClass::setMode()
@@ -58,6 +62,14 @@ void KPDeviceSettingClass::setApiPwd()
   KPEEPROMClass::end();
 }
 
+void KPDeviceSettingClass::setHttpSeg()
+{
+  KPEEPROMClass::begin(CFG_TOTAL);
+  KPEEPROMClass::setEEPROMString(CFG_HTTPUSER, httpUser);
+  KPEEPROMClass::setEEPROMString(CFG_HTTPPWD, httpPwd);
+  KPEEPROMClass::end();
+}
+
 void KPDeviceSettingClass::getDeviceSettings()
 {
   KPEEPROMClass::begin(CFG_TOTAL);
@@ -70,7 +82,8 @@ void KPDeviceSettingClass::getDeviceSettings()
   apiPwd = KPEEPROMClass::getEEPROMString(CFG_APIPWD, CFG_TOTAL);
   apWifiPwd = KPEEPROMClass::getEEPROMString(CFG_APWIFIPWD, CFG_TOTAL);
   utcConfig = KPEEPROMClass::getEEPROMUInt8(CFG_UTC);
-
+  httpUser = KPEEPROMClass::getEEPROMString(CFG_HTTPUSER, CFG_TOTAL);
+  httpPwd = KPEEPROMClass::getEEPROMString(CFG_HTTPPWD, CFG_TOTAL);
   KPEEPROMClass::end();
 }
 
@@ -82,6 +95,7 @@ void KPDeviceSettingClass::factoryReset()
   KPDeviceSettingClass::setWifi();
   KPDeviceSettingClass::setApWifiPwd();
   KPDeviceSettingClass::setApiPwd();
+  KPDeviceSettingClass::setHttpSeg();
 }
 
 void KPDeviceSettingClass::showVariables()
@@ -120,6 +134,12 @@ void KPDeviceSettingClass::showVariables()
   Serial.print(KPDeviceSettingClass::numberToIpString(apWifiGTW));
   Serial.printf(" (%u)\n", apWifiGTW);
   Serial.printf("UTC  =  (%d)\n", utcConfig);
+
+  Serial.print("Http User:  = ");
+  Serial.println(httpUser);
+  Serial.print("Http Pwd:   = ");
+  Serial.println(httpPwd);
+  Serial.println();
 }
 
 uint32_t KPDeviceSettingClass::getMemSize()

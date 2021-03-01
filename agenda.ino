@@ -7,8 +7,7 @@
 void agenda()
 {
 
-  if (DEBUG_ON)
-    Serial.println("Consultado agenda...");
+  (!DEBUG_ON) ?: Serial.println("Consultado agenda...");
 
   verificaAgenda();
 }
@@ -153,16 +152,16 @@ void verificaAgenda()
 
     } // fim separar dados
 
-    /*     if (DEBUG_ON) Serial.println(texto);
-    if (DEBUG_ON) Serial.println("Agenda Ativa: " + Ativo);
-    if (DEBUG_ON) Serial.println("Agenda é Cena: " + ECena);
-    if (DEBUG_ON) Serial.println("Agenda Cena Liga: " + CenaLiga);
-    if (DEBUG_ON) Serial.println("Agenda Cena Desliga: " + CenaDesliga);
+    /*     (!DEBUG_ON) ?:   Serial.println(texto);
+    (!DEBUG_ON) ?:   Serial.println("Agenda Ativa: " + Ativo);
+    (!DEBUG_ON) ?:   Serial.println("Agenda é Cena: " + ECena);
+    (!DEBUG_ON) ?:   Serial.println("Agenda Cena Liga: " + CenaLiga);
+    (!DEBUG_ON) ?:   Serial.println("Agenda Cena Desliga: " + CenaDesliga);
  */
 
     if (i == 3)
     {
-      //if (DEBUG_ON) Serial.println("Ativo: " + Ativo + " Tipo: " + Tipo);
+      //(!DEBUG_ON) ?:   Serial.println("Ativo: " + Ativo + " Tipo: " + Tipo);
     }
 
     // Verifica se a agenda está ativa
@@ -209,10 +208,10 @@ void verificaAgenda()
       }
 
       String ValorAgendaDesligada = Data + "|" + HoraI + "|" + HoraF + "|" + Seg + "|" + Ter + "|" + Qua + "|" + Qui + "|" + Sex + "|" + Sab + "|" + Dom + "|" + Tipo + "|" + Porta + "|0|" + ECena + "|" + CenaLiga + "|" + CenaDesliga + "|";
-      //if (DEBUG_ON) Serial.println(HoraAgora);
+      //(!DEBUG_ON) ?:   Serial.println(HoraAgora);
       if (Tipo == "1") // apenas uma vez
       {
-        //if (DEBUG_ON) Serial.println("Agenda tipo 1 encontrada");
+        //(!DEBUG_ON) ?:   Serial.println("Agenda tipo 1 encontrada");
         if ((HoraAgora == HoraI) && (ECena == "1"))
         {
           triggerCena(CenaLiga);
@@ -233,8 +232,7 @@ void verificaAgenda()
             triggerCena(CenaDesliga);
           }
           Agendas[i - 1] = ValorAgendaDesligada;
-          if (DEBUG_ON)
-            Serial.println(Agendas[i - 1]);
+          (!DEBUG_ON) ?: Serial.println(Agendas[i - 1]);
           gravaragenda2();
         }
         else
@@ -246,15 +244,14 @@ void verificaAgenda()
             LigaDesliga(retornaPorta(Porta.toInt()), LOW, "", 0);
 
             Agendas[i - 1] = ValorAgendaDesligada;
-            if (DEBUG_ON)
-              Serial.println(Agendas[i - 1]);
+            (!DEBUG_ON) ?: Serial.println(Agendas[i - 1]);
             gravaragenda2();
           }
         }
       }
       if (Tipo == "2") // todos os dias
       {
-        //if (DEBUG_ON) Serial.println("Agenda tipo 2 encontrada");
+        //(!DEBUG_ON) ?:   Serial.println("Agenda tipo 2 encontrada");
         if ((HoraAgora == HoraI) && (ECena == "1"))
         {
           triggerCena(CenaLiga);
@@ -287,9 +284,9 @@ void verificaAgenda()
       }
       if (Tipo == "3") // data específica
       {
-        //if (DEBUG_ON) Serial.println("Agenda tipo 3 encontrada");
-        //if (DEBUG_ON) Serial.println("Data Agora: " + DataAgora);
-        //if (DEBUG_ON) Serial.println("Data: " + Data);
+        //(!DEBUG_ON) ?:   Serial.println("Agenda tipo 3 encontrada");
+        //(!DEBUG_ON) ?:   Serial.println("Data Agora: " + DataAgora);
+        //(!DEBUG_ON) ?:   Serial.println("Data: " + Data);
         if ((HoraAgora == HoraI) && (ECena == "1") && (DataAgora == Data))
         {
           triggerCena(CenaLiga);
@@ -364,13 +361,13 @@ void verificaAgenda()
           EDiaSemana = false;
         }
 
-        //if (DEBUG_ON) Serial.println("Agenda tipo 4 encontrada");
-        //if (DEBUG_ON) Serial.println("Valor EdiaSemana = " + String(EDiaSemana));
-        //if (DEBUG_ON) Serial.println("Valor DiaSemanaAgora = " + String(DiaSemanaAgora));
-        //if (DEBUG_ON) Serial.println("Porta: " + Porta);
+        //(!DEBUG_ON) ?:   Serial.println("Agenda tipo 4 encontrada");
+        //(!DEBUG_ON) ?:   Serial.println("Valor EdiaSemana = " + String(EDiaSemana));
+        //(!DEBUG_ON) ?:   Serial.println("Valor DiaSemanaAgora = " + String(DiaSemanaAgora));
+        //(!DEBUG_ON) ?:   Serial.println("Porta: " + Porta);
         //domingo
         //if (EDiaSemana == 1)
-        //if (DEBUG_ON) Serial.println("Vai rodar");
+        //(!DEBUG_ON) ?:   Serial.println("Vai rodar");
 
         if ((HoraAgora == HoraI) && (ECena == "1") && (EDiaSemana == 1))
         {
@@ -407,15 +404,12 @@ void verificaAgenda()
 
 void atualizahora()
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
   uint32_t vHora = server.arg("h").toInt();
   String Senha = server.arg("k");
-  if (DEBUG_ON)
-    Serial.println(vHora);
+  (!DEBUG_ON) ?: Serial.println(vHora);
 
   if (Senha == "kdi9e")
   {
@@ -430,7 +424,7 @@ void atualizahora()
     Rtc.second = HoraNova.Second();
     Rtc.set_time();
 
-    //if (DEBUG_ON) Serial.println("Hora atualizada com sucesso!");
+    //(!DEBUG_ON) ?:   Serial.println("Hora atualizada com sucesso!");
     printDateTime(HoraNova);
   }
   else
@@ -448,8 +442,8 @@ String consultaAgenda(int id)
   f.close();
   SPIFFS.end();  
 
-  //if (DEBUG_ON) Serial.println("consultando agenda " + String(id));
-  //if (DEBUG_ON) Serial.println(texto);
+  //(!DEBUG_ON) ?:   Serial.println("consultando agenda " + String(id));
+  //(!DEBUG_ON) ?:   Serial.println(texto);
 
   return texto;
 */
@@ -459,8 +453,8 @@ String consultaAgenda(int id)
   f.close();
   SPIFFS.end();
 
-  //if (DEBUG_ON) Serial.println("consultando agenda " + String(id));
-  //if (DEBUG_ON) Serial.println(texto);
+  //(!DEBUG_ON) ?:   Serial.println("consultando agenda " + String(id));
+  //(!DEBUG_ON) ?:   Serial.println(texto);
 
   return texto;
 }
@@ -475,8 +469,8 @@ void consultaAgenda2()
     Agendas[i-1] = f.readStringUntil('*');
     f.close();
 
-  //if (DEBUG_ON) Serial.println("consultando agenda " + String(id));
-  //if (DEBUG_ON) Serial.println(texto);
+  //(!DEBUG_ON) ?:   Serial.println("consultando agenda " + String(id));
+  //(!DEBUG_ON) ?:   Serial.println(texto);
   }
   SPIFFS.end();  
   */
@@ -521,8 +515,7 @@ void consultaAgenda2()
 
 void conagenda()
 {
-  //  const char* www_username = www_username2.c_str();
-  //  const char* www_password = www_password2.c_str();
+
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -531,7 +524,7 @@ void conagenda()
 
   if (Senha == "kdi9e")
   {
-    //if (DEBUG_ON) Serial.println("consultando agenda");
+    //(!DEBUG_ON) ?:   Serial.println("consultando agenda");
     String texto = consultaAgenda(0);
     server.send(200, "text/html", texto);
   }
@@ -543,8 +536,7 @@ void conagenda()
 
 void gravaragenda()
 {
-  //  const char* www_username = www_username2.c_str();
-  //  const char* www_password = www_password2.c_str();
+
   if (!server.authenticate(www_username, www_password))
     return server.requestAuthentication();
 
@@ -569,8 +561,8 @@ void gravaragenda()
     f.println(Valor);
     f.close();
     SPIFFS.end();
-    //if (DEBUG_ON) Serial.println("valor salvo na ag"+idAgenda+".txt");
-    //if (DEBUG_ON) Serial.println(Valor);
+    //(!DEBUG_ON) ?:   Serial.println("valor salvo na ag"+idAgenda+".txt");
+    //(!DEBUG_ON) ?:   Serial.println(Valor);
   }
 }
 
@@ -592,8 +584,8 @@ void gravaragenda2()
   f.close();
   SPIFFS.end();
 
-  //if (DEBUG_ON) Serial.println("valor salvo agenda");
-  //if (DEBUG_ON) Serial.println(texto);
+  //(!DEBUG_ON) ?:   Serial.println("valor salvo agenda");
+  //(!DEBUG_ON) ?:   Serial.println(texto);
 }
 
 #define countof(a) (sizeof(a) / sizeof(a[0]))
@@ -611,8 +603,7 @@ void printDateTime(const RtcDateTime &dt)
              dt.Hour(),
              dt.Minute(),
              dt.Second());
-  if (DEBUG_ON)
-    Serial.print(datestring);
+  (!DEBUG_ON) ?: Serial.print(datestring);
 }
 
 String RetornaData(const RtcDateTime &dt)
@@ -635,21 +626,17 @@ void LoopAgenda()
 {
   if (HorarioAtual.Minute() != Minuto)
   {
-    if (DEBUG_ON)
-      Serial.println("\nCiclos por segundos: " + String(nCiclos / 60));
-    if (DEBUG_ON)
-      Serial.println("Ciclos por minuto: " + String(nCiclos));
+    (!DEBUG_ON) ?: Serial.println("\nCiclos por segundos: " + String(nCiclos / 60));
+    (!DEBUG_ON) ?: Serial.println("Ciclos por minuto: " + String(nCiclos));
     memorialivre = system_get_free_heap_size();
-    if (DEBUG_ON)
-      Serial.println("memoria livre: " + String(memorialivre));
+    (!DEBUG_ON) ?: Serial.println("memoria livre: " + String(memorialivre));
 
     nCiclos = 0;
     Minuto = HorarioAtual.Minute();
 
     char time[50];
     sprintf(time, "%02d/%02d/%02d %02d:%02d:%02d", HorarioAtual.Day(), HorarioAtual.Month(), HorarioAtual.Year(), HorarioAtual.Hour(), HorarioAtual.Minute(), HorarioAtual.Second());
-    if (DEBUG_ON)
-      Serial.println(time);
+    (!DEBUG_ON) ?: Serial.println(time);
 
     agenda();
   }

@@ -39,6 +39,9 @@ public:
 
   int8_t utcConfig;
 
+  String httpUser; //Limit 35 bytes;
+  String httpPwd;  //Limit 35 bytes;
+
   KPDeviceSettingClass();
 
   // void begin();
@@ -47,18 +50,19 @@ public:
   void setWifi();
   void setApWifiPwd();
   void setApiPwd();
-  void getDeviceSettings();
-  void factoryReset();
-
+  void setHttpSeg();
   void setAPWifiSSID(String s);
+  void getDeviceSettings();
+  String getAPWifiSSID();
+  uint32_t getMemSize();
+  void factoryReset();
 
   uint32_t ipStringToNumber(const char *sIp);
   String numberToIpString(uint32_t numIp);
 
   void showVariables();
-  String getAPWifiSSID();
+
   String dateTimeStr(const time_t &t);
-  uint32_t getMemSize();
 
   byte *conv4Bytes(uint32_t f1);
   uint32_t convUint32(byte *d);
@@ -73,7 +77,9 @@ private:
   const byte CFG_APIPWD = CFG_WIFIGTW + 4;
   const byte CFG_APWIFIPWD = CFG_APIPWD + 35;
   const byte CFG_UTC = CFG_APWIFIPWD + 35;
-  const word CFG_TOTAL = CFG_UTC + 1;
+  const byte CFG_HTTPUSER = CFG_UTC + 1;
+  const byte CFG_HTTPPWD = CFG_HTTPUSER + 35;
+  const word CFG_TOTAL = CFG_HTTPPWD + 35;
 
   void _factoryDefault();
 };

@@ -16,17 +16,13 @@ void sendSMS(int numSensor)
   {
     String data = "user=fcleal&password=201277&destinatario=" + Numeros + "&msg=" + Texto;
 
-    if (DEBUG_ON)
-      Serial.println("envia sms");
-    if (DEBUG_ON)
-      Serial.println(data);
+    (!DEBUG_ON) ?: Serial.println("envia sms");
+    (!DEBUG_ON) ?: Serial.println(data);
 
-    if (DEBUG_ON)
-      Serial.println("Send data...");
+    (!DEBUG_ON) ?: Serial.println("Send data...");
     if (cliente.connect("www.facilitamovel.com.br", 80))
     {
-      if (DEBUG_ON)
-        Serial.println("Connected to the server..");
+      (!DEBUG_ON) ?: Serial.println("Connected to the server..");
       cliente.println("POST /api/multipleSend.ft HTTP/1.1");
       //        cliente.println("Authorization: key=" + serve + "");
       cliente.println("Content-Type: application/x-www-form-urlencoded");
@@ -36,17 +32,15 @@ void sendSMS(int numSensor)
       cliente.println();
       cliente.println(data);
     }
-    if (DEBUG_ON)
-      Serial.println("Enviado sms...Aguardando confirmacao..");
+    (!DEBUG_ON) ?: Serial.println("Enviado sms...Aguardando confirmacao..");
     while (cliente.available())
     {
       char c = cliente.read();
-      //        if (DEBUG_ON) Serial.print(c);
+      //        (!DEBUG_ON) ?:   Serial.print(c);
     }
-    if (DEBUG_ON)
-      Serial.println("SMS Enviado!");
+    (!DEBUG_ON) ?: Serial.println("SMS Enviado!");
     cliente.flush();
-    //if (DEBUG_ON) Serial.println(data);
+    //(!DEBUG_ON) ?:   Serial.println(data);
 
     msgDisparada[numSensor] = true;
   }
@@ -88,8 +82,7 @@ void gravasms()
     fNumeros.close();
     SPIFFS.end();
 
-    if (DEBUG_ON)
-      Serial.println(Numeros);
+    (!DEBUG_ON) ?: Serial.println(Numeros);
   }
 }
 
@@ -139,8 +132,7 @@ void consultasms()
     if (Texto == "" && Numeros == "")
     {
       gravasms2("*", "*");
-      if (DEBUG_ON)
-        Serial.println("SMS: " + Texto);
+      (!DEBUG_ON) ?: Serial.println("SMS: " + Texto);
     }
 
     fTexto.close();
