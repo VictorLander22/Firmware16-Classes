@@ -90,7 +90,7 @@ void getAvalibleNetwork()
   }
   else if ((millisAtual > millisNetworkScan) && n != -1)
   {
-    millisNetworkScan = millisAtual + 15000;
+    millisNetworkScan = millisAtual + 30000;
     //scanningWifi = n;
     (!DEBUG_ON) ?: Serial.println("\nNetwork scan started");
     WiFi.scanNetworks(true);
@@ -246,4 +246,76 @@ void wifiConectAP()
   chip3.write(LedWifiConnected, HIGH);
   chip3.write(LedWifiHI, HIGH);
   chip3.write(LedWifiLOW, HIGH);
+}
+
+void SetupPing()
+{ //execute ping routine
+  for (int i = 0; i < numDNSquery; i++)
+  {
+    if (ips[i])
+    {
+      if (!WiFi.hostByName(ips[i], addrs[i]))
+        addrs[i].fromString(ips[i]);
+    }
+
+    Pings[i].on(true, [](const AsyncPingResponse &response) {
+      IPAddress addr(response.addr);
+      if (!response.answer)
+        return false;
+    });
+
+    Pings[i].on(false, [](const AsyncPingResponse &response) {
+      IPAddress addr(response.addr);
+      if (response.total_recv > 1)
+      {
+        Serial.println(F("Internet connected"));
+        numberPingResponse++;
+      }
+      else
+        Serial.println(F("Internet disconnected"));
+
+      if (numberPingResponse > 0)
+      {
+        enableConnection = true;
+        hasInternet = true;
+      }
+      else
+      {
+        enableConnection = false;
+        hasInternet = false;
+      }
+      return true;
+    });
+  }
+
+  LoopPing();
+}
+
+void LoopPing()
+{
+  if (!client.connected() && (tipoWifiAtual != 2))
+  {
+    numberPingResponse = 0;
+    for (int i = 0; i < numDNSquery; i++)
+    {
+      if (addrs[i].toString().c_str() != "255.255.255.255")
+      {
+        Serial.printf("started ping to %s:\n", addrs[i].toString().c_str());
+        Pings[i].begin(addrs[i]);
+      }
+    }
+  }
+}
+
+void UpdatePing()
+{
+  (!DEBUG_ON) ?: Serial.println(F("Atualizando endereços do ping"));
+  for (int i; i < numDNSquery; i++)
+  {
+    if (ips[i])
+    {
+      if (!WiFi.hostByName(ips[i], addrs[i]))
+        addrs[i].fromString(ips[i]);
+    }
+  }
 }

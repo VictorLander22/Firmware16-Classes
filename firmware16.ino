@@ -95,6 +95,12 @@ void setup(void)
 
   Udp.begin(localUdpPort);
   (!DEBUG_ON) ?: Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
+
+  SetupPing();
+
+  LoopPing();
+
+  timer.attach(30, LoopPing);
 }
 
 //########################################################################################################################################################

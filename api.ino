@@ -154,11 +154,6 @@ void api()
           {
             if (typeApi == "n" || typeApi == "p")
             {
-              //Rtc.chip1 = 255;
-              //Rtc.chip2 = 255;
-              //(!DEBUG_ON) ?:   Serial.println("vou gravar");
-              //Rtc.set_chip1();
-              //Rtc.set_chip2();
 
               chip1.write8(255);
               chip2.write8(255);
@@ -168,16 +163,6 @@ void api()
               if (isPost)
                 server.send(200, "text/html", "1");
             }
-            // else if (typeApi == "p")
-            // {
-            //     //Rtc.chip1 = 255;
-            //     //Rtc.chip2 = 255;
-            //     //Rtc.set_chip1();
-            //     //Rtc.set_chip2();
-            //     chip1.write8(255);
-            //     chip2.write8(255);
-            //     if (isPost) server.send(200, "text/html", "1");
-            //}
             else
             {
               if (isPost)
@@ -188,11 +173,6 @@ void api()
           {
             if (typeApi == "n")
             {
-              //Rtc.chip1 = 0;
-              //Rtc.chip2 = 0;
-              //Rtc.set_chip1();
-              //Rtc.set_chip2();
-
               chip1.write8(0);
               chip2.write8(0);
               memRtc.outValues = 0;
@@ -203,9 +183,6 @@ void api()
             }
             else if (typeApi == "p")
             {
-              //Rtc.chip1 = 0;
-              //Rtc.chip2 = 0;
-
               chip1.write8(0);
               chip2.write8(0);
               for (uint8_t pulsoApiCount = 0; pulsoApiCount <= 15; pulsoApiCount++)
@@ -217,15 +194,6 @@ void api()
               memRtc.outValues = 255 << 8 | 255; //Se for pulso sempre vai escrever off para ram
               memRtc.setOutputs();
 
-              // chip1.write8(0);
-              // chip2.write8(0);
-              // delay(300);
-              // chip1.write8(255);
-              // chip2.write8(255);
-              //Rtc.chip1 = 255;
-              //Rtc.chip2 = 255;
-              //Rtc.set_chip1();
-              //Rtc.set_chip2();
               if (isPost)
                 server.send(200, "text/html", "1");
             }

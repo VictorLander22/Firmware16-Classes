@@ -1,6 +1,7 @@
 
 #define espMemory 52696
 #define ntpServer "pool.ntp.org"
+#define numDNSquery 5
 
 #include <user_interface.h>
 //#ifndef UNIT_TEST
@@ -31,11 +32,12 @@
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
 #include <NTPClient.h>
+#include "AsyncPing.h"
+#include "Ticker.h"
 
 #include "src\KPDeviceSetting.h"
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
-//#include "src\seguranca\Seguranca.h"
 
 const bool DEBUG_ON = true;
 
@@ -156,8 +158,8 @@ ESP8266WebServer server(80);
 
 int contadorled = 0;
 
-unsigned long starTime = 0;   // Use unsigned long when dealing with millisAtual
-unsigned long interval = 500; // 1000 millis = 1 second
+unsigned long starTime = 0;    // Use unsigned long when dealing with millisAtual
+unsigned long interval = 1000; // 1000 millis = 1 second
 //unsigned long Contador = 0;
 
 //Dispositivos
@@ -236,3 +238,11 @@ byte *ipTemp;
 byte ipConfigTemp[4];
 
 //RTC//
+//PING//
+bool hasInternet = false;
+bool enableConnection = true;
+uint8_t numberPingResponse;
+Ticker timer;
+AsyncPing Pings[numDNSquery];
+IPAddress addrs[numDNSquery];
+const char *ips[] = {"8.8.8.8", "8.8.4.4", "1.1.1.1", "google.com", "keepin.com.br"};

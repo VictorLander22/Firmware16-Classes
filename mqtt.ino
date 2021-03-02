@@ -6,7 +6,6 @@
  * Try to connect from a remote client and publish something - the console will show this as well.
  */
 #include <string>
-//#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
 bool WiFiAP = false; // Do yo want the ESP as AP?
@@ -60,12 +59,12 @@ void MqttCloudReconnect()
 {
   // Loop until we're reconnected
   //(!DEBUG_ON) ?:
-  Serial.println("Iniciando MQTT connection...");
+  Serial.println(F("Iniciando MQTT connection..."));
 
   if (!client.connected())
   {
     //(!DEBUG_ON) ?:
-    Serial.print("Attempting MQTT connection...");
+    Serial.print(F("Attempting MQTT connection..."));
     // Create a random client ID
     String clientId = "ESP8266Client-";
     clientId += String(random(0xffff), HEX);
@@ -85,6 +84,8 @@ void MqttCloudReconnect()
       Serial.println("IP address: " + WiFi.localIP().toString());
 
       NtpSetDateTimeNTP();
+      UpdatePing();
+      hasInternet = true;
     }
     else
     {
@@ -93,10 +94,9 @@ void MqttCloudReconnect()
       //(!DEBUG_ON) ?:
       Serial.print(client.state());
       //(!DEBUG_ON) ?:
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      //delay(5000);
+      Serial.println(" try again in 15 seconds");
     }
+    enableConnection = false;
   }
 }
 
@@ -130,8 +130,14 @@ void MqttLoop()
 
   if (!client.connected() && (tipoWifiAtual != 2) && ((millisAtual >= millisMqttReconnect)))
   {
-    millisMqttReconnect = millisAtual + 30000;
-    MqttCloudReconnect();
+    (!DEBUG_ON) ?: Serial.println("MQTT disconnected!!!");
+
+    millisMqttReconnect = millisAtual + 15000;
+
+    if (enableConnection)
+    {
+      MqttCloudReconnect();
+    }
   }
   client.loop();
 }

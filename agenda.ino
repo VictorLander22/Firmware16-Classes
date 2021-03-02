@@ -7,7 +7,7 @@
 void agenda()
 {
 
-  (!DEBUG_ON) ?: Serial.println("Consultado agenda...");
+  (!DEBUG_ON) ?: Serial.println(F("Consultado agenda..."));
 
   verificaAgenda();
 }
@@ -151,13 +151,6 @@ void verificaAgenda()
       }
 
     } // fim separar dados
-
-    /*     (!DEBUG_ON) ?:   Serial.println(texto);
-    (!DEBUG_ON) ?:   Serial.println("Agenda Ativa: " + Ativo);
-    (!DEBUG_ON) ?:   Serial.println("Agenda é Cena: " + ECena);
-    (!DEBUG_ON) ?:   Serial.println("Agenda Cena Liga: " + CenaLiga);
-    (!DEBUG_ON) ?:   Serial.println("Agenda Cena Desliga: " + CenaDesliga);
- */
 
     if (i == 3)
     {

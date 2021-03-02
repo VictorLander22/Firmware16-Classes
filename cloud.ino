@@ -268,7 +268,7 @@ String retornaValorCloud(char val)
 void LoopCloud()
 {
   // só acessa o cloud se estiver marcado para usar.
-  if ((usaCloud == true) && WiFi.status() == WL_CONNECTED)
+  if ((usaCloud == true) && WiFi.status() == WL_CONNECTED && hasInternet)
   {
     if (HorarioAtual.Second() % 5 == 0 && ConsultouCloud == false)
     {
