@@ -1,6 +1,9 @@
 #########################################################
 2,38 - Leonardo Aquino
 - Alteração do html e webconfig
+- melhorias nas funçoes
+- alteração da classe KPDevices
+- melhorias na memoria ram
 
 #########################################################
 2,37 - Leonardo Aquino

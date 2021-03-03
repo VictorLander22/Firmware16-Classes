@@ -816,7 +816,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
+            (!DEBUG_ON) ?: Serial.print("enviado comando UDP: ");
+            (!DEBUG_ON) ?: Serial.println(Texto);
             Udp.beginPacket(Destino, localUdpPort);
             Udp.write(replyPacekt);
             Udp.endPacket();

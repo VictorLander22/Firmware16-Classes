@@ -18,19 +18,11 @@ void leituraUDP()
   if (packetSize > 16)
   {
     //(!DEBUG_ON) ?:   Serial.println(cabecalho.substring(0,7));
-    if (cabecalho.substring(0, 7) == "2934d04")
+    if (cabecalho.substring(0, 7) != "2934d04")
     {
-      //(!DEBUG_ON) ?:   Serial.println("cabeçalho");
-      //(!DEBUG_ON) ?:   Serial.println(cabecalho);
-      //(!DEBUG_ON) ?:   Serial.println("2934d03" + cabecalho.substring(7));
-      server.send(200, "text/html", "2934d03" + cabecalho.substring(7));
-    }
-    else
-    {
-
       // receive incoming UDP packets
-      //    (!DEBUG_ON) ?:   Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
-      //    (!DEBUG_ON) ?:   Serial.printf("UDP packet contents: %s\n", incomingPacket);
+      //(!DEBUG_ON) ?: Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
+      //(!DEBUG_ON) ?: Serial.printf("UDP packet contents: %s\n", incomingPacket);
 
       String sIP = "";
       String Porta = "";

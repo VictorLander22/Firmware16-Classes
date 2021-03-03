@@ -272,9 +272,7 @@ void api()
         }
       }
     }
-    else
-        // Infravermelho
-        if (action == "i")
+    else if (action == "i") // Infravermelho
     {
       (!DEBUG_ON) ?: Serial.println("api infravermelho");
       String vModel1 = server.arg("m1");
@@ -326,9 +324,7 @@ void api()
       if (isPost)
         server.send(200, "text/html", "1");
     }
-    else
-        // Cenas
-        if (action == "c")
+    else if (action == "c") // Cenas
     {
       (!DEBUG_ON) ?: Serial.println("api cenas");
       if (isPost)
@@ -361,6 +357,19 @@ void api()
 
       if (isPost)
         server.send(200, "text/html", "1");
+    }
+    else if (action == "update") // executaupdate
+    {
+      (!DEBUG_ON) ?: Serial.println("API: Executar update");
+
+      if (isPost)
+      {
+        if (!server.authenticate(www_username, www_password))
+          return server.requestAuthentication();
+        executeupdateBeta();
+      }
+      else
+        executeupdateBeta();
     }
   }
   else

@@ -39,7 +39,7 @@
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
 
-const bool DEBUG_ON = true;
+const bool DEBUG_ON = false;
 
 String vchipId;
 String gchipId;
@@ -245,4 +245,4 @@ uint8_t numberPingResponse;
 Ticker timer;
 AsyncPing Pings[numDNSquery];
 IPAddress addrs[numDNSquery];
-const char *ips[] = {"8.8.8.8", "8.8.4.4", "1.1.1.1", "google.com", "keepin.com.br"};
+const char *ips[] = {"8.8.8.8", "8.8.4.4", "208.67.222.222", "google.com", "keepin.com.br"};

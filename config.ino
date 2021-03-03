@@ -88,6 +88,9 @@ void convertConfig()
     if (SPIFFS.exists("/senhaap.txt"))
       SPIFFS.remove("/senhaap.txt");
 
+    if (SPIFFS.exists("/cloud.txt"))
+      SPIFFS.remove("/cloud.txt");
+
     DevSet.setMode();
     DevSet.setWifi();
     DevSet.setApWifiPwd();
