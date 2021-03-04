@@ -1,5 +1,8 @@
 void ConfigurarWebServer(void)
 {
+  //server.on("/", handleHtmlConfig);
+  // server.on(
+  //     "/", HTTP_GET, [](request) {}, handleHtmlConfig);
   server.on("/", handleHtmlConfig);
   //server.on("/grava", grava);
   //server.on("/ler", ler);
@@ -63,17 +66,26 @@ void ConfigurarWebServer(void)
   server.on("/gravacloud", GravaCloud);
   server.on("/dirarquivos", dirarquivos);
   server.on("/downloadfile", File_Download);
-  server.on("/uploadfile", File_Upload);
-  server.on(
-      "/fupload", HTTP_POST, []() { server.send(200); }, handleFileUpload);
   server.on("/deletefile", File_Delete);
-  //server.on("/cloud", cloud);
-  //  server.on("/sendcloud", sendCloud);
-  server.on("/testehtml", handleHtmlConfig);
+  server.on("/asyncRestart", asyncESPRestart);
+  // upload a file to /upload
+  server.on(
+      "/uploadfile", HTTP_POST, [](AsyncWebServerRequest *request) {
+        request->send(200);
+      },
+      onUpload);
 
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works as well");
-  });
+  //server.on("/uploadfile", HTTP_ANY, File_Upload);
+  // server.on(
+  //     "/fupload", HTTP_POST, []() { request->send(200); }, handleFileUpload);
+
+  // //server.on("/cloud", cloud);
+  // //  server.on("/sendcloud", sendCloud);
+  // server.on("/testehtml", handleHtmlConfig);
+
+  // server.on("/inline", []() {
+  //   request->send(200, "text/plain", "this works as well");
+  // });
 
   server.on("/teste", mostarEEProm);
 
@@ -96,10 +108,10 @@ void ConfigurarWebServer(void)
 //   return sFn;
 // }.
 
-void handleHtmlConfig()
+void handleHtmlConfig(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
   String defaultPage(FPSTR(webDefaultPage));
   defaultPage.replace("#ipfixo#", "true");
   defaultPage.replace("#utc#", String(DevSet.utcConfig));
@@ -109,37 +121,40 @@ void handleHtmlConfig()
   defaultPage.replace("#msk#", DevSet.numberToIpString(DevSet.wifiMSK));
   defaultPage.replace("#gtw#", DevSet.numberToIpString(DevSet.wifiGTW));
 
-  server.send_P(200, "text/html", defaultPage.c_str());
+  request->send_P(200, "text/html", defaultPage.c_str());
 }
 
-void about()
+void about(AsyncWebServerRequest *request)
 {
-  server.send_P(200, "text/html", webAbout);
+  request->send_P(200, "text/html", webAbout);
 }
 
-void reiniciar()
+void reiniciar(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
   String restartPage(FPSTR(webRestart));
+  restartPage.replace("#oldip#", WiFi.localIP().toString());
   restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-  server.send_P(200, "text/html", restartPage.c_str());
-  delay(500);
-  ESP.restart();
+  Serial.println(restartPage);
+  request->send_P(200, "text/html", restartPage.c_str());
+  //request->send_P(200, "text/html", restartPage.c_str()); //, processor);
+  //request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + DevSet.numberToIpString(DevSet.wifiIP) + "\")</script></html>");
+  //ESP.restart();
 }
 
-void gravawifi()
+void gravawifi(AsyncWebServerRequest *request)
 {
 
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
-  String wifiSSID = server.arg("txtnomerede");
-  String wifiPWD = server.arg("txtsenha");
-  const char *wifiIP = server.arg("txtip").c_str();
-  const char *wifiMSK = server.arg("txtmascara").c_str();
-  const char *wifiGTW = server.arg("txtgateway").c_str();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  request->send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
+  String wifiSSID = request->arg("txtnomerede");
+  String wifiPWD = request->arg("txtsenha");
+  const char *wifiIP = request->arg("txtip").c_str();
+  const char *wifiMSK = request->arg("txtmascara").c_str();
+  const char *wifiGTW = request->arg("txtgateway").c_str();
   bitWrite(DevSet.mode, 2, 0); //wifiPadrao
   DevSet.wifiSSID = wifiSSID;
   DevSet.wifiPwd = wifiPWD;
@@ -149,11 +164,19 @@ void gravawifi()
   DevSet.setWifi();
   (!DEBUG_ON) ?: Serial.println(F("New WIFI Settings"));
   DevSet.showVariables();
-
-  //gravahtml();
 }
 
 void redirectPage()
 {
-  server.send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + WiFi.localIP().toString() + "\")</script></html>");
+  request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + WiFi.localIP().toString() + "\")</script></html>");
+}
+
+void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
+{
+  //Handle upload
+}
+
+void asyncESPRestart(AsyncWebServerRequest *request)
+{
+  ESP.restart();
 }

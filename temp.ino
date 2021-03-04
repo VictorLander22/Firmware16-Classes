@@ -1,6 +1,6 @@
 void teste()
 {
-  server.send(200, "text/html", "OK");
+  request->send(200, "text/html", "OK");
   (!DEBUG_ON) ?: Serial.println(WiFi.status());
   (!DEBUG_ON) ?: Serial.println(WiFi.softAPIP());
   (!DEBUG_ON) ?: Serial.println(WiFi.localIP());
@@ -29,7 +29,7 @@ void FreeMemory(String functionName)
   }
 }
 
-void mostarEEProm()
+void mostarEEProm(AsyncWebServerRequest *request)
 {
   DevSet.getDeviceSettings();
   DevSet.showVariables();

@@ -31,6 +31,7 @@ PubSubClient client(espClient);
 // recebido mqtt pela cloud
 void callback(char *topic, byte *payload, unsigned int length)
 {
+  AsyncWebServerRequest *request;
   String strRec = "";
   char data_str[length + 1];
   os_memcpy(data_str, payload, length);
@@ -49,7 +50,7 @@ void callback(char *topic, byte *payload, unsigned int length)
 
   client.publish(mqttTopicoCloudRet, cloudStr);
 
-  api();
+  api(request);
 }
 /*
  * WiFi init stuff

@@ -9,7 +9,8 @@
 //#endif
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <ESP8266WebServer.h>
+//#include <ESP8266WebServer.h>
+#include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <WiFiUdp.h>
 //#include <ESP8266WiFiMesh.h>
@@ -39,7 +40,7 @@
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
 
-const bool DEBUG_ON = false;
+const bool DEBUG_ON = true;
 
 String vchipId;
 String gchipId;
@@ -154,7 +155,9 @@ IPAddress local_IP(192, 168, 4, 1);
 IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
 
-ESP8266WebServer server(80);
+//ESP8266WebServer server(80);
+AsyncWebServer server(80);
+AsyncWebServerRequest *request;
 
 int contadorled = 0;
 

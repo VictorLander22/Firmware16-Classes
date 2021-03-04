@@ -1,4 +1,8 @@
 #########################################################
+2,39 - Leonardo Aquino
+- Async web
+
+#########################################################
 2,38 - Leonardo Aquino
 - Alteração do html e webconfig
 - melhorias nas funçoes

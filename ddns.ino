@@ -1,18 +1,18 @@
-void chamaddns()
+void chamaddns(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String sIP = server.arg("ip");
-  String Senha = server.arg("s");
-  int Porta = server.arg("p").toInt();
-  String funcao = server.arg("f");
-  int IdChip = server.arg("c").toInt();
-  String Tipo = server.arg("t");
-  String Nome = server.arg("n");
-  int Tipoa = server.arg("pu").toInt();
+  String sIP = request->arg("ip");
+  String Senha = request->arg("s");
+  int Porta = request->arg("p").toInt();
+  String funcao = request->arg("f");
+  int IdChip = request->arg("c").toInt();
+  String Tipo = request->arg("t");
+  String Nome = request->arg("n");
+  int Tipoa = request->arg("pu").toInt();
 
   IPAddress Destino;
 
@@ -28,11 +28,11 @@ void chamaddns()
 
       if (Tipo == "A" || Tipo == "G")
       {
-        Texto += server.arg("j") + "|n|";
+        Texto += request->arg("j") + "|n|";
       }
       else if (Tipo == "B")
       {
-        Texto += server.arg("j") + "|" + server.arg("b") + "|";
+        Texto += request->arg("j") + "|" + request->arg("b") + "|";
       }
       else if (Tipo == "E" || Tipo == "X")
       {
@@ -53,11 +53,11 @@ void chamaddns()
 
       if (Tipo == "E")
       {
-        //server.send(200, "text/html", "ok");
+        //request->send(200, "text/html", "ok");
       }
       else
       {
-        //server.send(200, "text/html", "ok");
+        //request->send(200, "text/html", "ok");
       }
     }
   }
@@ -72,13 +72,13 @@ void chamaddns()
         {
           if (funcao == "true")
           {
-            server.send(200, "text/html", "ok");
+            request->send(200, "text/html", "ok");
             LigaDesliga(Porta, HIGH, Nome, Tipoa);
             (!DEBUG_ON) ?: Serial.println("led 1 ligado");
           }
           else
           {
-            server.send(200, "text/html", "ok");
+            request->send(200, "text/html", "ok");
             LigaDesliga(Porta, LOW, Nome, Tipoa);
             (!DEBUG_ON) ?: Serial.println("led 1 desligado");
           }
@@ -87,11 +87,11 @@ void chamaddns()
         {
           if (LePorta(Porta) == HIGH)
           {
-            server.send(200, "text/html", "true");
+            request->send(200, "text/html", "true");
           }
           else
           {
-            server.send(200, "text/html", "false");
+            request->send(200, "text/html", "false");
           }
         }
         else if (Tipo == "S")
@@ -111,44 +111,44 @@ void chamaddns()
               sSensor2 = '0' + sSensor2;
             }
 
-            server.send(200, "text/html", sSensor1 + sSensor2);
+            request->send(200, "text/html", sSensor1 + sSensor2);
           }
           else
           {
-            server.send(200, "text/html", ultimoDisparo);
+            request->send(200, "text/html", ultimoDisparo);
           }
         }
         else if (Tipo == "N")
         {
-          server.send(200, "text/html", String(notificar));
+          request->send(200, "text/html", String(notificar));
         }
         else if (Tipo == "A")
         {
-          server.send(200, "text/html", "ok");
-          String Texto = server.arg("j");
+          request->send(200, "text/html", "ok");
+          String Texto = request->arg("j");
           gravasensor2(Texto);
         }
         else if (Tipo == "G")
         {
-          String Texto = server.arg("j");
+          String Texto = request->arg("j");
           // liberar depois que colocar o arquivo de RF          gravarf2(Texto);
-          server.send(200, "text/html", "ok");
+          request->send(200, "text/html", "ok");
         }
         else if (Tipo == "B")
         {
-          server.send(200, "text/html", "ok");
-          String Texto = server.arg("j");
-          String Telef = server.arg("b");
+          request->send(200, "text/html", "ok");
+          String Texto = request->arg("j");
+          String Telef = request->arg("b");
           gravasms2(Texto, Telef);
         }
         else if (Tipo == "D")
         {
-          server.send(200, "text/html", consultasms2());
+          request->send(200, "text/html", consultasms2());
         }
         else if (Tipo == "F")
         {
-          server.send(200, "text/html", "ok");
-          String Valor = server.arg("j");
+          request->send(200, "text/html", "ok");
+          String Valor = request->arg("j");
           gravanot2(Valor);
         }
         else if (Tipo == "I")
@@ -208,7 +208,7 @@ void chamaddns()
           String valSensores = sSensor1 + sSensor2;
           valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + rssi + "*";
           valSensores.toCharArray(replyPacekt, 255);
-          server.send(200, "text/html", replyPacekt);
+          request->send(200, "text/html", replyPacekt);
         }
       }
     }

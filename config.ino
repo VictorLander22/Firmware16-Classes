@@ -103,12 +103,12 @@ void convertConfig()
   SPIFFS.end();
 }
 
-void wifireset()
+void wifireset(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "ESP resetado");
+  request->send(200, "text/html", "ESP resetado");
   DevSet.factoryReset();
   ESP.restart();
 }
@@ -161,26 +161,26 @@ RtcDateTime carregaHora()
   return dt2;
 }
 
-void valorwifi()
+void valorwifi(AsyncWebServerRequest *request)
 {
 
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
   int32_t rssi;
   rssi = WiFi.RSSI();
 
-  server.send(200, "text/html", String(rssi));
+  request->send(200, "text/html", String(rssi));
 }
 
-void fmodelo()
+void fmodelo(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "2");
+  request->send(200, "text/html", "2");
 }
 
 String lerMemoria()
@@ -215,16 +215,16 @@ void Memoria()
   }
 }
 
-void fMemoria()
+void fMemoria(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
 
-  if (server.arg("m") == "1")
+  if (request->arg("m") == "1")
   {
     bitWrite(DevSet.mode, 0, true);
   }
@@ -261,18 +261,18 @@ void lerConfiguracao()
   TipoMemoria = bitRead(DevSet.mode, 3);
 }
 
-void GravaCloud()
+void GravaCloud(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  if (server.arg("s") == Senha)
+  if (request->arg("s") == Senha)
   {
-    if (server.arg("f") == "w")
+    if (request->arg("f") == "w")
     {
-      server.send(200, "text/html", "1");
+      request->send(200, "text/html", "1");
 
-      usaCloud = (server.arg("v") == "1") ? true : false;
+      usaCloud = (request->arg("v") == "1") ? true : false;
 
       bitWrite(DevSet.mode, 1, usaCloud);
       DevSet.setMode();
@@ -280,20 +280,20 @@ void GravaCloud()
     }
     else
     {
-      server.send(200, "text/html", (usaCloud) ? "1" : "0");
+      request->send(200, "text/html", (usaCloud) ? "1" : "0");
     }
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }
 
-void dirarquivos()
+void dirarquivos(AsyncWebServerRequest *request)
 {
   String arquivos = "";
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
   SPIFFS.begin();
   (!DEBUG_ON) ?: Serial.println("Consultar sistema de arquivos");
   Dir dir = SPIFFS.openDir("/");
@@ -314,44 +314,47 @@ void dirarquivos()
 
   arquivos += "*";
 
-  server.send(200, "text/html", arquivos);
+  request->send(200, "text/html", arquivos);
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-void File_Download()
+void File_Download(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String path = server.arg("f");
+  String path = request->arg("f");
 
   if (!path.startsWith("/"))
     path = "/" + path;
 
   SPIFFS.begin();
-  if (SPIFFS.exists(path))
+  bool fileExist = SPIFFS.exists(path);
+  SPIFFS.end();
+
+  if (fileExist)
   {
     (!DEBUG_ON) ?: Serial.println("Arquivo existe");
+    request->send(SPIFFS, path, String(), true);
 
-    File download = SPIFFS.open(path, "r");
+    // File download = SPIFFS.open(path, "r");
 
-    if (download)
-    {
-      server.sendHeader("Content-Type", "text/text");
-      server.sendHeader("Content-Disposition", "attachment; filename=" + path);
-      server.sendHeader("Connection", "close");
-      server.streamFile(download, "application/octet-stream");
-      download.close();
-    }
+    // if (download)
+    // {
+    //   server.sendHeader("Content-Type", "text/text");
+    //   server.sendHeader("Content-Disposition", "attachment; filename=" + path);
+    //   server.sendHeader("Connection", "close");
+    //   server.streamFile(download, "application/octet-stream");
+    //   download.close();
+    // }
   }
   else
   {
     (!DEBUG_ON) ?: Serial.println("Arquivo não existe");
   }
-  SPIFFS.end();
 }
 
-void File_Upload()
+void File_Upload(AsyncWebServerRequest *request)
 {
   (!DEBUG_ON) ?: Serial.println("File upload stage-1");
   String webfile = "<h3>Select File to Upload</h3>";
@@ -360,73 +363,73 @@ void File_Upload()
   webfile += "<br><button class='buttons' style='width:10%' type='submit'>Upload File</button><br>";
   webfile += "<a href='/'>[Back]</a><br><br>";
   (!DEBUG_ON) ?: Serial.println("File upload stage-2");
-  server.send(200, "text/html", webfile);
+  request->send(200, "text/html", webfile);
 }
 
-void handleFileUpload()
-{ // upload a new file to the Filing system
+// void handleFileUpload()
+// { // upload a new file to the Filing system
 
-  (!DEBUG_ON) ?: Serial.println("File upload stage-3");
-  HTTPUpload &uploadfile = server.upload();
+//   (!DEBUG_ON) ?: Serial.println("File upload stage-3");
+//   HTTPUpload &uploadfile = server.upload();
 
-  if (uploadfile.status == UPLOAD_FILE_START)
-  {
-    (!DEBUG_ON) ?: Serial.println("File upload stage-4");
-    String filename = uploadfile.filename;
-    if (!filename.startsWith("/"))
-      filename = "/" + filename;
-    (!DEBUG_ON) ?: Serial.print("Upload File Name: ");
-    (!DEBUG_ON) ?: Serial.println(filename);
+//   if (uploadfile.status == UPLOAD_FILE_START)
+//   {
+//     (!DEBUG_ON) ?: Serial.println("File upload stage-4");
+//     String filename = uploadfile.filename;
+//     if (!filename.startsWith("/"))
+//       filename = "/" + filename;
+//     (!DEBUG_ON) ?: Serial.print("Upload File Name: ");
+//     (!DEBUG_ON) ?: Serial.println(filename);
 
-    SPIFFS.begin();
+//     SPIFFS.begin();
 
-    SPIFFS.remove(filename); // Remove a previous version, otherwise data is appended the file again
+//     SPIFFS.remove(filename); // Remove a previous version, otherwise data is appended the file again
 
-    UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
-  }
-  else if (uploadfile.status == UPLOAD_FILE_WRITE)
-  {
-    (!DEBUG_ON) ?: Serial.println("File upload stage-5");
-    if (UploadFile)
-    {
-      UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
-    }
-  }
-  else if (uploadfile.status == UPLOAD_FILE_END)
-  {
-    if (UploadFile) // If the file was successfully created
-    {
-      UploadFile.close(); // Close the file again
-      (!DEBUG_ON) ?: Serial.print("Upload Size: ");
-      (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
+//     UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
+//   }
+//   else if (uploadfile.status == UPLOAD_FILE_WRITE)
+//   {
+//     (!DEBUG_ON) ?: Serial.println("File upload stage-5");
+//     if (UploadFile)
+//     {
+//       UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
+//     }
+//   }
+//   else if (uploadfile.status == UPLOAD_FILE_END)
+//   {
+//     if (UploadFile) // If the file was successfully created
+//     {
+//       UploadFile.close(); // Close the file again
+//       (!DEBUG_ON) ?: Serial.print("Upload Size: ");
+//       (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
 
-      //append_page_header();
-      String webfile = "<h3>File was successfully uploaded</h3>";
-      webfile += "<h2>Uploaded File Name: ";
-      webfile += uploadfile.filename + "</h2>";
-      webfile += "<h2>File Size: OK";
-      //webfile += uploadfile.totalSize + "</h2><br>";
-      //append_page_footer();
-      server.send(200, "text/html", webfile);
-      //
-      SPIFFS.end();
-    }
-  }
-  else
-  {
-    (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
-    SPIFFS.end();
-  }
-}
+//       //append_page_header();
+//       String webfile = "<h3>File was successfully uploaded</h3>";
+//       webfile += "<h2>Uploaded File Name: ";
+//       webfile += uploadfile.filename + "</h2>";
+//       webfile += "<h2>File Size: OK";
+//       //webfile += uploadfile.totalSize + "</h2><br>";
+//       //append_page_footer();
+//       request->send(200, "text/html", webfile);
+//       //
+//       SPIFFS.end();
+//     }
+//   }
+//   else
+//   {
+//     (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
+//     SPIFFS.end();
+//   }
+// }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-void File_Delete()
+void File_Delete(AsyncWebServerRequest *request)
 { // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
 
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String path = server.arg("f");
+  String path = request->arg("f");
 
   if (!path.startsWith("/"))
     path = "/" + path;
@@ -438,13 +441,13 @@ void File_Delete()
     if (SPIFFS.remove(path))
     {
       (!DEBUG_ON) ?: Serial.println("Removido");
-      server.send(200, "text/html", "Removido");
+      request->send(200, "text/html", "Removido");
     }
   }
   else
   {
     (!DEBUG_ON) ?: Serial.println("Arquivo não existe");
-    server.send(200, "text/html", "Não existe");
+    request->send(200, "text/html", "Não existe");
   }
   SPIFFS.end();
 }

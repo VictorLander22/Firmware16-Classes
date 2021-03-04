@@ -1,18 +1,18 @@
-void gravacena()
+void gravacena(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
 
-  String Senha = server.arg("k");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
-    String ia = server.arg("ia");
-    String vTipo = server.arg("t");
-    String Valor = server.arg("v");
-    String IdCena = server.arg("id");
+    String ia = request->arg("ia");
+    String vTipo = request->arg("t");
+    String Valor = request->arg("v");
+    String IdCena = request->arg("id");
     (!DEBUG_ON) ?: Serial.println(Valor);
     SPIFFS.begin();
 
@@ -39,7 +39,7 @@ void gravacena()
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }
 

@@ -1,6 +1,6 @@
 void cloud()
 {
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
   HTTPClient http;
   http.begin("http://cloud.keepin.com.br/api/control/3");
   int httpCode = http.GET();

@@ -1,4 +1,4 @@
-#define Placa_Version "2,38"
+#define Placa_Version "2,39"
 
 #include "globalvar.h"
 
@@ -145,7 +145,7 @@ void loop(void)
 
     MillisResets();
 
-    server.handleClient();
+    //server.handleClient();
 
     //showDateTime();
 

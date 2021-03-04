@@ -278,12 +278,12 @@ void sendDataToFirebase(String MSG, int numSen, String vTag)
   cliente.stop();
 }
 
-void lersensores()
+void lersensores(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
   String sSensor1 = String(sensor1.read8(), BIN);
   String sSensor2 = String(sensor2.read8(), BIN);
@@ -298,22 +298,22 @@ void lersensores()
     sSensor2 = '0' + sSensor2;
   }
 
-  server.send(200, "text/html", sSensor1);
+  request->send(200, "text/html", sSensor1);
 }
 
-void gravasensor()
+void gravasensor(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", "ok");
-  //String idAgenda = server.arg("ag");
-  String Valor = server.arg("s");
-  String Senha = server.arg("k");
-  String nomeS = server.arg("nome");
-  String gv = server.arg("gn");
-  int Indice = server.arg("p").toInt();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  request->send(200, "text/html", "ok");
+  //String idAgenda = request->arg("ag");
+  String Valor = request->arg("s");
+  String Senha = request->arg("k");
+  String nomeS = request->arg("nome");
+  String gv = request->arg("gn");
+  int Indice = request->arg("p").toInt();
   String nomesG = "";
 
   if (gv == "1")
@@ -1044,35 +1044,35 @@ String lerSensor()
   return texto;
 }
 
-void consensor()
+void consensor(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String Senha = server.arg("k");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
     String texto = lerSensor();
-    server.send(200, "text/html", texto);
+    request->send(200, "text/html", texto);
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }
 
-void gravadevice()
+void gravadevice(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", "ok");
-  String Valor = server.arg("d");
-  String Senha = server.arg("k");
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  request->send(200, "text/html", "ok");
+  String Valor = request->arg("d");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
@@ -1094,14 +1094,14 @@ void gravadevice()
   }
 }
 
-void buscadevice()
+void buscadevice(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String Senha = server.arg("k");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
@@ -1112,7 +1112,7 @@ void buscadevice()
 
     f.close();
     SPIFFS.end();
-    server.send(200, "text/html", valorDevice);
+    request->send(200, "text/html", valorDevice);
   }
 }
 
@@ -1132,22 +1132,22 @@ void limpadevice()
     //f.close();
     SPIFFS.end();
 
-    server.send(200, "text/html", "OK");    
+    request->send(200, "text/html", "OK");    
 }
 */
 
-void ultimodisp()
+void ultimodisp(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String Senha = server.arg("k");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
-    server.send(200, "text/html", ultimoDisparo);
+    request->send(200, "text/html", ultimoDisparo);
   }
 }
 
@@ -1166,34 +1166,34 @@ void retornaNotificar()
   SPIFFS.end();
 }
 
-void buscaNotificar()
+void buscaNotificar(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String Senha = server.arg("k");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
-    server.send(200, "text/html", String(notificar));
+    request->send(200, "text/html", String(notificar));
   }
   else
   {
-    server.send(200, "text/html", "0");
+    request->send(200, "text/html", "0");
   }
 }
 
-void gravanot()
+void gravanot(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", "ok");
-  String Valor = server.arg("v");
-  String Senha = server.arg("k");
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  request->send(200, "text/html", "ok");
+  String Valor = request->arg("v");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {

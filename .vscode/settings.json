@@ -52,7 +52,8 @@
       "memory_resource": "cpp",
       "optional": "cpp",
       "regex": "cpp",
-      "condition_variable": "cpp"
+      "condition_variable": "cpp",
+      "*.inc": "cpp"
     },
     "editor.formatOnSave": true
 }

@@ -232,7 +232,11 @@ const char webRestart[] PROGMEM = R"===(
 </h1>
 <script type="text/javascript">
     // Total seconds to wait
-    var seconds = 20;
+    var seconds = 10;
+
+    window.onload = (function () {
+    window.location.href = 'http://#oldip#/asyncRestart'
+  })
     
     function countdown() {
         seconds = seconds - 1;

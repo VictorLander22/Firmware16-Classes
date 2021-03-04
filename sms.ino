@@ -47,16 +47,16 @@ void sendSMS(int numSensor)
   cliente.stop();
 }
 
-void gravasms()
+void gravasms(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", "ok");
-  String Senha = server.arg("k");
-  String Texto = server.arg("t");
-  String Numeros = server.arg("n");
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  request->send(200, "text/html", "ok");
+  String Senha = request->arg("k");
+  String Texto = request->arg("t");
+  String Numeros = request->arg("n");
 
   if (Senha == "kdi9e")
   {
@@ -111,14 +111,14 @@ void gravasms2(String Texto, String Numeros)
   SPIFFS.end();
 }
 
-void consultasms()
+void consultasms(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String Senha = server.arg("k");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
@@ -139,7 +139,7 @@ void consultasms()
     fNumeros.close();
     SPIFFS.end();
 
-    server.send(200, "text/html", Texto + "|" + Numeros);
+    request->send(200, "text/html", Texto + "|" + Numeros);
   }
 }
 

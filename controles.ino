@@ -26,38 +26,38 @@ void parseBytes(const char *str, char sep, byte *bytes, int maxBytes, int base)
   }
 }
 
-void retornachip()
+void retornachip(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", vchipId);
+  request->send(200, "text/html", vchipId);
 }
 
-void RetornaChipMac()
+void RetornaChipMac(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", gchipId);
+  request->send(200, "text/html", gchipId);
 }
 
-void controle()
+void controle(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
   //(!DEBUG_ON) ?:   Serial.println("user: " + String(www_username) + " - pass: " + String(www_password));
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
 
-  String p = server.arg("p");
-  String k = server.arg("k");
-  String f = server.arg("f");
-  String Nome = server.arg("n");
+  String p = request->arg("p");
+  String k = request->arg("k");
+  String f = request->arg("f");
+  String Nome = request->arg("n");
   int porta = p.toInt();
-  int Tipoa = server.arg("pu").toInt();
+  int Tipoa = request->arg("pu").toInt();
 
   //  if (porta == 1)
   //  {
@@ -85,15 +85,15 @@ void controle()
     }
 }
 
-void situacao()
+void situacao(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String p = server.arg("p");
-  String k = server.arg("k");
+  String p = request->arg("p");
+  String k = request->arg("k");
   int porta = p.toInt();
 
   //  if (porta == 1)
@@ -108,11 +108,11 @@ void situacao()
     {
       if (LePorta(porta) == HIGH)
       {
-        server.send(200, "text/html", "true");
+        request->send(200, "text/html", "true");
       }
       else
       {
-        server.send(200, "text/html", "false");
+        request->send(200, "text/html", "false");
       }
     }
 }
@@ -121,8 +121,8 @@ void situacao()
 // {
 //   //const char* www_username = www_username2.c_str();
 //   //const char* www_password = www_password2.c_str();
-//   if (!server.authenticate(www_username, www_password))
-//     return server.requestAuthentication();
+//   if (!request->authenticate(www_username, www_password))
+//     return request->requestAuthentication();
 
 //   SPIFFS.begin();
 //   File f = SPIFFS.open("/config.txt", "w");
@@ -139,48 +139,48 @@ void situacao()
 //   SPIFFS.end();
 // }
 
-void valida()
+void valida(AsyncWebServerRequest *request)
 {
 
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  //server.send(200, "text/html", "16");
-  server.send(200, "text/html", "16|2|16|" + vchipId + "|");
+  //request->send(200, "text/html", "16");
+  request->send(200, "text/html", "16|2|16|" + vchipId + "|");
 }
 
 // void ler()
 // {
 //   //const char* www_username = www_username2.c_str();
 //   //const char* www_password = www_password2.c_str();
-//   if (!server.authenticate(www_username, www_password))
-//     return server.requestAuthentication();
+//   if (!request->authenticate(www_username, www_password))
+//     return request->requestAuthentication();
 
 //   SPIFFS.begin();
 //   File f = SPIFFS.open("/config.txt", "r");
 //   String texto = f.readStringUntil('\n');
-//   server.send(200, "text/html", texto);
+//   request->send(200, "text/html", texto);
 //   f.close();
 //   SPIFFS.end();
 // }
 
-void handleNotFound()
+void handleNotFound(AsyncWebServerRequest *request)
 {
   String message = "File Not Found\n\n";
   message += "URI: ";
-  message += server.uri();
+  message += request->url();
   message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
+  message += (request->method() == HTTP_GET) ? "GET" : "POST";
   message += "\nArguments: ";
-  message += server.args();
+  message += request->args();
   message += "\n";
-  for (uint8_t i = 0; i < server.args(); i++)
+  for (uint8_t i = 0; i < request->args(); i++)
   {
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+    message += " " + request->argName(i) + ": " + request->arg(i) + "\n";
   }
-  server.send(404, "text/plain", message);
+  request->send(404, "text/plain", message);
   // digitalWrite(led, 0);
 
   //ESP.restart();

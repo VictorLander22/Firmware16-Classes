@@ -58,16 +58,16 @@ void conectar()
     getAvalibleNetwork();
 }
 
-void listawifi2()
+void listawifi2(AsyncWebServerRequest *request)
 {
-  server.send(200, "text/html", vListaWifi);
+  request->send(200, "text/html", vListaWifi);
 }
 
-void WifiNetworkScan()
+void WifiNetworkScan(AsyncWebServerRequest *request)
 {
   millisNetworkScan = millisAtual;
   getAvalibleNetwork();
-  server.send(200, "text/html", vListaWifi);
+  request->send(200, "text/html", vListaWifi);
 }
 
 void getAvalibleNetwork()
@@ -97,57 +97,57 @@ void getAvalibleNetwork()
   }
 }
 
-void gravasenhawifi()
+void gravasenhawifi(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  if (server.arg("s") == Senha)
+  if (request->arg("s") == Senha)
   {
-    if (vSenhaAP == server.arg("a"))
+    if (vSenhaAP == request->arg("a"))
     {
 
-      vSenhaAP = server.arg("v");
+      vSenhaAP = request->arg("v");
 
       if (vSenhaAP.length() >= 8)
       {
-        server.send(200, "text/html", "ok");
+        request->send(200, "text/html", "ok");
         DevSet.apWifiPwd = vSenhaAP;
         DevSet.setApWifiPwd();
         (!DEBUG_ON) ?: Serial.println("Alterado: " + vSenhaAP);
       }
       else
       {
-        server.send(200, "text/html", "-1");
+        request->send(200, "text/html", "-1");
       }
     }
     else
     {
-      server.send(200, "text/html", "-1");
+      request->send(200, "text/html", "-1");
     }
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }
 
-void gravasenhahttp()
+void gravasenhahttp(AsyncWebServerRequest *request)
 {
   //args - [s=senha padrao] [u=new http user] [v=new http pwd] [ua=old http user] [a=old http pwd]
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  if (server.arg("s") == Senha)
+  if (request->arg("s") == Senha)
   {
-    String newHttpUser = server.arg("u");
-    String newHttpPwd = server.arg("v");
+    String newHttpUser = request->arg("u");
+    String newHttpPwd = request->arg("v");
 
-    if ((newHttpUser.length() >= 4 && newHttpPwd.length() >= 4) && (server.arg("ua") == DevSet.httpUser && server.arg("a") == DevSet.httpPwd))
+    if ((newHttpUser.length() >= 4 && newHttpPwd.length() >= 4) && (request->arg("ua") == DevSet.httpUser && request->arg("a") == DevSet.httpPwd))
     {
       String restartPage(FPSTR(webRestart));
       restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-      server.send_P(200, "text/html", restartPage.c_str());
+      request->send_P(200, "text/html", restartPage.c_str());
 
       DevSet.httpUser = newHttpUser;
       DevSet.httpPwd = newHttpPwd;
@@ -159,12 +159,12 @@ void gravasenhahttp()
     }
     else
     {
-      server.send(200, "text/html", "-1");
+      request->send(200, "text/html", "-1");
     }
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }
 

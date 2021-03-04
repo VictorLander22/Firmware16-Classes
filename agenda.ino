@@ -395,18 +395,18 @@ void verificaAgenda()
   }
 }
 
-void atualizahora()
+void atualizahora(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  uint32_t vHora = server.arg("h").toInt();
-  String Senha = server.arg("k");
+  uint32_t vHora = request->arg("h").toInt();
+  String Senha = request->arg("k");
   (!DEBUG_ON) ?: Serial.println(vHora);
 
   if (Senha == "kdi9e")
   {
-    server.send(200, "text/html", "ok");
+    request->send(200, "text/html", "ok");
     RtcDateTime HoraNova = vHora;
 
     Rtc.year = HoraNova.Year();
@@ -422,7 +422,7 @@ void atualizahora()
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }
 
@@ -506,39 +506,39 @@ void consultaAgenda2()
   }
 }
 
-void conagenda()
+void conagenda(AsyncWebServerRequest *request)
 {
 
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  //int idAgenda = server.arg("ag").toInt();
-  String Senha = server.arg("k");
+  //int idAgenda = request->arg("ag").toInt();
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
     //(!DEBUG_ON) ?:   Serial.println("consultando agenda");
     String texto = consultaAgenda(0);
-    server.send(200, "text/html", texto);
+    request->send(200, "text/html", texto);
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }
 
-void gravaragenda()
+void gravaragenda(AsyncWebServerRequest *request)
 {
 
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
 
   AgendaAlterada = true;
-  //String idAgenda = server.arg("ag");
-  String Valor = server.arg("v");
-  String Senha = server.arg("k");
+  //String idAgenda = request->arg("ag");
+  String Valor = request->arg("v");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {

@@ -1,18 +1,18 @@
-void api()
+void api(AsyncWebServerRequest *request)
 {
   String vPassApi, action, apiPort, apiSource, valueApi, typeApi;
   bool isPost = false;
 
   if (!newMqttMsg)
   {
-    if (!server.authenticate(www_username, www_password))
-      return server.requestAuthentication();
+    if (!request->authenticate(www_username, www_password))
+      return request->requestAuthentication();
     isPost = true;
-    vPassApi = server.arg("pw");
+    vPassApi = request->arg("pw");
     vPassApi.toLowerCase();
-    action = server.arg("a");
-    apiPort = server.arg("p");
-    apiSource = server.arg("s");
+    action = request->arg("a");
+    apiPort = request->arg("p");
+    apiSource = request->arg("s");
     //(!DEBUG_ON) ?:   Serial.println(apiSource);
   }
   else
@@ -101,7 +101,7 @@ void api()
         }
 
         if (isPost)
-          server.send(200, "text/html", sDados2 + sDados1);
+          request->send(200, "text/html", sDados2 + sDados1);
       }
       else
       {
@@ -110,12 +110,12 @@ void api()
           if (LePorta(apiPort.toInt() - 1) == HIGH)
           {
             if (isPost)
-              server.send(200, "text/html", "1");
+              request->send(200, "text/html", "1");
           }
           else
           {
             if (isPost)
-              server.send(200, "text/html", "0");
+              request->send(200, "text/html", "0");
           }
         }
         else
@@ -123,12 +123,12 @@ void api()
           if (LeSensor(apiPort.toInt() - 1) == HIGH)
           {
             if (isPost)
-              server.send(200, "text/html", "1");
+              request->send(200, "text/html", "1");
           }
           else
           {
             if (isPost)
-              server.send(200, "text/html", "0");
+              request->send(200, "text/html", "0");
           }
         }
       }
@@ -137,8 +137,8 @@ void api()
     {
       if (isPost)
       {
-        valueApi = server.arg("v");
-        typeApi = server.arg("t");
+        valueApi = request->arg("v");
+        typeApi = request->arg("t");
       }
       else
       {
@@ -161,12 +161,12 @@ void api()
               memRtc.setOutputs();
 
               if (isPost)
-                server.send(200, "text/html", "1");
+                request->send(200, "text/html", "1");
             }
             else
             {
               if (isPost)
-                server.send(200, "text/html", "-1");
+                request->send(200, "text/html", "-1");
             }
           }
           else if (valueApi == "1")
@@ -179,7 +179,7 @@ void api()
               memRtc.setOutputs();
 
               if (isPost)
-                server.send(200, "text/html", "1");
+                request->send(200, "text/html", "1");
             }
             else if (typeApi == "p")
             {
@@ -195,24 +195,24 @@ void api()
               memRtc.setOutputs();
 
               if (isPost)
-                server.send(200, "text/html", "1");
+                request->send(200, "text/html", "1");
             }
             else
             {
               if (isPost)
-                server.send(200, "text/html", "-1");
+                request->send(200, "text/html", "-1");
             }
           }
           else
           {
             if (isPost)
-              server.send(200, "text/html", "-1");
+              request->send(200, "text/html", "-1");
           }
         }
         else
         {
           if (isPost)
-            server.send(200, "text/html", "-1");
+            request->send(200, "text/html", "-1");
         }
       }
       else // porta
@@ -225,18 +225,18 @@ void api()
             {
               LigaDesliga(apiPort.toInt() - 1, LOW, "", 0);
               if (isPost)
-                server.send(200, "text/html", "1");
+                request->send(200, "text/html", "1");
             }
             else if (valueApi == "1") // Liga
             {
               LigaDesliga(apiPort.toInt() - 1, HIGH, "", 0);
               if (isPost)
-                server.send(200, "text/html", "1");
+                request->send(200, "text/html", "1");
             }
             else
             {
               if (isPost)
-                server.send(200, "text/html", "-1");
+                request->send(200, "text/html", "-1");
             }
           }
           else if (typeApi == "p") // pulsado
@@ -245,56 +245,56 @@ void api()
             {
               LigaDesliga(apiPort.toInt() - 1, LOW, "", 1);
               if (isPost)
-                server.send(200, "text/html", "1");
+                request->send(200, "text/html", "1");
             }
             else if (valueApi == "1") // Liga
             {
               LigaDesliga(apiPort.toInt() - 1, HIGH, "", 1);
               if (isPost)
-                server.send(200, "text/html", "1");
+                request->send(200, "text/html", "1");
             }
             else
             {
               if (isPost)
-                server.send(200, "text/html", "-1");
+                request->send(200, "text/html", "-1");
             }
           }
           else
           {
             if (isPost)
-              server.send(200, "text/html", "-1");
+              request->send(200, "text/html", "-1");
           }
         }
         else
         {
           if (isPost)
-            server.send(200, "text/html", "-1");
+            request->send(200, "text/html", "-1");
         }
       }
     }
     else if (action == "i") // Infravermelho
     {
       (!DEBUG_ON) ?: Serial.println("api infravermelho");
-      String vModel1 = server.arg("m1");
-      String vModel2 = server.arg("m2");
-      String vModel3 = server.arg("m3");
-      String vModel4 = server.arg("m4");
-      String Comando1 = server.arg("c1");
-      String Comando2 = server.arg("c2");
-      String Comando3 = server.arg("c3");
-      String Comando4 = server.arg("c4");
-      String Comando12 = server.arg("c12");
-      String Comando22 = server.arg("c22");
-      String Comando32 = server.arg("c32");
-      String Comando42 = server.arg("c42");
-      String qtde1 = server.arg("qt1");
-      String qtde2 = server.arg("qt2");
-      String qtde3 = server.arg("qt3");
-      String qtde4 = server.arg("qt4");
-      String vp1 = server.arg("p1");
-      String vp2 = server.arg("p2");
-      String vp3 = server.arg("p3");
-      String vp4 = server.arg("p4");
+      String vModel1 = request->arg("m1");
+      String vModel2 = request->arg("m2");
+      String vModel3 = request->arg("m3");
+      String vModel4 = request->arg("m4");
+      String Comando1 = request->arg("c1");
+      String Comando2 = request->arg("c2");
+      String Comando3 = request->arg("c3");
+      String Comando4 = request->arg("c4");
+      String Comando12 = request->arg("c12");
+      String Comando22 = request->arg("c22");
+      String Comando32 = request->arg("c32");
+      String Comando42 = request->arg("c42");
+      String qtde1 = request->arg("qt1");
+      String qtde2 = request->arg("qt2");
+      String qtde3 = request->arg("qt3");
+      String qtde4 = request->arg("qt4");
+      String vp1 = request->arg("p1");
+      String vp2 = request->arg("p2");
+      String vp3 = request->arg("p3");
+      String vp4 = request->arg("p4");
 
       if (vModel1 != "")
       {
@@ -322,18 +322,18 @@ void api()
         sendirAPI(qtde4.toInt(), vModel4.toInt(), Comando4, Comando42, vp4.toInt());
       }
       if (isPost)
-        server.send(200, "text/html", "1");
+        request->send(200, "text/html", "1");
     }
     else if (action == "c") // Cenas
     {
       (!DEBUG_ON) ?: Serial.println("api cenas");
       if (isPost)
-        String valueApi = server.arg("v");
+        String valueApi = request->arg("v");
       else
         String valueApi = MqttArg(msgMqtt, "v");
       triggerCena(valueApi);
       if (isPost)
-        server.send(200, "text/html", "1");
+        request->send(200, "text/html", "1");
     }
     else if (action == "l") // linha de ação
     {
@@ -356,7 +356,7 @@ void api()
       }
 
       if (isPost)
-        server.send(200, "text/html", "1");
+        request->send(200, "text/html", "1");
     }
     else if (action == "update") // executaupdate
     {
@@ -364,75 +364,75 @@ void api()
 
       if (isPost)
       {
-        if (!server.authenticate(www_username, www_password))
-          return server.requestAuthentication();
-        executeupdateBeta();
+        if (!request->authenticate(www_username, www_password))
+          return request->requestAuthentication();
+        executeupdateBeta(request);
       }
       else
-        executeupdateBeta();
+        executeupdateBeta(request);
     }
   }
   else
   {
     if (isPost)
-      server.send(200, "text/html", "-1");
+      request->send(200, "text/html", "-1");
   }
 }
 
-void apiativo()
+void apiativo(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
   if (AlowApi == true)
   {
-    server.send(200, "text/html", "1");
+    request->send(200, "text/html", "1");
   }
   else
   {
-    server.send(200, "text/html", "0");
+    request->send(200, "text/html", "0");
   }
 }
 
-void apiconfig()
+void apiconfig(AsyncWebServerRequest *request)
 {
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  if (server.arg("s") == Senha)
+  if (request->arg("s") == Senha)
   {
-    server.send(200, "text/html", "ok");
+    request->send(200, "text/html", "ok");
 
-    AlowApi = (server.arg("v") == "1") ? true : false;
+    AlowApi = (request->arg("v") == "1") ? true : false;
     bitWrite(DevSet.mode, 0, AlowApi);
     DevSet.setMode();
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }
 
-void alterasenhapi()
+void alterasenhapi(AsyncWebServerRequest *request)
 {
 
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  if (server.arg("s") == Senha)
+  if (request->arg("s") == Senha)
   {
 
     MD5Builder md5;
     md5.begin();
-    md5.add(server.arg("a"));
+    md5.add(request->arg("a"));
     md5.calculate();
 
     if (ApiPass == md5.toString())
     {
 
-      server.send(200, "text/html", "ok");
+      request->send(200, "text/html", "ok");
 
-      String req = server.arg("v");
+      String req = request->arg("v");
       if (req == "")
       {
         req = "12345678"; // se não houver registro, vai para o padrão
@@ -448,11 +448,11 @@ void alterasenhapi()
     }
     else
     {
-      server.send(200, "text/html", "-1");
+      request->send(200, "text/html", "-1");
     }
   }
   else
   {
-    server.send(200, "text/html", "-1");
+    request->send(200, "text/html", "-1");
   }
 }

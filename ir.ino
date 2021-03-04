@@ -319,35 +319,35 @@ void dumpCode(decode_results *results)
   }
 }
 
-void getIR()
+void getIR(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", String(tamanho) + "|" + String(Modelo) + "|" + codigoIR + "*");
+  request->send(200, "text/html", String(tamanho) + "|" + String(Modelo) + "|" + codigoIR + "*");
   tamanho = -1;
   codigoIR = "-1";
 }
 
-void sendir()
+void sendir(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
 
-  String S = server.arg("s");
+  String S = request->arg("s");
   int QtdeBit = 12;
-  int PortaIRS = server.arg("p").toInt();
-  int vModelo = server.arg("m").toInt();
-  int q = server.arg("q").toInt();
+  int PortaIRS = request->arg("p").toInt();
+  int vModelo = request->arg("m").toInt();
+  int q = request->arg("q").toInt();
 
-  String Codigo = server.arg("c");
-  String Codigo2 = server.arg("c2");
+  String Codigo = request->arg("c");
+  String Codigo2 = request->arg("c2");
 
   //  (!DEBUG_ON) ?:   Serial.println(Codigo);
   //rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
@@ -742,13 +742,13 @@ uint16_t converteRAW(String codig, String codig2, int tam)
 //return rawData;
 /*}*/
 
-void habir()
+void habir(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", "ok");
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  request->send(200, "text/html", "ok");
   irrecv.resume();
   irrecv.resume();
   irrecv.resume();

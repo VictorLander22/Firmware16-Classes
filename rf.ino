@@ -5,42 +5,42 @@ void configRF()
   sSendRF.setRepeatTransmit(5);
 }
 
-void getRF()
+void getRF(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
+  request->send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
   tamanhoRF = -1;
   gProtocoloRF = -1;
   codigoRF = "-1";
 }
 
-void habRF()
+void habRF(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
   //enReadRF = true;
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
 }
 
-void gravarf()
+void gravarf(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", "ok");
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  request->send(200, "text/html", "ok");
 
   SensorRFAlterado = true;
-  //String idAgenda = server.arg("ag");
-  String Valor = server.arg("s");
-  String Senha = server.arg("k");
+  //String idAgenda = request->arg("ag");
+  String Valor = request->arg("s");
+  String Senha = request->arg("k");
 
   (!DEBUG_ON) ?: Serial.println(Valor);
   if (Senha == "kdi9e")
@@ -590,32 +590,32 @@ void consultaSensorRF()
   }
 }
 
-void ultimodisprf()
+void ultimodisprf(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  String Senha = server.arg("k");
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
-    server.send(200, "text/html", ultimoDisparoRF);
+    request->send(200, "text/html", ultimoDisparoRF);
   }
 }
 
-void sendRFp()
+void sendRFp(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
-  server.send(200, "text/html", "ok");
-  unsigned long Valor = strtoul(server.arg("c").c_str(), NULL, 10);
-  unsigned long _tamanhorf = strtoul(server.arg("t").c_str(), NULL, 10);
-  unsigned long _protocol = strtoul(server.arg("p").c_str(), NULL, 10);
-  String Senha = server.arg("k");
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  request->send(200, "text/html", "ok");
+  unsigned long Valor = strtoul(request->arg("c").c_str(), NULL, 10);
+  unsigned long _tamanhorf = strtoul(request->arg("t").c_str(), NULL, 10);
+  unsigned long _protocol = strtoul(request->arg("p").c_str(), NULL, 10);
+  String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {

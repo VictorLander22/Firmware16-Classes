@@ -1,11 +1,11 @@
-void executeupdate()
+void executeupdate(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
   //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
   t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/firmware16.bin");
   //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
@@ -14,29 +14,29 @@ void executeupdate()
   {
   case HTTP_UPDATE_FAILED:
     (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-    //            server.send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
+    //            request->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
     break;
 
   case HTTP_UPDATE_NO_UPDATES:
     (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
-    //    server.send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
+    //    request->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
     break;
 
   case HTTP_UPDATE_OK:
     (!DEBUG_ON) ?: Serial.println("ok");
-    //    server.send(200, "text/html", "HTTP_UPDATE_OK");
+    //    request->send(200, "text/html", "HTTP_UPDATE_OK");
     break;
   }
 }
 
-void executeupdateBeta()
+void executeupdateBeta(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  // if (!server.authenticate(www_username, www_password))
-  //   return server.requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
-  server.send(200, "text/html", "ok");
+  request->send(200, "text/html", "ok");
   //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
   t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/beta/firmware16.bin");
   //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
@@ -45,49 +45,49 @@ void executeupdateBeta()
   {
   case HTTP_UPDATE_FAILED:
     (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-    //            server.send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
+    //            request->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
     break;
 
   case HTTP_UPDATE_NO_UPDATES:
     (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
-    //    server.send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
+    //    request->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
     break;
 
   case HTTP_UPDATE_OK:
     (!DEBUG_ON) ?: Serial.println("ok");
-    //    server.send(200, "text/html", "HTTP_UPDATE_OK");
+    //    request->send(200, "text/html", "HTTP_UPDATE_OK");
     break;
   }
 }
 
-void versao()
+void versao(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", Placa_Version);
+  request->send(200, "text/html", Placa_Version);
 }
 
-void linkversao()
+void linkversao(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
+  request->send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
 }
 
-void linkversaoBeta()
+void linkversaoBeta(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!server.authenticate(www_username, www_password))
-    return server.requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
-  server.send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
+  request->send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
 }
 
 void logData(String dados)
@@ -107,22 +107,22 @@ void logData(String dados)
   SPIFFS.end();
 }
 
-void readlog()
+void readlog(AsyncWebServerRequest *request)
 {
   SPIFFS.begin();
-  String comando = server.arg("c");
+  String comando = request->arg("c");
 
   if (comando == "delete")
   {
     if (SPIFFS.remove("/log.txt"))
     {
       SPIFFS.end();
-      server.send(200, "text/html", "remove");
+      request->send(200, "text/html", "remove");
     }
     else
     {
       SPIFFS.end();
-      server.send(200, "text/html", "falha");
+      request->send(200, "text/html", "falha");
     }
   }
   else if (comando == "read")
@@ -136,10 +136,10 @@ void readlog()
     dados = dados + "</ul></body></html>";
     f.close();
     SPIFFS.end();
-    server.send(200, "text/html", dados);
+    request->send(200, "text/html", dados);
   }
   else
   {
-    server.send(200, "text/html", "ok");
+    request->send(200, "text/html", "ok");
   }
 }
