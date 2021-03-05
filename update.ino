@@ -1,69 +1,62 @@
 void executeupdate(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
   if (!request->authenticate(www_username, www_password))
     return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
-  //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
-  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/firmware16.bin");
-  //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
-
-  switch (ret)
-  {
-  case HTTP_UPDATE_FAILED:
-    (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-    //            request->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
-    break;
-
-  case HTTP_UPDATE_NO_UPDATES:
-    (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
-    //    request->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
-    break;
-
-  case HTTP_UPDATE_OK:
-    (!DEBUG_ON) ?: Serial.println("ok");
-    //    request->send(200, "text/html", "HTTP_UPDATE_OK");
-    break;
-  }
+  shouldUpdate = 1;
 }
 
 void executeupdateBeta(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
-  //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
-  t_httpUpdate_return ret = ESPhttpUpdate.update("http://keepin.com.br/firmware/16/beta/firmware16.bin");
-  //t_httpUpdate_return  ret = ESPhttpUpdate.update("https://server/file.bin");
+  shouldUpdate = 2;
+}
 
-  switch (ret)
+void ExecuteUpdate()
+{
+  if (shouldUpdate != 0)
   {
-  case HTTP_UPDATE_FAILED:
-    (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-    //            request->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
-    break;
+    String url;
+    //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
+    if (shouldUpdate == 1) //executa update
+      url = "http://keepin.com.br/firmware/16/firmware16.bin";
+    else if (shouldUpdate == 2) // executa update beta
+      url = "http://keepin.com.br/firmware/16/beta/firmware16.bin";
 
-  case HTTP_UPDATE_NO_UPDATES:
-    (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
-    //    request->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
-    break;
+    shouldUpdate = 0;
 
-  case HTTP_UPDATE_OK:
-    (!DEBUG_ON) ?: Serial.println("ok");
-    //    request->send(200, "text/html", "HTTP_UPDATE_OK");
-    break;
+    (!DEBUG_ON) ?: Serial.print("Iniciando Update em: ");
+
+    (!DEBUG_ON) ?: Serial.println(url);
+
+    t_httpUpdate_return ret = ESPhttpUpdate.update(url);
+
+    switch (ret)
+    {
+    case HTTP_UPDATE_FAILED:
+      (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+      //            request->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
+      break;
+
+    case HTTP_UPDATE_NO_UPDATES:
+      (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
+      //    request->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
+      break;
+
+    case HTTP_UPDATE_OK:
+      (!DEBUG_ON) ?: Serial.println("ok");
+      //    request->send(200, "text/html", "HTTP_UPDATE_OK");
+      break;
+    }
   }
 }
 
 void versao(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
   if (!request->authenticate(www_username, www_password))
     return request->requestAuthentication();
 
@@ -72,8 +65,6 @@ void versao(AsyncWebServerRequest *request)
 
 void linkversao(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
   if (!request->authenticate(www_username, www_password))
     return request->requestAuthentication();
 
@@ -82,8 +73,6 @@ void linkversao(AsyncWebServerRequest *request)
 
 void linkversaoBeta(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
   if (!request->authenticate(www_username, www_password))
     return request->requestAuthentication();
 

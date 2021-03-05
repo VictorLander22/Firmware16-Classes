@@ -249,3 +249,5 @@ Ticker timer;
 AsyncPing Pings[numDNSquery];
 IPAddress addrs[numDNSquery];
 const char *ips[] = {"8.8.8.8", "8.8.4.4", "208.67.222.222", "google.com", "keepin.com.br"};
+
+uint8_t shouldUpdate;

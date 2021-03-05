@@ -187,7 +187,7 @@ void File_Download(AsyncWebServerRequest *request)
 
   SPIFFS.begin();
   bool fileExist = SPIFFS.exists(path);
-  //SPIFFS.end();
+
   if (fileExist)
   {
     (!DEBUG_ON) ?: Serial.println(F("Arquivo existe"));
@@ -196,6 +196,7 @@ void File_Download(AsyncWebServerRequest *request)
   else
   {
     (!DEBUG_ON) ?: Serial.println(F("Arquivo não existe"));
+    SPIFFS.end();
   }
 }
 

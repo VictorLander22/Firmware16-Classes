@@ -145,9 +145,7 @@ void loop(void)
 
     MillisResets();
 
-    //server.handleClient();
-
-    //showDateTime();
+    ExecuteUpdate();
 
     FreeMemory(F("loop()"));
   }
