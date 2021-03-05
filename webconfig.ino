@@ -4,9 +4,6 @@ void ConfigurarWebServer(void)
   // server.on(
   //     "/", HTTP_GET, [](request) {}, handleHtmlConfig);
   server.on("/", handleHtmlConfig);
-  //server.on("/grava", grava);
-  //server.on("/ler", ler);
-  //server.on("/config", configuracao);
   server.on("/gravarwifi", gravawifi);
   server.on("/gravasenhawifi", gravasenhawifi);
   server.on("/gravasenhahttp", gravasenhahttp);
@@ -68,50 +65,23 @@ void ConfigurarWebServer(void)
   server.on("/downloadfile", File_Download);
   server.on("/deletefile", File_Delete);
   server.on("/asyncRestart", asyncESPRestart);
-  // upload a file to /upload
+
+  server.on("/uploadfile", File_Upload);
   server.on(
-      "/uploadfile", HTTP_POST, [](AsyncWebServerRequest *request) {
-        request->send(200);
-      },
-      onUpload);
-
-  //server.on("/uploadfile", HTTP_ANY, File_Upload);
-  // server.on(
-  //     "/fupload", HTTP_POST, []() { request->send(200); }, handleFileUpload);
-
-  // //server.on("/cloud", cloud);
-  // //  server.on("/sendcloud", sendCloud);
-  // server.on("/testehtml", handleHtmlConfig);
-
-  // server.on("/inline", []() {
-  //   request->send(200, "text/plain", "this works as well");
-  // });
+      "/fupload", HTTP_POST, [](AsyncWebServerRequest *request) { request->send(200); }, onUpload);
 
   server.on("/teste", mostarEEProm);
-
   server.onNotFound(handleNotFound);
-
   server.begin();
 
   (!DEBUG_ON) ?: Serial.println("HTTP server started");
 }
 
-// String ipStr(const IPAddress &ip)
-// {
-//   // Retorna IPAddress em formato "n.n.n.n"
-//   String sFn = "";
-//   for (byte bFn = 0; bFn < 3; bFn++)
-//   {
-//     sFn += String((ip >> (8 * bFn)) & 0xFF) + ".";
-//   }
-//   sFn += String(((ip >> 8 * 3)) & 0xFF);
-//   return sFn;
-// }.
-
 void handleHtmlConfig(AsyncWebServerRequest *request)
 {
   if (!request->authenticate(www_username, www_password))
     return request->requestAuthentication();
+
   String defaultPage(FPSTR(webDefaultPage));
   defaultPage.replace("#ipfixo#", "true");
   defaultPage.replace("#utc#", String(DevSet.utcConfig));
@@ -146,7 +116,6 @@ void reiniciar(AsyncWebServerRequest *request)
 
 void gravawifi(AsyncWebServerRequest *request)
 {
-
   if (!request->authenticate(www_username, www_password))
     return request->requestAuthentication();
   request->send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
@@ -171,12 +140,182 @@ void redirectPage()
   request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + WiFi.localIP().toString() + "\")</script></html>");
 }
 
-void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
-{
-  //Handle upload
-}
-
 void asyncESPRestart(AsyncWebServerRequest *request)
 {
+  request->send(200, "text/html", "ok");
   ESP.restart();
+}
+
+void dirarquivos(AsyncWebServerRequest *request)
+{
+  String arquivos = "";
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+  SPIFFS.begin();
+  (!DEBUG_ON) ?: Serial.println(F("Consultar sistema de arquivos"));
+  Dir dir = SPIFFS.openDir("/");
+  while (dir.next())
+  {
+    arquivos += dir.fileName();
+    //(!DEBUG_ON) ?:   Serial.print(dir.fileName());
+    if (dir.fileSize())
+    {
+      File f = dir.openFile("r");
+      arquivos += f.size();
+      //(!DEBUG_ON) ?:   Serial.println(f.size());
+      f.close();
+    }
+    arquivos += "<BR>";
+  }
+  SPIFFS.end();
+
+  arquivos += "*";
+
+  request->send(200, "text/html", arquivos);
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+void File_Download(AsyncWebServerRequest *request)
+{
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+
+  String path = request->arg("f");
+
+  if (!path.startsWith("/"))
+    path = "/" + path;
+
+  SPIFFS.begin();
+  bool fileExist = SPIFFS.exists(path);
+  //SPIFFS.end();
+  if (fileExist)
+  {
+    (!DEBUG_ON) ?: Serial.println(F("Arquivo existe"));
+    request->send(SPIFFS, path, String(), true);
+  }
+  else
+  {
+    (!DEBUG_ON) ?: Serial.println(F("Arquivo não existe"));
+  }
+}
+
+void File_Upload(AsyncWebServerRequest *request)
+{
+  request->send_P(200, "text/html", webUpload);
+}
+
+void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
+{
+  if (!index)
+  {
+    (!DEBUG_ON) ?: Serial.printf("UploadStart: %s\n", filename.c_str());
+    if (!filename.startsWith("/"))
+      filename = "/" + filename;
+    SPIFFS.begin();
+    SPIFFS.remove(filename);                 // Remove a previous version, otherwise data is appended the file again
+    UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
+  }
+
+  //Serial.printf("%s", (const char *)data);
+  UploadFile.write(data, len); // Write the received bytes to the file
+
+  if (final)
+  {
+    (!DEBUG_ON) ?: Serial.printf("UploadEnd: %s (%u)\n", filename.c_str(), index + len);
+    if (UploadFile) // If the file was successfully created
+    {
+      UploadFile.close(); // Close the file again
+      request->send(200, "text/html", F("<h3>File was successfully uploaded</h3>"));
+      SPIFFS.end();
+    }
+    else
+    {
+      //(!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
+      SPIFFS.end();
+    }
+  }
+}
+// void handleFileUpload()
+// { // upload a new file to the Filing system
+
+//   (!DEBUG_ON) ?: Serial.println("File upload stage-3");
+//   HTTPUpload &uploadfile = server.upload();
+
+//   if (uploadfile.status == UPLOAD_FILE_START)
+//   {
+//     (!DEBUG_ON) ?: Serial.println("File upload stage-4");
+//     String filename = uploadfile.filename;
+//     if (!filename.startsWith("/"))
+//       filename = "/" + filename;
+//     (!DEBUG_ON) ?: Serial.print("Upload File Name: ");
+//     (!DEBUG_ON) ?: Serial.println(filename);
+
+//     SPIFFS.begin();
+
+//     SPIFFS.remove(filename); // Remove a previous version, otherwise data is appended the file again
+
+//     UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
+//   }
+//   else if (uploadfile.status == UPLOAD_FILE_WRITE)
+//   {
+//     (!DEBUG_ON) ?: Serial.println("File upload stage-5");
+//     if (UploadFile)
+//     {
+//       UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
+//     }
+//   }
+//   else if (uploadfile.status == UPLOAD_FILE_END)
+//   {
+//     if (UploadFile) // If the file was successfully created
+//     {
+//       UploadFile.close(); // Close the file again
+//       (!DEBUG_ON) ?: Serial.print("Upload Size: ");
+//       (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
+
+//       //append_page_header();
+//       String webfile = "<h3>File was successfully uploaded</h3>";
+//       webfile += "<h2>Uploaded File Name: ";
+//       webfile += uploadfile.filename + "</h2>";
+//       webfile += "<h2>File Size: OK";
+//       //webfile += uploadfile.totalSize + "</h2><br>";
+//       //append_page_footer();
+//       request->send(200, "text/html", webfile);
+//       //
+//       SPIFFS.end();
+//     }
+//   }
+//   else
+//   {
+//     (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
+//     SPIFFS.end();
+//   }
+// }
+
+void File_Delete(AsyncWebServerRequest *request)
+{ // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
+
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
+
+  String path = request->arg("f");
+
+  if (!path.startsWith("/"))
+    path = "/" + path;
+
+  SPIFFS.begin();
+  if (SPIFFS.exists(path))
+  {
+    (!DEBUG_ON) ?: Serial.println(F("Arquivo existe"));
+    if (SPIFFS.remove(path))
+    {
+      (!DEBUG_ON) ?: Serial.println(F("Removido"));
+      request->send(200, "text/html", F("Removido"));
+    }
+  }
+  else
+  {
+    (!DEBUG_ON) ?: Serial.println(F("Arquivo não existe"));
+    request->send(200, "text/html", F("Não existe"));
+  }
+  SPIFFS.end();
 }

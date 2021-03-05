@@ -255,3 +255,11 @@ const char webRestart[] PROGMEM = R"===(
     countdown();
 </script>
 )===";
+
+const char webUpload[] PROGMEM = R"===(
+  <h3>Select File to Upload</h3>
+  <FORM action='/fupload' method='post' enctype='multipart/form-data'>
+  <input type="file" id="upload" name="upload"><br><br>
+  <button class='buttons' style='width:10%' type='submit'>Upload File</button><br><br>
+  <a href='/'>[Back]</a><br><br>
+)===";
