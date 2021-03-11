@@ -307,8 +307,10 @@ void gravasensor(AsyncWebServerRequest *request)
   //const char* www_password = www_password2.c_str();
   if (!request->authenticate(www_username, www_password))
     return request->requestAuthentication();
+
   request->send(200, "text/html", "ok");
-  //String idAgenda = request->arg("ag");
+
+  String idAgenda = request->arg("ag");
   String Valor = request->arg("s");
   String Senha = request->arg("k");
   String nomeS = request->arg("nome");
@@ -319,10 +321,18 @@ void gravasensor(AsyncWebServerRequest *request)
   if (gv == "1")
   {
     nomeSensores[Indice] = nomeS;
+    Serial.println(nomeS);
   }
 
   if (Senha == "kdi9e")
   {
+
+    for (int id = 0; id < 16; id++)
+    {
+      nomesG += nomeSensores[id] + "|";
+    }
+    nomesG += "*";
+
     SPIFFS.begin();
     File f = SPIFFS.open("/sensores.txt", "w");
 
@@ -332,25 +342,22 @@ void gravasensor(AsyncWebServerRequest *request)
       File f = SPIFFS.open("/sensores.txt", "w");
     }
 
-    File nf = SPIFFS.open("/nsensores.txt", "w");
-
-    for (int id = 0; id < 16; id++)
-    {
-      nomesG += nomeSensores[id] + "|";
-    }
-    nomesG += "*";
-
     f.println(Valor);
-    nf.println(nomesG);
     f.close();
+
+    File nf = SPIFFS.open("/nsensores.txt", "w");
+    nf.println(nomesG);
     nf.close();
+
     SPIFFS.end();
-    //(!DEBUG_ON) ?:   Serial.println("valor salvo na ag"+idAgenda+".txt");
+    //(!DEBUG_ON) ?: Serial.println("valor salvo na ag" + idAgenda + ".txt");
     (!DEBUG_ON) ?: Serial.println(Valor);
   }
 
+  //Serial.println("Vou consultar sensor");
+  //consultaSensor();
+  //Serial.println("Sai de consulta sensor");
   SensorAlterado = true;
-  consultaSensor();
 }
 
 void gravasensor2(String Valor)
@@ -966,22 +973,23 @@ boolean verificaSensores(int nsensor, String vsAtual)
 void consultaSensor()
 {
   SPIFFS.begin();
-  File f = SPIFFS.open("/sensores.txt", "r");
-  File nf = SPIFFS.open("/nsensores.txt", "r");
-  String texto = f.readStringUntil('*');
-  String nomeS = nf.readStringUntil('*');
-  texto += '*';
-  nomeS += '*';
 
+  File f = SPIFFS.open("/sensores.txt", "r");
+  String texto = f.readStringUntil('*');
+  texto += '*';
   f.close();
-  nf.close();
+
+  f = SPIFFS.open("/nsensores.txt", "r");
+  String nomeS = f.readStringUntil('*');
+  nomeS += '*';
+  f.close();
+
   SPIFFS.end();
 
   int posicao = 0;
   int contador = 0;
   int i = 0;
   String textoSensor = "";
-
   if (texto.length() > 4)
   {
     Sensores[i] = "";
@@ -1007,7 +1015,6 @@ void consultaSensor()
       posicao++;
     }
   }
-
   // nomes dos sensores
   posicao = 0;
   i = 0;
