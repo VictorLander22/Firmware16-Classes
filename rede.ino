@@ -145,7 +145,11 @@ void gravasenhahttp(AsyncWebServerRequest *request)
 
     if ((newHttpUser.length() >= 4 && newHttpPwd.length() >= 4) && (request->arg("ua") == DevSet.httpUser && request->arg("a") == DevSet.httpPwd))
     {
+      String ip = WiFi.localIP().toString();
+      if (ip == "(IP unset)")
+        ip = DevSet.numberToIpString(DevSet.apWifiIP);
       String restartPage(FPSTR(webRestart));
+      restartPage.replace("#oldip#", ip);
       restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
       request->send_P(200, "text/html", restartPage.c_str());
 

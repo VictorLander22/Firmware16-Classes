@@ -25,7 +25,7 @@ void FreeMemory(String functionName)
     Serial.print((espMemory - ESP.getFreeHeap()));
     Serial.print(F(" Livre: "));
     Serial.println(ESP.getFreeHeap());
-    millisFreeMemory = millis() + 3000;
+    millisFreeMemory = millis() + 5000;
   }
 }
 

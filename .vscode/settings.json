@@ -53,7 +53,8 @@
       "optional": "cpp",
       "regex": "cpp",
       "condition_variable": "cpp",
-      "*.inc": "cpp"
+      "*.inc": "cpp",
+      "chrono": "cpp"
     },
     "editor.formatOnSave": true
 }

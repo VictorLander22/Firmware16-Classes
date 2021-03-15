@@ -336,11 +336,11 @@ void gravasensor(AsyncWebServerRequest *request)
     SPIFFS.begin();
     File f = SPIFFS.open("/sensores.txt", "w");
 
-    if (!f)
-    {
-      SPIFFS.format();
-      File f = SPIFFS.open("/sensores.txt", "w");
-    }
+    // if (!f)
+    // {
+    //   SPIFFS.format();
+    //   File f = SPIFFS.open("/sensores.txt", "w");
+    // }
 
     f.println(Valor);
     f.close();
@@ -367,11 +367,11 @@ void gravasensor2(String Valor)
   SPIFFS.begin();
   File f = SPIFFS.open("/sensores.txt", "w");
 
-  if (!f)
-  {
-    SPIFFS.format();
-    File f = SPIFFS.open("/sensores.txt", "w");
-  }
+  // if (!f)
+  // {
+  //   SPIFFS.format();
+  //   File f = SPIFFS.open("/sensores.txt", "w");
+  // }
 
   f.println(Valor);
   f.close();
@@ -1086,11 +1086,11 @@ void gravadevice(AsyncWebServerRequest *request)
     SPIFFS.begin();
     File f = SPIFFS.open("/device.txt", "w");
 
-    if (!f)
-    {
-      SPIFFS.format();
-      File f = SPIFFS.open("/device.txt", "w");
-    }
+    // if (!f)
+    // {
+    //   SPIFFS.format();
+    //   File f = SPIFFS.open("/device.txt", "w");
+    // }
 
     f.println(Valor);
 
@@ -1207,11 +1207,11 @@ void gravanot(AsyncWebServerRequest *request)
     SPIFFS.begin();
     File f = SPIFFS.open("/notific.txt", "w");
 
-    if (!f)
-    {
-      SPIFFS.format();
-      File f = SPIFFS.open("/notific.txt", "w");
-    }
+    // if (!f)
+    // {
+    //   SPIFFS.format();
+    //   File f = SPIFFS.open("/notific.txt", "w");
+    // }
 
     f.println(Valor);
 
@@ -1236,11 +1236,11 @@ void gravanot2(String Valor)
   SPIFFS.begin();
   File f = SPIFFS.open("/notific.txt", "w");
 
-  if (!f)
-  {
-    SPIFFS.format();
-    File f = SPIFFS.open("/notific.txt", "w");
-  }
+  // if (!f)
+  // {
+  //   SPIFFS.format();
+  //   File f = SPIFFS.open("/notific.txt", "w");
+  // }
 
   f.println(Valor);
 

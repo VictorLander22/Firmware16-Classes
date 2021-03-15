@@ -3,13 +3,12 @@ void sendSMS(int numSensor)
   WiFiClient cliente;
   SPIFFS.begin();
   File fTexto = SPIFFS.open("/sms_text.txt", "r");
-  File fNumeros = SPIFFS.open("/sms_numb.txt", "r");
-
   String Texto = fTexto.readStringUntil('*');
-  String Numeros = fNumeros.readStringUntil('*');
-
   fTexto.close();
-  fNumeros.close();
+
+  fTexto = SPIFFS.open("/sms_numb.txt", "r");
+  String Numeros = fTexto.readStringUntil('*');
+  fTexto.close();
   SPIFFS.end();
 
   if (Numeros.length() > 8 && Texto.length() > 4)
@@ -62,24 +61,22 @@ void gravasms(AsyncWebServerRequest *request)
   {
     SPIFFS.begin();
     File fTexto = SPIFFS.open("/sms_text.txt", "w");
-    File fNumeros = SPIFFS.open("/sms_numb.txt", "w");
-
-    if (!fTexto)
-    {
-      SPIFFS.format();
-      File fTexto = SPIFFS.open("/sms_text.txt", "w");
-    }
-
-    if (!fNumeros)
-    {
-      SPIFFS.format();
-      File fNumeros = SPIFFS.open("/sms_numb.txt", "w");
-    }
-
+    // if (!fTexto)
+    // {
+    //   SPIFFS.format();
+    //   File fTexto = SPIFFS.open("/sms_text.txt", "w");
+    // }
     fTexto.println(Texto);
-    fNumeros.println(Numeros);
     fTexto.close();
-    fNumeros.close();
+
+    fTexto = SPIFFS.open("/sms_numb.txt", "w");
+    // if (!fTexto)
+    // {
+    //   SPIFFS.format();
+    //   fTexto = SPIFFS.open("/sms_numb.txt", "w");
+    // }
+    fTexto.println(Numeros);
+    fTexto.close();
     SPIFFS.end();
 
     (!DEBUG_ON) ?: Serial.println(Numeros);
@@ -90,24 +87,22 @@ void gravasms2(String Texto, String Numeros)
 {
   SPIFFS.begin();
   File fTexto = SPIFFS.open("/sms_text.txt", "w");
-  File fNumeros = SPIFFS.open("/sms_numb.txt", "w");
-
-  if (!fTexto)
-  {
-    SPIFFS.format();
-    File fTexto = SPIFFS.open("/sms_text.txt", "w");
-  }
-
-  if (!fNumeros)
-  {
-    SPIFFS.format();
-    File fNumeros = SPIFFS.open("/sms_numb.txt", "w");
-  }
-
+  // if (!fTexto)
+  // {
+  //   SPIFFS.format();
+  //   File fTexto = SPIFFS.open("/sms_text.txt", "w");
+  // }
   fTexto.println(Texto);
-  fNumeros.println(Numeros);
   fTexto.close();
-  fNumeros.close();
+
+  fTexto = SPIFFS.open("/sms_numb.txt", "w");
+  // if (!fTexto)
+  // {
+  //   SPIFFS.format();
+  //   fTexto = SPIFFS.open("/sms_numb.txt", "w");
+  // }
+  fTexto.println(Numeros);
+  fTexto.close();
   SPIFFS.end();
 }
 
@@ -123,21 +118,22 @@ void consultasms(AsyncWebServerRequest *request)
   if (Senha == "kdi9e")
   {
     SPIFFS.begin();
-    File fTexto = SPIFFS.open("/sms_text.txt", "r");
-    File fNumeros = SPIFFS.open("/sms_numb.txt", "r");
 
+    File fTexto = SPIFFS.open("/sms_text.txt", "r");
     String Texto = fTexto.readStringUntil('*');
-    String Numeros = fNumeros.readStringUntil('*');
+    fTexto.close();
+
+    fTexto = SPIFFS.open("/sms_numb.txt", "r");
+    String Numeros = fTexto.readStringUntil('*');
+    fTexto.close();
+
+    SPIFFS.end();
 
     if (Texto == "" && Numeros == "")
     {
       gravasms2("*", "*");
       (!DEBUG_ON) ?: Serial.println("SMS: " + Texto);
     }
-
-    fTexto.close();
-    fNumeros.close();
-    SPIFFS.end();
 
     request->send(200, "text/html", Texto + "|" + Numeros);
   }
@@ -146,14 +142,15 @@ void consultasms(AsyncWebServerRequest *request)
 String consultasms2()
 {
   SPIFFS.begin();
+
   File fTexto = SPIFFS.open("/sms_text.txt", "r");
-  File fNumeros = SPIFFS.open("/sms_numb.txt", "r");
-
   String Texto = fTexto.readStringUntil('*');
-  String Numeros = fNumeros.readStringUntil('*');
-
   fTexto.close();
-  fNumeros.close();
+
+  fTexto = SPIFFS.open("/sms_numb.txt", "r");
+  String Numeros = fTexto.readStringUntil('*');
+  fTexto.close();
+
   SPIFFS.end();
 
   return Texto + "|" + Numeros;

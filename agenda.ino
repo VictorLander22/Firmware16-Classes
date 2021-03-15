@@ -18,11 +18,11 @@ void verificaArquivos()
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "w");
 
-  if (!f)
-  {
-    SPIFFS.format();
-    File f = SPIFFS.open("/agenda.txt", "w");
-  }
+  // if (!f)
+  // {
+  //   SPIFFS.format();
+  //   File f = SPIFFS.open("/agenda.txt", "w");
+  // }
   f.close();
   SPIFFS.end();
 }
@@ -545,11 +545,11 @@ void gravaragenda(AsyncWebServerRequest *request)
     SPIFFS.begin();
     File f = SPIFFS.open("/agenda.txt", "w");
 
-    if (!f)
-    {
-      SPIFFS.format();
-      File f = SPIFFS.open("/agenda.txt", "w");
-    }
+    // if (!f)
+    // {
+    //   SPIFFS.format();
+    //   File f = SPIFFS.open("/agenda.txt", "w");
+    // }
 
     f.println(Valor);
     f.close();
@@ -567,11 +567,11 @@ void gravaragenda2()
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "w");
 
-  if (!f)
-  {
-    SPIFFS.format();
-    File f = SPIFFS.open("/agenda.txt", "w");
-  }
+  // if (!f)
+  // {
+  //   SPIFFS.format();
+  //   File f = SPIFFS.open("/agenda.txt", "w");
+  // }
 
   f.println(texto);
   f.close();

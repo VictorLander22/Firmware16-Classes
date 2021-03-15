@@ -48,11 +48,11 @@ void gravarf(AsyncWebServerRequest *request)
     SPIFFS.begin();
     File f = SPIFFS.open("/rf.txt", "w");
 
-    if (!f)
-    {
-      SPIFFS.format();
-      File f = SPIFFS.open("/rf.txt", "w");
-    }
+    // if (!f)
+    // {
+    //   SPIFFS.format();
+    //   File f = SPIFFS.open("/rf.txt", "w");
+    // }
 
     f.println(Valor);
     f.close();
@@ -634,7 +634,7 @@ void LoopRF()
 
   {
 
-    (!DEBUG_ON) ?: Serial.println("sinal de radio detectado");
+    //(!DEBUG_ON) ?: Serial.println("sinal de radio detectado");
     //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
     if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
     {
@@ -664,6 +664,7 @@ void LoopRF()
       (!DEBUG_ON) ?: Serial.print("Protocol: ");
       (!DEBUG_ON) ?: Serial.println(mySwitch.getReceivedProtocol());
       gProtocoloRF = mySwitch.getReceivedProtocol();
+
       trataRF();
     }
     mySwitch.resetAvailable();

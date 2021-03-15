@@ -19,6 +19,8 @@ void setup(void)
   sensor2.begin();
   ApagaPortas();
 
+  CheckSPIFFS();
+
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(2000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa

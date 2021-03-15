@@ -162,3 +162,22 @@ void NtpSetDateTimeNTP()
   (!DEBUG_ON) ?: Serial.printf("Data e hora ajustados para: %02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
   (!DEBUG_ON) ?: Serial.println();
 }
+
+void CheckSPIFFS()
+{ //Check if SPIFFS is ok, otherwise format it
+  SPIFFS.begin();
+  File f = SPIFFS.open("/checkSPIFFS.txt", "w");
+  if (!f)
+  {
+    (!DEBUG_ON) ?: Serial.print(F("Creating file system... "));
+    if (SPIFFS.format())
+      (!DEBUG_ON) ?: Serial.println(F("OK"));
+    else
+      (!DEBUG_ON) ?: Serial.println(F("Fail"));
+  }
+  else
+    (!DEBUG_ON) ?: Serial.println(F("Filesystem is OK"));
+
+  f.close();
+  SPIFFS.end();
+}

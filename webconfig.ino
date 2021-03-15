@@ -105,9 +105,9 @@ void reiniciar(AsyncWebServerRequest *request)
     return request->requestAuthentication();
 
   String restartPage(FPSTR(webRestart));
-  restartPage.replace("#oldip#", WiFi.localIP().toString());
+  restartPage.replace("#oldip#", DevSet.numberToIpString(DevSet.apWifiIP));
   restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-  Serial.println(restartPage);
+  //Serial.println(restartPage);
   request->send_P(200, "text/html", restartPage.c_str());
   //request->send_P(200, "text/html", restartPage.c_str()); //, processor);
   //request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + DevSet.numberToIpString(DevSet.wifiIP) + "\")</script></html>");
@@ -137,7 +137,10 @@ void gravawifi(AsyncWebServerRequest *request)
 
 void redirectPage()
 {
-  request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + WiFi.localIP().toString() + "\")</script></html>");
+  String ip = WiFi.localIP().toString();
+  if (ip == "(IP unset)")
+    ip = DevSet.numberToIpString(DevSet.apWifiIP);
+  request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + ip + "\")</script></html>");
 }
 
 void asyncESPRestart(AsyncWebServerRequest *request)
