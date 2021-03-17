@@ -81,8 +81,7 @@ void setup(void)
 
   conectar(); //consome 1K da ram 19000
   // Wait for connection
-  (!DEBUG_ON) ?: Serial.print("Connected to ");
-  (!DEBUG_ON) ?: Serial.print("IP address: ");
+  (!DEBUG_ON) ?: Serial.print(F("Connected... IP address: "));
   (!DEBUG_ON) ?: Serial.println(WiFi.localIP());
 
   ConfigurarWebServer(); //consome 6.2K da ram 13500
@@ -148,6 +147,8 @@ void loop(void)
     MillisResets();
 
     ExecuteUpdate();
+
+    cloud1();
 
     FreeMemory(F("loop()"));
   }

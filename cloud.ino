@@ -1,38 +1,73 @@
-void cloud()
+void cloud(AsyncWebServerRequest *request)
 {
   request->send(200, "text/html", "ok");
-  HTTPClient http;
-  http.begin("http://cloud.keepin.com.br/api/control/3");
-  int httpCode = http.GET();
-  String payload;
-  if (httpCode > 0)
+
+  executeCloud = true;
+}
+
+void cloud1()
+{
+  if (executeCloud)
   {
-    payload = http.getString();
-    (!DEBUG_ON) ?: Serial.println(payload);
+    executeCloud = false;
+    HTTPClient http;
+    http.begin("http://cloud.keepin.com.br/api/control/3");
+    int httpCode = http.GET();
+    String payload;
+    if (httpCode > 0)
+    {
+      payload = http.getString();
+      (!DEBUG_ON) ?: Serial.println(payload);
+    }
+
+    http.end();
+
+    //    StaticJsonBuffer<200> jsonBuffer;
+
+    //DynamicJsonBuffer jsonBuffer(payload.length());
+    //JsonObject &root = jsonBuffer.parseObject(payload);
+    Serial.println(payload.length());
+
+    DynamicJsonDocument root(payload.length() * 2);
+    auto error = deserializeJson(root, payload);
+
+    if (error)
+    {
+      //(!DEBUG_ON) ?: Serial.println("parseObject() failed");
+      (!DEBUG_ON) ?: Serial.print(F("deserializeJson() failed with code "));
+      (!DEBUG_ON) ?: Serial.println(error.c_str());
+      return;
+    }
+    else
+    {
+
+      const String Descricao = root["descricao"];
+      const bool ED1 = root["ed1"];
+      const bool ED3 = root["ed3"];
+
+      (!DEBUG_ON) ?: Serial.println(Descricao);
+      (!DEBUG_ON) ?: Serial.println(ED1);
+      (!DEBUG_ON) ?: Serial.println(ED3);
+
+      //(!DEBUG_ON) ?: Serial.println(root["ed4"]);
+      //(!DEBUG_ON) ?: Serial.println(root["ed4"]);
+    }
   }
+  // if (!root.success())
+  // {
+  //   (!DEBUG_ON) ?: Serial.println("parseObject() failed");
+  // }
+  // else
+  // {
 
-  http.end();
+  //   const String Descricao = root["descricao"];
+  //   const bool ED1 = root["ed1"];
+  //   const bool ED3 = root["ed3"];
 
-  //    StaticJsonBuffer<200> jsonBuffer;
-
-  DynamicJsonBuffer jsonBuffer(payload.length());
-  JsonObject &root = jsonBuffer.parseObject(payload);
-
-  if (!root.success())
-  {
-    (!DEBUG_ON) ?: Serial.println("parseObject() failed");
-  }
-  else
-  {
-
-    const String Descricao = root["descricao"];
-    const bool ED1 = root["ed1"];
-    const bool ED3 = root["ed3"];
-
-    (!DEBUG_ON) ?: Serial.println(Descricao);
-    (!DEBUG_ON) ?: Serial.println(ED1);
-    (!DEBUG_ON) ?: Serial.println(ED3);
-  }
+  //   (!DEBUG_ON) ?: Serial.println(Descricao);
+  //   (!DEBUG_ON) ?: Serial.println(ED1);
+  //   (!DEBUG_ON) ?: Serial.println(ED3);
+  // }
 }
 
 void sendCloud()
@@ -127,14 +162,19 @@ void sendCloud()
   if (httpCode == 200 && payload != "[]")
   {
     //(!DEBUG_ON) ?:   Serial.println("Payload: " + payload);
-    DynamicJsonBuffer jsonBuffer(payload.length());
-    JsonArray &array1 = jsonBuffer.parseArray(payload);
+    //DynamicJsonBuffer jsonBuffer(payload.length());
+    //JsonArray &array1 = jsonBuffer.parseArray(payload);
+    Serial.println(payload);
+    Serial.println(payload.length());
+    DynamicJsonDocument array1(payload.length() * 2);
+    auto error = deserializeJson(array1, payload);
     //    JsonObject& root = jsonBuffer.parseObject(payload);
 
-    if (!array1.success())
+    if (error)
     {
-      (!DEBUG_ON) ?: Serial.println("antes");
-      (!DEBUG_ON) ?: Serial.println("parseObject() failed");
+      (!DEBUG_ON) ?: Serial.print(F("deserializeJson() failed with code "));
+      (!DEBUG_ON) ?: Serial.println(error.c_str());
+      return;
     }
     else
     {

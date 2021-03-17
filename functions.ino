@@ -28,25 +28,6 @@ void LoopResetFabrica()
   {
     ESP.restart();
   };
-  // {
-  //   if (resetIntPulsado() == true)
-  //   {
-  //     ConfigEP();
-  //     //(!DEBUG_ON) ?:   Serial.println("reset pulsado");
-  //   }
-  //   else if (resetIntNormal() == true)s
-  //   {
-  //     ConfigEN();
-  //     //(!DEBUG_ON) ?:   Serial.println("reset normal");
-  //   }
-  //   else
-  //   {
-  //     //(!DEBUG_ON) ?:   Serial.print("reset ligado: ");
-  //     //(!DEBUG_ON) ?:   Serial.println(digitalRead(buttonState));
-  //     wifireset2();
-  //     ESP.restart();
-  //   }
-  // }
 }
 
 void LoopLedStatus()
@@ -166,7 +147,7 @@ void NtpSetDateTimeNTP()
 void CheckSPIFFS()
 { //Check if SPIFFS is ok, otherwise format it
   SPIFFS.begin();
-  File f = SPIFFS.open("/checkSPIFFS.txt", "w");
+  File f = SPIFFS.open("/checkSPIFFS.txt", "w+");
   if (!f)
   {
     (!DEBUG_ON) ?: Serial.print(F("Creating file system... "));

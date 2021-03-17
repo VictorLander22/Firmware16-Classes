@@ -366,13 +366,6 @@ void gravasensor2(String Valor)
 
   SPIFFS.begin();
   File f = SPIFFS.open("/sensores.txt", "w");
-
-  // if (!f)
-  // {
-  //   SPIFFS.format();
-  //   File f = SPIFFS.open("/sensores.txt", "w");
-  // }
-
   f.println(Valor);
   f.close();
   SPIFFS.end();
@@ -1042,9 +1035,11 @@ void consultaSensor()
 
 String lerSensor()
 {
+  String texto;
   SPIFFS.begin();
   File f = SPIFFS.open("/sensores.txt", "r");
-  String texto = f.readStringUntil('*');
+  if (f)
+    texto = f.readStringUntil('*');
   f.close();
   SPIFFS.end();
 

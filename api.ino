@@ -38,10 +38,8 @@ void api(AsyncWebServerRequest *request)
   }
 
   if (AlowApi == true && vPassApi == ApiPass)
-
   {
-    // consulta
-    if (action == "q")
+    if (action == "q") //consulta
     {
       //todas portas
       if (apiPort == "a")

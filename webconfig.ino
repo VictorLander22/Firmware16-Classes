@@ -70,7 +70,7 @@ void ConfigurarWebServer(void)
   server.on(
       "/fupload", HTTP_POST, [](AsyncWebServerRequest *request) { request->send(200); }, onUpload);
 
-  server.on("/teste", mostarEEProm);
+  server.on("/teste", cloud);
   server.onNotFound(handleNotFound);
   server.begin();
 
