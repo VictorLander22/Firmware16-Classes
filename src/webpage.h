@@ -1,214 +1,76 @@
 const char webDefaultPage[] PROGMEM = R"===(
-<script>
-  var utc = #utc#;
-  var ipfixo = #ipfixo#;
-  var ssid = "#ssid#";
-  var pwd = "#pwd#";
-  var ip = "#ip#";
-  var msk = "#msk#";
-  var gtw = "#gtw#";
-</script>
-
 <!DOCTYPE html>
-<html lang="pt">
 <head>
-  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" name="viewport" content="width=device-width">
   <title>Keepin</title>
-  <style>
-    span {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25px;
-      font-weight: bold;
-      font-family: Arial;
-    }
-
-    #content {
-      border: solid 1px black;
-      border-radius: 5px;
-      flex: 1;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      margin: 0 20px 0 20px;
-      border-radius: 10;
-      background-color: #f8f8f8;
-    }
-
-    input {
-      height: 25px;
-      font-size: 18px;
-      font-family: Arial;
-      margin-bottom: 5px;
-    }
-
-    label {
-      margin-top: 7px;
-      margin-bottom: 2px;
-      font-size: 20px;
-      font-weight: bold;
-      font-family: Arial;
-    }
-
-    select {
-      height: 25px;
-      font-size: 18px;
-      font-family: Arial;
-    }
-
-    button {
-      margin-top: 10px;
-      height: 30px;
-      border: solid 1px rgb(102, 102, 102);
-      border-radius: 5px;
-      color: black;
-      background-color: aquamarine;
-      font-size: 20px;
-      font-family: Arial;
-    }
-
-    a {
-      margin-top: 10px;
-      height: 30px;
-      border: solid 1px rgb(102, 102, 102);
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      color: black;
-      background-color: aquamarine;
-      font-size: 20px;
-      font-family: Arial;
-    }
-
-    form div {
-      display: flex;
-      flex-direction: column;
-    }
-
-    #check {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-    }
-
-    #check span {
-      font-weight: 100;
-      font-size: 20px;
-    }
-
-    #check input {
-      margin-bottom: 4px;
-    }
-
-    #title span {
-      font-size: 20px;
-      font-family: Arial;
-      justify-content: left;
-    }
-
-    #check div {
-      margin: 0 5px 0 15px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-    }
-
-    #check div select {
-      margin: 5px 5px 0 5px;
-      font-size: 20px;
-    }
-  </style>
 </head>
-
+<style>
+  body{background-color:#b3b3b3}
+  input,select{width:95vw;margin:3px;height:30px;font-size:20px}
+  .b,#fuso,select{width:95.5vw;height:40px;}
+  label{font-weight:bolder}
+  #dhcp,#fixo{height:20px;width:30px;}
+</style>
+<body>
+<h2>Configuração de rede</h2>
+  <form action="gravarwifi">
+<label>SSID<br><input required type="text" name="txtnomerede" id="ssid"><br>Password<br><input required type="password" name="txtsenha" id="pwd"><br>
+  Fuso Horário<br><select name="utcsel" id="fuso">
+  <option value="-12">(-12:00) Eniwetok, Kwajalein</option>
+  <option value="-11">(-11:00) Midway Island, Samoa</option>
+  <option value="-10">(-10:00) Hawaii</option>
+  <option value="-9">(-9:00) Alaska</option>
+  <option value="-8">(-8:00) Pacific Time</option>
+  <option value="-7">(-7:00) Mountain Time</option>
+  <option value="-6">(-6:00) Central Time, Mexico City</option>
+  <option value="-5">(-5:00) Eastern Time, Bogota, Lima</option>
+  <option value="-4">(-4:00) Atlantic Time, Caracas, La Paz</option>
+  <option value="-3">(-3:00) Brazil, Buenos Aires, Georgetown</option>
+  <option value="-2">(-2:00) Mid-Atlantic</option>
+  <option value="-1">(-1:00) Azores, Cape Verde Islands</option>
+  <option value="0">(0:00) Western Europe Time, London, Lisbon, Casablanca</option>
+  <option value="1">(+1:00) Brussels, Copenhagen, Madrid, Paris</option>
+  <option value="2">(+2:00) Kaliningrad, South Africa</option>
+  <option value="3">(+3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
+  <option value="4">(+4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
+  <option value="5">(+5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
+  <option value="6">(+6:00) Almaty, Dhaka, Colombo</option>
+  <option value="7">(+7:00) Bangkok, Hanoi, Jakarta</option>
+  <option value="8">(+8:00) Beijing, Perth, Singapore, Hong Kong</option>
+  <option value="9">(+9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
+  <option value="10">(+10:00) Eastern Australia, Guam, Vladivostok</option>
+  <option value="11">(+11:00) Magadan, Solomon Islands, New Caledonia</option>
+  <option value="12">(+12:00) Auckland, Wellington, Fiji, Kamchatka</option>
+  <option value="13">(+13:00) Apia, Nukualofa</option>
+  <option value="14">(+14:00) Line Islands, Tokelau</option>
+  </select>
+  <table>
+    <tr>
+      <th>IP</th>
+      <th><input type="radio" name="ipfixo" onclick="isFixIp('dhcp',0)" value="0" id="dhcp"></th>
+      <th>Dinânico</th>
+      <th><input type="radio" name="ipfixo" onclick="isFixIp('fixo',1)" value="1" id="fixo"></th>
+      <th>Estático</th>
+    </tr>
+  </table>
+  <input required type="text" name="txtip" id="ip"><br>
+  Máscara<br><input required type="text" name="txtmascara" id="msk"><br>
+  Gateway<br><input required type="text" name="txtgateway" id="gtw"><br><br>
+  <input type="submit" class="b" value="Gravar" /></label></form>
+  <input type="submit" class="b" value="Reiniciar" onclick="window.location='/reiniciar'"/>
+  <input type="submit" class="b" value="Configuração de Fábrica" onclick="window.location='/reset'"/>
+  <input type="submit" class="b" value="Atualizar Firmware" onclick="window.location='/executeupdate?s=kdi9e'"/>
 <script>
+  var utc =#utc#, ipfixo =#ipfixo#, ssid = "#ssid#", pwd = "#pwd#", ip = "#ip#", msk = "#msk#", gtw = "#gtw#";
   window.onload = (function () {
-    document.getElementById("fuso").value = utc;
-    ipfixo ? isFixIp() : isDHCP();
-    document.getElementById("ssid").value = ssid;
-    document.getElementById("pwd").value = pwd;
-    document.getElementById("ip").value = ip;
-    document.getElementById("msk").value = msk;
-    document.getElementById("gtw").value = gtw;
+    fValue("fuso", utc); fValue("ssid", ssid); fValue("pwd", pwd); fValue("ip", ip); fValue("msk", msk); fValue("gtw", gtw);
+    ipfixo ? isFixIp("fixo", ipfixo) : isFixIp("dhcp", ipfixo);
   })
-
-  function isDHCP() {
-    document.getElementById("dhcp").checked = true;
-    document.getElementById("ip").disabled = true;
-    document.getElementById("msk").disabled = true;
-    document.getElementById("gtw").disabled = true;
-  }
-  function isFixIp() {
-    document.getElementById("fixo").checked = true;
-    document.getElementById("ip").disabled = false;
-    document.getElementById("msk").disabled = false;
-    document.getElementById("gtw").disabled = false;
-  }
+  function isFixIp(v, t) { document.getElementById(v).checked = true; fDesab("ip", !t); fDesab("msk", !t); fDesab("gtw", !t); }
+  function fDesab(v, t) { document.getElementById(v).disabled = t; }
+  function fValue(v, t) { document.getElementById(v).value = t; }
 </script>
-
-<body><span>Configuração da rede</span><br>
-  <div id="content">
-    <form action="gravarwifi">
-      <div>
-        <label for="txtnomerede">SSID</label><input required type="text" name="txtnomerede" id="ssid">
-        <label for="txtsenha">Password</label><input required type="password" name="txtsenha" id="pwd">
-        <label for="utctime" id="title">
-          <div>
-            <span>Fuso Horário</span>
-            <select name="utcsel" id="fuso">
-              <option value="-12">(GMT -12:00) Eniwetok, Kwajalein</option>
-              <option value="-11">(GMT -11:00) Midway Island, Samoa</option>
-              <option value="-10">(GMT -10:00) Hawaii</option>
-              <option value="-9">(GMT -9:00) Alaska</option>
-              <option value="-8">(GMT -8:00) Pacific Time (US &amp; Canada)</option>
-              <option value="-7">(GMT -7:00) Mountain Time (US &amp; Canada)</option>
-              <option value="-6">(GMT -6:00) Central Time (US &amp; Canada), Mexico City</option>
-              <option value="-5">(GMT -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</option>
-              <option value="-4">(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz</option>
-              <option value="-3">(GMT -3:00) Brazil, Buenos Aires, Georgetown</option>
-              <option value="-2">(GMT -2:00) Mid-Atlantic</option>
-              <option value="-1">(GMT -1:00) Azores, Cape Verde Islands</option>
-              <option value="0">(GMT) Western Europe Time, London, Lisbon, Casablanca</option>
-              <option value="1">(GMT +1:00) Brussels, Copenhagen, Madrid, Paris</option>
-              <option value="2">(GMT +2:00) Kaliningrad, South Africa</option>
-              <option value="3">(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
-              <option value="4">(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
-              <option value="5">(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
-              <option value="6">(GMT +6:00) Almaty, Dhaka, Colombo</option>
-              <option value="7">(GMT +7:00) Bangkok, Hanoi, Jakarta</option>
-              <option value="8">(GMT +8:00) Beijing, Perth, Singapore, Hong Kong</option>
-              <option value="9">(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
-              <option value="10">(GMT +10:00) Eastern Australia, Guam, Vladivostok</option>
-              <option value="11">(GMT +11:00) Magadan, Solomon Islands, New Caledonia</option>
-              <option value="12">(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
-              <option value="13">(GMT +13:00) Apia, Nukualofa</option>
-              <option value="14">(GMT +14:00) Line Islands, Tokelau</option>
-            </select>
-          </div>
-        </label>
-        <label for="dchp" id="check">IP&nbsp;&nbsp;
-          <input type="radio" name="ipfixo" onclick="isDHCP()" value="0" id="dhcp"> <span>Dinânico&nbsp;</span>
-          <input type="radio" name="ipfixo" onclick="isFixIp()" value="1" id="fixo"><span>Estático</span>
-        </label>
-        <input required pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-          type="text" name="txtip" id="ip">
-        <label for="txtmascara">Máscara</label><input required
-          pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" type="text"
-          name="txtmascara" id="msk">
-        <label for="txtgateway">Gateway</label><input required
-          pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" type="text"
-          name="txtgateway" id="gtw">
-        <button type="submit" formmethod="GET">Gravar</button>
-        <a href="reiniciar">Reiniciar</a>
-        <a href="reset">Configuração Fábrica</a>
-        <a href="executeupdate?s=kdi9e">Atualizar Firmware</a>
-      </div>
-    </form>
-  </div>
-</body>
-</html>
+</body></html>
 )===";
 
 const char webAbout[] PROGMEM = R"===(
