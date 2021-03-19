@@ -338,6 +338,10 @@ void CarregaEntradas()
   String sSensor1 = String(sensor1.read8(), BIN);
   String sSensor2 = String(sensor2.read8(), BIN);
 
+  (!DEBUG_ON) ?: Serial.println("CarregaEntradas()");
+  (!DEBUG_ON) ?: Serial.println(sSensor1);
+  (!DEBUG_ON) ?: Serial.println(sSensor2);
+
   while (sSensor1.length() < 8)
   {
     sSensor1 = '0' + sSensor1;
@@ -348,11 +352,18 @@ void CarregaEntradas()
     sSensor2 = '0' + sSensor2;
   }
 
+  (!DEBUG_ON) ?: Serial.println("CarregaEntradas()");
+  (!DEBUG_ON) ?: Serial.println(sSensor1);
+  (!DEBUG_ON) ?: Serial.println(sSensor2);
+
   int posicaoSensor;
 
   for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
   {
     Sensores[posicaoSensor] = sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor);
+
+    (!DEBUG_ON) ?: Serial.println(Sensores[posicaoSensor]);
+
     if (sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor) == "0")
     {
       estadoAtual[posicaoSensor] = HIGH;
@@ -368,7 +379,7 @@ void CarregaEntradas()
   for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
   {
     Sensores[posicaoSensor + 8] = sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor);
-
+    (!DEBUG_ON) ?: Serial.println(Sensores[posicaoSensor + 8]);
     if (sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor) == "0")
     {
       estadoAtual[posicaoSensor + 8] = HIGH;

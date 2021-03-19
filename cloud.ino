@@ -26,7 +26,7 @@ void cloud1()
 
     //DynamicJsonBuffer jsonBuffer(payload.length());
     //JsonObject &root = jsonBuffer.parseObject(payload);
-    Serial.println(payload.length());
+    (!DEBUG_ON) ?: Serial.println(payload.length());
 
     DynamicJsonDocument root(payload.length() * 2);
     auto error = deserializeJson(root, payload);
@@ -141,6 +141,8 @@ void sendCloud()
   dataPost = dataPost + "\"sinal\": \"" + String(rssi) + "\"";
   dataPost = dataPost + " }";
 
+  (!DEBUG_ON) ?: Serial.println(dataPost);
+
   WiFiClient cliente;
   HTTPClient http;
   String payload;
@@ -164,8 +166,8 @@ void sendCloud()
     //(!DEBUG_ON) ?:   Serial.println("Payload: " + payload);
     //DynamicJsonBuffer jsonBuffer(payload.length());
     //JsonArray &array1 = jsonBuffer.parseArray(payload);
-    Serial.println(payload);
-    Serial.println(payload.length());
+    (!DEBUG_ON) ?: Serial.println(payload);
+    (!DEBUG_ON) ?: Serial.println(payload.length());
     DynamicJsonDocument array1(payload.length() * 2);
     auto error = deserializeJson(array1, payload);
     //    JsonObject& root = jsonBuffer.parseObject(payload);

@@ -1,8 +1,5 @@
 void ConfigurarWebServer(void)
 {
-  //server.on("/", handleHtmlConfig);
-  // server.on(
-  //     "/", HTTP_GET, [](request) {}, handleHtmlConfig);
   server.on("/", handleHtmlConfig);
   server.on("/gravarwifi", gravawifi);
   server.on("/gravasenhawifi", gravasenhawifi);
@@ -15,8 +12,6 @@ void ConfigurarWebServer(void)
   server.on("/chipid", retornachip);
   server.on("/chipmac", RetornaChipMac);
   server.on("/chamaddns", chamaddns);
-  //server.on("/mesh", mesh);
-  //server.on("/consultamesh", meshconsulta);
   server.on("/consultaagenda", conagenda);
   server.on("/gravaragenda", gravaragenda);
   server.on("/atualizahora", atualizahora);
@@ -30,7 +25,6 @@ void ConfigurarWebServer(void)
   server.on("/versao", versao);
   server.on("/link", linkversao);
   server.on("/link", linkversaoBeta);
-  //server.on("/limpadevice", limpadevice);
   server.on("/ultimodisparo", ultimodisp);
   server.on("/buscaNotificar", buscaNotificar);
   server.on("/gravanot", gravanot);
@@ -51,8 +45,6 @@ void ConfigurarWebServer(void)
   server.on("/sendrf", sendRFp);
   server.on("/modelo", fmodelo);
   server.on("/memoria", fMemoria);
-  //server.on("/html", gravahtml);
-  //server.on("/teste", testes2);
   server.on("/api", api);
   server.on("/apiativo", apiativo);
   server.on("/apiconfig", apiconfig);
@@ -65,7 +57,6 @@ void ConfigurarWebServer(void)
   server.on("/downloadfile", File_Download);
   server.on("/deletefile", File_Delete);
   server.on("/asyncRestart", asyncESPRestart);
-
   server.on("/uploadfile", File_Upload);
   server.on(
       "/fupload", HTTP_POST, [](AsyncWebServerRequest *request) { request->send(200); }, onUpload);
@@ -105,20 +96,22 @@ void reiniciar(AsyncWebServerRequest *request)
     return request->requestAuthentication();
 
   String restartPage(FPSTR(webRestart));
-  restartPage.replace("#oldip#", DevSet.numberToIpString(DevSet.apWifiIP));
+  restartPage.replace("#oldip#", CurrentIP());
   restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-  //Serial.println(restartPage);
   request->send_P(200, "text/html", restartPage.c_str());
-  //request->send_P(200, "text/html", restartPage.c_str()); //, processor);
-  //request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + DevSet.numberToIpString(DevSet.wifiIP) + "\")</script></html>");
-  //ESP.restart();
 }
 
 void gravawifi(AsyncWebServerRequest *request)
 {
   if (!request->authenticate(www_username, www_password))
     return request->requestAuthentication();
-  request->send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
+  //request->send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
+
+  // String ip = WiFi.localIP().toString();
+  // if (ip == "(IP unset)")
+  //   ip = DevSet.numberToIpString(DevSet.apWifiIP);
+  request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
+
   String wifiSSID = request->arg("txtnomerede");
   String wifiPWD = request->arg("txtsenha");
   const char *wifiIP = request->arg("txtip").c_str();
@@ -137,10 +130,10 @@ void gravawifi(AsyncWebServerRequest *request)
 
 void redirectPage()
 {
-  String ip = WiFi.localIP().toString();
-  if (ip == "(IP unset)")
-    ip = DevSet.numberToIpString(DevSet.apWifiIP);
-  request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + ip + "\")</script></html>");
+  // String ip = WiFi.localIP().toString();
+  // if (ip == "(IP unset)")
+  //   ip = DevSet.numberToIpString(DevSet.apWifiIP);
+  request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
 }
 
 void asyncESPRestart(AsyncWebServerRequest *request)
@@ -160,12 +153,10 @@ void dirarquivos(AsyncWebServerRequest *request)
   while (dir.next())
   {
     arquivos += dir.fileName();
-    //(!DEBUG_ON) ?:   Serial.print(dir.fileName());
     if (dir.fileSize())
     {
       File f = dir.openFile("r");
       arquivos += f.size();
-      //(!DEBUG_ON) ?:   Serial.println(f.size());
       f.close();
     }
     arquivos += "<BR>";
@@ -230,70 +221,16 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
     {
       UploadFile.close(); // Close the file again
       request->send(200, "text/html", F("<h3>File was successfully uploaded</h3>"));
-      SPIFFS.end();
+      //  SPIFFS.end();
     }
-    else
-    {
-      //(!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
-      SPIFFS.end();
-    }
+    //else
+    //{
+    //  //(!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
+    //  SPIFFS.end();
+    //}
+    SPIFFS.end();
   }
 }
-// void handleFileUpload()
-// { // upload a new file to the Filing system
-
-//   (!DEBUG_ON) ?: Serial.println("File upload stage-3");
-//   HTTPUpload &uploadfile = server.upload();
-
-//   if (uploadfile.status == UPLOAD_FILE_START)
-//   {
-//     (!DEBUG_ON) ?: Serial.println("File upload stage-4");
-//     String filename = uploadfile.filename;
-//     if (!filename.startsWith("/"))
-//       filename = "/" + filename;
-//     (!DEBUG_ON) ?: Serial.print("Upload File Name: ");
-//     (!DEBUG_ON) ?: Serial.println(filename);
-
-//     SPIFFS.begin();
-
-//     SPIFFS.remove(filename); // Remove a previous version, otherwise data is appended the file again
-
-//     UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
-//   }
-//   else if (uploadfile.status == UPLOAD_FILE_WRITE)
-//   {
-//     (!DEBUG_ON) ?: Serial.println("File upload stage-5");
-//     if (UploadFile)
-//     {
-//       UploadFile.write(uploadfile.buf, uploadfile.currentSize); // Write the received bytes to the file
-//     }
-//   }
-//   else if (uploadfile.status == UPLOAD_FILE_END)
-//   {
-//     if (UploadFile) // If the file was successfully created
-//     {
-//       UploadFile.close(); // Close the file again
-//       (!DEBUG_ON) ?: Serial.print("Upload Size: ");
-//       (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
-
-//       //append_page_header();
-//       String webfile = "<h3>File was successfully uploaded</h3>";
-//       webfile += "<h2>Uploaded File Name: ";
-//       webfile += uploadfile.filename + "</h2>";
-//       webfile += "<h2>File Size: OK";
-//       //webfile += uploadfile.totalSize + "</h2><br>";
-//       //append_page_footer();
-//       request->send(200, "text/html", webfile);
-//       //
-//       SPIFFS.end();
-//     }
-//   }
-//   else
-//   {
-//     (!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
-//     SPIFFS.end();
-//   }
-// }
 
 void File_Delete(AsyncWebServerRequest *request)
 { // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
@@ -322,4 +259,12 @@ void File_Delete(AsyncWebServerRequest *request)
     request->send(200, "text/html", F("Não existe"));
   }
   SPIFFS.end();
+}
+
+String CurrentIP()
+{
+  String ip = WiFi.localIP().toString();
+  if (ip == "(IP unset)")
+    ip = DevSet.numberToIpString(DevSet.apWifiIP);
+  return ip;
 }

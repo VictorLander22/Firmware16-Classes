@@ -322,6 +322,7 @@ void gravasensor(AsyncWebServerRequest *request)
   {
     nomeSensores[Indice] = nomeS;
     Serial.println(nomeS);
+    Serial.println("Estou aqui 1");
   }
 
   if (Senha == "kdi9e")
@@ -345,9 +346,9 @@ void gravasensor(AsyncWebServerRequest *request)
     f.println(Valor);
     f.close();
 
-    File nf = SPIFFS.open("/nsensores.txt", "w");
-    nf.println(nomesG);
-    nf.close();
+    f = SPIFFS.open("/nsensores.txt", "w");
+    f.println(nomesG);
+    f.close();
 
     SPIFFS.end();
     //(!DEBUG_ON) ?: Serial.println("valor salvo na ag" + idAgenda + ".txt");
@@ -378,6 +379,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
     SensorAlterado = false;
     consultaSensor();
   }
+
   //String texto = consultaAgenda(i);
   String texto = Sensores[nsensor];
   texto.trim();
@@ -1057,8 +1059,8 @@ void consensor(AsyncWebServerRequest *request)
 
   if (Senha == "kdi9e")
   {
-    String texto = lerSensor();
-    request->send(200, "text/html", texto);
+    //String texto = lerSensor();
+    request->send(200, "text/html", lerSensor());
   }
   else
   {
