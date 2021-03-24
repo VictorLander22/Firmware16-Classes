@@ -50,8 +50,8 @@ void gravasms(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   request->send(200, "text/html", "ok");
   String Senha = request->arg("k");
   String Texto = request->arg("t");
@@ -110,8 +110,8 @@ void consultasms(AsyncWebServerRequest *request)
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String Senha = request->arg("k");
 

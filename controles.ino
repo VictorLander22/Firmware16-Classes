@@ -28,27 +28,25 @@ void parseBytes(const char *str, char sep, byte *bytes, int maxBytes, int base)
 
 void retornachip(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", vchipId);
 }
 
 void RetornaChipMac(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", gchipId);
 }
 
 void controle(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  //(!DEBUG_ON) ?:   Serial.println("user: " + String(www_username) + " - pass: " + String(www_password));
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate("a2VlcGluOmtlZXBpbg=="))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
 
@@ -87,10 +85,9 @@ void controle(AsyncWebServerRequest *request)
 
 void situacao(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String p = request->arg("p");
   String k = request->arg("k");
@@ -117,54 +114,15 @@ void situacao(AsyncWebServerRequest *request)
     }
 }
 
-// void grava()
-// {
-//   //const char* www_username = www_username2.c_str();
-//   //const char* www_password = www_password2.c_str();
-//   if (!request->authenticate(www_username, www_password))
-//     return request->requestAuthentication();
-
-//   SPIFFS.begin();
-//   File f = SPIFFS.open("/config.txt", "w");
-
-//   if (!f)
-//   {
-//     SPIFFS.format();
-//     File f = SPIFFS.open("/config.txt", "w");
-//   }
-
-//   f.println("IP: teste");
-
-//   f.close();
-//   SPIFFS.end();
-// }
-
 void valida(AsyncWebServerRequest *request)
 {
 
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   //request->send(200, "text/html", "16");
   request->send(200, "text/html", "16|2|16|" + vchipId + "|");
 }
-
-// void ler()
-// {
-//   //const char* www_username = www_username2.c_str();
-//   //const char* www_password = www_password2.c_str();
-//   if (!request->authenticate(www_username, www_password))
-//     return request->requestAuthentication();
-
-//   SPIFFS.begin();
-//   File f = SPIFFS.open("/config.txt", "r");
-//   String texto = f.readStringUntil('\n');
-//   request->send(200, "text/html", texto);
-//   f.close();
-//   SPIFFS.end();
-// }
 
 void handleNotFound(AsyncWebServerRequest *request)
 {

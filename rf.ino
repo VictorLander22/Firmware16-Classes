@@ -7,10 +7,9 @@ void configRF()
 
 void getRF(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
   tamanhoRF = -1;
@@ -20,10 +19,9 @@ void getRF(AsyncWebServerRequest *request)
 
 void habRF(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   //enReadRF = true;
   request->send(200, "text/html", "ok");
@@ -31,10 +29,9 @@ void habRF(AsyncWebServerRequest *request)
 
 void gravarf(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   request->send(200, "text/html", "ok");
 
   SensorRFAlterado = true;
@@ -592,10 +589,9 @@ void consultaSensorRF()
 
 void ultimodisprf(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String Senha = request->arg("k");
 
@@ -607,10 +603,9 @@ void ultimodisprf(AsyncWebServerRequest *request)
 
 void sendRFp(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   request->send(200, "text/html", "ok");
   unsigned long Valor = strtoul(request->arg("c").c_str(), NULL, 10);
   unsigned long _tamanhorf = strtoul(request->arg("t").c_str(), NULL, 10);

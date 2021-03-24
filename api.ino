@@ -5,8 +5,8 @@ void api(AsyncWebServerRequest *request)
 
   if (!newMqttMsg)
   {
-    if (!request->authenticate(www_username, www_password))
-      return request->requestAuthentication();
+    // if (!request->authenticate(www_username, www_password))
+    //   return request->requestAuthentication();
     isPost = true;
     vPassApi = request->arg("pw");
     vPassApi.toLowerCase();
@@ -362,8 +362,8 @@ void api(AsyncWebServerRequest *request)
 
       if (isPost)
       {
-        if (!request->authenticate(www_username, www_password))
-          return request->requestAuthentication();
+        // if (!request->authenticate(www_username, www_password))
+        //   return request->requestAuthentication();
         executeupdateBeta(request);
       }
       else
@@ -379,8 +379,8 @@ void api(AsyncWebServerRequest *request)
 
 void apiativo(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   if (AlowApi == true)
   {
@@ -394,8 +394,8 @@ void apiativo(AsyncWebServerRequest *request)
 
 void apiconfig(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   if (request->arg("s") == Senha)
   {
@@ -414,8 +414,8 @@ void apiconfig(AsyncWebServerRequest *request)
 void alterasenhapi(AsyncWebServerRequest *request)
 {
 
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   if (request->arg("s") == Senha)
   {

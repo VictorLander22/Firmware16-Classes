@@ -99,8 +99,8 @@ void getAvalibleNetwork()
 
 void gravasenhawifi(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   if (request->arg("s") == Senha)
   {
@@ -135,8 +135,8 @@ void gravasenhawifi(AsyncWebServerRequest *request)
 void gravasenhahttp(AsyncWebServerRequest *request)
 {
   //args - [s=senha padrao] [u=new http user] [v=new http pwd] [ua=old http user] [a=old http pwd]
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   if (request->arg("s") == Senha)
   {

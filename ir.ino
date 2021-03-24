@@ -321,10 +321,8 @@ void dumpCode(decode_results *results)
 
 void getIR(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", String(tamanho) + "|" + String(Modelo) + "|" + codigoIR + "*");
   tamanho = -1;
@@ -333,10 +331,9 @@ void getIR(AsyncWebServerRequest *request)
 
 void sendir(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
 
@@ -744,10 +741,9 @@ uint16_t converteRAW(String codig, String codig2, int tam)
 
 void habir(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   request->send(200, "text/html", "ok");
   irrecv.resume();
   irrecv.resume();

@@ -1,9 +1,8 @@
 void chamaddns(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String sIP = request->arg("ip");
   String Senha = request->arg("s");

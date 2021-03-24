@@ -397,8 +397,8 @@ void verificaAgenda()
 
 void atualizahora(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   uint32_t vHora = request->arg("h").toInt();
   String Senha = request->arg("k");
@@ -509,8 +509,8 @@ void consultaAgenda2()
 void conagenda(AsyncWebServerRequest *request)
 {
 
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   //int idAgenda = request->arg("ag").toInt();
   String Senha = request->arg("k");
@@ -530,8 +530,8 @@ void conagenda(AsyncWebServerRequest *request)
 void gravaragenda(AsyncWebServerRequest *request)
 {
 
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
 

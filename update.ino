@@ -1,7 +1,7 @@
 void executeupdate(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
   shouldUpdate = 1;
@@ -9,8 +9,8 @@ void executeupdate(AsyncWebServerRequest *request)
 
 void executeupdateBeta(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
   shouldUpdate = 2;
@@ -57,24 +57,24 @@ void ExecuteUpdate()
 
 void versao(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", Placa_Version);
 }
 
 void linkversao(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
 }
 
 void linkversaoBeta(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
 }

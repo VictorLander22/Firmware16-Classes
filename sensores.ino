@@ -280,10 +280,9 @@ void sendDataToFirebase(String MSG, int numSen, String vTag)
 
 void lersensores(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String sSensor1 = String(sensor1.read8(), BIN);
   String sSensor2 = String(sensor2.read8(), BIN);
@@ -303,10 +302,9 @@ void lersensores(AsyncWebServerRequest *request)
 
 void gravasensor(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
 
@@ -1050,16 +1048,12 @@ String lerSensor()
 
 void consensor(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
-
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
   {
-    //String texto = lerSensor();
     request->send(200, "text/html", lerSensor());
   }
   else
@@ -1070,15 +1064,13 @@ void consensor(AsyncWebServerRequest *request)
 
 void gravadevice(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   request->send(200, "text/html", "ok");
   String Valor = request->arg("d");
-  String Senha = request->arg("k");
+  //String Senha = ;
 
-  if (Senha == "kdi9e")
+  if (request->arg("k") == "kdi9e")
   {
     SPIFFS.begin();
     File f = SPIFFS.open("/device.txt", "w");
@@ -1100,56 +1092,27 @@ void gravadevice(AsyncWebServerRequest *request)
 
 void buscadevice(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
-
-  String Senha = request->arg("k");
-
-  if (Senha == "kdi9e")
+  if (request->arg("k") == "kdi9e")
   {
     SPIFFS.begin();
     File f = SPIFFS.open("/device.txt", "r");
-
-    String valorDevice = f.readStringUntil('*');
-
+    if (!f)
+    {
+      request->send(200, "text/html", "");
+    }
+    else
+    {
+      String valorDevice = f.readStringUntil('*');
+      request->send(200, "text/html", valorDevice);
+    }
     f.close();
     SPIFFS.end();
-    request->send(200, "text/html", valorDevice);
   }
 }
 
-/*
-void limpadevice() 
-{
-    SPIFFS.begin();   
-    //File f = SPIFFS.open("/device.txt", "w");
-    SPIFFS.remove("/device.txt");  
-    //if (!f) {
-    //  SPIFFS.format();
-    //  File f = SPIFFS.open("/device.txt", "w");
-    //}
-
-    //f.println("");    
-
-    //f.close();
-    SPIFFS.end();
-
-    request->send(200, "text/html", "OK");    
-}
-*/
-
 void ultimodisp(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
-
-  String Senha = request->arg("k");
-
-  if (Senha == "kdi9e")
+  if (request->arg("k") == "kdi9e")
   {
     request->send(200, "text/html", ultimoDisparo);
   }
@@ -1159,23 +1122,24 @@ void retornaNotificar()
 {
   SPIFFS.begin();
   File f = SPIFFS.open("/notific.txt", "r");
+  if (f)
+  {
+    String valor = f.readStringUntil('*');
+    if (valor == "true")
+      notificar = true;
+    else
+      notificar = false;
+  }
 
-  String valor = f.readStringUntil('*');
-
-  if (valor == "true")
-    notificar = true;
-  else
-    notificar = false;
   f.close();
   SPIFFS.end();
 }
 
 void buscaNotificar(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String Senha = request->arg("k");
 
@@ -1191,10 +1155,9 @@ void buscaNotificar(AsyncWebServerRequest *request)
 
 void gravanot(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   request->send(200, "text/html", "ok");
   String Valor = request->arg("v");
   String Senha = request->arg("k");
@@ -1203,12 +1166,6 @@ void gravanot(AsyncWebServerRequest *request)
   {
     SPIFFS.begin();
     File f = SPIFFS.open("/notific.txt", "w");
-
-    // if (!f)
-    // {
-    //   SPIFFS.format();
-    //   File f = SPIFFS.open("/notific.txt", "w");
-    // }
 
     f.println(Valor);
 

@@ -62,6 +62,7 @@ void ConfigurarWebServer(void)
       "/fupload", HTTP_POST, [](AsyncWebServerRequest *request) { request->send(200); }, onUpload);
 
   server.on("/teste", cloud);
+
   server.onNotFound(handleNotFound);
   server.begin();
 
@@ -70,8 +71,8 @@ void ConfigurarWebServer(void)
 
 void handleHtmlConfig(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String defaultPage(FPSTR(webDefaultPage));
   defaultPage.replace("#ipfixo#", "true");
@@ -92,8 +93,8 @@ void about(AsyncWebServerRequest *request)
 
 void reiniciar(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String restartPage(FPSTR(webRestart));
   restartPage.replace("#oldip#", CurrentIP());
@@ -103,8 +104,8 @@ void reiniciar(AsyncWebServerRequest *request)
 
 void gravawifi(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   //request->send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
 
   // String ip = WiFi.localIP().toString();
@@ -145,8 +146,8 @@ void asyncESPRestart(AsyncWebServerRequest *request)
 void dirarquivos(AsyncWebServerRequest *request)
 {
   String arquivos = "";
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
   SPIFFS.begin();
   (!DEBUG_ON) ?: Serial.println(F("Consultar sistema de arquivos"));
   Dir dir = SPIFFS.openDir("/");
@@ -171,8 +172,8 @@ void dirarquivos(AsyncWebServerRequest *request)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void File_Download(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String path = request->arg("f");
 
@@ -235,8 +236,8 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
 void File_Delete(AsyncWebServerRequest *request)
 { // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
 
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   String path = request->arg("f");
 

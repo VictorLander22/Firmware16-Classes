@@ -105,8 +105,8 @@ void convertConfig()
 
 void wifireset(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "ESP resetado");
   DevSet.factoryReset();
@@ -164,8 +164,8 @@ RtcDateTime carregaHora()
 void valorwifi(AsyncWebServerRequest *request)
 {
 
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   int32_t rssi;
   rssi = WiFi.RSSI();
@@ -175,10 +175,8 @@ void valorwifi(AsyncWebServerRequest *request)
 
 void fmodelo(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "2");
 }
@@ -217,10 +215,8 @@ void Memoria()
 
 void fMemoria(AsyncWebServerRequest *request)
 {
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   request->send(200, "text/html", "ok");
 
@@ -263,8 +259,8 @@ void lerConfiguracao()
 
 void GravaCloud(AsyncWebServerRequest *request)
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
 
   if (request->arg("s") == Senha)
   {
