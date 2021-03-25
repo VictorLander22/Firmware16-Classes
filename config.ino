@@ -167,10 +167,10 @@ void valorwifi(AsyncWebServerRequest *request)
   // if (!request->authenticate(www_username, www_password))
   //   return request->requestAuthentication();
 
-  int32_t rssi;
-  rssi = WiFi.RSSI();
+  // int32_t rssi;
+  // rssi = WiFi.RSSI();
 
-  request->send(200, "text/html", String(rssi));
+  request->send(200, "text/html", String(getRSSI()));
 }
 
 void fmodelo(AsyncWebServerRequest *request)

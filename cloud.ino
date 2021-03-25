@@ -98,8 +98,8 @@ void sendCloud()
     sChip2 = '0' + sChip2;
   }
 
-  int32_t rssi;
-  rssi = WiFi.RSSI();
+  // int32_t rssi;
+  // rssi = WiFi.RSSI();
 
   String dataPost = "";
   dataPost = "{";
@@ -138,7 +138,7 @@ void sendCloud()
   dataPost = dataPost + "\"ED16\": \"" + retornaValorCloud(sSensor2[0]) + "\",";
   dataPost = dataPost + "\"ip\": \"" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "\",";
   dataPost = dataPost + "\"notificacao\": \"" + String(notificar) + "\",";
-  dataPost = dataPost + "\"sinal\": \"" + String(rssi) + "\"";
+  dataPost = dataPost + "\"sinal\": \"" + String(getRSSI()) + "\"";
   dataPost = dataPost + " }";
 
   (!DEBUG_ON) ?: Serial.println(dataPost);

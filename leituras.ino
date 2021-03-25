@@ -258,11 +258,11 @@ void leituraUDP()
             valorSensores[posicaoSensor + 8] = sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor);
           }
 
-          int32_t rssi;
-          rssi = WiFi.RSSI();
+          // int32_t rssi;
+          // rssi = WiFi.RSSI();
           char replyPacekt[255] = "";
           String valSensores = sSensor1 + sSensor2;
-          valSensores = "2934d04" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + rssi + "*";
+          valSensores = "2934d04" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + getRSSI() + "*";
           valSensores.toCharArray(replyPacekt, 255);
           //retorna udp
 

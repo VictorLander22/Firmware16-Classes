@@ -41,7 +41,7 @@ void LoopLedStatus()
     {
       millisWifiLed = millisAtual + 2000;
     }
-    rssi = WiFi.RSSI();
+    rssi = getRSSI();
     //(!DEBUG_ON) ?:   Serial.println(String(rssi));
 
     if (rssi >= -65)
@@ -161,4 +161,11 @@ void CheckSPIFFS()
 
   f.close();
   SPIFFS.end();
+}
+
+int32_t getRSSI()
+{
+  int32_t rssi;
+  (WiFi.getMode() == WIFI_STA) ? rssi = WiFi.RSSI() : rssi = -45;
+  return rssi;
 }
