@@ -54,7 +54,8 @@ void setup(void)
   DevSet.verifyEEPROM();
   convertConfig();
   DevSet.getDeviceSettings();
-  DevSet.showVariables();
+  if (DEBUG_ON)
+    DevSet.showVariables();
 
   www_username = DevSet.httpUser.c_str();
   www_password = DevSet.httpPwd.c_str();

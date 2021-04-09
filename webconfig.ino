@@ -126,7 +126,8 @@ void gravawifi(AsyncWebServerRequest *request)
   DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
   DevSet.setWifi();
   (!DEBUG_ON) ?: Serial.println(F("New WIFI Settings"));
-  DevSet.showVariables();
+  if (DEBUG_ON)
+    DevSet.showVariables();
 }
 
 void redirectPage()

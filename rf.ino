@@ -544,9 +544,11 @@ boolean verificaSensoresRF()
 
 void consultaSensorRF()
 {
+  String texto = "";
   SPIFFS.begin();
   File f = SPIFFS.open("/rf.txt", "r");
-  String texto = f.readStringUntil('*');
+  if (f)
+    texto = f.readStringUntil('*');
   texto += '*';
   (!DEBUG_ON) ?: Serial.println(texto);
   f.close();

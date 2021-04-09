@@ -14,15 +14,8 @@ void agenda()
 
 void verificaArquivos()
 {
-
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "w");
-
-  // if (!f)
-  // {
-  //   SPIFFS.format();
-  //   File f = SPIFFS.open("/agenda.txt", "w");
-  // }
   f.close();
   SPIFFS.end();
 }
@@ -428,48 +421,23 @@ void atualizahora(AsyncWebServerRequest *request)
 
 String consultaAgenda(int id)
 {
-  /*
-  SPIFFS.begin();
-  File f = SPIFFS.open("/ag"+String(id)+".txt", "r");
-  String texto = f.readStringUntil('*');
-  f.close();
-  SPIFFS.end();  
-
-  //(!DEBUG_ON) ?:   Serial.println("consultando agenda " + String(id));
-  //(!DEBUG_ON) ?:   Serial.println(texto);
-
-  return texto;
-*/
+  String texto = "";
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "r");
-  String texto = f.readStringUntil('*');
+  if (f)
+    texto = f.readStringUntil('*');
   f.close();
   SPIFFS.end();
-
-  //(!DEBUG_ON) ?:   Serial.println("consultando agenda " + String(id));
-  //(!DEBUG_ON) ?:   Serial.println(texto);
-
   return texto;
 }
 
 void consultaAgenda2()
 {
-  /*
-  SPIFFS.begin();
-  for (int i = 1; i <= 6; i++) {
-    Agendas[i-1] = "";   
-    File f = SPIFFS.open("/ag"+String(i)+".txt", "r");
-    Agendas[i-1] = f.readStringUntil('*');
-    f.close();
-
-  //(!DEBUG_ON) ?:   Serial.println("consultando agenda " + String(id));
-  //(!DEBUG_ON) ?:   Serial.println(texto);
-  }
-  SPIFFS.end();  
-  */
+  String texto = "";
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "r");
-  String texto = f.readStringUntil('*');
+  if (f)
+    texto = f.readStringUntil('*');
   texto += '*';
   f.close();
   SPIFFS.end();
@@ -544,41 +512,22 @@ void gravaragenda(AsyncWebServerRequest *request)
   {
     SPIFFS.begin();
     File f = SPIFFS.open("/agenda.txt", "w");
-
-    // if (!f)
-    // {
-    //   SPIFFS.format();
-    //   File f = SPIFFS.open("/agenda.txt", "w");
-    // }
-
     f.println(Valor);
     f.close();
     SPIFFS.end();
-    //(!DEBUG_ON) ?:   Serial.println("valor salvo na ag"+idAgenda+".txt");
-    //(!DEBUG_ON) ?:   Serial.println(Valor);
+    ;
   }
 }
 
 void gravaragenda2()
 {
   String texto = "";
-
   texto += Agendas[0] + Agendas[1] + Agendas[2] + Agendas[3] + Agendas[4] + Agendas[5] + '*';
   SPIFFS.begin();
   File f = SPIFFS.open("/agenda.txt", "w");
-
-  // if (!f)
-  // {
-  //   SPIFFS.format();
-  //   File f = SPIFFS.open("/agenda.txt", "w");
-  // }
-
   f.println(texto);
   f.close();
   SPIFFS.end();
-
-  //(!DEBUG_ON) ?:   Serial.println("valor salvo agenda");
-  //(!DEBUG_ON) ?:   Serial.println(texto);
 }
 
 #define countof(a) (sizeof(a) / sizeof(a[0]))

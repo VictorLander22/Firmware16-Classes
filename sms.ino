@@ -1,13 +1,18 @@
 void sendSMS(int numSensor)
 {
   WiFiClient cliente;
+  String Texto = "";
+  String Numeros = "";
+
   SPIFFS.begin();
   File fTexto = SPIFFS.open("/sms_text.txt", "r");
-  String Texto = fTexto.readStringUntil('*');
+  if (fTexto)
+    Texto = fTexto.readStringUntil('*');
   fTexto.close();
 
   fTexto = SPIFFS.open("/sms_numb.txt", "r");
-  String Numeros = fTexto.readStringUntil('*');
+  if (fTexto)
+    Numeros = fTexto.readStringUntil('*');
   fTexto.close();
   SPIFFS.end();
 
@@ -112,7 +117,8 @@ void consultasms(AsyncWebServerRequest *request)
   //const char* www_password = www_password2.c_str();
   // if (!request->authenticate(www_username, www_password))
   //   return request->requestAuthentication();
-
+  String Texto = "";
+  String Numeros = "";
   String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
@@ -120,11 +126,13 @@ void consultasms(AsyncWebServerRequest *request)
     SPIFFS.begin();
 
     File fTexto = SPIFFS.open("/sms_text.txt", "r");
-    String Texto = fTexto.readStringUntil('*');
+    if (fTexto)
+      Texto = fTexto.readStringUntil('*');
     fTexto.close();
 
     fTexto = SPIFFS.open("/sms_numb.txt", "r");
-    String Numeros = fTexto.readStringUntil('*');
+    if (fTexto)
+      Numeros = fTexto.readStringUntil('*');
     fTexto.close();
 
     SPIFFS.end();
@@ -141,14 +149,19 @@ void consultasms(AsyncWebServerRequest *request)
 
 String consultasms2()
 {
+  String Texto = "";
+  String Numeros = "";
+
   SPIFFS.begin();
 
   File fTexto = SPIFFS.open("/sms_text.txt", "r");
-  String Texto = fTexto.readStringUntil('*');
+  if (fTexto)
+    Texto = fTexto.readStringUntil('*');
   fTexto.close();
 
   fTexto = SPIFFS.open("/sms_numb.txt", "r");
-  String Numeros = fTexto.readStringUntil('*');
+  if (fTexto)
+    Numeros = fTexto.readStringUntil('*');
   fTexto.close();
 
   SPIFFS.end();

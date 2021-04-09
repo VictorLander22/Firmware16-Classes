@@ -1,9 +1,10 @@
 void trataDevice(String (&Devices)[20])
 {
+  String valorDevice = "";
   SPIFFS.begin();
   File f = SPIFFS.open("/device.txt", "r");
-
-  String valorDevice = f.readStringUntil('*');
+  if (f)
+    String valorDevice = f.readStringUntil('*');
   //(!DEBUG_ON) ?:   Serial.println(valorDevice);
   f.close();
   SPIFFS.end();
@@ -965,15 +966,20 @@ boolean verificaSensores(int nsensor, String vsAtual)
 
 void consultaSensor()
 {
+
+  String texto = "";
+  String nomeS = "";
   SPIFFS.begin();
 
   File f = SPIFFS.open("/sensores.txt", "r");
-  String texto = f.readStringUntil('*');
+  if (f)
+    texto = f.readStringUntil('*');
   texto += '*';
   f.close();
 
   f = SPIFFS.open("/nsensores.txt", "r");
-  String nomeS = f.readStringUntil('*');
+  if (f)
+    nomeS = f.readStringUntil('*');
   nomeS += '*';
   f.close();
 

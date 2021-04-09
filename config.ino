@@ -183,9 +183,11 @@ void fmodelo(AsyncWebServerRequest *request)
 
 String lerMemoria()
 {
+  String texto = "";
   SPIFFS.begin();
   File f = SPIFFS.open("/memoria.txt", "r");
-  String texto = f.readStringUntil('|');
+  if (f)
+    texto = f.readStringUntil('|');
 
   f.close();
   SPIFFS.end();
@@ -272,7 +274,8 @@ void GravaCloud(AsyncWebServerRequest *request)
 
       bitWrite(DevSet.mode, 1, usaCloud);
       DevSet.setMode();
-      DevSet.showVariables();
+      if (DEBUG_ON)
+        DevSet.showVariables();
     }
     else
     {

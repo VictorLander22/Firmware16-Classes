@@ -32,5 +32,6 @@ void FreeMemory(String functionName)
 void mostarEEProm(AsyncWebServerRequest *request)
 {
   DevSet.getDeviceSettings();
-  DevSet.showVariables();
+  if (DEBUG_ON)
+    DevSet.showVariables();
 }
