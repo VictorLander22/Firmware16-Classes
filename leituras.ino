@@ -111,7 +111,7 @@ void leituraUDP()
         {
           if (LePorta(Porta.toInt()) == HIGH)
           {
-            request->send(200, "text/html", "true");
+            //request->send(200, "text/html", "true");
 
             Tipo = "R";
             funcao = "true";
@@ -127,7 +127,7 @@ void leituraUDP()
           }
           else
           {
-            request->send(200, "text/html", "false");
+            //request->send(200, "text/html", "false");
 
             Tipo = "R";
             funcao = "false";
@@ -146,11 +146,11 @@ void leituraUDP()
         {
           if (funcao == "true")
           {
-            request->send(200, "text/html", "true");
+            //request->send(200, "text/html", "true");
           }
           else
           {
-            request->send(200, "text/html", "false");
+            //request->send(200, "text/html", "false");
           }
         }
         else if (Tipo == "S")
@@ -170,42 +170,42 @@ void leituraUDP()
               sSensor2 = '0' + sSensor2;
             }
 
-            request->send(200, "text/html", sSensor1 + sSensor2);
+            //request->send(200, "text/html", sSensor1 + sSensor2);
           }
           else
           {
-            request->send(200, "text/html", ultimoDisparo);
+            //request->send(200, "text/html", ultimoDisparo);
           }
         }
         else if (Tipo == "N")
         {
-          request->send(200, "text/html", String(notificar));
+          //request->send(200, "text/html", String(notificar));
         }
         else if (Tipo == "A")
         {
-          request->send(200, "text/html", "ok");
+          //request->send(200, "text/html", "ok");
           gravasensor2(Texto);
         }
         else if (Tipo == "B")
         {
-          request->send(200, "text/html", "ok");
-          String Texto = request->arg("j");
-          String Telef = request->arg("b");
+          //request->send(200, "text/html", "ok");
+          String Texto = ""; //request->arg("j");
+          String Telef = ""; //request->arg("b");
           gravasms2(Texto, Telef);
         }
         else if (Tipo == "D")
         {
-          request->send(200, "text/html", consultasms2());
+          //request->send(200, "text/html", consultasms2());
         }
         else if (Tipo == "F")
         {
-          request->send(200, "text/html", "ok");
-          String Valor = request->arg("j");
+          //request->send(200, "text/html", "ok");
+          String Valor = ""; //request->arg("j");
           gravanot2(Valor);
         }
         else if (Tipo == "X") // retorno udp valor do dimmer
         {
-          request->send(200, "text/html", funcao);
+          //request->send(200, "text/html", funcao);
         }
         else if (Tipo == "I")
         {
@@ -290,6 +290,6 @@ void leituraUDP()
   }
   else if (packetSize == 2)
   {
-    request->send(200, "text/html", "ok");
+    //request->send(200, "text/html", "ok");
   }
 }

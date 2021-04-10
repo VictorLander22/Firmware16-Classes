@@ -141,7 +141,7 @@ void sendCloud()
   dataPost = dataPost + "\"sinal\": \"" + String(getRSSI()) + "\"";
   dataPost = dataPost + " }";
 
-  (!DEBUG_ON) ?: Serial.println(dataPost);
+  //(!DEBUG_ON) ?: Serial.println(dataPost);
 
   WiFiClient cliente;
   HTTPClient http;
