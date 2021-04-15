@@ -143,9 +143,9 @@ void loop(void)
 
     MqttLoop();
 
-    ResetSaidasPulsadas();
-
     MillisResets();
+
+    ResetSaidasPulsadas();
 
     ExecuteUpdate();
 

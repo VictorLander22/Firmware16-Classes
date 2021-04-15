@@ -2,6 +2,7 @@
 #define espMemory 52696
 #define ntpServer "pool.ntp.org"
 #define numDNSquery 5
+#define pulseTime 600
 
 #include <user_interface.h>
 //#ifndef UNIT_TEST

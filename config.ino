@@ -138,8 +138,9 @@ void IniciaRTC()
     Rtc.set_time();
 
     memRtc.setBateryMemStatus();
-    memRtc.outValues = 255 << 8 | 255;
-    memRtc.setOutputs();
+    //memRtc.outValues = 255 << 8 | 255;
+    //memRtc.setOutputs();
+    SaveOutputs();
 
     (!DEBUG_ON) ?: Serial.println(F("Set Date"));
     Rtc.get_time();
@@ -196,52 +197,33 @@ String lerMemoria()
 
 void Memoria()
 {
-  String retorno = "1"; //lerMemoria();
-  if (retorno == "1")
+  if (TipoMemoria)
   {
-
     (!DEBUG_ON) ?: Serial.printf("\nSet outputs ON: %d", memRtc.getOutputs());
     (!DEBUG_ON) ?: Serial.println();
     uint16_t outputs = memRtc.getOutputs();
     chip1.write8(outputs & 0xff);
     chip2.write8((outputs >> 8) & 0xff);
   }
-  else
-  {
-    (!DEBUG_ON) ?: Serial.printf("\nSet outputs OFF");
-    (!DEBUG_ON) ?: Serial.println();
-    chip1.write8(255);
-    chip2.write8(255);
-  }
 }
 
 void fMemoria(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", "ok");
 
   if (request->arg("m") == "1")
   {
-    bitWrite(DevSet.mode, 0, true);
+    bitWrite(DevSet.mode, 3, true);
+    SaveOutputs();
   }
   else
   {
-    bitWrite(DevSet.mode, 0, false);
-  }
-  DevSet.setMode();
-
-  if bitRead (DevSet.mode, 0)
-  {
-    memRtc.outValues = chip2.read8() << 8 | chip1.read8();
-    memRtc.setOutputs();
-  }
-  else
-  {
+    bitWrite(DevSet.mode, 3, false);
     memRtc.outValues = 255 << 8 | 255;
     memRtc.setOutputs();
   }
+
+  DevSet.setMode();
 }
 
 void lerConfiguracao()

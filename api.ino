@@ -155,8 +155,9 @@ void api(AsyncWebServerRequest *request)
 
               chip1.write8(255);
               chip2.write8(255);
-              memRtc.outValues = 255 << 8 | 255;
-              memRtc.setOutputs();
+              //memRtc.outValues = 255 << 8 | 255;
+              //memRtc.setOutputs();
+              SaveOutputs();
 
               if (isPost)
                 request->send(200, "text/html", "1");
@@ -173,8 +174,9 @@ void api(AsyncWebServerRequest *request)
             {
               chip1.write8(0);
               chip2.write8(0);
-              memRtc.outValues = 0;
-              memRtc.setOutputs();
+              //memRtc.outValues = 0;
+              //memRtc.setOutputs();
+              SaveOutputs();
 
               if (isPost)
                 request->send(200, "text/html", "1");
@@ -189,8 +191,9 @@ void api(AsyncWebServerRequest *request)
                 g_pulsoHabilita[pulsoApiCount] = true;
               }
 
-              memRtc.outValues = 255 << 8 | 255; //Se for pulso sempre vai escrever off para ram
-              memRtc.setOutputs();
+              //memRtc.outValues = 255 << 8 | 255; //Se for pulso sempre vai escrever off para ram
+              //memRtc.setOutputs();
+              SaveOutputs();
 
               if (isPost)
                 request->send(200, "text/html", "1");

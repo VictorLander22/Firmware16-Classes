@@ -4,7 +4,7 @@ void ResetSaidasPulsadas()
   {
     if (g_pulsoHabilita[iPorta])
     {
-      if (millisAtual >= g_tempoInicioPulso[iPorta] + 500)
+      if (millisAtual >= g_tempoInicioPulso[iPorta] + pulseTime)
       {
         g_pulsoHabilita[iPorta] = false;
         if (iPorta < 8)
@@ -15,6 +15,9 @@ void ResetSaidasPulsadas()
         {
           chip2.write(iPorta - 8, HIGH);
         }
+        //memRtc.outValues = chip2.read8() << 8 | chip1.read8();
+        //memRtc.setOutputs();
+        SaveOutputs();
       }
     }
   }
@@ -168,4 +171,13 @@ int32_t getRSSI()
   int32_t rssi;
   (WiFi.getMode() == WIFI_STA) ? rssi = WiFi.RSSI() : rssi = -45;
   return rssi;
+}
+
+void SaveOutputs()
+{
+  if (TipoMemoria)
+  {
+    memRtc.outValues = chip2.read8() << 8 | chip1.read8();
+    memRtc.setOutputs();
+  }
 }

@@ -28,26 +28,16 @@ void parseBytes(const char *str, char sep, byte *bytes, int maxBytes, int base)
 
 void retornachip(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", vchipId);
 }
 
 void RetornaChipMac(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", gchipId);
 }
 
 void controle(AsyncWebServerRequest *request)
 {
-
-  // if (!request->authenticate("a2VlcGluOmtlZXBpbg=="))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", "ok");
 
   String p = request->arg("p");
@@ -57,49 +47,31 @@ void controle(AsyncWebServerRequest *request)
   int porta = p.toInt();
   int Tipoa = request->arg("pu").toInt();
 
-  //  if (porta == 1)
-  //  {
-  //porta = 14;
-  //}
   porta = retornaPorta(porta);
   if (porta >= 0)
-    //pinMode(porta, OUTPUT);
 
     if (k == "kdi9e")
     {
 
       if (f == "true")
       {
-        //digitalWrite(porta, 1);
         LigaDesliga(porta, HIGH, Nome, Tipoa);
-        (!DEBUG_ON) ?: Serial.println("led 1 ligado - Porta: " + String(porta));
       }
       else
       {
-        //digitalWrite(porta, 0);
         LigaDesliga(porta, LOW, Nome, Tipoa);
-        (!DEBUG_ON) ?: Serial.println("led 1 desligado - Porta: " + String(porta));
       }
     }
 }
 
 void situacao(AsyncWebServerRequest *request)
 {
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   String p = request->arg("p");
   String k = request->arg("k");
   int porta = p.toInt();
 
-  //  if (porta == 1)
-  //  {
-  //    porta = 14;
-  //  }
   porta = retornaPorta(porta);
   if (porta >= 0)
-    //pinMode(porta, OUTPUT);
 
     if (k == "kdi9e")
     {
@@ -116,11 +88,6 @@ void situacao(AsyncWebServerRequest *request)
 
 void valida(AsyncWebServerRequest *request)
 {
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
-  //request->send(200, "text/html", "16");
   request->send(200, "text/html", "16|2|16|" + vchipId + "|");
 }
 
@@ -139,24 +106,12 @@ void handleNotFound(AsyncWebServerRequest *request)
     message += " " + request->argName(i) + ": " + request->arg(i) + "\n";
   }
   request->send(404, "text/plain", message);
-  // digitalWrite(led, 0);
-
-  //ESP.restart();
 }
 
 void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
 {
   if (Tipo != 1) //normal
   {
-    // if (vFuncao == HIGH)
-    // {
-    //   vFuncao = LOW;
-    // }
-    // else
-    // {
-    //   vFuncao = HIGH;
-    // }
-
     if (vPorta < 8)
     {
       chip1.write(vPorta, !vFuncao);
@@ -165,12 +120,7 @@ void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
     {
       chip2.write(vPorta - 8, !vFuncao);
     }
-
-    if (TipoMemoria)
-    {
-      memRtc.outValues = chip2.read8() << 8 | chip1.read8();
-      memRtc.setOutputs();
-    }
+    SaveOutputs();
   }
   else //pulsado
   {
@@ -232,28 +182,9 @@ int LeSensor(int vPorta)
 
 void ApagaPortas()
 {
-  for (int i = 1; i <= 16; i++)
-  {
-    if (i <= 8)
-    {
-      chip1.write(retornaPorta(i), HIGH);
-      chip2.write(retornaPorta(i), HIGH);
-    }
-    else
-    {
-      chip2.write(retornaPorta(i) - 8, HIGH);
-    }
-  }
-
-  for (int i = 0; i < 8; i++)
-  {
-    chip3.write(i, LOW);
-  }
-
-  chip3.write(4, HIGH);
-  chip3.write(5, HIGH);
-  chip3.write(6, HIGH);
-  chip3.write(7, HIGH);
+  chip1.write8(255);
+  chip2.write8(255);
+  chip3.write8(240);
 }
 
 void Inverte(int vPorta)
@@ -266,30 +197,8 @@ void Inverte(int vPorta)
   {
     chip2.write(vPorta - 8, !chip2.read(vPorta - 8));
   }
-
-  if (TipoMemoria)
-  {
-    memRtc.outValues = chip2.read8() << 8 | chip1.read8();
-    memRtc.setOutputs();
-    //Rtc.chip1 = String(chip1.read8()).toInt();
-    //Rtc.chip2 = String(chip2.read8()).toInt();
-    //Rtc.set_chip1();
-    //Rtc.set_chip2();
-  }
+  SaveOutputs();
 }
-/*
-// Return RSSI or 0 if target SSID not found
-int32_t getRSSI(const char* target_ssid) {
-  byte available_networks = WiFi.scanNetworks();
-
-  for (int network = 0; network < available_networks; network++) {
-    if (strcmp(WiFi.SSID(network), target_ssid) == 0) {
-      return WiFi.RSSI(network);
-    }
-  }
-  return 0;
-}
-*/
 
 void CarregaEntradas()
 {
