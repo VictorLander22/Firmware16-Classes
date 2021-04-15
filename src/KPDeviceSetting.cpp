@@ -12,7 +12,7 @@ void KPDeviceSettingClass::_factoryDefault()
   String chipMac = WiFi.macAddress();
   chipMac.replace(":", "");
 
-  mode = 13; //b0:AllowApi=1, b1:UsaCloud=1, b2:wifiPadrao=1, b3:TipoMemoria=1
+  mode = 15; //b0:AllowApi=1, b1:UsaCloud=1, b2:wifiPadrao=1, b3:TipoMemoria=1
 
   apiPwd = "25d55ad283aa400af464c76d713c07ad"; ///Limit 35 bytes;
 

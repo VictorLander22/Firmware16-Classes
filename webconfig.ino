@@ -71,8 +71,8 @@ void ConfigurarWebServer(void)
 
 void handleHtmlConfig(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  if (!request->authenticate(www_username, www_password))
+    return request->requestAuthentication();
 
   String defaultPage(FPSTR(webDefaultPage));
   defaultPage.replace("#ipfixo#", "true");
@@ -93,9 +93,6 @@ void about(AsyncWebServerRequest *request)
 
 void reiniciar(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   String restartPage(FPSTR(webRestart));
   restartPage.replace("#oldip#", CurrentIP());
   restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
@@ -104,13 +101,6 @@ void reiniciar(AsyncWebServerRequest *request)
 
 void gravawifi(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-  //request->send(200, "text/html", F("<html>ok<meta charset='UTF-8'><script>history.back()</script></html>"));
-
-  // String ip = WiFi.localIP().toString();
-  // if (ip == "(IP unset)")
-  //   ip = DevSet.numberToIpString(DevSet.apWifiIP);
   request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
 
   String wifiSSID = request->arg("txtnomerede");
@@ -125,16 +115,15 @@ void gravawifi(AsyncWebServerRequest *request)
   DevSet.wifiMSK = DevSet.ipStringToNumber(wifiMSK);
   DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
   DevSet.setWifi();
-  (!DEBUG_ON) ?: Serial.println(F("New WIFI Settings"));
   if (DEBUG_ON)
+  {
+    Serial.println(F("New WIFI Settings"));
     DevSet.showVariables();
+  }
 }
 
 void redirectPage()
 {
-  // String ip = WiFi.localIP().toString();
-  // if (ip == "(IP unset)")
-  //   ip = DevSet.numberToIpString(DevSet.apWifiIP);
   request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
 }
 
@@ -147,8 +136,6 @@ void asyncESPRestart(AsyncWebServerRequest *request)
 void dirarquivos(AsyncWebServerRequest *request)
 {
   String arquivos = "";
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
   SPIFFS.begin();
   (!DEBUG_ON) ?: Serial.println(F("Consultar sistema de arquivos"));
   Dir dir = SPIFFS.openDir("/");
@@ -173,9 +160,6 @@ void dirarquivos(AsyncWebServerRequest *request)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void File_Download(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   String path = request->arg("f");
 
   if (!path.startsWith("/"))
@@ -225,11 +209,7 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
       request->send(200, "text/html", F("<h3>File was successfully uploaded</h3>"));
       //  SPIFFS.end();
     }
-    //else
-    //{
-    //  //(!DEBUG_ON) ?: Serial.println(uploadfile.totalSize);
-    //  SPIFFS.end();
-    //}
+
     SPIFFS.end();
   }
 }

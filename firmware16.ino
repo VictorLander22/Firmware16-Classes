@@ -149,7 +149,7 @@ void loop(void)
 
     ExecuteUpdate();
 
-    cloud1();
+    //cloud1();
 
     FreeMemory(F("loop()"));
   }
