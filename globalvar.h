@@ -41,7 +41,7 @@
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
 
-const bool DEBUG_ON = false;
+const bool DEBUG_ON = true;
 
 String vchipId;
 String gchipId;
@@ -155,7 +155,7 @@ char incomingPacket[255];
 IPAddress local_IP(192, 168, 4, 1);
 IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
-
+IPAddress broadcastIP;
 //ESP8266WebServer server(80);
 AsyncWebServer server(80);
 AsyncWebServerRequest *request;

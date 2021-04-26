@@ -201,6 +201,7 @@ void wifiConectSTA()
 
   IpDispositivo = ip;
   local_IP = ip;
+  setBroadcastIP(DevSet.wifiMSK);
 
   WiFi.config(ip, gateway, subnet, DNS1, DNS2);
   WiFi.begin(ssid, password);
@@ -246,6 +247,7 @@ void wifiConectAP()
   (!DEBUG_ON) ?: Serial.print("Soft-AP IP address = ");
   (!DEBUG_ON) ?: Serial.println(WiFi.softAPIP());
   IpDispositivo = local_IP;
+  setBroadcastIP(DevSet.apWifiMSK);
 
   chip3.write(LedWifiConnected, HIGH);
   chip3.write(LedWifiHI, HIGH);
@@ -322,4 +324,15 @@ void UpdatePing()
         addrs[i].fromString(ips[i]);
     }
   }
+}
+
+void setBroadcastIP(uint32_t _currentSubnet)
+{
+  IPAddress _broadcastIP(_currentSubnet);
+  for (int i = 0; i <= 3; i++)
+  {
+    Serial.println(_broadcastIP[i]);
+    (_broadcastIP[i] == 0) ? _broadcastIP[i] = 255 : _broadcastIP[i] = IpDispositivo[i];
+  }
+  broadcastIP = _broadcastIP;
 }

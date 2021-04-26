@@ -112,40 +112,13 @@ void trataSensores()
     String valSensores = sSensor1 + sSensor2;
     valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + getRSSI() + "*";
     valSensores.toCharArray(replyPacekt, 255);
-    //(!DEBUG_ON) ?:   Serial.println(valSensores);
-    IPAddress broadcastIp = IpDispositivo;
-    broadcastIp[0] = 255;
-    broadcastIp[1] = 255;
-    broadcastIp[2] = 255;
-    broadcastIp[3] = 255;
 
-    if (IpDispositivo[0] == 192 && IpDispositivo[1] == 168 && IpDispositivo[2] == 4)
-    {
-      broadcastIp[0] = 192;
-      broadcastIp[1] = 168;
-      broadcastIp[2] = 4;
-      broadcastIp[3] = 255;
-    }
+    // (!DEBUG_ON) ?: Serial.println(broadcastIP[0]);
+    // (!DEBUG_ON) ?: Serial.println(broadcastIP[1]);
+    // (!DEBUG_ON) ?: Serial.println(broadcastIP[2]);
+    // (!DEBUG_ON) ?: Serial.println(broadcastIP[3]);
 
-    if (subnet[0] == 255 && subnet[1] == 255 && subnet[2] == 255)
-    {
-      broadcastIp[0] = IpDispositivo[0];
-      broadcastIp[1] = IpDispositivo[1];
-      broadcastIp[2] = IpDispositivo[2];
-      broadcastIp[3] = 255;
-    }
-
-    if (subnet[0] == 255 && subnet[1] == 255 && subnet[2] == 0)
-    {
-      broadcastIp[0] = IpDispositivo[0];
-      broadcastIp[1] = IpDispositivo[1];
-      broadcastIp[2] = 255;
-      broadcastIp[3] = 255;
-    }
-
-    //(!DEBUG_ON) ?:   Serial.println(Contador);
-    //    Contador = 0;
-    Udp.beginPacketMulticast(broadcastIp, localUdpPort, IpDispositivo);
+    Udp.beginPacketMulticast(broadcastIP, localUdpPort, IpDispositivo);
     //Udp.beginPacket(broadcastIp, localUdpPort);
     Udp.write(replyPacekt);
     Udp.endPacket();
