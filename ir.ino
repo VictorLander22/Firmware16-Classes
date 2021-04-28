@@ -16,95 +16,97 @@ void configIR()
 //
 void encoding(decode_results *results)
 {
+  (!DEBUG_ON) ?: Serial.print("\nDecode type: ");
+  (!DEBUG_ON) ?: Serial.println(results->decode_type);
   switch (results->decode_type)
   {
   default:
   case UNKNOWN:
-    (!DEBUG_ON) ?: Serial.print("UNKNOWN");
+    //(!DEBUG_ON) ?: Serial.print("UNKNOWN");
     Modelo = 0;
     break;
   case NEC:
-    (!DEBUG_ON) ?: Serial.print("NEC");
+    //(!DEBUG_ON) ?: Serial.print("NEC");
     Modelo = 1;
     break;
   case NEC_LIKE:
-    (!DEBUG_ON) ?: Serial.print("NEC (non-strict)");
+    //(!DEBUG_ON) ?: Serial.print("NEC (non-strict)");
     Modelo = 2;
     break;
   case SONY:
-    (!DEBUG_ON) ?: Serial.print("SONY");
+    //(!DEBUG_ON) ?: Serial.print("SONY");
     Modelo = 3;
     break;
   case RC5:
-    (!DEBUG_ON) ?: Serial.print("RC5");
+    //(!DEBUG_ON) ?: Serial.print("RC5");
     Modelo = 4;
     break;
   case RC5X:
-    (!DEBUG_ON) ?: Serial.print("RC5X");
+    //(!DEBUG_ON) ?: Serial.print("RC5X");
     Modelo = 5;
     break;
   case RC6:
-    (!DEBUG_ON) ?: Serial.print("RC6");
+    //(!DEBUG_ON) ?: Serial.print("RC6");
     Modelo = 6;
     break;
   case RCMM:
-    (!DEBUG_ON) ?: Serial.print("RCMM");
+    //(!DEBUG_ON) ?: Serial.print("RCMM");
     Modelo = 7;
     break;
   case DISH:
-    (!DEBUG_ON) ?: Serial.print("DISH");
+    //(!DEBUG_ON) ?: Serial.print("DISH");
     Modelo = 8;
     break;
   case SHARP:
-    (!DEBUG_ON) ?: Serial.print("SHARP");
+    //(!DEBUG_ON) ?: Serial.print("SHARP");
     Modelo = 9;
     break;
   case JVC:
-    (!DEBUG_ON) ?: Serial.print("JVC");
+    //(!DEBUG_ON) ?: Serial.print("JVC");
     Modelo = 10;
     break;
   case SANYO:
-    (!DEBUG_ON) ?: Serial.print("SANYO");
+    //(!DEBUG_ON) ?: Serial.print("SANYO");
     Modelo = 11;
     break;
   case SANYO_LC7461:
-    (!DEBUG_ON) ?: Serial.print("SANYO_LC7461");
+    //(!DEBUG_ON) ?: Serial.print("SANYO_LC7461");
     Modelo = 12;
     break;
   case MITSUBISHI:
-    (!DEBUG_ON) ?: Serial.print("MITSUBISHI");
+    //(!DEBUG_ON) ?: Serial.print("MITSUBISHI");
     Modelo = 13;
     break;
   case SAMSUNG:
-    (!DEBUG_ON) ?: Serial.print("SAMSUNG");
+    //(!DEBUG_ON) ?: Serial.print("SAMSUNG");
     Modelo = 14;
     break;
   case LG:
-    (!DEBUG_ON) ?: Serial.print("LG");
+    //(!DEBUG_ON) ?: Serial.print("LG");
     Modelo = 15;
     break;
   case WHYNTER:
-    (!DEBUG_ON) ?: Serial.print("WHYNTER");
+    //(!DEBUG_ON) ?: Serial.print("WHYNTER");
     Modelo = 16;
     break;
   case AIWA_RC_T501:
-    (!DEBUG_ON) ?: Serial.print("AIWA_RC_T501");
+    //(!DEBUG_ON) ?: Serial.print("AIWA_RC_T501");
     Modelo = 17;
     break;
   case PANASONIC:
-    (!DEBUG_ON) ?: Serial.print("PANASONIC");
+    //(!DEBUG_ON) ?: Serial.print("PANASONIC");
     Modelo = 18;
     break;
   case DENON:
-    (!DEBUG_ON) ?: Serial.print("DENON");
+    //(!DEBUG_ON) ?: Serial.print("DENON");
     Modelo = 19;
     break;
   case COOLIX:
-    (!DEBUG_ON) ?: Serial.print("COOLIX");
+    //(!DEBUG_ON) ?: Serial.print("COOLIX");
     Modelo = 20;
     break;
   case GREE:
-    (!DEBUG_ON) ?: Serial.print("GREE");
+    //(!DEBUG_ON) ?: Serial.print("GREE");
     Modelo = 21;
     break;
   }
@@ -123,15 +125,15 @@ void dumpInfo(decode_results *results)
                                  CAPTURE_BUFFER_SIZE);
 
   // Show Encoding standard
-  (!DEBUG_ON) ?: Serial.print("Encoding  : ");
+  //(!DEBUG_ON) ?: Serial.print("Encoding  : ");
   encoding(results);
-  (!DEBUG_ON) ?: Serial.println("");
+  //(!DEBUG_ON) ?: Serial.println("");
 
   // Show Code & length
-  (!DEBUG_ON) ?: Serial.print("Code      : ");
-  serialPrintUint64(results->value, 16);
+  //(!DEBUG_ON) ?: Serial.print("Code      : ");
+  serialPrintUint64(results->value, 10);
 
-  (!DEBUG_ON) ?: Serial.print(" (");
+  //(!DEBUG_ON) ?: Serial.print(" (");
   //if (Modelo == 3 || Modelo == 1 || Modelo == 14)
   if (Modelo > 0 && Modelo < 22)
   {
@@ -232,10 +234,10 @@ void dumpCode(decode_results *results)
   //(!DEBUG_ON) ?:   Serial.println(codigoIR2);
 
   // Comment
-  (!DEBUG_ON) ?: Serial.print("  // ");
+  //(!DEBUG_ON) ?: Serial.print("  // ");
   encoding(results);
-  (!DEBUG_ON) ?: Serial.print(" ");
-  serialPrintUint64(results->value, HEX);
+  //(!DEBUG_ON) ?: Serial.print(" ");
+  //serialPrintUint64(results->value, HEX);
   //if (Modelo == 3 || Modelo == 1 || Modelo == 14){
   if (Modelo >= 0 && Modelo < 22)
   {
@@ -261,7 +263,7 @@ void dumpCode(decode_results *results)
   */
     codigoIR = "" + uint64ToString(results->value, 16) + "";
   }
-  // (!DEBUG_ON) ?:   Serial.println("CodigoIR: " + codigoIR) ;
+  (!DEBUG_ON) ?: Serial.println("CodigoIR: " + codigoIR);
 
   (!DEBUG_ON) ?: Serial.println("Modelo: " + String(Modelo));
   if (Modelo == 0)
@@ -346,7 +348,7 @@ void sendir(AsyncWebServerRequest *request)
   String Codigo = request->arg("c");
   String Codigo2 = request->arg("c2");
 
-  //  (!DEBUG_ON) ?:   Serial.println(Codigo);
+  //(!DEBUG_ON) ?: Serial.println(Codigo);
   //rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
   //uint16_t rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
 
@@ -538,11 +540,16 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
     }
     else if (vModelo == 21) // GREE
     {
+
       Codigo.toUpperCase();
       uint64_t vCodigo = getUInt64fromHex(Codigo.c_str());
-      irsend.sendGree(vCodigo, QtdeBit);
-      (!DEBUG_ON) ?: Serial.println("");
+
+      //serialPrintUint64(vCodigo,10);
+
+      //irsend.sendGree(0x0309205000200080, 64);
+      (!DEBUG_ON) ?: Serial.println("é nesta rotina");
       (!DEBUG_ON) ?: Serial.println("GREE");
+      (!DEBUG_ON) ?: Serial.println(Codigo);
       (!DEBUG_ON) ?: Serial.println("Qtde Bit");
       (!DEBUG_ON) ?: Serial.println(QtdeBit);
     }
@@ -844,9 +851,9 @@ void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
 
   IRsend irsend(16, true);
   irsend.begin();
-  ///    (!DEBUG_ON) ?:   Serial.println("Modelo: " + String(vModelo));
-  ///    (!DEBUG_ON) ?:   Serial.println("tamanho");
-  ///    (!DEBUG_ON) ?:   Serial.println(String(QtdeBit));
+  (!DEBUG_ON) ?: Serial.println("Modelo: " + String(vModelo));
+  (!DEBUG_ON) ?: Serial.println("tamanho");
+  (!DEBUG_ON) ?: Serial.println(String(QtdeBit));
   if (vModelo == 1) // NEC
   {
     vCod = "0x" + vCod;

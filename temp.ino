@@ -25,7 +25,7 @@ void FreeMemory(String functionName)
     Serial.print((espMemory - ESP.getFreeHeap()));
     Serial.print(F(" Livre: "));
     Serial.println(ESP.getFreeHeap());
-    millisFreeMemory = millis() + 5000;
+    millisFreeMemory = millis() + 10000;
   }
 }
 
@@ -35,3 +35,22 @@ void mostarEEProm(AsyncWebServerRequest *request)
   if (DEBUG_ON)
     DevSet.showVariables();
 }
+
+// void print_uint64_t(uint64_t num)
+// {
+
+//   char rev[128];
+//   char *p = rev + 1;
+
+//   while (num > 0)
+//   {
+//     *p++ = '0' + (num % 10);
+//     num /= 10;
+//   }
+//   p--;
+//   /*Print the number which is now in reverse*/
+//   while (p > rev)
+//   {
+//     Serial.print(*p--);
+//   }
+// }
