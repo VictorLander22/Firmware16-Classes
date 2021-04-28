@@ -189,6 +189,12 @@ String codigoIR = "-1";
 IRsend irsend(16);
 boolean enReadIR = false;
 int Modelo = 0;
+boolean irEnSend = false;
+uint16_t irNumBits;
+uint16_t irModel;
+uint8_t irPort;
+String irData = "";
+
 //   IR   //
 
 //   RF  //

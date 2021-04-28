@@ -276,52 +276,60 @@ void api(AsyncWebServerRequest *request)
     else if (action == "i") // Infravermelho
     {
       (!DEBUG_ON) ?: Serial.println("api infravermelho");
-      String vModel1 = request->arg("m1");
-      String vModel2 = request->arg("m2");
-      String vModel3 = request->arg("m3");
-      String vModel4 = request->arg("m4");
-      String Comando1 = request->arg("c1");
-      String Comando2 = request->arg("c2");
-      String Comando3 = request->arg("c3");
-      String Comando4 = request->arg("c4");
-      String Comando12 = request->arg("c12");
-      String Comando22 = request->arg("c22");
-      String Comando32 = request->arg("c32");
-      String Comando42 = request->arg("c42");
-      String qtde1 = request->arg("qt1");
-      String qtde2 = request->arg("qt2");
-      String qtde3 = request->arg("qt3");
-      String qtde4 = request->arg("qt4");
-      String vp1 = request->arg("p1");
-      String vp2 = request->arg("p2");
-      String vp3 = request->arg("p3");
-      String vp4 = request->arg("p4");
+      // String vModel1 = request->arg("m1");
+      // String vModel2 = request->arg("m2");
+      // String vModel3 = request->arg("m3");
+      // String vModel4 = request->arg("m4");
+      // String Comando1 = request->arg("c1");
+      // String Comando2 = request->arg("c2");
+      // String Comando3 = request->arg("c3");
+      // String Comando4 = request->arg("c4");
+      // String Comando12 = request->arg("c12");
+      // String Comando22 = request->arg("c22");
+      // String Comando32 = request->arg("c32");
+      // String Comando42 = request->arg("c42");
+      // String qtde1 = request->arg("qt1");
+      // String qtde2 = request->arg("qt2");
+      // String qtde3 = request->arg("qt3");
+      // String qtde4 = request->arg("qt4");
+      // String vp1 = request->arg("p1");
+      // String vp2 = request->arg("p2");
+      // String vp3 = request->arg("p3");
+      // String vp4 = request->arg("p4");
 
-      if (vModel1 != "")
-      {
-        sendirAPI(qtde1.toInt(), vModel1.toInt(), Comando1, Comando12, vp1.toInt());
-        (!DEBUG_ON) ?: Serial.println("1");
-      }
+      // if (vModel1 != "")
+      // {
+      //   sendirAPI(qtde1.toInt(), vModel1.toInt(), Comando1, Comando12, vp1.toInt());
+      //   (!DEBUG_ON) ?: Serial.println("1");
+      // }
 
-      if (vModel2 != "")
-      {
-        delay(300);
-        sendirAPI(qtde2.toInt(), vModel2.toInt(), Comando2, Comando22, vp2.toInt());
-        (!DEBUG_ON) ?: Serial.println("2");
-      }
+      // if (vModel2 != "")
+      // {
+      //   delay(300);
+      //   sendirAPI(qtde2.toInt(), vModel2.toInt(), Comando2, Comando22, vp2.toInt());
+      //   (!DEBUG_ON) ?: Serial.println("2");
+      // }
 
-      if (vModel3 != "")
-      {
-        delay(300);
-        sendirAPI(qtde3.toInt(), vModel3.toInt(), Comando3, Comando32, vp3.toInt());
-        (!DEBUG_ON) ?: Serial.println("3");
-      }
+      // if (vModel3 != "")
+      // {
+      //   delay(300);
+      //   sendirAPI(qtde3.toInt(), vModel3.toInt(), Comando3, Comando32, vp3.toInt());
+      //   (!DEBUG_ON) ?: Serial.println("3");
+      // }
 
-      if (vModel4 != "")
-      {
-        delay(300);
-        sendirAPI(qtde4.toInt(), vModel4.toInt(), Comando4, Comando42, vp4.toInt());
-      }
+      // if (vModel4 != "")
+      // {
+      //   delay(300);
+      //   sendirAPI(qtde4.toInt(), vModel4.toInt(), Comando4, Comando42, vp4.toInt());
+      // }
+      irNumBits = request->arg("qt1").toInt();
+      irModel = request->arg("m1").toInt();
+      irPort = request->arg("p1").toInt();
+      irData = request->arg("c1") + request->arg("c12");
+
+      irEnSend = true;
+      (!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
+
       if (isPost)
         request->send(200, "text/html", "1");
     }

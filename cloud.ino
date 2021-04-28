@@ -234,6 +234,15 @@ void sendCloud()
           {
             cenaPAtual++;
             sendIRCMD(acaoJson, "", qtdeJson.toInt(), portaJson.toInt(), modeloJson.toInt(), qtdeJson.toInt());
+
+            // irNumBits = qtdeJson.toInt();
+            // irModel = modeloJson.toInt();
+            // irPort = portaJson.toInt();
+            // irData = acaoJson;
+
+            // irEnSend = true;
+            //(!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
+
             lastCnTime = millisAtual;
             delay(300);
           }

@@ -340,29 +340,37 @@ void sendir(AsyncWebServerRequest *request)
   request->send(200, "text/html", "ok");
 
   String S = request->arg("s");
-  int QtdeBit = 12;
-  int PortaIRS = request->arg("p").toInt();
-  int vModelo = request->arg("m").toInt();
-  int q = request->arg("q").toInt();
+  // int QtdeBit = 12;
+  // int PortaIRS = request->arg("p").toInt();
+  // int vModelo = request->arg("m").toInt();
+  // int q = request->arg("q").toInt();
 
-  String Codigo = request->arg("c");
-  String Codigo2 = request->arg("c2");
+  // String Codigo = request->arg("c");
+  // String Codigo2 = request->arg("c2");
+
+  irNumBits = request->arg("q").toInt();
+  irModel = request->arg("m").toInt();
+  irPort = request->arg("p").toInt();
+  irData = request->arg("c") + request->arg("c2");
+  if (S == Senha)
+    irEnSend = true;
+  (!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
 
   //(!DEBUG_ON) ?: Serial.println(Codigo);
   //rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
   //uint16_t rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
 
-  (!DEBUG_ON) ?: Serial.println(Codigo + Codigo2);
+  // (!DEBUG_ON) ?: Serial.println(Codigo + Codigo2);
 
-  if (S == Senha && QtdeBit > 0)
-  {
-    sendIRCMD(Codigo, Codigo2, QtdeBit, PortaIRS, vModelo, q);
-    Codigo = "";
-    Codigo2 = "";
-    //PortaIRS = retornaPorIRS(PortaIRS);
+  // if (S == Senha && QtdeBit > 0)
+  // {
+  //   sendIRCMD(Codigo, Codigo2, QtdeBit, PortaIRS, vModelo, q);
+  //   Codigo = "";
+  //   Codigo2 = "";
+  //   //PortaIRS = retornaPorIRS(PortaIRS);
 
-    (!DEBUG_ON) ?: Serial.println("Enviado IR");
-  }
+  //   (!DEBUG_ON) ?: Serial.println("Enviado IR");
+  // }
 }
 
 void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vModelo, int q)
@@ -547,114 +555,133 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       //serialPrintUint64(vCodigo,10);
 
       //irsend.sendGree(0x0309205000200080, 64);
-      (!DEBUG_ON) ?: Serial.println("é nesta rotina");
-      (!DEBUG_ON) ?: Serial.println("GREE");
-      (!DEBUG_ON) ?: Serial.println(Codigo);
-      (!DEBUG_ON) ?: Serial.println("Qtde Bit");
-      (!DEBUG_ON) ?: Serial.println(QtdeBit);
+      irsend.sendGree(vCodigo, QtdeBit);
+      // (!DEBUG_ON) ?: Serial.println("é nesta rotina");
+      // (!DEBUG_ON) ?: Serial.println("GREE");
+      // (!DEBUG_ON) ?: Serial.println(Codigo);
+      // (!DEBUG_ON) ?: Serial.println("Qtde Bit");
+      // (!DEBUG_ON) ?: Serial.println(QtdeBit);
+    }
+    else if (vModelo == 23) // Raw
+    {
+      IRSendRaw((char *)Codigo.c_str(), QtdeBit);
     }
     else
     {
-      uint16_t rawData[QtdeBit];
-      for (int i = 0; i <= QtdeBit - 1; i++)
-      {
-        rawData[i] = 0;
-      }
-
-      int tam2 = 0;
-      String CodAtu = "";
-
+      String linhas = "";
       SPIFFS.begin();
       File rFile = SPIFFS.open("/ir_" + Codigo + ".cfg", "r");
-      int Qtde;
-      Qtde = 0;
-      Codigo = "";
-      while (rFile.available())
+      if (rFile.available())
       {
-        String linhas = rFile.readStringUntil('\n');
-        (!DEBUG_ON) ?: Serial.println("linhas: ");
+        linhas = rFile.readStringUntil('\n');
+        (!DEBUG_ON) ?: Serial.println(F("[rawData]"));
         (!DEBUG_ON) ?: Serial.print(linhas);
-
-        for (int i = 1; i <= linhas.length(); i++)
-        {
-          if (linhas[i] != ',' && linhas[i] != '}')
-          {
-            CodAtu += linhas[i];
-          }
-          else
-          {
-            rawData[tam2] = CodAtu.toInt();
-            //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
-            tam2++;
-            CodAtu = "";
-          }
-        }
-        Qtde++;
       }
-
       rFile.close();
       SPIFFS.end();
-      //converteRAW(Codigo, Codigo2, QtdeBit);
-      /*
-      Codigo += ",";
 
-      //(!DEBUG_ON) ?:   Serial.println("Codigo Recebido: " + codig);
+      IRSendRaw((char *)linhas.c_str(), QtdeBit);
 
-      for (int i = 1; i <= Codigo.length(); i++)
-      {
-        if (Codigo[i] != ',')
-        {
-          CodAtu += Codigo[i];
-        }
-        else
-        {
-          rawData[tam2] = CodAtu.toInt();
-          //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
-          tam2 ++;
-          CodAtu = "";
-        }
-      }
+      //       uint16_t rawData[QtdeBit];
+      //       for (int i = 0; i <= QtdeBit - 1; i++)
+      //       {
+      //         rawData[i] = 0;
+      //       }
 
-      CodAtu = "";
-      for (int i = 1; i <= Codigo2.length(); i++)
-      {
-        if (Codigo2[i] != ',')
-        {
-          CodAtu += Codigo2[i];
-        }
-        else
-        {
-          rawData[tam2] = CodAtu.toInt();
-          //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
-          tam2 ++;
-          CodAtu = "";
-        }
-      }
-   */
-      //      (!DEBUG_ON) ?:   Serial.println("Qtde: " + String(QtdeBit));
+      //       int tam2 = 0;
+      //       String CodAtu = "";
 
-      //      for (int i = 0; i <= QtdeBit-1; i++)
-      //      {
-      //        (!DEBUG_ON) ?:   Serial.println(String(rawData[i]));
-      //      }
+      //       SPIFFS.begin();
+      //       File rFile = SPIFFS.open("/ir_" + Codigo + ".cfg", "r");
+      //       int Qtde;
+      //       Qtde = 0;
+      //       Codigo = "";
+      //       while (rFile.available())
+      //       {
+      //         String linhas = rFile.readStringUntil('\n');
+      //         (!DEBUG_ON) ?: Serial.println("linhas: ");
+      //         (!DEBUG_ON) ?: Serial.print(linhas);
 
-      //#if SEND_RAW
-      irsend.sendRaw(rawData, QtdeBit, 38);
-      (!DEBUG_ON) ?: Serial.println("enviado...\n");
-      //#endif
+      //         for (int i = 1; i <= linhas.length(); i++)
+      //         {
+      //           if (linhas[i] != ',' && linhas[i] != '}')
+      //           {
+      //             CodAtu += linhas[i];
+      //           }
+      //           else
+      //           {
+      //             rawData[tam2] = CodAtu.toInt();
+      //             //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
+      //             tam2++;
+      //             CodAtu = "";
+      //           }
+      //         }
+      //         Qtde++;
+      //       }
 
-      /*
-      Codigo = "0x" + Codigo;
-      ///(!DEBUG_ON) ?:   Serial.println(Codigo);
-      unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
-      //uint64_t vCodigo2 = vCodigo;
-      //#if SEND_NEC
-        irsend.sendNEC(vCodigo, 32);      
-      //#endif
+      //       rFile.close();
+      //       SPIFFS.end();
+      //       //converteRAW(Codigo, Codigo2, QtdeBit);
+      //       /*
+      //       Codigo += ",";
 
-      (!DEBUG_ON) ?:   Serial.println("Envio IR: " + String(QtdeBit));
-      (!DEBUG_ON) ?:   Serial.println(String(vCodigo));
-*/
+      //       //(!DEBUG_ON) ?:   Serial.println("Codigo Recebido: " + codig);
+
+      //       for (int i = 1; i <= Codigo.length(); i++)
+      //       {
+      //         if (Codigo[i] != ',')
+      //         {
+      //           CodAtu += Codigo[i];
+      //         }
+      //         else
+      //         {
+      //           rawData[tam2] = CodAtu.toInt();
+      //           //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
+      //           tam2 ++;
+      //           CodAtu = "";
+      //         }
+      //       }
+
+      //       CodAtu = "";
+      //       for (int i = 1; i <= Codigo2.length(); i++)
+      //       {
+      //         if (Codigo2[i] != ',')
+      //         {
+      //           CodAtu += Codigo2[i];
+      //         }
+      //         else
+      //         {
+      //           rawData[tam2] = CodAtu.toInt();
+      //           //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
+      //           tam2 ++;
+      //           CodAtu = "";
+      //         }
+      //       }
+      //    */
+      //       //      (!DEBUG_ON) ?:   Serial.println("Qtde: " + String(QtdeBit));
+
+      //       //      for (int i = 0; i <= QtdeBit-1; i++)
+      //       //      {
+      //       //        (!DEBUG_ON) ?:   Serial.println(String(rawData[i]));
+      //       //      }
+
+      //       //#if SEND_RAW
+      //       irsend.sendRaw(rawData, QtdeBit, 38);
+      //       (!DEBUG_ON) ?: Serial.println("enviado...\n");
+      //       //#endif
+
+      //       /*
+      //       Codigo = "0x" + Codigo;
+      //       ///(!DEBUG_ON) ?:   Serial.println(Codigo);
+      //       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
+      //       //uint64_t vCodigo2 = vCodigo;
+      //       //#if SEND_NEC
+      //         irsend.sendNEC(vCodigo, 32);
+      //       //#endif
+
+      //       (!DEBUG_ON) ?:   Serial.println("Envio IR: " + String(QtdeBit));
+      //       (!DEBUG_ON) ?:   Serial.println(String(vCodigo));
+      // */
     }
 
     Codigo = "";
@@ -838,223 +865,247 @@ void configuraPortaIR(int PortIR2)
   }
 }
 
-void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
-{
-  int QtdeBit = vQt;
-  int PortaIRS = vPt;
-  int vModelo = vMd;
-  //PortaIRS = retornaPorIRS(PortaIRS);
-  configuraPortaIR(PortaIRS);
+// void sendirAPI(int vQt, int vMd, String vCod, String vCod2, int vPt)
+// {
+//   int QtdeBit = vQt;
+//   int PortaIRS = vPt;
+//   int vModelo = vMd;
+//   //PortaIRS = retornaPorIRS(PortaIRS);
+//   configuraPortaIR(PortaIRS);
 
-  //rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
-  //uint16_t rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
+//   //rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
+//   //uint16_t rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
 
-  IRsend irsend(16, true);
-  irsend.begin();
-  (!DEBUG_ON) ?: Serial.println("Modelo: " + String(vModelo));
-  (!DEBUG_ON) ?: Serial.println("tamanho");
-  (!DEBUG_ON) ?: Serial.println(String(QtdeBit));
-  if (vModelo == 1) // NEC
-  {
-    vCod = "0x" + vCod;
-    //    (!DEBUG_ON) ?:   Serial.println(vCod);
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    // uint64_t vCodigo2 = vCodigo;
-    //#if SEND_NEC
-    irsend.sendNEC(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 2) // NEC (non-strict)
-  {
-    vCod = "0x" + vCod;
-    ///(!DEBUG_ON) ?:   Serial.println(Codigo);
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //uint64_t vCodigo2 = vCodigo;
-    //#if SEND_NEC
-    irsend.sendNEC(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 3) //Sony
-  {
-    vCod = "0x" + vCod;
-    //(!DEBUG_ON) ?:   Serial.println(vCod);
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    // uint64_t vCodigo2 = vCodigo;
-    // #if SEND_SONY
-    irsend.sendSony(vCodigo, QtdeBit, 2);
-    // #endif
-  }
-  else if (vModelo == 4) //RC5
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    irsend.sendRC5(vCodigo, QtdeBit, 2);
-  }
-  else if (vModelo == 5) //RC5X
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    irsend.sendRC5(vCodigo, QtdeBit, 2);
-  }
-  else if (vModelo == 6) //RC6
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //#if SEND_RC6
-    irsend.sendRC6(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 7) // RCMM
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //#if SEND_RC6
-    irsend.sendRCMM(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 8) // DISH
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //#if SEND_RC6
-    irsend.sendDISH(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 9) // SHARP
-  {
-    vCod = "0x" + vCod;
-    (!DEBUG_ON) ?: Serial.println(vCod);
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //  uint64_t vCodigo2 = vCodigo;
-    //#if SEND_SHARP
-    irsend.sendSharp(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 10) // JVC
-  {
-    vCod = "0x" + vCod;
-    (!DEBUG_ON) ?: Serial.println(vCod);
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    // uint64_t vCodigo2 = vCodigo;
-    //#if SEND_JVC
-    irsend.sendJVC(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 13) // MITSUBISHI
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //#if SEND_RC6
-    irsend.sendMitsubishi(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 14) // SAMSUNG
-  {
-    vCod = "0x" + vCod;
-    (!DEBUG_ON) ?: Serial.println(vCod);
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //   uint64_t vCodigo2 = vCodigo;
-    //#if SEND_SAMSUNG
-    irsend.sendSAMSUNG(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 15) // LG
-  {
-    vCod = "0x" + vCod;
-    (!DEBUG_ON) ?: Serial.println(vCod);
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //    uint64_t vCodigo2 = vCodigo;
-    //#if SEND_LG
-    irsend.sendLG(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 16) // WHYNTER
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //#if SEND_RC6
-    irsend.sendWhynter(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 17) // AIWA
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //#if SEND_RC6
-    irsend.sendAiwaRCT501(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 19) // DENON
-  {
-    //Codigo = Codigo;
-    vCod.toUpperCase();
-    //irsend.sendDenon((long long unsigned)getUInt64fromHex(vCod.c_str()), QtdeBit);  //kDenon48Bits
-    uint64_t vCodigo = getUInt64fromHex(vCod.c_str());
-    irsend.sendDenon(vCodigo, QtdeBit); //kDenon48Bits
-                                        //      (!DEBUG_ON) ?:   Serial.println("DENON OK");
-  }
-  else if (vModelo == 20) // COOLIX
-  {
-    vCod = "0x" + vCod;
-    unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
-    //#if SEND_RC6
-    irsend.sendCOOLIX(vCodigo, QtdeBit);
-    //#endif
-  }
-  else if (vModelo == 21) // GREE
-  {
-    vCod.toUpperCase();
-    //irsend.sendGree((long long unsigned)getUInt64fromHex(vCod.c_str()), QtdeBit);
-    uint64_t vCodigo = getUInt64fromHex(vCod.c_str());
-    irsend.sendGree(vCodigo, QtdeBit);
-  }
-  else
-  {
-    uint16_t rawData[QtdeBit];
-    for (int i = 0; i <= QtdeBit - 1; i++)
-    {
-      rawData[i] = 0;
-    }
+//   IRsend irsend(16, true);
+//   irsend.begin();
+//   (!DEBUG_ON) ?: Serial.println("Modelo: " + String(vModelo));
+//   (!DEBUG_ON) ?: Serial.println("tamanho");
+//   (!DEBUG_ON) ?: Serial.println(String(QtdeBit));
+//   if (vModelo == 1) // NEC
+//   {
+//     vCod = "0x" + vCod;
+//     //    (!DEBUG_ON) ?:   Serial.println(vCod);
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     // uint64_t vCodigo2 = vCodigo;
+//     //#if SEND_NEC
+//     irsend.sendNEC(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 2) // NEC (non-strict)
+//   {
+//     vCod = "0x" + vCod;
+//     ///(!DEBUG_ON) ?:   Serial.println(Codigo);
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //uint64_t vCodigo2 = vCodigo;
+//     //#if SEND_NEC
+//     irsend.sendNEC(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 3) //Sony
+//   {
+//     vCod = "0x" + vCod;
+//     //(!DEBUG_ON) ?:   Serial.println(vCod);
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     // uint64_t vCodigo2 = vCodigo;
+//     // #if SEND_SONY
+//     irsend.sendSony(vCodigo, QtdeBit, 2);
+//     // #endif
+//   }
+//   else if (vModelo == 4) //RC5
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     irsend.sendRC5(vCodigo, QtdeBit, 2);
+//   }
+//   else if (vModelo == 5) //RC5X
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     irsend.sendRC5(vCodigo, QtdeBit, 2);
+//   }
+//   else if (vModelo == 6) //RC6
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //#if SEND_RC6
+//     irsend.sendRC6(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 7) // RCMM
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //#if SEND_RC6
+//     irsend.sendRCMM(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 8) // DISH
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //#if SEND_RC6
+//     irsend.sendDISH(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 9) // SHARP
+//   {
+//     vCod = "0x" + vCod;
+//     (!DEBUG_ON) ?: Serial.println(vCod);
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //  uint64_t vCodigo2 = vCodigo;
+//     //#if SEND_SHARP
+//     irsend.sendSharp(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 10) // JVC
+//   {
+//     vCod = "0x" + vCod;
+//     (!DEBUG_ON) ?: Serial.println(vCod);
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     // uint64_t vCodigo2 = vCodigo;
+//     //#if SEND_JVC
+//     irsend.sendJVC(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 13) // MITSUBISHI
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //#if SEND_RC6
+//     irsend.sendMitsubishi(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 14) // SAMSUNG
+//   {
+//     vCod = "0x" + vCod;
+//     (!DEBUG_ON) ?: Serial.println(vCod);
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //   uint64_t vCodigo2 = vCodigo;
+//     //#if SEND_SAMSUNG
+//     irsend.sendSAMSUNG(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 15) // LG
+//   {
+//     vCod = "0x" + vCod;
+//     (!DEBUG_ON) ?: Serial.println(vCod);
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //    uint64_t vCodigo2 = vCodigo;
+//     //#if SEND_LG
+//     irsend.sendLG(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 16) // WHYNTER
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //#if SEND_RC6
+//     irsend.sendWhynter(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 17) // AIWA
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //#if SEND_RC6
+//     irsend.sendAiwaRCT501(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 19) // DENON
+//   {
+//     //Codigo = Codigo;
+//     vCod.toUpperCase();
+//     //irsend.sendDenon((long long unsigned)getUInt64fromHex(vCod.c_str()), QtdeBit);  //kDenon48Bits
+//     uint64_t vCodigo = getUInt64fromHex(vCod.c_str());
+//     irsend.sendDenon(vCodigo, QtdeBit); //kDenon48Bits
+//                                         //      (!DEBUG_ON) ?:   Serial.println("DENON OK");
+//   }
+//   else if (vModelo == 20) // COOLIX
+//   {
+//     vCod = "0x" + vCod;
+//     unsigned long vCodigo = strtoul(vCod.c_str(), 0, 16) + strtoul(vCod2.c_str(), 0, 16);
+//     //#if SEND_RC6
+//     irsend.sendCOOLIX(vCodigo, QtdeBit);
+//     //#endif
+//   }
+//   else if (vModelo == 21) // GREE
+//   {
+//     vCod.toUpperCase();
+//     //irsend.sendGree((long long unsigned)getUInt64fromHex(vCod.c_str()), QtdeBit);
+//     uint64_t vCodigo = getUInt64fromHex(vCod.c_str());
+//     irsend.sendGree(vCodigo, QtdeBit);
+//   }
+//   else if (vModelo == 23) // Raw
+//   {
+//     char *str = (char *)vCod.c_str();
 
-    int tam2 = 0;
-    String CodAtu = "";
+//     const size_t bufferSize = irNumBits;
+//     uint16_t arr[bufferSize];
 
-    SPIFFS.begin();
-    File rFile = SPIFFS.open("/ir_" + vCod + ".cfg", "r");
-    int Qtde;
-    Qtde = 0;
-    while (rFile.available())
-    {
-      String linhas = rFile.readStringUntil('\n');
-      //(!DEBUG_ON) ?:   Serial.print(linhas);
+//     char *p = strtok(str, ",{} ");
+//     size_t index = 0;
 
-      for (int i = 1; i <= linhas.length(); i++)
-      {
-        if (linhas[i] != ',' && linhas[i] != '}')
-        {
-          CodAtu += linhas[i];
-        }
-        else
-        {
-          rawData[tam2] = CodAtu.toInt();
-          //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
-          tam2++;
-          CodAtu = "";
-        }
-      }
-      Qtde++;
-    }
+//     while (p != nullptr && index < bufferSize)
+//     {
+//       arr[index++] = atoi(p);
+//       p = strtok(NULL, ",{} ");
+//     }
 
-    rFile.close();
-    SPIFFS.end();
-    //#if SEND_RAW
-    irsend.sendRaw(rawData, QtdeBit, 38);
-    (!DEBUG_ON) ?: Serial.println("enviado");
-    //#endif
-  }
+//     for (size_t i = 0; i < index; i++)
+//     {
+//       Serial.print(i);
+//       Serial.print(":  ");
+//       Serial.println(arr[i]);
+//     }
+//     irsend.sendRaw(arr, bufferSize, 38);
+//   }
+//   else
+//   {
+//     uint16_t rawData[QtdeBit];
+//     for (int i = 0; i <= QtdeBit - 1; i++)
+//     {
+//       rawData[i] = 0;
+//     }
 
-  digitalWrite(16, LOW);
-}
+//     int tam2 = 0;
+//     String CodAtu = "";
+
+//     SPIFFS.begin();
+//     File rFile = SPIFFS.open("/ir_" + vCod + ".cfg", "r");
+//     int Qtde;
+//     Qtde = 0;
+//     while (rFile.available())
+//     {
+//       String linhas = rFile.readStringUntil('\n');
+//       //(!DEBUG_ON) ?:   Serial.print(linhas);
+
+//       for (int i = 1; i <= linhas.length(); i++)
+//       {
+//         if (linhas[i] != ',' && linhas[i] != '}')
+//         {
+//           CodAtu += linhas[i];
+//         }
+//         else
+//         {
+//           rawData[tam2] = CodAtu.toInt();
+//           //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
+//           tam2++;
+//           CodAtu = "";
+//         }
+//       }
+//       Qtde++;
+//     }
+
+//     rFile.close();
+//     SPIFFS.end();
+//     //#if SEND_RAW
+//     irsend.sendRaw(rawData, QtdeBit, 38);
+//     (!DEBUG_ON) ?: Serial.println("enviado");
+//     //#endif
+//   }
+
+//   digitalWrite(16, LOW);
+// }
 
 uint64_t getUInt64fromHex(char const *str)
 {
@@ -1097,6 +1148,8 @@ uint64_t getUInt64fromHex(char const *str)
 
 void LoopIR()
 {
+  AsyncIRSend();
+
   if (enReadIR)
   {
     if (irrecv.decode(&results))
@@ -1114,4 +1167,28 @@ void LoopIR()
       irrecv.resume();
     }
   }
+}
+
+void IRSendRaw(char *str, const size_t bufferSize)
+{
+  //char *str = (char *)Codigo.c_str();
+
+  //const size_t bufferSize = irNumBits;
+  uint16_t arr[bufferSize];
+
+  char *p = strtok(str, ",{} ");
+  size_t index = 0;
+
+  while (p != nullptr && index < bufferSize)
+  {
+    arr[index++] = atoi(p);
+    p = strtok(NULL, ",{} ");
+  }
+  // for (size_t i = 0; i < index; i++)
+  // {
+  //   (!DEBUG_ON) ?: Serial.print(i);
+  //   (!DEBUG_ON) ?: Serial.print(": ");
+  //   (!DEBUG_ON) ?: Serial.println(arr[i]);
+  // }
+  irsend.sendRaw(arr, bufferSize, 38);
 }

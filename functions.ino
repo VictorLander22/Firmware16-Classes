@@ -181,3 +181,15 @@ void SaveOutputs()
     memRtc.setOutputs();
   }
 }
+
+void AsyncIRSend()
+{
+  if (irEnSend)
+  {
+    //sendirCMDAPI(irNumBits, irModel, irData, "", irPort);
+    sendIRCMD(irData, "", irNumBits, irPort, irModel, irNumBits);
+    irEnSend = false;
+    irData = "";
+    (!DEBUG_ON) ?: Serial.println(F("...IR Enviado"));
+  }
+}
