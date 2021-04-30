@@ -70,7 +70,7 @@ void cloud1()
   // }
 }
 
-void sendCloud()
+void sendCloud(bool onlyNotify = false)
 {
   String sSensor1 = String(sensor1.read8(), BIN);
   String sSensor2 = String(sensor2.read8(), BIN);
@@ -161,7 +161,7 @@ void sendCloud()
   http.end();
   //(!DEBUG_ON) ?:   Serial.println(payload);
   //(!DEBUG_ON) ?: Serial.println("Cloud code: " + String(httpCode));
-  if (httpCode == 200 && payload != "[]")
+  if (httpCode == 200 && payload != "[]" && !onlyNotify)
   {
     //(!DEBUG_ON) ?:   Serial.println("Payload: " + payload);
     //DynamicJsonBuffer jsonBuffer(payload.length());
@@ -296,7 +296,7 @@ void sendCloud()
     }
     http.end();
   }
-  else if (httpCode != 200)
+  else if (httpCode != 200 && !onlyNotify)
   {
     (!DEBUG_ON) ?: Serial.println("servidor fora! Code: " + String(httpCode));
     http.end();

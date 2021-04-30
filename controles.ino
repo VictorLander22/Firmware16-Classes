@@ -126,6 +126,8 @@ void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
   {
     executaPulso(vPorta);
   }
+
+  sendCloud(true);
 }
 
 int LePorta(int vPorta)
