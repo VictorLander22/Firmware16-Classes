@@ -259,3 +259,4 @@ const char *ips[] = {"8.8.8.8", "8.8.4.4", "208.67.222.222", "google.com", "keep
 
 uint8_t shouldUpdate;
 bool executeCloud;
+uint16_t lastOutputs;

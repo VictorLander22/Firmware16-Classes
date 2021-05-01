@@ -44,24 +44,45 @@ void controle(AsyncWebServerRequest *request)
   String k = request->arg("k");
   String f = request->arg("f");
   String Nome = request->arg("n");
-  int porta = p.toInt();
   int Tipoa = request->arg("pu").toInt();
+  if (p == "a")
+  {
+    //if (f == "true")
+    //{
+    //uint16_t outputs = memRtc.getOutputs();
+    chip1.write8(f.toInt() & 0xff);
+    chip2.write8((f.toInt() >> 8) & 0xff);
 
-  porta = retornaPorta(porta);
-  if (porta >= 0)
+    //chip1.write8(0);
+    //chip2.write8(0);
+    SaveOutputs();
+    //}
+    //else
+    //{
+    //  chip1.write8(255);
+    //  chip2.write8(255);
+    //  SaveOutputs();
+    //}
+  }
+  else
+  {
+    int porta = p.toInt();
+    porta = retornaPorta(porta);
+    if (porta >= 0)
 
-    if (k == "kdi9e")
-    {
-
-      if (f == "true")
+      if (k == "kdi9e")
       {
-        LigaDesliga(porta, HIGH, Nome, Tipoa);
+
+        if (f == "true")
+        {
+          LigaDesliga(porta, HIGH, Nome, Tipoa);
+        }
+        else
+        {
+          LigaDesliga(porta, LOW, Nome, Tipoa);
+        }
       }
-      else
-      {
-        LigaDesliga(porta, LOW, Nome, Tipoa);
-      }
-    }
+  }
 }
 
 void situacao(AsyncWebServerRequest *request)
@@ -127,7 +148,7 @@ void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)
     executaPulso(vPorta);
   }
 
-  sendCloud(true);
+  //sendCloud(true);
 }
 
 int LePorta(int vPorta)

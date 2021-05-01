@@ -39,11 +39,14 @@ void LoopLedStatus()
   if (WiFi.getMode() == 1 && millisAtual > millisWifiLed)
   {
     int32_t rssi;
+
+    checkOutput();
+
     chip3.write(LedWifiConnected, LOW);
-    if (!vConfigWIFI)
-    {
-      millisWifiLed = millisAtual + 2000;
-    }
+    //if (!vConfigWIFI)
+    //{
+    millisWifiLed = millisAtual + 2000;
+    //}
     rssi = getRSSI();
     //(!DEBUG_ON) ?:   Serial.println(String(rssi));
 
@@ -175,9 +178,9 @@ int32_t getRSSI()
 
 void SaveOutputs()
 {
+  memRtc.outValues = chip2.read8() << 8 | chip1.read8();
   if (TipoMemoria)
   {
-    memRtc.outValues = chip2.read8() << 8 | chip1.read8();
     memRtc.setOutputs();
   }
 }
@@ -191,5 +194,16 @@ void AsyncIRSend()
     irEnSend = false;
     irData = "";
     (!DEBUG_ON) ?: Serial.println(F("...IR Enviado"));
+  }
+}
+
+void checkOutput()
+{
+  //(!DEBUG_ON) ?: Serial.println(lastOutputs);
+  //(!DEBUG_ON) ?: Serial.println(memRtc.outValues);
+  if (lastOutputs != memRtc.outValues)
+  {
+    sendCloud(true);
+    lastOutputs = memRtc.outValues;
   }
 }
