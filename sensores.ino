@@ -555,6 +555,8 @@ boolean verificaSensores(int nsensor, String vsAtual)
           Udp.write(replyPacekt);
           Udp.endPacket();
           msgDisparada[nsensor] = true;
+
+          (!DEBUG_ON) ?: Serial.println(replyPacekt);
         }
       }
       else if (vDisparadoSensor[nsensor] == false)
@@ -595,11 +597,12 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
           }
           Texto.toCharArray(replyPacekt, 255);
-          (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
+          (!DEBUG_ON) ?: Serial.print("enviar comando UDP: ");
           Udp.beginPacket(Destino, localUdpPort);
           Udp.write(replyPacekt);
           Udp.endPacket();
           msgDisparada[nsensor] = true;
+          (!DEBUG_ON) ?: Serial.println(replyPacekt);
         }
       }
     }
@@ -658,6 +661,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
         Udp.write(replyPacekt);
         Udp.endPacket();
         msgDisparada[nsensor] = true;
+        (!DEBUG_ON) ?: Serial.println(replyPacekt);
       }
     }
   }
@@ -694,6 +698,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
         Udp.write(replyPacekt);
         Udp.endPacket();
         msgDisparada[nsensor] = true;
+        (!DEBUG_ON) ?: Serial.println(replyPacekt);
       }
       if (Msg == "1")
       {
@@ -724,6 +729,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
         Udp.write(replyPacekt);
         Udp.endPacket();
         msgDisparada[nsensor] = true;
+        (!DEBUG_ON) ?: Serial.println(replyPacekt);
       }
       if (Msg == "1")
       {
@@ -762,6 +768,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Udp.write(replyPacekt);
             Udp.endPacket();
             msgDisparada[nsensor] = true;
+            (!DEBUG_ON) ?: Serial.println(replyPacekt);
           }
         }
       }
@@ -796,6 +803,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Udp.write(replyPacekt);
             Udp.endPacket();
             msgDisparada[nsensor] = true;
+            (!DEBUG_ON) ?: Serial.println(replyPacekt);
           }
         }
       }
@@ -842,6 +850,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
         Udp.endPacket();
         msgDisparada[nsensor] = true;
         ultimoEstado[nsensor] = estadoAtual[nsensor];
+        (!DEBUG_ON) ?: Serial.println(replyPacekt);
       }
     }
     else if (Funcao == "8")
@@ -889,6 +898,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Udp.write(replyPacekt);
             Udp.endPacket();
             msgDisparada[nsensor] = true;
+            (!DEBUG_ON) ?: Serial.println(replyPacekt);
           }
         }
       }

@@ -242,11 +242,3 @@ void File_Delete(AsyncWebServerRequest *request)
   }
   SPIFFS.end();
 }
-
-String CurrentIP()
-{
-  String ip = WiFi.localIP().toString();
-  if (ip == "(IP unset)")
-    ip = DevSet.numberToIpString(DevSet.apWifiIP);
-  return ip;
-}

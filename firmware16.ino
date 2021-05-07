@@ -1,4 +1,4 @@
-#define Placa_Version "2,39"
+#define Placa_Version "2.40"
 
 #include "globalvar.h"
 

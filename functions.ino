@@ -185,6 +185,21 @@ void SaveOutputs()
   }
 }
 
+uint16_t getInputs()
+{
+  return sensor2.read8() << 8 | sensor1.read8();
+}
+
+String getDevStatus()
+{
+  return "{\"mac\":" + gchipId +
+         ",\"ip:\"" + CurrentIP() +
+         ",\"v:\"" + Placa_Version +
+         ",\"i:\"" + String(getInputs()) +
+         ",\"o:\"" + String(memRtc.outValues) +
+         ",\"s:\"" + String(getRSSI()) + "}";
+}
+
 void AsyncIRSend()
 {
   if (irEnSend)
@@ -206,4 +221,12 @@ void checkOutput()
     sendCloud(true);
     lastOutputs = memRtc.outValues;
   }
+}
+
+String CurrentIP()
+{
+  String ip = WiFi.localIP().toString();
+  if (ip == "(IP unset)")
+    ip = DevSet.numberToIpString(DevSet.apWifiIP);
+  return ip;
 }
