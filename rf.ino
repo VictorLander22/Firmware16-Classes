@@ -338,9 +338,10 @@ boolean verificaSensoresRF()
           (!DEBUG_ON) ?: Serial.println(Texto);
           Texto.toCharArray(replyPacekt, 255);
           (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-          Udp.beginPacket(Destino, localUdpPort);
-          Udp.write(replyPacekt);
-          Udp.endPacket();
+          SendUDP(Destino, localUdpPort, String(replyPacekt));
+          // Udp.beginPacket(Destino, localUdpPort);
+          // Udp.write(replyPacekt);
+          // Udp.endPacket();
           msgDisparadaRF[numSensorDisparado] = true;
         }
         if (Msg == "1")
@@ -368,9 +369,10 @@ boolean verificaSensoresRF()
           String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|";
           Texto.toCharArray(replyPacekt, 255);
           (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-          Udp.beginPacket(Destino, localUdpPort);
-          Udp.write(replyPacekt);
-          Udp.endPacket();
+          SendUDP(Destino, localUdpPort, String(replyPacekt));
+          // Udp.beginPacket(Destino, localUdpPort);
+          // Udp.write(replyPacekt);
+          // Udp.endPacket();
           msgDisparadaRF[numSensorDisparado] = true;
         }
         if (Msg == "1")
@@ -410,9 +412,10 @@ boolean verificaSensoresRF()
               (!DEBUG_ON) ?: Serial.println(Texto);
               Texto.toCharArray(replyPacekt, 255);
               (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-              Udp.beginPacket(Destino, localUdpPort);
-              Udp.write(replyPacekt);
-              Udp.endPacket();
+              SendUDP(Destino, localUdpPort, String(replyPacekt));
+              // Udp.beginPacket(Destino, localUdpPort);
+              // Udp.write(replyPacekt);
+              // Udp.endPacket();
               msgDisparadaRF[numSensorDisparado] = true;
               ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
             }
@@ -444,9 +447,10 @@ boolean verificaSensoresRF()
               String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
               Texto.toCharArray(replyPacekt, 255);
               (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-              Udp.beginPacket(Destino, localUdpPort);
-              Udp.write(replyPacekt);
-              Udp.endPacket();
+              SendUDP(Destino, localUdpPort, String(replyPacekt));
+              // Udp.beginPacket(Destino, localUdpPort);
+              // Udp.write(replyPacekt);
+              // Udp.endPacket();
               msgDisparadaRF[numSensorDisparado] = true;
               ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
             }
@@ -474,9 +478,10 @@ boolean verificaSensoresRF()
               String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
               Texto.toCharArray(replyPacekt, 255);
               (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-              Udp.beginPacket(Destino, localUdpPort);
-              Udp.write(replyPacekt);
-              Udp.endPacket();
+              SendUDP(Destino, localUdpPort, String(replyPacekt));
+              // Udp.beginPacket(Destino, localUdpPort);
+              // Udp.write(replyPacekt);
+              // Udp.endPacket();
               msgDisparadaRF[numSensorDisparado] = true;
               ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
             }
@@ -504,9 +509,10 @@ boolean verificaSensoresRF()
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
             Texto.toCharArray(replyPacekt, 255);
             (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-            Udp.beginPacket(Destino, localUdpPort);
-            Udp.write(replyPacekt);
-            Udp.endPacket();
+            SendUDP(Destino, localUdpPort, String(replyPacekt));
+            // Udp.beginPacket(Destino, localUdpPort);
+            // Udp.write(replyPacekt);
+            // Udp.endPacket();
             msgDisparadaRF[numSensorDisparado] = true;
             ultimoEstadoRF[numSensorDisparado] = estadoAtual[numSensorDisparado];
           }

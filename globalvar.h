@@ -13,7 +13,8 @@
 //#include <ESP8266WebServer.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
-#include <WiFiUdp.h>
+//#include <WiFiUdp.h>
+#include <ESPAsyncUDP.h>
 //#include <ESP8266WiFiMesh.h>
 #include <pgmspace.h>
 #include <Wire.h> // must be included here so that Arduino library object file references work
@@ -147,9 +148,10 @@ const int LedWifiLOW = 6; //14;
 const int LedRunning = 7;
 
 //UDP
-WiFiUDP Udp;
-unsigned int localUdpPort = 4210;
-char incomingPacket[255];
+//WiFiUDP Udp;
+AsyncUDP udp;
+uint16_t localUdpPort = 4210;
+//char incomingPacket[255];
 //FIM UDP
 
 IPAddress local_IP(192, 168, 4, 1);
@@ -163,7 +165,7 @@ AsyncWebServerRequest *request;
 int contadorled = 0;
 
 unsigned long starTime = 0;    // Use unsigned long when dealing with millisAtual
-unsigned long interval = 1000; // 1000 millis = 1 second
+unsigned long interval = 2000; // 1000 millis = 1 second
 //unsigned long Contador = 0;
 
 //Dispositivos

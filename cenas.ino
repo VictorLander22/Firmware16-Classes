@@ -314,9 +314,10 @@ void executaCena(String comandoCena)
       (!DEBUG_ON) ?: Serial.println(Texto);
       Texto.toCharArray(replyPacekt, 255);
       (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-      Udp.beginPacket(Destino, localUdpPort);
-      Udp.write(replyPacekt);
-      Udp.endPacket();
+      SendUDP(Destino, localUdpPort, String(replyPacekt));
+      // Udp.beginPacket(Destino, localUdpPort);
+      // Udp.write(replyPacekt);
+      // Udp.endPacket();
       delay(200);
       cenaPAtual++;
     }
@@ -375,9 +376,10 @@ void executaCena(String comandoCena)
     Texto.toCharArray(replyPacekt, 255);
 
     (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-    Udp.beginPacket(Destino, localUdpPort);
-    Udp.write(replyPacekt);
-    Udp.endPacket();
+    SendUDP(Destino, localUdpPort, String(replyPacekt));
+    // Udp.beginPacket(Destino, localUdpPort);
+    // Udp.write(replyPacekt);
+    // Udp.endPacket();
 
     cenaPAtual++;
   }

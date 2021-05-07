@@ -117,11 +117,12 @@ void trataSensores()
     // (!DEBUG_ON) ?: Serial.println(broadcastIP[1]);
     // (!DEBUG_ON) ?: Serial.println(broadcastIP[2]);
     // (!DEBUG_ON) ?: Serial.println(broadcastIP[3]);
-
-    Udp.beginPacketMulticast(broadcastIP, localUdpPort, IpDispositivo);
-    //Udp.beginPacket(broadcastIp, localUdpPort);
-    Udp.write(replyPacekt);
-    Udp.endPacket();
+    SendUDP(broadcastIP, localUdpPort, String(replyPacekt));
+    udp.broadcast(replyPacekt);
+    // Udp.beginPacketMulticast(broadcastIP, localUdpPort, IpDispositivo);
+    // //Udp.beginPacket(broadcastIp, localUdpPort);
+    // Udp.write(replyPacekt);
+    // Udp.endPacket();
     starTime = millisAtual;
   }
   else if ((currenTime - starTime) < 0)
@@ -550,10 +551,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|I|";
           }
           Texto.toCharArray(replyPacekt, 255);
-          (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-          Udp.beginPacket(Destino, localUdpPort);
-          Udp.write(replyPacekt);
-          Udp.endPacket();
+          (!DEBUG_ON) ?: Serial.println("enviado comando UDP1");
+          SendUDP(Destino, localUdpPort, String(replyPacekt));
+          // Udp.beginPacket(Destino, localUdpPort);
+          // Udp.write(replyPacekt);
+          // Udp.endPacket();
           msgDisparada[nsensor] = true;
 
           (!DEBUG_ON) ?: Serial.println(replyPacekt);
@@ -597,10 +599,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
           }
           Texto.toCharArray(replyPacekt, 255);
-          (!DEBUG_ON) ?: Serial.print("enviar comando UDP: ");
-          Udp.beginPacket(Destino, localUdpPort);
-          Udp.write(replyPacekt);
-          Udp.endPacket();
+          (!DEBUG_ON) ?: Serial.print("enviar comando UDP2");
+          SendUDP(Destino, localUdpPort, String(replyPacekt));
+          // Udp.beginPacket(Destino, localUdpPort);
+          // Udp.write(replyPacekt);
+          // Udp.endPacket();
           msgDisparada[nsensor] = true;
           (!DEBUG_ON) ?: Serial.println(replyPacekt);
         }
@@ -656,10 +659,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
           Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|I|";
         }
         Texto.toCharArray(replyPacekt, 255);
-        (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-        Udp.beginPacket(Destino, localUdpPort);
-        Udp.write(replyPacekt);
-        Udp.endPacket();
+        (!DEBUG_ON) ?: Serial.println("enviado comando UDP3");
+        SendUDP(Destino, localUdpPort, String(replyPacekt));
+        // Udp.beginPacket(Destino, localUdpPort);
+        // Udp.write(replyPacekt);
+        // Udp.endPacket();
         msgDisparada[nsensor] = true;
         (!DEBUG_ON) ?: Serial.println(replyPacekt);
       }
@@ -693,10 +697,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
         String Texto = vIPDest + "|" + PortaAparelho + "|true|" + String(vChip) + "|E|0|";
         (!DEBUG_ON) ?: Serial.println(Texto);
         Texto.toCharArray(replyPacekt, 255);
-        (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-        Udp.beginPacket(Destino, localUdpPort);
-        Udp.write(replyPacekt);
-        Udp.endPacket();
+        (!DEBUG_ON) ?: Serial.println("enviado comando UDP4");
+        SendUDP(Destino, localUdpPort, String(replyPacekt));
+        // Udp.beginPacket(Destino, localUdpPort);
+        // Udp.write(replyPacekt);
+        // Udp.endPacket();
         msgDisparada[nsensor] = true;
         (!DEBUG_ON) ?: Serial.println(replyPacekt);
       }
@@ -724,10 +729,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|0|";
         Texto.toCharArray(replyPacekt, 255);
-        (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-        Udp.beginPacket(Destino, localUdpPort);
-        Udp.write(replyPacekt);
-        Udp.endPacket();
+        (!DEBUG_ON) ?: Serial.println("enviado comando UDP5");
+        SendUDP(Destino, localUdpPort, String(replyPacekt));
+        // Udp.beginPacket(Destino, localUdpPort);
+        // Udp.write(replyPacekt);
+        // Udp.endPacket();
         msgDisparada[nsensor] = true;
         (!DEBUG_ON) ?: Serial.println(replyPacekt);
       }
@@ -763,10 +769,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-            Udp.beginPacket(Destino, localUdpPort);
-            Udp.write(replyPacekt);
-            Udp.endPacket();
+            (!DEBUG_ON) ?: Serial.println("enviado comando UDP6");
+            SendUDP(Destino, localUdpPort, String(replyPacekt));
+            // Udp.beginPacket(Destino, localUdpPort);
+            // Udp.write(replyPacekt);
+            // Udp.endPacket();
             msgDisparada[nsensor] = true;
             (!DEBUG_ON) ?: Serial.println(replyPacekt);
           }
@@ -797,11 +804,12 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            (!DEBUG_ON) ?: Serial.print("enviado comando UDP: ");
+            (!DEBUG_ON) ?: Serial.print("enviado comando UDP7");
             (!DEBUG_ON) ?: Serial.println(Texto);
-            Udp.beginPacket(Destino, localUdpPort);
-            Udp.write(replyPacekt);
-            Udp.endPacket();
+            SendUDP(Destino, localUdpPort, String(replyPacekt));
+            // Udp.beginPacket(Destino, localUdpPort);
+            // Udp.write(replyPacekt);
+            // Udp.endPacket();
             msgDisparada[nsensor] = true;
             (!DEBUG_ON) ?: Serial.println(replyPacekt);
           }
@@ -844,10 +852,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
         Texto.toCharArray(replyPacekt, 255);
-        (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-        Udp.beginPacket(Destino, localUdpPort);
-        Udp.write(replyPacekt);
-        Udp.endPacket();
+        (!DEBUG_ON) ?: Serial.println("enviado comando UDP8");
+        SendUDP(Destino, localUdpPort, String(replyPacekt));
+        // Udp.beginPacket(Destino, localUdpPort);
+        // Udp.write(replyPacekt);
+        // Udp.endPacket();
         msgDisparada[nsensor] = true;
         ultimoEstado[nsensor] = estadoAtual[nsensor];
         (!DEBUG_ON) ?: Serial.println(replyPacekt);
@@ -893,10 +902,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-            Udp.beginPacket(Destino, localUdpPort);
-            Udp.write(replyPacekt);
-            Udp.endPacket();
+            (!DEBUG_ON) ?: Serial.println("enviado comando UDP9");
+            SendUDP(Destino, localUdpPort, String(replyPacekt));
+            // Udp.beginPacket(Destino, localUdpPort);
+            // Udp.write(replyPacekt);
+            // Udp.endPacket();
             msgDisparada[nsensor] = true;
             (!DEBUG_ON) ?: Serial.println(replyPacekt);
           }

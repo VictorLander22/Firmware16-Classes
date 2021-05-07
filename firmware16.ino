@@ -95,8 +95,9 @@ void setup(void)
 
   MqttSetup(); //consome 2k da ram 11400
 
-  Udp.begin(localUdpPort);
-  (!DEBUG_ON) ?: Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
+  SetupUDP();
+  //Udp.begin(localUdpPort);
+  //(!DEBUG_ON) ?: Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
 
   SetupPing();
 
@@ -131,7 +132,7 @@ void loop(void)
     LoopResetFabrica();
 
     //mesh_node.acceptRequest();
-    leituraUDP();
+    //leituraUDP();
 
     trataSensores();
 

@@ -46,9 +46,10 @@ void chamaddns(AsyncWebServerRequest *request)
 
       (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
       (!DEBUG_ON) ?: Serial.println(Texto);
-      Udp.beginPacket(Destino, localUdpPort);
-      Udp.write(replyPacekt);
-      Udp.endPacket();
+      SendUDP(Destino, localUdpPort, String(replyPacekt));
+      // Udp.beginPacket(Destino, localUdpPort);
+      // Udp.write(replyPacekt);
+      // Udp.endPacket();
 
       if (Tipo == "E")
       {
