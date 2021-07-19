@@ -38,6 +38,8 @@
 #include "AsyncPing.h"
 #include "Ticker.h"
 
+#include <SSD1306Wire.h>
+
 #include "src\KPDeviceSetting.h"
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
@@ -55,6 +57,7 @@ unsigned long millisAtual;
 unsigned long millisDebug;
 unsigned long millisMqttReconnect;
 unsigned long millisNetworkScan;
+unsigned long lastDisplay;
 
 File UploadFile;
 
