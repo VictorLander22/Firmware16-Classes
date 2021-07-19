@@ -138,7 +138,8 @@ void sendCloud(bool onlyNotify = false)
   dataPost = dataPost + "\"ED16\": \"" + retornaValorCloud(sSensor2[0]) + "\",";
   dataPost = dataPost + "\"ip\": \"" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "\",";
   dataPost = dataPost + "\"notificacao\": \"" + String(notificar) + "\",";
-  dataPost = dataPost + "\"sinal\": \"" + String(getRSSI()) + "\"";
+  dataPost = dataPost + "\"sinal\": \"" + String(getRSSI()) + "\",";
+  dataPost = dataPost + "\"macid\": \"" + gchipId + "\"";
   dataPost = dataPost + " }";
 
   //(!DEBUG_ON) ?: Serial.println(dataPost);

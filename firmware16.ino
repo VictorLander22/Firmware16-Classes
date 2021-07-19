@@ -9,7 +9,7 @@ void setup(void)
   Serial.println();
   Wire.begin(5, 4);
   Wire.setClock(100000L);
-  delay(300); //Wait to start I2C transmission
+  delay(300); //Wait for start I2C transmission
   (!DEBUG_ON) ?: Serial.println();
   IniciaRTC();
   chip1.begin();

@@ -133,7 +133,7 @@ void MqttLoop()
   {
     (!DEBUG_ON) ?: Serial.println("MQTT disconnected!!!");
 
-    millisMqttReconnect = millisAtual + 30000;
+    millisMqttReconnect = millisAtual + 60000;
 
     if (enableConnection)
     {
