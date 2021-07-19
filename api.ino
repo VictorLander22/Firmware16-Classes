@@ -337,12 +337,17 @@ void api(AsyncWebServerRequest *request)
     {
       (!DEBUG_ON) ?: Serial.println("api cenas");
       if (isPost)
-        String valueApi = request->arg("v");
-      else
-        String valueApi = MqttArg(msgMqtt, "v");
-      triggerCena(valueApi);
-      if (isPost)
+      {
+        valueApi = request->arg("v");
         request->send(200, "text/html", "1");
+      }
+      else
+        valueApi = MqttArg(msgMqtt, "v");
+
+      (!DEBUG_ON) ?: Serial.println("Numero da cena: " + valueApi);
+
+      triggerCena(valueApi);
+      //if (isPost)
     }
     else if (action == "l") // linha de ação
     {
