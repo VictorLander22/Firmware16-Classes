@@ -103,6 +103,8 @@ void setup(void)
 
   LoopPing();
 
+  Disp_Setup();
+
   timer.attach(30, LoopPing);
 }
 
@@ -152,6 +154,9 @@ void loop(void)
 
     //cloud1();
 
+    Display_loop();
+
     FreeMemory(F("loop()"));
+
   }
 }
