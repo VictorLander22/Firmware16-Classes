@@ -154,11 +154,7 @@ void loop(void)
 
     //cloud1();
 
-    if (millisAtual > (lastDisplay + 2000))
-    {
-      lastDisplay = millisAtual;
-      Display_loop();
-    }
+    LoopDisplay();
 
     FreeMemory(F("loop()"));
   }
