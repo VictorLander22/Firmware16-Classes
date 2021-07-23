@@ -184,9 +184,11 @@ void gravasenhahttp(AsyncWebServerRequest *request)
 void wifiConectSTA()
 {
   (!DEBUG_ON) ?: Serial.println(F("\nWifi trying conection in: STA MODE"));
+  UpdateDisplay(F("Trying Wifi in: STA MODE"));
   WiFi.mode(WIFI_STA);
   tipoWifiAtual = 1;
   const char *ssid = DevSet.wifiSSID.c_str();
+  UpdateDisplay(DevSet.wifiSSID);
   const char *password = DevSet.wifiPwd.c_str();
   IPAddress ip(DevSet.wifiIP);
   IPAddress subnet(DevSet.wifiMSK);
@@ -216,6 +218,8 @@ void wifiConectAP()
   (!DEBUG_ON) ?: Serial.print("Rede não localizada: ");
   (!DEBUG_ON) ?: Serial.println(DevSet.wifiSSID);
   (!DEBUG_ON) ?: Serial.println("Wifi trying conection in: AP MODE");
+  UpdateDisplay(DevSet.wifiSSID);
+  UpdateDisplay(F("Trying Wifi in: AP MODE"));
   WiFi.mode(WIFI_AP);
   tipoWifiAtual = 2;
   //listawifi();

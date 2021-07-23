@@ -1,4 +1,25 @@
 {
-  "files.associations": {},
+  "files.associations": {
+    "array": "cpp",
+    "chrono": "cpp",
+    "deque": "cpp",
+    "format": "cpp",
+    "forward_list": "cpp",
+    "initializer_list": "cpp",
+    "list": "cpp",
+    "regex": "cpp",
+    "vector": "cpp",
+    "xhash": "cpp",
+    "xstring": "cpp",
+    "xtree": "cpp",
+    "xutility": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp",
+    "cstddef": "cpp",
+    "xmemory": "cpp",
+    "xlocale": "cpp",
+    "functional": "cpp",
+    "xiosbase": "cpp"
+  },
   "editor.formatOnSave": true
 }

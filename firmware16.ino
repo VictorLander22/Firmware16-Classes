@@ -11,28 +11,35 @@ void setup(void)
   Wire.setClock(100000L);
   delay(300); //Wait for start I2C transmission
   (!DEBUG_ON) ?: Serial.println();
-  IniciaRTC();
+
+  scanI2c();
+
   chip1.begin();
   chip2.begin();
   chip3.begin();
   sensor1.begin();
   sensor2.begin();
+  UpdateDisplay(F("Devices Started"));
   ApagaPortas();
-
+  UpdateDisplay(F("Ports Initialized"));
+  IniciaRTC();
+  UpdateDisplay(F("RTC Initialized"));
   CheckSPIFFS();
 
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
-  delay(2000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
+
   String Razao = ESP.getResetReason();
   (!DEBUG_ON) ?: Serial.print("Motivo Reset: ");
   (!DEBUG_ON) ?: Serial.println(Razao);
+  UpdateDisplay("Rst Mod: " + Razao);
+  delay(2000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
 
   //Set chip id
   vchipId = ESP.getChipId();
   gchipId = WiFi.macAddress();
   gchipId.replace(":", "");
-
+  UpdateDisplay(F("MAC OK"));
   (!DEBUG_ON) ?: Serial.println();
   (!DEBUG_ON) ?: Serial.println("Keepin Firmware: " + String(Placa_Version));
   (!DEBUG_ON) ?: Serial.println("Keepin ID: " + vchipId);
@@ -43,16 +50,20 @@ void setup(void)
   {
     (!DEBUG_ON) ?: Serial.println();
     (!DEBUG_ON) ?: Serial.println(F("Factory reset\n"));
+    UpdateDisplay(F("Factory Reset"));
     DevSet.factoryReset();
   }
   else
   {
     (!DEBUG_ON) ?: Serial.println();
     (!DEBUG_ON) ?: Serial.println(F("Simple restart\n"));
+    UpdateDisplay(F("Simple restart"));
   }
 
+  UpdateDisplay(F("Checking EEPROM"));
   DevSet.verifyEEPROM();
   convertConfig();
+  UpdateDisplay(F("Loading settings"));
   DevSet.getDeviceSettings();
   if (DEBUG_ON)
     DevSet.showVariables();
@@ -60,8 +71,10 @@ void setup(void)
   www_username = DevSet.httpUser.c_str();
   www_password = DevSet.httpPwd.c_str();
 
+  UpdateDisplay(F("Configuring IR"));
   configIR(); //consome 2K da ram 20000
 
+  UpdateDisplay(F("Loading user configuration"));
   lerConfiguracao();
 
   millisAtual = millis();
@@ -70,42 +83,48 @@ void setup(void)
   rfmilis = millisAtual;
   millisWifiLed = millisAtual;
 
+  UpdateDisplay(F("Configuring RF"));
   configRF();
 
   //verificar se ha necessidade de colocar um delay aqui para evitar dos relés abrirem e fecharem muito rapido
+  UpdateDisplay(F("Loading Outputs"));
   Memoria();
 
+  UpdateDisplay(F("Getting Networks"));
   scanningWifi = WiFi.scanNetworks();
 
   //WiFi.scanNetworksAsync(prinScanResult);
   (!DEBUG_ON) ?: Serial.printf("\nAvailable Wifi: %d\n", scanningWifi);
-
+  UpdateDisplay(F("Connecting Wifi"));
   conectar(); //consome 1K da ram 19000
   // Wait for connection
   (!DEBUG_ON) ?: Serial.print(F("Connected... IP address: "));
   (!DEBUG_ON) ?: Serial.println(WiFi.localIP());
 
+  UpdateDisplay(F("Configuring WebServer"));
   ConfigurarWebServer(); //consome 6.2K da ram 13500
 
   retornaNotificar();
 
   (!DEBUG_ON) ?: Serial.println("Notificar: " + String(notificar));
 
+  UpdateDisplay(F("Loading Inputs"));
   CarregaEntradas();
-
+  UpdateDisplay(F("Configuring MQTT"));
   MqttSetup(); //consome 2k da ram 11400
-
+  UpdateDisplay(F("Configuring UDP"));
   SetupUDP();
   //Udp.begin(localUdpPort);
   //(!DEBUG_ON) ?: Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
-
+  UpdateDisplay(F("Checking Internet"));
   SetupPing();
 
   LoopPing();
 
-  Disp_Setup();
-
   timer.attach(30, LoopPing);
+
+  dispText[0] = "INITIALING KEEPIN";
+  UpdateDisplay(F("Setup finished!!!"));
 }
 
 //########################################################################################################################################################

@@ -265,3 +265,8 @@ const char *ips[] = {"8.8.8.8", "8.8.4.4", "208.67.222.222", "google.com", "keep
 uint8_t shouldUpdate;
 bool executeCloud;
 uint16_t lastOutputs;
+
+const uint8_t dispY[5] = {1, 14, 30, 42, 54};
+String dispText[5] = {"", "", "", "", ""};
+uint8_t dispLine = 0;
+bool hasDisplay = false;

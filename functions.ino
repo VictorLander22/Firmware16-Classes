@@ -230,3 +230,79 @@ String CurrentIP()
     ip = DevSet.numberToIpString(DevSet.apWifiIP);
   return ip;
 }
+
+void scanI2c()
+{
+  const unsigned long waitDelay = 100;
+  uint8_t devices;
+
+  dispText[0] = "EXECUTING SETUP";
+  dispText[4] = ("Starting devices..");
+
+  //const int TEMPOLEITURA = 100;
+  //const int TEMPOESPERA = 500;
+  //byte endereco, codigoResultado, dispositivosEncontrados;
+  // Testar Display
+  Wire.beginTransmission(0x3C);
+  if (Wire.endTransmission() == 0)
+  {
+    hasDisplay = true;
+    Disp_Setup();
+    Serial.print(F("Display OK"));
+    UpdateDisplay("Display Present");
+  }
+  else
+  {
+    hasDisplay = false;
+    Serial.print(F("Display Fail"));
+  }
+
+  delay(waitDelay);
+  //Testar Out1
+  Wire.beginTransmission(0x21);
+  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("21 Fail"));
+  delay(waitDelay);
+  //Testar Out2
+  Wire.beginTransmission(0x22);
+  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("22 Fail"));
+  delay(waitDelay);
+  //Testar In1
+  Wire.beginTransmission(0x23);
+  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("23 Fail"));
+  delay(waitDelay);
+  //Testar In2
+  Wire.beginTransmission(0x24);
+  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("24 Fail"));
+  delay(waitDelay);
+  //Testar chip3
+  Wire.beginTransmission(0x25);
+  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("25 Fail"));
+  delay(waitDelay);
+  //Testar RTC
+  Wire.beginTransmission(0x50);
+  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("50 Fail"));
+  delay(waitDelay);
+  // for (endereco = 0; endereco < 128; endereco++)
+  // {
+  //   Wire.beginTransmission(endereco);
+  //   codigoResultado = Wire.endTransmission();
+  //   if (codigoResultado == 0)
+  //   {
+  //     (!DEBUG_ON) ?: Serial.print("Dispositivo I2c detectado no endereço: ");
+  //     (!DEBUG_ON) ?: Serial.println(endereco, HEX);
+  //     dispositivosEncontrados++;
+  //     delay(TEMPOESPERA);
+  //   }
+  //   delay(TEMPOLEITURA);
+  // }
+  (devices == 6) ? UpdateDisplay(F("Devices OK..")) : UpdateDisplay(F("Devices Fail.."));
+  // {
+  //   (!DEBUG_ON) ?: Serial.print("Foi encontrado um total de: ");
+  //   (!DEBUG_ON) ?: Serial.print(dispositivosEncontrados);
+  //   (!DEBUG_ON) ?: Serial.println(" dispositivos");
+  // }
+  // else
+  // {
+  //   (!DEBUG_ON) ?: Serial.println("Nenhum dispositivo foi encontrado !!!");
+  // }
+}
