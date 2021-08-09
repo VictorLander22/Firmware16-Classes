@@ -44,7 +44,7 @@
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
 
-const bool DEBUG_ON = true;
+const bool DEBUG_ON = false;
 
 String vchipId;
 String gchipId;

@@ -48,10 +48,12 @@ void conectar()
         waitingWifi++;
       }
       (!DEBUG_ON) ?: Serial.println("");
+      //SetupUDP();
     }
     else if (WiFi.getMode() < 2)
     {
       wifiConectAP();
+      //SetupUDP();
     }
   }
   if (WiFi.getMode() != 1)

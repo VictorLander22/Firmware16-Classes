@@ -42,10 +42,13 @@ byte Inicio_X, Inicio_Y, Altura, Comprimento; //Display ProgressBar
 int Coluna = 0;
 int Linha = 0;
 
-void Disp_Setup()
+void DisplaySetup()
 {
-  display.init();
-  display.flipScreenVertically();
+  if (hasDisplay)
+  {
+    display.init();
+    display.flipScreenVertically();
+  }
 }
 
 void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, int16_t rssi)
@@ -112,7 +115,7 @@ bool UpdateDisplay(String text)
 
 void LoopDisplay()
 {
-  if (millisAtual > (lastDisplay + 2000))
+  if ((millisAtual > (lastDisplay + 2000)) && hasDisplay)
   {
     lastDisplay = millisAtual;
     display.clear();

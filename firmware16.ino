@@ -33,7 +33,7 @@ void setup(void)
   (!DEBUG_ON) ?: Serial.print("Motivo Reset: ");
   (!DEBUG_ON) ?: Serial.println(Razao);
   UpdateDisplay("Rst Mod: " + Razao);
-  delay(2000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
+  delay(1000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
 
   //Set chip id
   vchipId = ESP.getChipId();
@@ -114,8 +114,7 @@ void setup(void)
   MqttSetup(); //consome 2k da ram 11400
   UpdateDisplay(F("Configuring UDP"));
   SetupUDP();
-  //Udp.begin(localUdpPort);
-  //(!DEBUG_ON) ?: Serial.printf("UDP ativo em IP %s, UDP porta %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
+
   UpdateDisplay(F("Checking Internet"));
   SetupPing();
 
