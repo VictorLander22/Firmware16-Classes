@@ -172,7 +172,7 @@ void sendCloud(bool onlyNotify = false)
     DynamicJsonDocument array1(payload.length() * 2);
     auto error = deserializeJson(array1, payload);
     //    JsonObject& root = jsonBuffer.parseObject(payload);
-
+    hasCloud = true;
     if (error)
     {
       (!DEBUG_ON) ?: Serial.print(F("deserializeJson() failed with code "));
@@ -300,6 +300,7 @@ void sendCloud(bool onlyNotify = false)
   else if (httpCode != 200 && !onlyNotify)
   {
     (!DEBUG_ON) ?: Serial.println("servidor fora! Code: " + String(httpCode));
+    hasCloud = false;
     http.end();
   }
   cliente.stop();

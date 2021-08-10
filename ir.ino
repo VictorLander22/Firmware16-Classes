@@ -333,21 +333,9 @@ void getIR(AsyncWebServerRequest *request)
 
 void sendir(AsyncWebServerRequest *request)
 {
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", "ok");
 
   String S = request->arg("s");
-  // int QtdeBit = 12;
-  // int PortaIRS = request->arg("p").toInt();
-  // int vModelo = request->arg("m").toInt();
-  // int q = request->arg("q").toInt();
-
-  // String Codigo = request->arg("c");
-  // String Codigo2 = request->arg("c2");
-
   irNumBits = request->arg("q").toInt();
   irModel = request->arg("m").toInt();
   irPort = request->arg("p").toInt();
@@ -355,22 +343,6 @@ void sendir(AsyncWebServerRequest *request)
   if (S == Senha)
     irEnSend = true;
   (!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
-
-  //(!DEBUG_ON) ?: Serial.println(Codigo);
-  //rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
-  //uint16_t rawData[QtdeBit] = strtol(Codigo.c_str(), NULL, 10);
-
-  // (!DEBUG_ON) ?: Serial.println(Codigo + Codigo2);
-
-  // if (S == Senha && QtdeBit > 0)
-  // {
-  //   sendIRCMD(Codigo, Codigo2, QtdeBit, PortaIRS, vModelo, q);
-  //   Codigo = "";
-  //   Codigo2 = "";
-  //   //PortaIRS = retornaPorIRS(PortaIRS);
-
-  //   (!DEBUG_ON) ?: Serial.println("Enviado IR");
-  // }
 }
 
 void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vModelo, int q)
@@ -581,111 +553,11 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       SPIFFS.end();
 
       IRSendRaw((char *)linhas.c_str(), QtdeBit);
-
-      //       uint16_t rawData[QtdeBit];
-      //       for (int i = 0; i <= QtdeBit - 1; i++)
-      //       {
-      //         rawData[i] = 0;
-      //       }
-
-      //       int tam2 = 0;
-      //       String CodAtu = "";
-
-      //       SPIFFS.begin();
-      //       File rFile = SPIFFS.open("/ir_" + Codigo + ".cfg", "r");
-      //       int Qtde;
-      //       Qtde = 0;
-      //       Codigo = "";
-      //       while (rFile.available())
-      //       {
-      //         String linhas = rFile.readStringUntil('\n');
-      //         (!DEBUG_ON) ?: Serial.println("linhas: ");
-      //         (!DEBUG_ON) ?: Serial.print(linhas);
-
-      //         for (int i = 1; i <= linhas.length(); i++)
-      //         {
-      //           if (linhas[i] != ',' && linhas[i] != '}')
-      //           {
-      //             CodAtu += linhas[i];
-      //           }
-      //           else
-      //           {
-      //             rawData[tam2] = CodAtu.toInt();
-      //             //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
-      //             tam2++;
-      //             CodAtu = "";
-      //           }
-      //         }
-      //         Qtde++;
-      //       }
-
-      //       rFile.close();
-      //       SPIFFS.end();
-      //       //converteRAW(Codigo, Codigo2, QtdeBit);
-      //       /*
-      //       Codigo += ",";
-
-      //       //(!DEBUG_ON) ?:   Serial.println("Codigo Recebido: " + codig);
-
-      //       for (int i = 1; i <= Codigo.length(); i++)
-      //       {
-      //         if (Codigo[i] != ',')
-      //         {
-      //           CodAtu += Codigo[i];
-      //         }
-      //         else
-      //         {
-      //           rawData[tam2] = CodAtu.toInt();
-      //           //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
-      //           tam2 ++;
-      //           CodAtu = "";
-      //         }
-      //       }
-
-      //       CodAtu = "";
-      //       for (int i = 1; i <= Codigo2.length(); i++)
-      //       {
-      //         if (Codigo2[i] != ',')
-      //         {
-      //           CodAtu += Codigo2[i];
-      //         }
-      //         else
-      //         {
-      //           rawData[tam2] = CodAtu.toInt();
-      //           //(!DEBUG_ON) ?:   Serial.println(String(CodAtu.toInt()));
-      //           tam2 ++;
-      //           CodAtu = "";
-      //         }
-      //       }
-      //    */
-      //       //      (!DEBUG_ON) ?:   Serial.println("Qtde: " + String(QtdeBit));
-
-      //       //      for (int i = 0; i <= QtdeBit-1; i++)
-      //       //      {
-      //       //        (!DEBUG_ON) ?:   Serial.println(String(rawData[i]));
-      //       //      }
-
-      //       //#if SEND_RAW
-      //       irsend.sendRaw(rawData, QtdeBit, 38);
-      //       (!DEBUG_ON) ?: Serial.println("enviado...\n");
-      //       //#endif
-
-      //       /*
-      //       Codigo = "0x" + Codigo;
-      //       ///(!DEBUG_ON) ?:   Serial.println(Codigo);
-      //       unsigned long vCodigo = strtoul(Codigo.c_str(), 0, 16) + strtoul(Codigo2.c_str(), 0, 16);
-      //       //uint64_t vCodigo2 = vCodigo;
-      //       //#if SEND_NEC
-      //         irsend.sendNEC(vCodigo, 32);
-      //       //#endif
-
-      //       (!DEBUG_ON) ?:   Serial.println("Envio IR: " + String(QtdeBit));
-      //       (!DEBUG_ON) ?:   Serial.println(String(vCodigo));
-      // */
     }
 
     Codigo = "";
     Codigo2 = "";
+
     digitalWrite(16, LOW);
   }
 }
@@ -1171,9 +1043,6 @@ void LoopIR()
 
 void IRSendRaw(char *str, const size_t bufferSize)
 {
-  //char *str = (char *)Codigo.c_str();
-
-  //const size_t bufferSize = irNumBits;
   uint16_t arr[bufferSize];
 
   char *p = strtok(str, ",{} ");

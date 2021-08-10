@@ -33,35 +33,7 @@ void SetupUDP()
 void leituraUDP(AsyncUDPPacket packet)
 {
 
-  //UDP
-  // int packetSize = packet.length(); //Udp.parsePacket();
-  //int len = Udp.read(incomingPacket, 255);
-  // if (len > 0)
-  // {
-  //   incomingPacket[len] = 0;
-  // }
-
-  // String cabecalho = "";
-  // for (int i = 0; i < 255; i++)
-  // {
-  //   cabecalho += incomingPacket[i];
-  // }
-
-  String cabecalho = "";
-  char data_str[packet.length() + 1];
-  os_memcpy(data_str, packet.data(), packet.length());
-  data_str[packet.length()] = '\0';
-
-  cabecalho = (String)data_str;
-  // Serial.println(cabecalho);
-
-  // String cabecalho = "";
-
-  // for (int i = 0; i < packet.length(); i++)
-  // {
-  //   cabecalho += (char)*(packet.data() + i);
-  // }
-  // //(!DEBUG_ON) ?: Serial.println(cabecalho);
+  String cabecalho = String((char *)packet.data());
 
   if (packet.length() > 16)
   {

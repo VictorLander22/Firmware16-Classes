@@ -253,7 +253,7 @@ void GravaCloud(AsyncWebServerRequest *request)
       request->send(200, "text/html", "1");
 
       usaCloud = (request->arg("v") == "1") ? true : false;
-
+      hasCloud = usaCloud;
       bitWrite(DevSet.mode, 1, usaCloud);
       DevSet.setMode();
       if (DEBUG_ON)

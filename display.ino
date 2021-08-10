@@ -1,45 +1,11 @@
-// Inicializa o display Oled
-
-//display.init();
-
-//Pinos do NodeMCU
-// SDA => D1
-// SCL => D2
-
-//display.flipScreenVertically();
-
-// byte PCF_3_P1_E1_8 = 1; //posicao byte X entrada 12345678
-// byte PCF_4_P1_E9_16 = 128;
-// byte PCF_1_P1_S1_8 = 1;    //170
-// byte PCF_2_P1_S9_16 = 255; //85
-
-// byte PCF_3_P2_E1_8 = 1;
-// byte PCF_4_P2_E9_16 = 128;
-// byte PCF_1_P2_S1_8 = 1;
-// byte PCF_2_P2_S9_16 = 255;
-
-byte E_S_Dummy = 0;
-byte Posicao_Bit = 0;
-bool Valor_Bit = 0;
-//byte Bit_LSB = 0;
-//byte Bit_MSB = 0;
-byte Linha_Inicial = 0;
-byte Contador_Posicao = 0;
 byte Nivel_Sinal = 0;
-//bool Conectado = 0;
-byte Contador_monta_cabecalho = 0;
 // ****************************************************  Variaveis do display para medicao de sinal
 char Nivel_Sinal_dbm;
-int Nivel_Sinal_dbl = -70; // = zero de sinal
 double Nivel_Sinal_dBm_dbl = -50;
 double Progresso;
-String _RSSI = "";
 byte Contador = 0;
-String Conectado_WiFi = "N";
-byte Inicio_X, Inicio_Y, Altura, Comprimento; //Display ProgressBar
 // ****************************************************  Variaveis do display para medicao de sinal
-//byte counter = 0;
-int Coluna = 0;
+
 int Linha = 0;
 
 void DisplaySetup()
@@ -51,7 +17,7 @@ void DisplaySetup()
   }
 }
 
-void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, int16_t rssi)
+void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, String internet, String mqtt, String cloud, int16_t rssi)
 {
   String sIn = "";
   String sIn2 = "";
@@ -77,7 +43,7 @@ void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, int16
   display.drawString(50, dispY[2], "Sinal");
   display.drawProgressBar(80, 31, 47, 8, rssi);
   display.drawString(1, dispY[3], "IP: " + IpDispositivo.toString());
-  display.drawString(1, dispY[4], "Int:OK MQTT:OK Cloud:OK");
+  display.drawString(1, dispY[4], "Int:" + internet + " MQTT:" + mqtt + " Cloud:" + cloud);
 }
 
 void Conv_dBm_mV()
@@ -119,7 +85,10 @@ void LoopDisplay()
   {
     lastDisplay = millisAtual;
     display.clear();
-    atualizaDisplay(~sensor1.read8(), ~sensor2.read8(), ~chip1.read8(), ~chip2.read8(), 60);
+    String internet = (hasInternet) ? "OK" : "F";
+    String mqtt = (hasMQTT) ? "OK" : "F";
+    String cloud = (hasCloud) ? "OK" : "F";
+    atualizaDisplay(~sensor1.read8(), ~sensor2.read8(), ~chip1.read8(), ~chip2.read8(), internet, mqtt, cloud, 60);
     display.display();
   }
 }

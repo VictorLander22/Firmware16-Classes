@@ -44,7 +44,7 @@
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
 
-const bool DEBUG_ON = false;
+const bool DEBUG_ON = true;
 
 String vchipId;
 String gchipId;
@@ -246,6 +246,8 @@ unsigned long lastCnTime = -1;
 bool usaCloud = false;
 char *msgMqtt;
 bool newMqttMsg;
+bool hasMQTT = false;
+bool hasCloud = false;
 
 //EEPROM//
 KPDeviceSettingClass DevSet;

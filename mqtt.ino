@@ -32,18 +32,13 @@ PubSubClient client(espClient);
 void callback(char *topic, byte *payload, unsigned int length)
 {
   AsyncWebServerRequest *request;
-  String strRec = "";
-  char data_str[length + 1];
-  os_memcpy(data_str, payload, length);
-  data_str[length] = '\0';
 
-  strRec = (String)data_str;
-
-  msgMqtt = data_str;
+  payload[length] = '\0';
+  msgMqtt = (char *)payload;
+  String strRec = String(msgMqtt);
   newMqttMsg = true;
 
-  //(!DEBUG_ON) ?:
-  Serial.println("mqttcloud: " + String(topic) + "-" + (String)data_str);
+  Serial.println("mqttcloud: " + String(topic) + "-" + (String)msgMqtt);
 
   String str = "Recibido Cloud: " + strRec;
   const char *cloudStr = str.c_str();
@@ -52,14 +47,10 @@ void callback(char *topic, byte *payload, unsigned int length)
 
   api(request);
 }
-/*
- * WiFi init stuff
- */
 
 void MqttCloudReconnect()
 {
-  // Loop until we're reconnected
-  //(!DEBUG_ON) ?:
+
   Serial.println(F("Iniciando MQTT connection..."));
 
   if (!client.connected())
@@ -87,10 +78,12 @@ void MqttCloudReconnect()
       NtpSetDateTimeNTP();
       UpdatePing();
       hasInternet = true;
+      hasMQTT = true;
     }
     else
     {
       //(!DEBUG_ON) ?:
+      hasMQTT = false;
       Serial.print("failed, rc=");
       //(!DEBUG_ON) ?:
       Serial.print(client.state());
