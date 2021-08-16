@@ -58,6 +58,7 @@ unsigned long millisDebug;
 unsigned long millisMqttReconnect;
 unsigned long millisNetworkScan;
 unsigned long lastDisplay;
+unsigned long millisIREnabled;
 
 File UploadFile;
 

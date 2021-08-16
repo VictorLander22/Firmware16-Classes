@@ -656,6 +656,8 @@ void habir(AsyncWebServerRequest *request)
   irrecv.resume();
 
   enReadIR = true;
+  millisIREnabled = millisAtual;
+  (!DEBUG_ON) ?: Serial.println("IR Receiving Enabled");
 }
 
 char hexCharToBin(char c)
@@ -1036,6 +1038,13 @@ void LoopIR()
       chip3.write(Buzzer, LOW);
       //noTone(Buzzer);
       enReadIR = false;
+      (!DEBUG_ON) ?: Serial.println("IR Receiving Disabled");
+      irrecv.resume();
+    }
+    else if (millisAtual > millisIREnabled + 30000)
+    {
+      enReadIR = false;
+      (!DEBUG_ON) ?: Serial.println("IR Receiving Disabled");
       irrecv.resume();
     }
   }

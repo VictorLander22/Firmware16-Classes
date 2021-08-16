@@ -160,6 +160,9 @@ void sendCloud(bool onlyNotify = false)
   //http.writeToStream(&Serial);
   payload = http.getString();
   http.end();
+
+  hasCloud = (httpCode == 200);
+
   //(!DEBUG_ON) ?: Serial.println(dataPost);
   //(!DEBUG_ON) ?: Serial.println("Cloud code: " + String(httpCode));
   if (httpCode == 200 && payload != "[]" && !onlyNotify)
@@ -172,7 +175,7 @@ void sendCloud(bool onlyNotify = false)
     DynamicJsonDocument array1(payload.length() * 2);
     auto error = deserializeJson(array1, payload);
     //    JsonObject& root = jsonBuffer.parseObject(payload);
-    hasCloud = true;
+
     if (error)
     {
       (!DEBUG_ON) ?: Serial.print(F("deserializeJson() failed with code "));
@@ -333,5 +336,9 @@ void LoopCloud()
     {
       ConsultouCloud = false;
     }
+  }
+  else
+  {
+    hasCloud = false;
   }
 }
