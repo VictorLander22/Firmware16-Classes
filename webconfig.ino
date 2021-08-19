@@ -16,7 +16,7 @@ void ConfigurarWebServer(void)
   server.on("/gravaragenda", gravaragenda);
   server.on("/atualizahora", atualizahora);
   server.on("/lersensores", lersensores);
-  server.on("/gravasensor", gravasensor);
+  server.on("/gravasensor", SaveInputConfig);
   server.on("/consultasensor", consensor);
   server.on("/gravadevice", gravadevice);
   server.on("/buscadevice", buscadevice);
@@ -61,7 +61,7 @@ void ConfigurarWebServer(void)
   server.on(
       "/fupload", HTTP_POST, [](AsyncWebServerRequest *request) { request->send(200); }, onUpload);
 
-  server.on("/teste", cloud);
+  server.on("/teste", teste);
 
   server.onNotFound(handleNotFound);
   server.begin();
@@ -124,7 +124,7 @@ void gravawifi(AsyncWebServerRequest *request)
 
 void redirectPage()
 {
-  request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
+  gRequest->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
 }
 
 void asyncESPRestart(AsyncWebServerRequest *request)

@@ -43,6 +43,7 @@ void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, Strin
   display.drawString(50, dispY[2], "Sinal");
   display.drawProgressBar(80, 31, 47, 8, rssi);
   display.drawString(1, dispY[3], "IP: " + IpDispositivo.toString());
+  display.drawString(121, dispY[3], String(clock2s));
   if (enIRRec)
     display.drawString(1, dispY[4], F("Waiting for IR Code..."));
   else
@@ -91,6 +92,7 @@ void LoopDisplay()
     String internet = (hasInternet) ? "OK" : "F";
     String mqtt = (hasMQTT) ? "OK" : "F";
     String cloud = (hasCloud) ? "OK" : "F";
+    clock2s = !clock2s;
     atualizaDisplay(~sensor1.read8(), ~sensor2.read8(), ~chip1.read8(), ~chip2.read8(), internet, mqtt, cloud, enReadIR, 60);
     display.display();
   }

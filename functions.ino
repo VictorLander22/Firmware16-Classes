@@ -103,6 +103,7 @@ void MillisResets()
     lastDebounceTime = 0;
     millisLedRunning = 0;
     millisIREnabled = 0;
+    millisSendUDP = 0;
     for (uint8_t iPorta = 0; iPorta <= 15; iPorta++)
     {
       g_tempoInicioPulso[iPorta] = 0;

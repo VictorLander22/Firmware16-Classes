@@ -1,12 +1,31 @@
-void teste()
+void teste(AsyncWebServerRequest *request)
 {
+  gRequest = request;
+  asyncExecuteFunction = true;
   request->send(200, "text/html", "OK");
-  (!DEBUG_ON) ?: Serial.println(WiFi.status());
-  (!DEBUG_ON) ?: Serial.println(WiFi.softAPIP());
-  (!DEBUG_ON) ?: Serial.println(WiFi.localIP());
-  (!DEBUG_ON) ?: Serial.println(WiFi.getMode());
-  //WiFiPhyMode_t mode;
-  (!DEBUG_ON) ?: Serial.println(WiFi.getPhyMode());
+}
+
+void asyncFunctions()
+{
+
+  if (asyncExecuteFunction)
+  {
+    asyncExecuteFunction = false;
+
+    for (size_t i = 0; i < gRequest->args(); i++)
+    {
+      (!DEBUG_ON) ?: Serial.println("[" + (String)i + "] " + gRequest->getParam(i)->name() + " : " + gRequest->getParam(i)->value());
+    }
+
+    if (gRequest->url() == "/teste")
+    {
+      (!DEBUG_ON) ?: Serial.println(gRequest->url());
+    }
+    else if (gRequest->url() == "/gravasensor")
+    {
+      //AsyncSaveInputConfig();
+    }
+  }
 }
 
 void showDateTime()

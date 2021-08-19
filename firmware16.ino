@@ -109,7 +109,7 @@ void setup(void)
   (!DEBUG_ON) ?: Serial.println("Notificar: " + String(notificar));
 
   UpdateDisplay(F("Loading Inputs"));
-  CarregaEntradas();
+  //CarregaEntradas();
   UpdateDisplay(F("Configuring MQTT"));
   MqttSetup(); //consome 2k da ram 11400
   UpdateDisplay(F("Configuring UDP"));
@@ -173,6 +173,8 @@ void loop(void)
     //cloud1();
 
     LoopDisplay();
+
+    asyncFunctions();
 
     FreeMemory(F("loop()"));
   }

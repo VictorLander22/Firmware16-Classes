@@ -43,61 +43,27 @@ void trataDevice(String (&Devices)[20])
 
 void trataSensores()
 {
+  uint16_t inValues = sensor2.read8() << 8 | sensor1.read8();
+  uint16_t outValues = chip2.read8() << 8 | chip1.read8();
+  String sInValues, sOutValues;
   static unsigned long limparUltimoDisparo = 0;
 
-  String sSensor1 = String(sensor1.read8(), BIN);
-  String sSensor2 = String(sensor2.read8(), BIN);
-
-  while (sSensor1.length() < 8)
+  for (size_t i = 0; i <= 15; i++)
   {
-    sSensor1 = '0' + sSensor1;
+    if (i < 8)
+    {
+      sInValues += (String)bitRead(inValues, 7 - i);
+      sOutValues += (String)bitRead(outValues, 7 - i);
+    }
+    else
+    {
+      sInValues += (String)bitRead(inValues, 15 - (i - 8));
+      sOutValues += (String)bitRead(outValues, 15 - (i - 8));
+    }
   }
 
-  while (sSensor2.length() < 8)
-  {
-    sSensor2 = '0' + sSensor2;
-  }
-
-  if (DeviceAlterado)
-  {
-    //trataDevice();
-  }
-
-  String sChip1 = String(chip1.read8(), BIN);
-  String sChip2 = String(chip2.read8(), BIN);
-
-  while (sChip1.length() < 8)
-  {
-    sChip1 = '0' + sChip1;
-  }
-
-  while (sChip2.length() < 8)
-  {
-    sChip2 = '0' + sChip2;
-  }
-
-  // separa os valores ligos no array
-  String valorSensores[16] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-  int posicaoSensor;
-
-  for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
-  {
-    valorSensores[posicaoSensor] = sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor);
-  }
-
-  for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
-  {
-    valorSensores[posicaoSensor + 8] = sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor);
-  }
-  // fim separação dos valroes lidos
-
-  //sensor1.write(7, LOW);
-  //(!DEBUG_ON) ?:   Serial.println(sSensor1);
-  //(!DEBUG_ON) ?:   Serial.println(String(sensor1.read(7)));
-
-  unsigned long currenTime = millisAtual;
-  //Contador += 1;
-  if (currenTime - starTime >= interval)
+  //Envio de UDP em broadcast
+  if (millisAtual >= millisSendUDP)
   {
     limparUltimoDisparo++;
 
@@ -106,35 +72,22 @@ void trataSensores()
       limparUltimoDisparo = 0;
       ultimoDisparo = "";
     }
-    // int32_t rssi;
-    // rssi = WiFi.RSSI();
-    char replyPacekt[255] = "";
-    String valSensores = sSensor1 + sSensor2;
-    valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + getRSSI() + "*";
-    valSensores.toCharArray(replyPacekt, 255);
 
-    // (!DEBUG_ON) ?: Serial.println(broadcastIP[0]);
-    // (!DEBUG_ON) ?: Serial.println(broadcastIP[1]);
-    // (!DEBUG_ON) ?: Serial.println(broadcastIP[2]);
-    // (!DEBUG_ON) ?: Serial.println(broadcastIP[3]);
+    char replyPacekt[255] = "";
+    String valInputs = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + sInValues + "|" + sOutValues + "|" + getRSSI() + "*";
+    valInputs.toCharArray(replyPacekt, 255);
+
     SendUDP(broadcastIP, localUdpPort, String(replyPacekt));
     udp.broadcast(replyPacekt);
-    // Udp.beginPacketMulticast(broadcastIP, localUdpPort, IpDispositivo);
-    // //Udp.beginPacket(broadcastIp, localUdpPort);
-    // Udp.write(replyPacekt);
-    // Udp.endPacket();
-    starTime = millisAtual;
-  }
-  else if ((currenTime - starTime) < 0)
-  {
-    starTime = millisAtual;
+
+    millisSendUDP = millisAtual + interval;
   }
 
   for (int numSensor = 0; numSensor <= 15; numSensor++)
   {
-
     //  if (SensorAlterado && (sSensor1 != "11111111" || sSensor2 != "11111111"))
-    if (verificaSensores(numSensor, valorSensores[numSensor]))
+    //if (verificaSensores(numSensor, valorSensores[numSensor]))
+    if (verificaSensores(numSensor, (String)bitRead(inValues, numSensor)))
     {
       if (msgDisparada[numSensor] == false)
       {
@@ -153,7 +106,7 @@ void trataSensores()
         {
           sendSMS(numSensor);
         }
-        ultimoDisparo = sSensor1 + sSensor2;
+        ultimoDisparo = sInValues; //sSensor1 + sSensor2;
         limparUltimoDisparo = 0;
         (!DEBUG_ON) ?: Serial.println("Sensor disparado");
       }
@@ -275,63 +228,63 @@ void lersensores(AsyncWebServerRequest *request)
   request->send(200, "text/html", sSensor1);
 }
 
-void gravasensor(AsyncWebServerRequest *request)
+void SaveInputConfig(AsyncWebServerRequest *request)
 {
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", "ok");
+  gRequest = request;
+  asyncExecuteFunction = true;
+}
 
-  String idAgenda = request->arg("ag");
-  String Valor = request->arg("s");
-  String Senha = request->arg("k");
-  String nomeS = request->arg("nome");
-  String gv = request->arg("gn");
-  int Indice = request->arg("p").toInt();
+void AsyncSaveInputConfig()
+{
+  (!DEBUG_ON) ?: Serial.println(gRequest->url());
+  String idAgenda = gRequest->arg("ag");
+  String Valor = gRequest->arg("s");
+  String Senha = gRequest->arg("k");
+  String nomeS = gRequest->arg("nome");
+  String gv = gRequest->arg("gn");
+  int Indice = gRequest->arg("p").toInt();
   String nomesG = "";
+
+  //(!DEBUG_ON) ?: Serial.println("Passei 1");
 
   if (gv == "1")
   {
     nomeSensores[Indice] = nomeS;
-    Serial.println(nomeS);
-    Serial.println("Estou aqui 1");
   }
-
+  //(!DEBUG_ON) ?: Serial.println("Passei 2");
   if (Senha == "kdi9e")
   {
-
+    (!DEBUG_ON) ?: Serial.println("Passei 2.0");
     for (int id = 0; id < 16; id++)
     {
       nomesG += nomeSensores[id] + "|";
     }
     nomesG += "*";
+    (!DEBUG_ON) ?: Serial.println("Passei 2.1");
 
-    SPIFFS.begin();
-    File f = SPIFFS.open("/sensores.txt", "w");
-
-    // if (!f)
-    // {
-    //   SPIFFS.format();
-    //   File f = SPIFFS.open("/sensores.txt", "w");
-    // }
-
-    f.println(Valor);
-    f.close();
-
-    f = SPIFFS.open("/nsensores.txt", "w");
-    f.println(nomesG);
-    f.close();
-
-    SPIFFS.end();
-    //(!DEBUG_ON) ?: Serial.println("valor salvo na ag" + idAgenda + ".txt");
-    (!DEBUG_ON) ?: Serial.println(Valor);
+    // SPIFFS.begin();
+    // (!DEBUG_ON) ?: Serial.println("Passei 2.2");
+    // File f = SPIFFS.open("/sensores.txt", "w");
+    // (!DEBUG_ON) ?: Serial.println("Passei 2.3");
+    // if (f)
+    //   f.println(Valor);
+    // (!DEBUG_ON) ?: Serial.println("Passei 2.4");
+    // f.close();
+    // (!DEBUG_ON) ?: Serial.println("Passei 2.5");
+    // delay(300);
+    // f = SPIFFS.open("/nsensores.txt", "w");
+    // (!DEBUG_ON) ?: Serial.println("Passei 2.6");
+    // if (f)
+    //   f.println(nomesG);
+    // (!DEBUG_ON) ?: Serial.println("Passei 2.7");
+    // f.close();
+    // (!DEBUG_ON) ?: Serial.println("Passei 2.8");
+    // SPIFFS.end();
+    (!DEBUG_ON) ?: Serial.println("Passei 2.9");
   }
-
-  //Serial.println("Vou consultar sensor");
-  //consultaSensor();
-  //Serial.println("Sai de consulta sensor");
-  SensorAlterado = true;
+  //(!DEBUG_ON) ?: Serial.println("Passei 3");
+  //SensorAlterado = true;
 }
 
 void gravasensor2(String Valor)
@@ -969,7 +922,7 @@ void consultaSensor()
     texto = f.readStringUntil('*');
   texto += '*';
   f.close();
-
+  delay(300);
   f = SPIFFS.open("/nsensores.txt", "r");
   if (f)
     nomeS = f.readStringUntil('*');
@@ -1029,6 +982,11 @@ void consultaSensor()
       }
       posicao++;
     }
+  }
+
+  for (size_t i = 0; i < 16; i++)
+  {
+    (!DEBUG_ON) ?: Serial.println("ConsultaSensor[" + (String)i + "] - " + Sensores[i] + " - " + nomeSensores[i]);
   }
 }
 

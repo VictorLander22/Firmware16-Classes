@@ -59,6 +59,7 @@ unsigned long millisMqttReconnect;
 unsigned long millisNetworkScan;
 unsigned long lastDisplay;
 unsigned long millisIREnabled;
+unsigned long millisSendUDP;
 
 File UploadFile;
 
@@ -164,12 +165,13 @@ IPAddress broadcastIP;
 IPAddress IpDispositivo;
 //ESP8266WebServer server(80);
 AsyncWebServer server(80);
-AsyncWebServerRequest *request;
+AsyncWebServerRequest *gRequest;
+bool asyncExecuteFunction;
 
 int contadorled = 0;
 
-unsigned long starTime = 0;    // Use unsigned long when dealing with millisAtual
-unsigned long interval = 2000; // 1000 millis = 1 second
+unsigned long starTime = 0; // Use unsigned long when dealing with millisAtual
+unsigned long interval = 2000;
 //unsigned long Contador = 0;
 
 //Dispositivos
@@ -273,3 +275,4 @@ const uint8_t dispY[5] = {1, 14, 30, 42, 54};
 String dispText[5] = {"", "", "", "", ""};
 uint8_t dispLine = 0;
 bool hasDisplay = false;
+bool clock2s;

@@ -223,52 +223,52 @@ void Inverte(int vPorta)
   SaveOutputs();
 }
 
-void CarregaEntradas()
-{
-  String sSensor1 = String(sensor1.read8(), BIN);
-  String sSensor2 = String(sensor2.read8(), BIN);
+// void CarregaEntradas()
+// {
+//   String sSensor1 = String(sensor1.read8(), BIN);
+//   String sSensor2 = String(sensor2.read8(), BIN);
 
-  while (sSensor1.length() < 8)
-  {
-    sSensor1 = '0' + sSensor1;
-  }
+//   while (sSensor1.length() < 8)
+//   {
+//     sSensor1 = '0' + sSensor1;
+//   }
 
-  while (sSensor2.length() < 8)
-  {
-    sSensor2 = '0' + sSensor2;
-  }
+//   while (sSensor2.length() < 8)
+//   {
+//     sSensor2 = '0' + sSensor2;
+//   }
 
-  int posicaoSensor;
+//   int posicaoSensor;
 
-  for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
-  {
-    Sensores[posicaoSensor] = sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor);
+//   for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
+//   {
+//     Sensores[posicaoSensor] = sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor);
 
-    if (sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor) == "0")
-    {
-      estadoAtual[posicaoSensor] = HIGH;
-      ultimoEstado[posicaoSensor] = HIGH;
-    }
-    else
-    {
-      estadoAtual[posicaoSensor] = LOW;
-      ultimoEstado[posicaoSensor] = LOW;
-    }
-  }
+//     if (sSensor1.substring(7 - posicaoSensor, 8 - posicaoSensor) == "0")
+//     {
+//       estadoAtual[posicaoSensor] = HIGH;
+//       ultimoEstado[posicaoSensor] = HIGH;
+//     }
+//     else
+//     {
+//       estadoAtual[posicaoSensor] = LOW;
+//       ultimoEstado[posicaoSensor] = LOW;
+//     }
+//   }
 
-  for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
-  {
-    Sensores[posicaoSensor + 8] = sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor);
+//   for (posicaoSensor = 0; posicaoSensor <= 7; posicaoSensor++)
+//   {
+//     Sensores[posicaoSensor + 8] = sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor);
 
-    if (sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor) == "0")
-    {
-      estadoAtual[posicaoSensor + 8] = HIGH;
-      ultimoEstado[posicaoSensor + 8] = HIGH;
-    }
-    else
-    {
-      estadoAtual[posicaoSensor + 8] = LOW;
-      ultimoEstado[posicaoSensor + 8] = LOW;
-    }
-  }
-}
+//     if (sSensor2.substring(7 - posicaoSensor, 8 - posicaoSensor) == "0")
+//     {
+//       estadoAtual[posicaoSensor + 8] = HIGH;
+//       ultimoEstado[posicaoSensor + 8] = HIGH;
+//     }
+//     else
+//     {
+//       estadoAtual[posicaoSensor + 8] = LOW;
+//       ultimoEstado[posicaoSensor + 8] = LOW;
+//     }
+//   }
+// }
