@@ -17,13 +17,21 @@ void asyncFunctions()
       (!DEBUG_ON) ?: Serial.println("[" + (String)i + "] " + gRequest->getParam(i)->name() + " : " + gRequest->getParam(i)->value());
     }
 
-    if (gRequest->url() == "/teste")
+    if (gRequest->url() == "/backupesp")
     {
-      (!DEBUG_ON) ?: Serial.println(gRequest->url());
+      AsyncBackupEsp();
+    }
+    else if (gRequest->url() == "/restoreesp")
+    {
+      AsyncRestoreEsp();
+    }
+    else if (gRequest->url() == "/teste")
+    {
+      AsyncFormatEsp();
     }
     else if (gRequest->url() == "/gravasensor")
     {
-      //AsyncSaveInputConfig();
+      AsyncSaveInputConfig();
     }
   }
 }
@@ -54,22 +62,3 @@ void mostarEEProm(AsyncWebServerRequest *request)
   if (DEBUG_ON)
     DevSet.showVariables();
 }
-
-// void print_uint64_t(uint64_t num)
-// {
-
-//   char rev[128];
-//   char *p = rev + 1;
-
-//   while (num > 0)
-//   {
-//     *p++ = '0' + (num % 10);
-//     num /= 10;
-//   }
-//   p--;
-//   /*Print the number which is now in reverse*/
-//   while (p > rev)
-//   {
-//     Serial.print(*p--);
-//   }
-// }

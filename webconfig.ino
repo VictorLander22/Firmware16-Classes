@@ -57,6 +57,8 @@ void ConfigurarWebServer(void)
   server.on("/downloadfile", File_Download);
   server.on("/deletefile", File_Delete);
   server.on("/asyncRestart", asyncESPRestart);
+  server.on("/backupesp", ExecuteAsyncFunction);
+  server.on("/restoreesp", ExecuteAsyncFunction);
   server.on("/uploadfile", File_Upload);
   server.on(
       "/fupload", HTTP_POST, [](AsyncWebServerRequest *request) { request->send(200); }, onUpload);
@@ -136,12 +138,12 @@ void asyncESPRestart(AsyncWebServerRequest *request)
 void dirarquivos(AsyncWebServerRequest *request)
 {
   String arquivos = "";
-  SPIFFS.begin();
+  LittleFS.begin();
   (!DEBUG_ON) ?: Serial.println(F("Consultar sistema de arquivos"));
-  Dir dir = SPIFFS.openDir("/");
+  Dir dir = LittleFS.openDir("/");
   while (dir.next())
   {
-    arquivos += dir.fileName();
+    arquivos += dir.fileName() + " ";
     if (dir.fileSize())
     {
       File f = dir.openFile("r");
@@ -150,7 +152,7 @@ void dirarquivos(AsyncWebServerRequest *request)
     }
     arquivos += "<BR>";
   }
-  SPIFFS.end();
+  LittleFS.end();
 
   arquivos += "*";
 
@@ -241,4 +243,120 @@ void File_Delete(AsyncWebServerRequest *request)
     request->send(200, "text/html", F("Não existe"));
   }
   SPIFFS.end();
+}
+
+void ExecuteAsyncFunction(AsyncWebServerRequest *request)
+{
+  gRequest = request;
+  asyncExecuteFunction = true;
+  request->send(200, "text/html", "OK");
+}
+
+void AsyncBackupEsp()
+{
+  (!DEBUG_ON) ?: Serial.println(gRequest->url());
+  WiFiClient cliente;
+  HTTPClient http;
+  String uri = "http://192.168.137.1:3000/postfile";
+  String path = "";
+
+  SPIFFS.begin();
+  Dir dir = SPIFFS.openDir("/");
+  while (dir.next())
+  {
+    path = dir.fileName();
+    if (!path.startsWith("/"))
+      path = "/" + path;
+    bool fileExist = SPIFFS.exists(path);
+
+    if (fileExist)
+    {
+
+      http.setTimeout(2000);
+      http.setReuse(true);
+
+      fs::File f = SPIFFS.open(path, "r");
+      http.begin(cliente, uri);
+      http.addHeader("Content-Type", "application/octet-stream");
+      http.addHeader("dirname", gchipId);
+      http.addHeader("filename", path);
+
+      int httpCode = http.sendRequest("POST", &f, f.size());
+
+      if (httpCode >= 200 && httpCode < 300)
+      {
+        String payload = http.getString();
+        (!DEBUG_ON) ?: Serial.println(payload);
+      }
+
+      http.end();
+      f.close();
+    }
+  }
+  SPIFFS.end();
+}
+
+void AsyncRestoreEsp()
+{
+  (!DEBUG_ON) ?: Serial.println(gRequest->url());
+  HTTPClient http;
+  WiFiClientSecure client;
+  WiFiClient *stream;
+
+  http.begin("http://192.168.137.1:3000/dir");
+  http.setReuse(true);
+  int httpCode = http.GET();
+  String payload = http.getString();
+  http.end();
+
+  (!DEBUG_ON) ?: Serial.println(payload);
+  (!DEBUG_ON) ?: Serial.println(payload.length());
+
+  DynamicJsonDocument dirlist(payload.length() * 2);
+  auto error = deserializeJson(dirlist, payload);
+
+  if (error)
+  {
+    (!DEBUG_ON) ?: Serial.print(F("deserializeJson() failed with code "));
+    (!DEBUG_ON) ?: Serial.println(error.c_str());
+    return;
+  }
+  else
+  {
+    LittleFS.begin();
+    for (int i = 0; i < dirlist["file"].size(); i++)
+    {
+      const String dir = dirlist["file"][i];
+      //Serial.println("/" + dir);
+      http.setTimeout(3000);
+      http.setReuse(true);
+
+      http.begin("http://192.168.137.1:3000/download");
+      http.addHeader("dirname", gchipId);
+      http.addHeader("filename", dir);
+
+      httpCode = http.GET();
+      delay(100);
+      if (httpCode == 200)
+      {
+        Serial.println("/" + dir);
+
+        fs::File f = LittleFS.open("/" + dir, "w");
+        http.writeToStream(&f);
+        //delay(100);
+        f.close();
+      }
+      delay(400);
+      http.end();
+    }
+    LittleFS.end();
+  }
+}
+
+void AsyncFormatEsp()
+{
+  (!DEBUG_ON) ?: Serial.println(gRequest->url());
+  LittleFS.format();
+  //SPIFFS.format();
+  (!DEBUG_ON) ?: Serial.println(F("Format SUCCESS!"));
 }

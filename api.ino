@@ -322,11 +322,20 @@ void api(AsyncWebServerRequest *request)
       //   delay(300);
       //   sendirAPI(qtde4.toInt(), vModel4.toInt(), Comando4, Comando42, vp4.toInt());
       // }
-      irNumBits = request->arg("qt1").toInt();
-      irModel = request->arg("m1").toInt();
-      irPort = request->arg("p1").toInt();
-      irData = request->arg("c1") + request->arg("c12");
-
+      if (isPost)
+      {
+        irNumBits = request->arg("qt1").toInt();
+        irModel = request->arg("m1").toInt();
+        irPort = request->arg("p1").toInt();
+        irData = request->arg("c1") + request->arg("c12");
+      }
+      else
+      {
+        irNumBits = MqttArg(msgMqtt, "qt1").toInt();
+        irModel = MqttArg(msgMqtt, "m1").toInt();
+        irPort = MqttArg(msgMqtt, "p1").toInt();
+        irData = MqttArg(msgMqtt, "c1");
+      }
       irEnSend = true;
       (!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
 

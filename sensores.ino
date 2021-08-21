@@ -263,14 +263,14 @@ void AsyncSaveInputConfig()
     nomesG += "*";
     (!DEBUG_ON) ?: Serial.println("Passei 2.1");
 
-    // SPIFFS.begin();
-    // (!DEBUG_ON) ?: Serial.println("Passei 2.2");
-    // File f = SPIFFS.open("/sensores.txt", "w");
-    // (!DEBUG_ON) ?: Serial.println("Passei 2.3");
-    // if (f)
-    //   f.println(Valor);
-    // (!DEBUG_ON) ?: Serial.println("Passei 2.4");
-    // f.close();
+    SPIFFS.begin();
+    (!DEBUG_ON) ?: Serial.println("Passei 2.2");
+    File f = SPIFFS.open("/sensores.txt", "w");
+    (!DEBUG_ON) ?: Serial.println("Passei 2.3");
+    if (f)
+      f.println(Valor);
+    (!DEBUG_ON) ?: Serial.println("Passei 2.4");
+    f.close();
     // (!DEBUG_ON) ?: Serial.println("Passei 2.5");
     // delay(300);
     // f = SPIFFS.open("/nsensores.txt", "w");
@@ -280,7 +280,7 @@ void AsyncSaveInputConfig()
     // (!DEBUG_ON) ?: Serial.println("Passei 2.7");
     // f.close();
     // (!DEBUG_ON) ?: Serial.println("Passei 2.8");
-    // SPIFFS.end();
+    SPIFFS.end();
     (!DEBUG_ON) ?: Serial.println("Passei 2.9");
   }
   //(!DEBUG_ON) ?: Serial.println("Passei 3");
@@ -992,6 +992,7 @@ void consultaSensor()
 
 String lerSensor()
 {
+
   String texto;
   SPIFFS.begin();
   File f = SPIFFS.open("/sensores.txt", "r");
@@ -1007,6 +1008,7 @@ void consensor(AsyncWebServerRequest *request)
 {
   // if (!request->authenticate(www_username, www_password))
   //   return request->requestAuthentication();
+  (!DEBUG_ON) ?: Serial.println("Passei em consensor");
   String Senha = request->arg("k");
 
   if (Senha == "kdi9e")
