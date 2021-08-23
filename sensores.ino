@@ -208,10 +208,6 @@ void sendDataToFirebase(String MSG, int numSen, String vTag)
 
 void lersensores(AsyncWebServerRequest *request)
 {
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   String sSensor1 = String(sensor1.read8(), BIN);
   String sSensor2 = String(sensor2.read8(), BIN);
 
@@ -228,63 +224,48 @@ void lersensores(AsyncWebServerRequest *request)
   request->send(200, "text/html", sSensor1);
 }
 
-void SaveInputConfig(AsyncWebServerRequest *request)
-{
-  request->send(200, "text/html", "ok");
-  gRequest = request;
-  asyncExecuteFunction = true;
-}
-
 void AsyncSaveInputConfig()
 {
   (!DEBUG_ON) ?: Serial.println(gRequest->url());
-  String idAgenda = gRequest->arg("ag");
   String Valor = gRequest->arg("s");
-  String Senha = gRequest->arg("k");
-  String nomeS = gRequest->arg("nome");
-  String gv = gRequest->arg("gn");
   int Indice = gRequest->arg("p").toInt();
+  String Senha = gRequest->arg("k");
+  String gv = gRequest->arg("gn");
+  String nomeS = gRequest->arg("nome");
+  //String idAgenda = gRequest->arg("ag");
   String nomesG = "";
-
-  //(!DEBUG_ON) ?: Serial.println("Passei 1");
 
   if (gv == "1")
   {
     nomeSensores[Indice] = nomeS;
   }
-  //(!DEBUG_ON) ?: Serial.println("Passei 2");
+
   if (Senha == "kdi9e")
   {
-    (!DEBUG_ON) ?: Serial.println("Passei 2.0");
     for (int id = 0; id < 16; id++)
     {
       nomesG += nomeSensores[id] + "|";
     }
     nomesG += "*";
-    (!DEBUG_ON) ?: Serial.println("Passei 2.1");
-
     SPIFFS.begin();
-    (!DEBUG_ON) ?: Serial.println("Passei 2.2");
+
+    //Save input configs
     File f = SPIFFS.open("/sensores.txt", "w");
-    (!DEBUG_ON) ?: Serial.println("Passei 2.3");
     if (f)
       f.println(Valor);
-    (!DEBUG_ON) ?: Serial.println("Passei 2.4");
     f.close();
-    // (!DEBUG_ON) ?: Serial.println("Passei 2.5");
-    // delay(300);
-    // f = SPIFFS.open("/nsensores.txt", "w");
-    // (!DEBUG_ON) ?: Serial.println("Passei 2.6");
-    // if (f)
-    //   f.println(nomesG);
-    // (!DEBUG_ON) ?: Serial.println("Passei 2.7");
-    // f.close();
-    // (!DEBUG_ON) ?: Serial.println("Passei 2.8");
+    delay(300);
+
+    //Save input names
+    f = SPIFFS.open("/nsensores.txt", "w");
+    if (f)
+      f.println(nomesG);
+    f.close();
+
     SPIFFS.end();
-    (!DEBUG_ON) ?: Serial.println("Passei 2.9");
   }
-  //(!DEBUG_ON) ?: Serial.println("Passei 3");
-  //SensorAlterado = true;
+
+  SensorAlterado = true;
 }
 
 void gravasensor2(String Valor)

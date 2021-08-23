@@ -64,6 +64,8 @@ unsigned long millisSendUDP;
 
 File UploadFile;
 
+const String cloudServer = "http://192.168.137.1:3000/";
+
 //String CloudAddress = "http://keepin.com.br/api/"";
 //Const CloudAddress = "http://192.168.15.16:4000/";
 

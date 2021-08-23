@@ -16,7 +16,7 @@ void ConfigurarWebServer(void)
   server.on("/gravaragenda", gravaragenda);
   server.on("/atualizahora", atualizahora);
   server.on("/lersensores", lersensores);
-  server.on("/gravasensor", SaveInputConfig);
+  server.on("/gravasensor", ExecuteAsyncFunction);
   server.on("/consultasensor", consensor);
   server.on("/gravadevice", gravadevice);
   server.on("/buscadevice", buscadevice);
@@ -138,9 +138,9 @@ void asyncESPRestart(AsyncWebServerRequest *request)
 void dirarquivos(AsyncWebServerRequest *request)
 {
   String arquivos = "";
-  LittleFS.begin();
+  SPIFFS.begin();
   (!DEBUG_ON) ?: Serial.println(F("Consultar sistema de arquivos"));
-  Dir dir = LittleFS.openDir("/");
+  Dir dir = SPIFFS.openDir("/");
   while (dir.next())
   {
     arquivos += dir.fileName() + " ";
@@ -152,7 +152,7 @@ void dirarquivos(AsyncWebServerRequest *request)
     }
     arquivos += "<BR>";
   }
-  LittleFS.end();
+  SPIFFS.end();
 
   arquivos += "*";
 
@@ -257,7 +257,7 @@ void AsyncBackupEsp()
   (!DEBUG_ON) ?: Serial.println(gRequest->url());
   WiFiClient cliente;
   HTTPClient http;
-  String uri = "http://192.168.137.1:3000/postfile";
+  String uri = cloudServer + "postfile";
   String path = "";
 
   SPIFFS.begin();
@@ -268,20 +268,22 @@ void AsyncBackupEsp()
     if (!path.startsWith("/"))
       path = "/" + path;
     bool fileExist = SPIFFS.exists(path);
-
     if (fileExist)
     {
-
+      (!DEBUG_ON) ?: Serial.println(path);
       http.setTimeout(2000);
       http.setReuse(true);
 
-      fs::File f = SPIFFS.open(path, "r");
+      File f = SPIFFS.open(path, "r");
       http.begin(cliente, uri);
       http.addHeader("Content-Type", "application/octet-stream");
       http.addHeader("dirname", gchipId);
       http.addHeader("filename", path);
 
       int httpCode = http.sendRequest("POST", &f, f.size());
+
+      (!DEBUG_ON) ?: Serial.println(uri);
+      (!DEBUG_ON) ?: Serial.println(httpCode);
 
       if (httpCode >= 200 && httpCode < 300)
       {
@@ -303,8 +305,11 @@ void AsyncRestoreEsp()
   WiFiClientSecure client;
   WiFiClient *stream;
 
-  http.begin("http://192.168.137.1:3000/dir");
+  http.setTimeout(1000);
   http.setReuse(true);
+  http.begin(cloudServer + "dir");
+
+  http.addHeader("dirname", gchipId);
   int httpCode = http.GET();
   String payload = http.getString();
   http.end();
@@ -323,7 +328,7 @@ void AsyncRestoreEsp()
   }
   else
   {
-    LittleFS.begin();
+    SPIFFS.begin();
     for (int i = 0; i < dirlist["file"].size(); i++)
     {
       const String dir = dirlist["file"][i];
@@ -331,7 +336,7 @@ void AsyncRestoreEsp()
       http.setTimeout(3000);
       http.setReuse(true);
 
-      http.begin("http://192.168.137.1:3000/download");
+      http.begin(cloudServer + "download");
       http.addHeader("dirname", gchipId);
       http.addHeader("filename", dir);
 
@@ -341,7 +346,7 @@ void AsyncRestoreEsp()
       {
         Serial.println("/" + dir);
 
-        fs::File f = LittleFS.open("/" + dir, "w");
+        fs::File f = SPIFFS.open("/" + dir, "w");
         http.writeToStream(&f);
         //delay(100);
         f.close();
@@ -349,14 +354,14 @@ void AsyncRestoreEsp()
       delay(400);
       http.end();
     }
-    LittleFS.end();
+    SPIFFS.end();
   }
 }
 
 void AsyncFormatEsp()
 {
   (!DEBUG_ON) ?: Serial.println(gRequest->url());
-  LittleFS.format();
-  //SPIFFS.format();
+  //LittleFS.format();
+  SPIFFS.format();
   (!DEBUG_ON) ?: Serial.println(F("Format SUCCESS!"));
 }
