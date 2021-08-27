@@ -38,7 +38,7 @@ void callback(char *topic, byte *payload, unsigned int length)
   String strRec = String(msgMqtt);
   newMqttMsg = true;
 
-  Serial.println("mqttcloud: " + String(topic) + "-" + (String)msgMqtt);
+  (!DEBUG_ON) ?: Serial.println("mqttcloud: " + String(topic) + "-" + (String)msgMqtt);
 
   String str = "Recibido Cloud: " + strRec;
   const char *cloudStr = str.c_str();
@@ -51,12 +51,12 @@ void callback(char *topic, byte *payload, unsigned int length)
 void MqttCloudReconnect()
 {
 
-  Serial.println(F("Iniciando MQTT connection..."));
+  (!DEBUG_ON) ?: Serial.println(F("Iniciando MQTT connection..."));
 
   if (!client.connected())
   {
     //(!DEBUG_ON) ?:
-    Serial.print(F("Attempting MQTT connection..."));
+    (!DEBUG_ON) ?: Serial.print(F("Attempting MQTT connection..."));
     // Create a random client ID
     String clientId = "ESP8266Client-";
     clientId += String(random(0xffff), HEX);
@@ -64,16 +64,16 @@ void MqttCloudReconnect()
     if (client.connect(clientId.c_str(), mqtt_server_user, mqtt_server_userpw))
     {
       //(!DEBUG_ON) ?:
-      Serial.println("connected");
+      (!DEBUG_ON) ?: Serial.println("connected");
       // Once connected, publish an announcement...
       client.publish("outTopic", "hello world");
       // ... and resubscribe
       client.subscribe(mqttTopicoCloud);
 
       //(!DEBUG_ON) ?:
-      Serial.println("WiFi connected");
+      (!DEBUG_ON) ?: Serial.println("WiFi connected");
       //(!DEBUG_ON) ?:
-      Serial.println("IP address: " + WiFi.localIP().toString());
+      (!DEBUG_ON) ?: Serial.println("IP address: " + WiFi.localIP().toString());
 
       NtpSetDateTimeNTP();
       UpdatePing();
@@ -84,11 +84,11 @@ void MqttCloudReconnect()
     {
       //(!DEBUG_ON) ?:
       hasMQTT = false;
-      Serial.print("failed, rc=");
+      (!DEBUG_ON) ?: Serial.print("failed, rc=");
       //(!DEBUG_ON) ?:
       Serial.print(client.state());
       //(!DEBUG_ON) ?:
-      Serial.println(" try again in 15 seconds");
+      (!DEBUG_ON) ?: Serial.println(" try again in 30 seconds");
     }
     enableConnection = false;
   }
@@ -97,7 +97,7 @@ void MqttCloudReconnect()
 void MqttSetup()
 {
   //(!DEBUG_ON) ?:
-  Serial.println();
+  (!DEBUG_ON) ?: Serial.println();
 
   str = "keepin/placas/" + gchipId + "/cloud";
   strRet = str + "/ret";
@@ -105,15 +105,15 @@ void MqttSetup()
   mqttTopicoCloudRet = strRet.c_str();
 
   //(!DEBUG_ON) ?:
-  Serial.println(mqtt_server);
+  (!DEBUG_ON) ?: Serial.println(mqtt_server);
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
   client.setBufferSize(2048);
   //(!DEBUG_ON) ?:
-  Serial.println("Id Chip: " + gchipId);
+  (!DEBUG_ON) ?: Serial.println("Id Chip: " + gchipId);
 
   //(!DEBUG_ON) ?:
-  Serial.println("Subscribe cloud: " + (String)mqttTopicoCloud);
+  (!DEBUG_ON) ?: Serial.println("Subscribe cloud: " + (String)mqttTopicoCloud);
 }
 
 void MqttLoop()

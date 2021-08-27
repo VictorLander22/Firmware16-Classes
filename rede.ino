@@ -280,11 +280,11 @@ void SetupPing()
       IPAddress addr(response.addr);
       if (response.total_recv > 1)
       {
-        Serial.println(F("Internet connected"));
+        (!DEBUG_ON) ?: Serial.println(F("Internet connected"));
         numberPingResponse++;
       }
       else
-        Serial.println(F("Internet disconnected"));
+        (!DEBUG_ON) ?: Serial.println(F("Internet disconnected"));
 
       if (numberPingResponse > 0)
       {

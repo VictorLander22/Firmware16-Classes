@@ -119,7 +119,7 @@ void gravawifi(AsyncWebServerRequest *request)
   DevSet.setWifi();
   if (DEBUG_ON)
   {
-    Serial.println(F("New WIFI Settings"));
+    (!DEBUG_ON) ?: Serial.println(F("New WIFI Settings"));
     DevSet.showVariables();
   }
 }
@@ -304,8 +304,9 @@ void AsyncRestoreEsp()
   HTTPClient http;
   WiFiClientSecure client;
   WiFiClient *stream;
+  int ret = -1;
 
-  http.setTimeout(1000);
+  http.setTimeout(5000);
   http.setReuse(true);
   http.begin(cloudServer + "dir");
 
@@ -331,28 +332,66 @@ void AsyncRestoreEsp()
     SPIFFS.begin();
     for (int i = 0; i < dirlist["file"].size(); i++)
     {
-      const String dir = dirlist["file"][i];
+      const String file = dirlist["file"][i];
       //Serial.println("/" + dir);
+
       http.setTimeout(3000);
       http.setReuse(true);
 
       http.begin(cloudServer + "download");
       http.addHeader("dirname", gchipId);
-      http.addHeader("filename", dir);
+      http.addHeader("filename", file);
 
       httpCode = http.GET();
-      delay(100);
+
+      //Serial.println("Header: " + http.header());
+      //delay(100);
       if (httpCode == 200)
       {
-        Serial.println("/" + dir);
+        (!DEBUG_ON) ?: Serial.println("/" + file);
 
-        fs::File f = SPIFFS.open("/" + dir, "w");
-        http.writeToStream(&f);
+        File f = SPIFFS.open("/" + file, "w");
+        if (f)
+        {
+          ret = http.writeToStream(&f);
+          (!DEBUG_ON) ?: Serial.println(ret);
+        }
         //delay(100);
         f.close();
       }
-      delay(400);
       http.end();
+      delay(300);
+      if (ret < 0)
+      {
+        (!DEBUG_ON) ?: Serial.println(F("Tentando novamente o download"));
+        http.setTimeout(3000);
+        http.setReuse(true);
+
+        http.begin(cloudServer + "download");
+        http.addHeader("dirname", gchipId);
+        http.addHeader("filename", file);
+
+        httpCode = http.GET();
+        //Serial.println("Header: " + http.header());
+
+        if (httpCode == 200)
+        {
+          (!DEBUG_ON) ?: Serial.println("/" + file);
+
+          File f = SPIFFS.open("/" + file, "w");
+          if (f)
+          {
+            ret = http.writeToStream(&f);
+            (!DEBUG_ON) ?: Serial.println(ret);
+          }
+          //delay(100);
+          f.close();
+        }
+
+        //delay(400);
+        http.end();
+        delay(300);
+      }
     }
     SPIFFS.end();
   }
