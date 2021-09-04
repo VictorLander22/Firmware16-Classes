@@ -1,11 +1,11 @@
 void ConfigurarWebServer(void)
 {
   server.on("/", handleHtmlConfig);
-  server.on("/gravarwifi", gravawifi);
+  server.on("/gravarwifi", ExecuteFunction);
   server.on("/gravasenhawifi", gravasenhawifi);
   server.on("/gravasenhahttp", gravasenhahttp);
   server.on("/reset", wifireset);
-  server.on("/reiniciar", reiniciar);
+  server.on("/reiniciar", ExecuteFunction);
   server.on("/valida", valida);
   server.on("/controle", controle);
   server.on("/situacao", situacao);
@@ -16,7 +16,7 @@ void ConfigurarWebServer(void)
   server.on("/gravaragenda", gravaragenda);
   server.on("/atualizahora", atualizahora);
   server.on("/lersensores", lersensores);
-  server.on("/gravasensor", ExecuteAsyncFunction);
+  server.on("/gravasensor", ExecuteFunction);
   server.on("/consultasensor", consensor);
   server.on("/gravadevice", gravadevice);
   server.on("/buscadevice", buscadevice);
@@ -49,26 +49,82 @@ void ConfigurarWebServer(void)
   server.on("/apiativo", apiativo);
   server.on("/apiconfig", apiconfig);
   server.on("/alterasenhapi", alterasenhapi);
-  server.on("/about", about);
+  server.on("/about", ExecuteFunction);
   server.on("/gravacena", gravacena);
   server.on("/log", readlog);
   server.on("/gravacloud", GravaCloud);
-  server.on("/dirarquivos", dirarquivos);
-  server.on("/downloadfile", File_Download);
-  server.on("/deletefile", File_Delete);
+  //server.on("/dirarquivos", dirarquivos);
+  //server.on("/downloadfile", File_Download);
+  //server.on("/deletefile", File_Delete);
   server.on("/asyncRestart", asyncESPRestart);
-  server.on("/backupesp", ExecuteAsyncFunction);
-  server.on("/restoreesp", ExecuteAsyncFunction);
-  server.on("/uploadfile", File_Upload);
+  //server.on("/espbackup", ExecuteFunction);
+  //server.on("/esprestore", ExecuteFunction);
+  //server.on("/espformat", ExecuteFunction);
+  //server.on("/uploadfile", FileUpload);
   server.on(
-      "/fupload", HTTP_POST, [](AsyncWebServerRequest *request) { request->send(200); }, onUpload);
+      "/fupload", HTTP_POST, [](AsyncWebServerRequest *request)
+      { request->send(200); },
+      onUpload);
 
-  server.on("/teste", teste);
+  server.on("/exec", ExecuteFunction);
 
   server.onNotFound(handleNotFound);
   server.begin();
 
   (!DEBUG_ON) ?: Serial.println("HTTP server started");
+}
+
+void ExecuteFunction(AsyncWebServerRequest *request)
+{
+  gRequest = request;
+
+  String functionName = (gRequest->hasArg("fn")) ? gRequest->arg("fn") : gRequest->url();
+
+  //(gRequest->hasArg("fn")) ? functionName = gRequest->arg("fn") : functionName = gRequest->url();
+
+  (!DEBUG_ON) ?: Serial.println(functionName);
+
+  if (functionName == "filedir")
+    FileDir();
+  else if (functionName == "filedownload")
+    FileDownload();
+  else if (functionName == "filedelete")
+    FileDelete();
+  else if (functionName == "fileupload")
+    FileUpload();
+  else if (functionName == "/gravarwifi")
+    gravawifi();
+  else if (functionName == "/reiniciar")
+    reiniciar();
+  else if (functionName == "/about")
+    about();
+  else
+  {
+    asyncExecuteFunction = true;
+  }
+}
+
+void AsyncFunctions()
+{
+  if (asyncExecuteFunction)
+  {
+    asyncExecuteFunction = false;
+    String functionName = (gRequest->hasArg("fn")) ? gRequest->arg("fn") : gRequest->url();
+
+    for (size_t i = 0; i < gRequest->args(); i++)
+    {
+      (!DEBUG_ON) ?: Serial.println("[" + (String)i + "] " + gRequest->getParam(i)->name() + " : " + gRequest->getParam(i)->value());
+    }
+
+    if (functionName == "espbackup")
+      AsyncBackupEsp();
+    else if (functionName == "esprestore")
+      AsyncRestoreEsp();
+    else if (functionName == "espformat")
+      AsyncFormatEsp();
+    else if (functionName == "/gravasensor")
+      AsyncSaveInputConfig();
+  }
 }
 
 void handleHtmlConfig(AsyncWebServerRequest *request)
@@ -88,28 +144,28 @@ void handleHtmlConfig(AsyncWebServerRequest *request)
   request->send_P(200, "text/html", defaultPage.c_str());
 }
 
-void about(AsyncWebServerRequest *request)
+void about()
 {
-  request->send_P(200, "text/html", webAbout);
+  gRequest->send_P(200, "text/html", webAbout);
 }
 
-void reiniciar(AsyncWebServerRequest *request)
+void reiniciar()
 {
   String restartPage(FPSTR(webRestart));
   restartPage.replace("#oldip#", CurrentIP());
   restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-  request->send_P(200, "text/html", restartPage.c_str());
+  gRequest->send_P(200, "text/html", restartPage.c_str());
 }
 
-void gravawifi(AsyncWebServerRequest *request)
+void gravawifi()
 {
-  request->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
+  gRequest->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
 
-  String wifiSSID = request->arg("txtnomerede");
-  String wifiPWD = request->arg("txtsenha");
-  const char *wifiIP = request->arg("txtip").c_str();
-  const char *wifiMSK = request->arg("txtmascara").c_str();
-  const char *wifiGTW = request->arg("txtgateway").c_str();
+  String wifiSSID = gRequest->arg("txtnomerede");
+  String wifiPWD = gRequest->arg("txtsenha");
+  const char *wifiIP = gRequest->arg("txtip").c_str();
+  const char *wifiMSK = gRequest->arg("txtmascara").c_str();
+  const char *wifiGTW = gRequest->arg("txtgateway").c_str();
   bitWrite(DevSet.mode, 2, 0); //wifiPadrao
   DevSet.wifiSSID = wifiSSID;
   DevSet.wifiPwd = wifiPWD;
@@ -124,10 +180,10 @@ void gravawifi(AsyncWebServerRequest *request)
   }
 }
 
-void redirectPage()
-{
-  gRequest->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
-}
+// void redirectPage()
+// {
+//   gRequest->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
+// }
 
 void asyncESPRestart(AsyncWebServerRequest *request)
 {
@@ -135,7 +191,8 @@ void asyncESPRestart(AsyncWebServerRequest *request)
   ESP.restart();
 }
 
-void dirarquivos(AsyncWebServerRequest *request)
+//void dirarquivos(AsyncWebServerRequest *request)
+void FileDir()
 {
   String arquivos = "";
   SPIFFS.begin();
@@ -156,13 +213,13 @@ void dirarquivos(AsyncWebServerRequest *request)
 
   arquivos += "*";
 
-  request->send(200, "text/html", arquivos);
+  gRequest->send(200, "text/html", arquivos);
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-void File_Download(AsyncWebServerRequest *request)
+void FileDownload()
 {
-  String path = request->arg("f");
+  String path = gRequest->arg("f");
 
   if (!path.startsWith("/"))
     path = "/" + path;
@@ -173,18 +230,48 @@ void File_Download(AsyncWebServerRequest *request)
   if (fileExist)
   {
     (!DEBUG_ON) ?: Serial.println(F("Arquivo existe"));
-    request->send(SPIFFS, path, String(), true);
+    gRequest->send(SPIFFS, path, String(), true);
   }
   else
   {
     (!DEBUG_ON) ?: Serial.println(F("Arquivo não existe"));
+    gRequest->send(200, "text/html", F("File not found"));
     SPIFFS.end();
   }
 }
 
-void File_Upload(AsyncWebServerRequest *request)
+void FileDelete()
+{ // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
+
+  // if (!request->authenticate(www_username, www_password))
+  //   return request->requestAuthentication();
+
+  String path = gRequest->arg("f");
+
+  if (!path.startsWith("/"))
+    path = "/" + path;
+
+  SPIFFS.begin();
+  if (SPIFFS.exists(path))
+  {
+    (!DEBUG_ON) ?: Serial.println(F("Arquivo existe"));
+    if (SPIFFS.remove(path))
+    {
+      (!DEBUG_ON) ?: Serial.println(F("Removido"));
+      gRequest->send(200, "text/html", F("Removido"));
+    }
+  }
+  else
+  {
+    (!DEBUG_ON) ?: Serial.println(F("Arquivo não existe"));
+    gRequest->send(200, "text/html", F("File not found"));
+  }
+  SPIFFS.end();
+}
+
+void FileUpload()
 {
-  request->send_P(200, "text/html", webUpload);
+  gRequest->send_P(200, "text/html", webUpload);
 }
 
 void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
@@ -216,45 +303,10 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
   }
 }
 
-void File_Delete(AsyncWebServerRequest *request)
-{ // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
-  String path = request->arg("f");
-
-  if (!path.startsWith("/"))
-    path = "/" + path;
-
-  SPIFFS.begin();
-  if (SPIFFS.exists(path))
-  {
-    (!DEBUG_ON) ?: Serial.println(F("Arquivo existe"));
-    if (SPIFFS.remove(path))
-    {
-      (!DEBUG_ON) ?: Serial.println(F("Removido"));
-      request->send(200, "text/html", F("Removido"));
-    }
-  }
-  else
-  {
-    (!DEBUG_ON) ?: Serial.println(F("Arquivo não existe"));
-    request->send(200, "text/html", F("Não existe"));
-  }
-  SPIFFS.end();
-}
-
-void ExecuteAsyncFunction(AsyncWebServerRequest *request)
-{
-  gRequest = request;
-  asyncExecuteFunction = true;
-  request->send(200, "text/html", "OK");
-}
-
 void AsyncBackupEsp()
 {
-  (!DEBUG_ON) ?: Serial.println(gRequest->url());
+  gRequest->send(200, "text/html", F("Backup"));
+
   WiFiClient cliente;
   HTTPClient http;
   String uri = cloudServer + "postfile";
@@ -300,15 +352,14 @@ void AsyncBackupEsp()
 
 void AsyncRestoreEsp()
 {
-  (!DEBUG_ON) ?: Serial.println(gRequest->url());
+  gRequest->send(200, "text/html", F("Restoring"));
   HTTPClient http;
-  WiFiClientSecure client;
-  WiFiClient *stream;
-  int ret = -1;
+  WiFiClient client;
+  //String payload;
 
-  http.setTimeout(5000);
+  http.setTimeout(2000);
   http.setReuse(true);
-  http.begin(cloudServer + "dir");
+  http.begin(client, cloudServer + "dir");
 
   http.addHeader("dirname", gchipId);
   int httpCode = http.GET();
@@ -332,74 +383,46 @@ void AsyncRestoreEsp()
     SPIFFS.begin();
     for (int i = 0; i < dirlist["file"].size(); i++)
     {
+      //Serial.println("AsyncRestoreEsp 1");
       const String file = dirlist["file"][i];
       //Serial.println("/" + dir);
 
-      http.setTimeout(3000);
+      http.setTimeout(2000);
       http.setReuse(true);
 
-      http.begin(cloudServer + "download");
+      http.begin(client, cloudServer + "download");
       http.addHeader("dirname", gchipId);
       http.addHeader("filename", file);
 
       httpCode = http.GET();
 
-      //Serial.println("Header: " + http.header());
+      //Serial.println(httpCode);
       //delay(100);
       if (httpCode == 200)
       {
         (!DEBUG_ON) ?: Serial.println("/" + file);
-
+        Serial.println("AsyncRestoreEsp 1");
+        payload = http.getString(); //Get the request response payload
+        Serial.println(payload);
         File f = SPIFFS.open("/" + file, "w");
         if (f)
         {
-          ret = http.writeToStream(&f);
-          (!DEBUG_ON) ?: Serial.println(ret);
+          f.print(payload);
         }
-        //delay(100);
         f.close();
       }
       http.end();
-      delay(300);
-      if (ret < 0)
-      {
-        (!DEBUG_ON) ?: Serial.println(F("Tentando novamente o download"));
-        http.setTimeout(3000);
-        http.setReuse(true);
-
-        http.begin(cloudServer + "download");
-        http.addHeader("dirname", gchipId);
-        http.addHeader("filename", file);
-
-        httpCode = http.GET();
-        //Serial.println("Header: " + http.header());
-
-        if (httpCode == 200)
-        {
-          (!DEBUG_ON) ?: Serial.println("/" + file);
-
-          File f = SPIFFS.open("/" + file, "w");
-          if (f)
-          {
-            ret = http.writeToStream(&f);
-            (!DEBUG_ON) ?: Serial.println(ret);
-          }
-          //delay(100);
-          f.close();
-        }
-
-        //delay(400);
-        http.end();
-        delay(300);
-      }
     }
     SPIFFS.end();
+    delay(100);
   }
 }
 
 void AsyncFormatEsp()
 {
-  (!DEBUG_ON) ?: Serial.println(gRequest->url());
+  gRequest->send(200, "text/html", F("Formating..."));
+
+  (!DEBUG_ON) ?: Serial.println(F("Formating"));
   //LittleFS.format();
   SPIFFS.format();
   (!DEBUG_ON) ?: Serial.println(F("Format SUCCESS!"));

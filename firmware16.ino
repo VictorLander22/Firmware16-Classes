@@ -36,7 +36,7 @@ void setup(void)
   delay(1000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
 
   //Set chip id
-  vchipId = ESP.getChipId();
+  vchipId = (String)ESP.getChipId();
   gchipId = WiFi.macAddress();
   gchipId.replace(":", "");
   UpdateDisplay(F("MAC OK"));
@@ -174,7 +174,7 @@ void loop(void)
 
     LoopDisplay();
 
-    asyncFunctions();
+    AsyncFunctions();
 
     FreeMemory(F("loop()"));
   }

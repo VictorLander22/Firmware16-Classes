@@ -10,7 +10,6 @@
 //#endif
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-//#include <ESP8266WebServer.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <LittleFS.h>
@@ -18,10 +17,11 @@
 #include <ESPAsyncUDP.h>
 //#include <ESP8266WiFiMesh.h>
 #include <pgmspace.h>
-#include <Wire.h> // must be included here so that Arduino library object file references work
+#include <Wire.h>
 #include <RtcDateTime.h>
 #include <PCF8583.h>
-#include <pcf8574_esp.h>
+#include <PCF8574.h>
+#include <ESP8266WiFiMulti.h>
 #include <ESP8266httpUpdate.h>
 //#include <ArduinoOTA.h>
 //IR
@@ -102,11 +102,11 @@ IPAddress DNS2(4, 4, 4, 4);
 String vSenhaAP = "12345678";
 
 //Congiguração chips I2C
-PCF857x chip1(0x21, &Wire);
-PCF857x chip2(0x22, &Wire);
-PCF857x chip3(0x25, &Wire);
-PCF857x sensor1(0x23, &Wire);
-PCF857x sensor2(0x24, &Wire);
+PCF8574 chip1(0x21, &Wire);
+PCF8574 chip2(0x22, &Wire);
+PCF8574 chip3(0x25, &Wire);
+PCF8574 sensor1(0x23, &Wire);
+PCF8574 sensor2(0x24, &Wire);
 PCF8583 Rtc(0xA0);
 KPPCF8583Class memRtc(0xA0);
 SSD1306Wire display(0x3c, -1, -1, GEOMETRY_128_64, I2C_ONE, 100000); //, D1, D2);

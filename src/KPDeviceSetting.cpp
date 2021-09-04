@@ -123,7 +123,7 @@ void KPDeviceSettingClass::showVariables()
   Serial.print("Wifi SSID = ");
   Serial.println(apWifiSSID);
   Serial.print("Wifi PWD  = ");
-  Serial.println(apWifiPwd);
+  Serial.println(KPDeviceSettingClass::apWifiPwd);
   Serial.print("Wifi IP   = ");
   Serial.print(KPDeviceSettingClass::numberToIpString(apWifiIP));
   Serial.printf(" (%u)\n", apWifiIP);
@@ -176,16 +176,8 @@ uint32_t KPDeviceSettingClass::ipStringToNumber(const char *sIp)
 
 String KPDeviceSettingClass::numberToIpString(uint32_t numIP)
 {
-  byte *b = KPDeviceSettingClass::conv4Bytes(numIP);
-  char sIp[20];
-  sprintf(sIp, "%u.%u.%u.%u", b[0], b[1], b[2], b[3]);
-  return sIp;
-}
-
-byte *KPDeviceSettingClass::conv4Bytes(uint32_t f1)
-{
-  byte *fb = (byte *)&f1;
-  return fb;
+  IPAddress sIp(numIP);
+  return sIp.toString();
 }
 
 uint32_t KPDeviceSettingClass::convUint32(byte *d)
@@ -215,7 +207,6 @@ void KPDeviceSettingClass::verifyEEPROM()
   }
   else
   {
-
     Serial.println("OK");
   }
 }

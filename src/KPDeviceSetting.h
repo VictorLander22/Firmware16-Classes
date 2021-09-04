@@ -64,7 +64,6 @@ public:
 
   String dateTimeStr(const time_t &t);
 
-  byte *conv4Bytes(uint32_t f1);
   uint32_t convUint32(byte *d);
 
 private:

@@ -270,34 +270,36 @@ void SetupPing()
         addrs[i].fromString(ips[i]);
     }
 
-    Pings[i].on(true, [](const AsyncPingResponse &response) {
-      IPAddress addr(response.addr);
-      if (!response.answer)
-        return false;
-    });
+    Pings[i].on(true, [](const AsyncPingResponse &response)
+                {
+                  IPAddress addr(response.addr);
+                  if (!response.answer)
+                    return false;
+                });
 
-    Pings[i].on(false, [](const AsyncPingResponse &response) {
-      IPAddress addr(response.addr);
-      if (response.total_recv > 1)
-      {
-        (!DEBUG_ON) ?: Serial.println(F("Internet connected"));
-        numberPingResponse++;
-      }
-      else
-        (!DEBUG_ON) ?: Serial.println(F("Internet disconnected"));
+    Pings[i].on(false, [](const AsyncPingResponse &response)
+                {
+                  IPAddress addr(response.addr);
+                  if (response.total_recv > 1)
+                  {
+                    (!DEBUG_ON) ?: Serial.println(F("Internet connected"));
+                    numberPingResponse++;
+                  }
+                  else
+                    (!DEBUG_ON) ?: Serial.println(F("Internet disconnected"));
 
-      if (numberPingResponse > 0)
-      {
-        enableConnection = true;
-        hasInternet = true;
-      }
-      else
-      {
-        enableConnection = false;
-        hasInternet = false;
-      }
-      return true;
-    });
+                  if (numberPingResponse > 0)
+                  {
+                    enableConnection = true;
+                    hasInternet = true;
+                  }
+                  else
+                  {
+                    enableConnection = false;
+                    hasInternet = false;
+                  }
+                  return true;
+                });
   }
 
   LoopPing();
@@ -337,7 +339,7 @@ void setBroadcastIP(uint32_t _currentSubnet)
   IPAddress _broadcastIP(_currentSubnet);
   for (int i = 0; i <= 3; i++)
   {
-    Serial.println(_broadcastIP[i]);
+    //(!DEBUG_ON) ?: Serial.println(_broadcastIP[i]);
     (_broadcastIP[i] == 0) ? _broadcastIP[i] = 255 : _broadcastIP[i] = IpDispositivo[i];
   }
   broadcastIP = _broadcastIP;

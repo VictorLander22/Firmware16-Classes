@@ -226,18 +226,18 @@ void lersensores(AsyncWebServerRequest *request)
 
 void AsyncSaveInputConfig()
 {
-  (!DEBUG_ON) ?: Serial.println(gRequest->url());
   String Valor = gRequest->arg("s");
   int Indice = gRequest->arg("p").toInt();
   String Senha = gRequest->arg("k");
   String gv = gRequest->arg("gn");
   String nomeS = gRequest->arg("nome");
   //String idAgenda = gRequest->arg("ag");
+
   String nomesG = "";
 
   if (gv == "1")
   {
-    nomeSensores[Indice] = nomeS;
+    nomeSensores[Indice - 1] = nomeS;
   }
 
   if (Senha == "kdi9e")
@@ -254,7 +254,7 @@ void AsyncSaveInputConfig()
     if (f)
       f.println(Valor);
     f.close();
-    delay(300);
+    //delay(300);
 
     //Save input names
     f = SPIFFS.open("/nsensores.txt", "w");
@@ -264,8 +264,8 @@ void AsyncSaveInputConfig()
 
     SPIFFS.end();
   }
-
   SensorAlterado = true;
+  gRequest->send(200, "text/html", "OK");
 }
 
 void gravasensor2(String Valor)

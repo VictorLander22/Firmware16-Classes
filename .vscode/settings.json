@@ -81,7 +81,10 @@
     "condition_variable": "cpp",
     "mutex": "cpp",
     "thread": "cpp",
-    "cinttypes": "cpp"
+    "cinttypes": "cpp",
+    "string_view": "cpp",
+    "ranges": "cpp"
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "C_Cpp.errorSquiggles": "Disabled"
 }

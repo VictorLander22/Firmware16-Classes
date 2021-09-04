@@ -1,38 +1,16 @@
 void teste(AsyncWebServerRequest *request)
 {
-  gRequest = request;
-  asyncExecuteFunction = true;
-  request->send(200, "text/html", "OK");
-}
-
-void asyncFunctions()
-{
-
-  if (asyncExecuteFunction)
+  String functionName = request->arg("fn");
+  (!DEBUG_ON) ?: Serial.println(functionName);
+  //gRequest = request;
+  //asyncExecuteFunction = true;
+  if (functionName == "teste")
   {
-    asyncExecuteFunction = false;
-
-    for (size_t i = 0; i < gRequest->args(); i++)
-    {
-      (!DEBUG_ON) ?: Serial.println("[" + (String)i + "] " + gRequest->getParam(i)->name() + " : " + gRequest->getParam(i)->value());
-    }
-
-    if (gRequest->url() == "/backupesp")
-    {
-      AsyncBackupEsp();
-    }
-    else if (gRequest->url() == "/restoreesp")
-    {
-      AsyncRestoreEsp();
-    }
-    else if (gRequest->url() == "/teste")
-    {
-      AsyncFormatEsp();
-    }
-    else if (gRequest->url() == "/gravasensor")
-    {
-      AsyncSaveInputConfig();
-    }
+    request->send(200, "text/html", "OK");
+  }
+  else
+  {
+    request->send(200, "text/html", "NOK");
   }
 }
 

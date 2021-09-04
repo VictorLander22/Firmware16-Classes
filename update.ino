@@ -1,23 +1,18 @@
 void executeupdate(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", "ok");
   shouldUpdate = 1;
 }
 
 void executeupdateBeta(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", "ok");
   shouldUpdate = 2;
 }
 
 void ExecuteUpdate()
 {
+  WiFiClient client;
   if (shouldUpdate != 0)
   {
     String url;
@@ -33,7 +28,7 @@ void ExecuteUpdate()
 
     (!DEBUG_ON) ?: Serial.println(url);
 
-    t_httpUpdate_return ret = ESPhttpUpdate.update(url);
+    t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
 
     switch (ret)
     {
@@ -57,25 +52,16 @@ void ExecuteUpdate()
 
 void versao(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", Placa_Version);
 }
 
 void linkversao(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
 }
 
 void linkversaoBeta(AsyncWebServerRequest *request)
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
   request->send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
 }
 

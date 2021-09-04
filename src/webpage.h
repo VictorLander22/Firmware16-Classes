@@ -14,7 +14,7 @@ const char webDefaultPage[] PROGMEM = R"===(
 <body>
 <h2>Configuração de rede</h2>
   <form action="gravarwifi">
-<label>SSID<br><input required type="text" name="txtnomerede" id="ssid"><br>Password<br><input required type="password" name="txtsenha" id="pwd"><br>
+<label>SSID<br><input required type="text" name="txtnomerede" id="ssid"><br>Password<br><input required type="text" name="txtsenha" id="pwd"><br>
   Fuso Horário<br><select name="utcsel" id="fuso">
   <option value="-12">(-12:00) Eniwetok, Kwajalein</option>
   <option value="-11">(-11:00) Midway Island, Samoa</option>
