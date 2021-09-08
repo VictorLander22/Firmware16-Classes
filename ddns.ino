@@ -1,17 +1,13 @@
-void chamaddns(AsyncWebServerRequest *request)
+void chamaddns()
 {
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
-  String sIP = request->arg("ip");
-  String Senha = request->arg("s");
-  int Porta = request->arg("p").toInt();
-  String funcao = request->arg("f");
-  int IdChip = request->arg("c").toInt();
-  String Tipo = request->arg("t");
-  String Nome = request->arg("n");
-  int Tipoa = request->arg("pu").toInt();
+  String sIP = gRequest->arg("ip");
+  String Senha = gRequest->arg("s");
+  int Porta = gRequest->arg("p").toInt();
+  String funcao = gRequest->arg("f");
+  int IdChip = gRequest->arg("c").toInt();
+  String Tipo = gRequest->arg("t");
+  String Nome = gRequest->arg("n");
+  int Tipoa = gRequest->arg("pu").toInt();
 
   IPAddress Destino;
 
@@ -27,11 +23,11 @@ void chamaddns(AsyncWebServerRequest *request)
 
       if (Tipo == "A" || Tipo == "G")
       {
-        Texto += request->arg("j") + "|n|";
+        Texto += gRequest->arg("j") + "|n|";
       }
       else if (Tipo == "B")
       {
-        Texto += request->arg("j") + "|" + request->arg("b") + "|";
+        Texto += gRequest->arg("j") + "|" + gRequest->arg("b") + "|";
       }
       else if (Tipo == "E" || Tipo == "X")
       {
@@ -53,11 +49,11 @@ void chamaddns(AsyncWebServerRequest *request)
 
       if (Tipo == "E")
       {
-        //request->send(200, "text/html", "ok");
+        //gRequest->send(200, "text/html", "ok");
       }
       else
       {
-        //request->send(200, "text/html", "ok");
+        //gRequest->send(200, "text/html", "ok");
       }
     }
   }
@@ -72,13 +68,13 @@ void chamaddns(AsyncWebServerRequest *request)
         {
           if (funcao == "true")
           {
-            request->send(200, "text/html", "ok");
+            gRequest->send(200, "text/html", "ok");
             LigaDesliga(Porta, HIGH, Nome, Tipoa);
             (!DEBUG_ON) ?: Serial.println("led 1 ligado");
           }
           else
           {
-            request->send(200, "text/html", "ok");
+            gRequest->send(200, "text/html", "ok");
             LigaDesliga(Porta, LOW, Nome, Tipoa);
             (!DEBUG_ON) ?: Serial.println("led 1 desligado");
           }
@@ -87,11 +83,11 @@ void chamaddns(AsyncWebServerRequest *request)
         {
           if (LePorta(Porta) == HIGH)
           {
-            request->send(200, "text/html", "true");
+            gRequest->send(200, "text/html", "true");
           }
           else
           {
-            request->send(200, "text/html", "false");
+            gRequest->send(200, "text/html", "false");
           }
         }
         else if (Tipo == "S")
@@ -111,44 +107,44 @@ void chamaddns(AsyncWebServerRequest *request)
               sSensor2 = '0' + sSensor2;
             }
 
-            request->send(200, "text/html", sSensor1 + sSensor2);
+            gRequest->send(200, "text/html", sSensor1 + sSensor2);
           }
           else
           {
-            request->send(200, "text/html", ultimoDisparo);
+            gRequest->send(200, "text/html", ultimoDisparo);
           }
         }
         else if (Tipo == "N")
         {
-          request->send(200, "text/html", String(notificar));
+          gRequest->send(200, "text/html", String(notificar));
         }
         else if (Tipo == "A")
         {
-          request->send(200, "text/html", "ok");
-          String Texto = request->arg("j");
+          gRequest->send(200, "text/html", "ok");
+          String Texto = gRequest->arg("j");
           gravasensor2(Texto);
         }
         else if (Tipo == "G")
         {
-          String Texto = request->arg("j");
+          String Texto = gRequest->arg("j");
           // liberar depois que colocar o arquivo de RF          gravarf2(Texto);
-          request->send(200, "text/html", "ok");
+          gRequest->send(200, "text/html", "ok");
         }
         else if (Tipo == "B")
         {
-          request->send(200, "text/html", "ok");
-          String Texto = request->arg("j");
-          String Telef = request->arg("b");
+          gRequest->send(200, "text/html", "ok");
+          String Texto = gRequest->arg("j");
+          String Telef = gRequest->arg("b");
           gravasms2(Texto, Telef);
         }
         else if (Tipo == "D")
         {
-          request->send(200, "text/html", consultasms2());
+          gRequest->send(200, "text/html", consultasms2());
         }
         else if (Tipo == "F")
         {
-          request->send(200, "text/html", "ok");
-          String Valor = request->arg("j");
+          gRequest->send(200, "text/html", "ok");
+          String Valor = gRequest->arg("j");
           gravanot2(Valor);
         }
         else if (Tipo == "I")
@@ -208,7 +204,7 @@ void chamaddns(AsyncWebServerRequest *request)
           String valSensores = sSensor1 + sSensor2;
           valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + getRSSI() + "*";
           valSensores.toCharArray(replyPacekt, 255);
-          request->send(200, "text/html", replyPacekt);
+          gRequest->send(200, "text/html", replyPacekt);
         }
       }
     }

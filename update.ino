@@ -1,12 +1,12 @@
-void executeupdate(AsyncWebServerRequest *request)
+void executeupdate()
 {
-  request->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", "ok");
   shouldUpdate = 1;
 }
 
-void executeupdateBeta(AsyncWebServerRequest *request)
+void executeupdateBeta()
 {
-  request->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", "ok");
   shouldUpdate = 2;
 }
 
@@ -34,35 +34,35 @@ void ExecuteUpdate()
     {
     case HTTP_UPDATE_FAILED:
       (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-      //            request->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
+      //            gRequest->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
       break;
 
     case HTTP_UPDATE_NO_UPDATES:
       (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
-      //    request->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
+      //    gRequest->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
       break;
 
     case HTTP_UPDATE_OK:
       (!DEBUG_ON) ?: Serial.println("ok");
-      //    request->send(200, "text/html", "HTTP_UPDATE_OK");
+      //    gRequest->send(200, "text/html", "HTTP_UPDATE_OK");
       break;
     }
   }
 }
 
-void versao(AsyncWebServerRequest *request)
+void versao()
 {
-  request->send(200, "text/html", Placa_Version);
+  gRequest->send(200, "text/html", Placa_Version);
 }
 
-void linkversao(AsyncWebServerRequest *request)
+void linkversao()
 {
-  request->send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
+  gRequest->send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
 }
 
-void linkversaoBeta(AsyncWebServerRequest *request)
+void linkversaoBeta()
 {
-  request->send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
+  gRequest->send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
 }
 
 void logData(String dados)
@@ -82,22 +82,22 @@ void logData(String dados)
   SPIFFS.end();
 }
 
-void readlog(AsyncWebServerRequest *request)
+void readlog()
 {
   SPIFFS.begin();
-  String comando = request->arg("c");
+  String comando = gRequest->arg("c");
 
   if (comando == "delete")
   {
     if (SPIFFS.remove("/log.txt"))
     {
       SPIFFS.end();
-      request->send(200, "text/html", "remove");
+      gRequest->send(200, "text/html", "remove");
     }
     else
     {
       SPIFFS.end();
-      request->send(200, "text/html", "falha");
+      gRequest->send(200, "text/html", "falha");
     }
   }
   else if (comando == "read")
@@ -111,10 +111,10 @@ void readlog(AsyncWebServerRequest *request)
     dados = dados + "</ul></body></html>";
     f.close();
     SPIFFS.end();
-    request->send(200, "text/html", dados);
+    gRequest->send(200, "text/html", dados);
   }
   else
   {
-    request->send(200, "text/html", "ok");
+    gRequest->send(200, "text/html", "ok");
   }
 }

@@ -5,39 +5,39 @@ void configRF()
   sSendRF.setRepeatTransmit(5);
 }
 
-void getRF(AsyncWebServerRequest *request)
+void getRF()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  request->send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
+  gRequest->send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
   tamanhoRF = -1;
   gProtocoloRF = -1;
   codigoRF = "-1";
 }
 
-void habRF(AsyncWebServerRequest *request)
+void habRF()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
   //enReadRF = true;
-  request->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", "ok");
 }
 
-void gravarf(AsyncWebServerRequest *request)
+void gravarf()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-  request->send(200, "text/html", "ok");
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
+  gRequest->send(200, "text/html", "ok");
 
   SensorRFAlterado = true;
-  //String idAgenda = request->arg("ag");
-  String Valor = request->arg("s");
-  String Senha = request->arg("k");
+  //String idAgenda = gRequest->arg("ag");
+  String Valor = gRequest->arg("s");
+  String Senha = gRequest->arg("k");
 
   (!DEBUG_ON) ?: Serial.println(Valor);
   if (Senha == "kdi9e")
@@ -595,30 +595,30 @@ void consultaSensorRF()
   }
 }
 
-void ultimodisprf(AsyncWebServerRequest *request)
+void ultimodisprf()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  String Senha = request->arg("k");
+  String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
   {
-    request->send(200, "text/html", ultimoDisparoRF);
+    gRequest->send(200, "text/html", ultimoDisparoRF);
   }
 }
 
-void sendRFp(AsyncWebServerRequest *request)
+void sendRFp()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-  request->send(200, "text/html", "ok");
-  unsigned long Valor = strtoul(request->arg("c").c_str(), NULL, 10);
-  unsigned long _tamanhorf = strtoul(request->arg("t").c_str(), NULL, 10);
-  unsigned long _protocol = strtoul(request->arg("p").c_str(), NULL, 10);
-  String Senha = request->arg("k");
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
+  gRequest->send(200, "text/html", "ok");
+  unsigned long Valor = strtoul(gRequest->arg("c").c_str(), NULL, 10);
+  unsigned long _tamanhorf = strtoul(gRequest->arg("t").c_str(), NULL, 10);
+  unsigned long _protocol = strtoul(gRequest->arg("p").c_str(), NULL, 10);
+  String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
   {

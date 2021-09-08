@@ -80,15 +80,11 @@ const char webAbout[] PROGMEM = R"===(
 
 const char webRestart[] PROGMEM = R"===(
 <h1>
-Redirecting to #newip# after <span id="countdown">12</span> seconds
+Redirecting to #newip# after <span id="countdown">15</span> seconds
 </h1>
 <script type="text/javascript">
 // Total seconds to wait
-var seconds = 12;
-
-window.onload = (function () {
-window.location.href = 'http://#oldip#/asyncRestart'
-})
+var seconds = 15;
 
 function countdown() {
 seconds = seconds - 1;

@@ -51,16 +51,16 @@ void sendSMS(int numSensor)
   cliente.stop();
 }
 
-void gravasms(AsyncWebServerRequest *request)
+void gravasms()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-  request->send(200, "text/html", "ok");
-  String Senha = request->arg("k");
-  String Texto = request->arg("t");
-  String Numeros = request->arg("n");
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
+  gRequest->send(200, "text/html", "ok");
+  String Senha = gRequest->arg("k");
+  String Texto = gRequest->arg("t");
+  String Numeros = gRequest->arg("n");
 
   if (Senha == "kdi9e")
   {
@@ -111,15 +111,15 @@ void gravasms2(String Texto, String Numeros)
   SPIFFS.end();
 }
 
-void consultasms(AsyncWebServerRequest *request)
+void consultasms()
 {
   //const char* www_username = www_username2.c_str();
   //const char* www_password = www_password2.c_str();
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
   String Texto = "";
   String Numeros = "";
-  String Senha = request->arg("k");
+  String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
   {
@@ -143,7 +143,7 @@ void consultasms(AsyncWebServerRequest *request)
       (!DEBUG_ON) ?: Serial.println("SMS: " + Texto);
     }
 
-    request->send(200, "text/html", Texto + "|" + Numeros);
+    gRequest->send(200, "text/html", Texto + "|" + Numeros);
   }
 }
 

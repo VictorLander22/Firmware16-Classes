@@ -321,28 +321,27 @@ void dumpCode(decode_results *results)
   }
 }
 
-void getIR(AsyncWebServerRequest *request)
+void getIR()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  request->send(200, "text/html", String(tamanho) + "|" + String(Modelo) + "|" + codigoIR + "*");
+  gRequest->send(200, "text/html", String(tamanho) + "|" + String(Modelo) + "|" + codigoIR + "*");
   tamanho = -1;
   codigoIR = "-1";
 }
 
-void sendir(AsyncWebServerRequest *request)
+void AsyncSendIR()
 {
-  request->send(200, "text/html", "ok");
-
-  String S = request->arg("s");
-  irNumBits = request->arg("q").toInt();
-  irModel = request->arg("m").toInt();
-  irPort = request->arg("p").toInt();
-  irData = request->arg("c") + request->arg("c2");
+  String S = gRequest->arg("s");
+  irNumBits = gRequest->arg("q").toInt();
+  irModel = gRequest->arg("m").toInt();
+  irPort = gRequest->arg("p").toInt();
+  irData = gRequest->arg("c") + gRequest->arg("c2");
   if (S == Senha)
     irEnSend = true;
   (!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
+  gRequest->send(200, "text/html", "ok");
 }
 
 void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vModelo, int q)
@@ -645,12 +644,12 @@ uint16_t converteRAW(String codig, String codig2, int tam)
 //return rawData;
 /*}*/
 
-void habir(AsyncWebServerRequest *request)
+void habir()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-  request->send(200, "text/html", "ok");
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
+  gRequest->send(200, "text/html", "ok");
   irrecv.resume();
   irrecv.resume();
   irrecv.resume();

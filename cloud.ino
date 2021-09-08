@@ -1,74 +1,9 @@
-void cloud(AsyncWebServerRequest *request)
+void cloud()
 {
-  request->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", "ok");
 
   executeCloud = true;
 }
-
-// void cloud1()
-// {
-//   if (executeCloud)
-//   {
-//     executeCloud = false;
-//     HTTPClient http;
-//     http.begin("http://cloud.keepin.com.br/api/control/3");
-//     int httpCode = http.GET();
-//     String payload;
-//     if (httpCode > 0)
-//     {
-//       payload = http.getString();
-//       (!DEBUG_ON) ?: Serial.println(payload);
-//     }
-
-//     http.end();
-
-//     //    StaticJsonBuffer<200> jsonBuffer;
-
-//     //DynamicJsonBuffer jsonBuffer(payload.length());
-//     //JsonObject &root = jsonBuffer.parseObject(payload);
-//     (!DEBUG_ON) ?: Serial.println(payload.length());
-
-//     DynamicJsonDocument root(payload.length() * 2);
-//     auto error = deserializeJson(root, payload);
-
-//     if (error)
-//     {
-//       //(!DEBUG_ON) ?: Serial.println("parseObject() failed");
-//       (!DEBUG_ON) ?: Serial.print(F("deserializeJson() failed with code "));
-//       (!DEBUG_ON) ?: Serial.println(error.c_str());
-//       return;
-//     }
-//     else
-//     {
-
-//       const String Descricao = root["descricao"];
-//       const bool ED1 = root["ed1"];
-//       const bool ED3 = root["ed3"];
-
-//       (!DEBUG_ON) ?: Serial.println(Descricao);
-//       (!DEBUG_ON) ?: Serial.println(ED1);
-//       (!DEBUG_ON) ?: Serial.println(ED3);
-
-//       //(!DEBUG_ON) ?: Serial.println(root["ed4"]);
-//       //(!DEBUG_ON) ?: Serial.println(root["ed4"]);
-//     }
-//   }
-//   // if (!root.success())
-//   // {
-//   //   (!DEBUG_ON) ?: Serial.println("parseObject() failed");
-//   // }
-//   // else
-//   // {
-
-//   //   const String Descricao = root["descricao"];
-//   //   const bool ED1 = root["ed1"];
-//   //   const bool ED3 = root["ed3"];
-
-//   //   (!DEBUG_ON) ?: Serial.println(Descricao);
-//   //   (!DEBUG_ON) ?: Serial.println(ED1);
-//   //   (!DEBUG_ON) ?: Serial.println(ED3);
-//   // }
-// }
 
 void sendCloud(bool onlyNotify = false)
 {
@@ -238,15 +173,6 @@ void sendCloud(bool onlyNotify = false)
           {
             cenaPAtual++;
             sendIRCMD(acaoJson, "", qtdeJson.toInt(), portaJson.toInt(), modeloJson.toInt(), qtdeJson.toInt());
-
-            // irNumBits = qtdeJson.toInt();
-            // irModel = modeloJson.toInt();
-            // irPort = portaJson.toInt();
-            // irData = acaoJson;
-
-            // irEnSend = true;
-            //(!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
-
             lastCnTime = millisAtual;
             delay(300);
           }

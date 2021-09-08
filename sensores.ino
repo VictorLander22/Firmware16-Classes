@@ -206,7 +206,7 @@ void sendDataToFirebase(String MSG, int numSen, String vTag)
   cliente.stop();
 }
 
-void lersensores(AsyncWebServerRequest *request)
+void lersensores()
 {
   String sSensor1 = String(sensor1.read8(), BIN);
   String sSensor2 = String(sensor2.read8(), BIN);
@@ -221,7 +221,7 @@ void lersensores(AsyncWebServerRequest *request)
     sSensor2 = '0' + sSensor2;
   }
 
-  request->send(200, "text/html", sSensor1);
+  gRequest->send(200, "text/html", sSensor1);
 }
 
 void AsyncSaveInputConfig()
@@ -985,32 +985,32 @@ String lerSensor()
   return texto;
 }
 
-void consensor(AsyncWebServerRequest *request)
+void consensor()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
   (!DEBUG_ON) ?: Serial.println("Passei em consensor");
-  String Senha = request->arg("k");
+  String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
   {
-    request->send(200, "text/html", lerSensor());
+    gRequest->send(200, "text/html", lerSensor());
   }
   else
   {
-    request->send(200, "text/html", "-1");
+    gRequest->send(200, "text/html", "-1");
   }
 }
 
-void gravadevice(AsyncWebServerRequest *request)
+void gravadevice()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-  request->send(200, "text/html", "ok");
-  String Valor = request->arg("d");
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
+  gRequest->send(200, "text/html", "ok");
+  String Valor = gRequest->arg("d");
   //String Senha = ;
 
-  if (request->arg("k") == "kdi9e")
+  if (gRequest->arg("k") == "kdi9e")
   {
     SPIFFS.begin();
     File f = SPIFFS.open("/device.txt", "w");
@@ -1030,31 +1030,31 @@ void gravadevice(AsyncWebServerRequest *request)
   }
 }
 
-void buscadevice(AsyncWebServerRequest *request)
+void buscadevice()
 {
-  if (request->arg("k") == "kdi9e")
+  if (gRequest->arg("k") == "kdi9e")
   {
     SPIFFS.begin();
     File f = SPIFFS.open("/device.txt", "r");
     if (!f)
     {
-      request->send(200, "text/html", "");
+      gRequest->send(200, "text/html", "");
     }
     else
     {
       String valorDevice = f.readStringUntil('*');
-      request->send(200, "text/html", valorDevice);
+      gRequest->send(200, "text/html", valorDevice);
     }
     f.close();
     SPIFFS.end();
   }
 }
 
-void ultimodisp(AsyncWebServerRequest *request)
+void ultimodisp()
 {
-  if (request->arg("k") == "kdi9e")
+  if (gRequest->arg("k") == "kdi9e")
   {
-    request->send(200, "text/html", ultimoDisparo);
+    gRequest->send(200, "text/html", ultimoDisparo);
   }
 }
 
@@ -1075,32 +1075,32 @@ void retornaNotificar()
   SPIFFS.end();
 }
 
-void buscaNotificar(AsyncWebServerRequest *request)
+void buscaNotificar()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  String Senha = request->arg("k");
+  String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
   {
-    request->send(200, "text/html", String(notificar));
+    gRequest->send(200, "text/html", String(notificar));
   }
   else
   {
-    request->send(200, "text/html", "0");
+    gRequest->send(200, "text/html", "0");
   }
 }
 
-void gravanot(AsyncWebServerRequest *request)
+void gravanot()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-  request->send(200, "text/html", "ok");
-  String Valor = request->arg("v");
-  String Senha = request->arg("k");
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
+  gRequest->send(200, "text/html", "ok");
+  String Valor = gRequest->arg("v");
+  String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
   {

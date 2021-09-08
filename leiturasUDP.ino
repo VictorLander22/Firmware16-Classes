@@ -4,29 +4,30 @@ void SetupUDP()
   {
     // Serial.print("UDP Listening on IP: ");
     // Serial.println(WiFi.localIP());
-    udp.onPacket([](AsyncUDPPacket packet) {
-      // Serial.print("UDP Packet Type: ");
-      // Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast"
-      //                                                                        : "Unicast");
-      // Serial.print(", From: ");
-      // Serial.print(packet.remoteIP());
-      // Serial.print(":");
-      // Serial.print(packet.remotePort());
-      // Serial.print(", To: ");
-      // Serial.print(packet.localIP());
-      // Serial.print(":");
-      // Serial.print(packet.localPort());
-      // Serial.print(", Length: ");
-      // Serial.print(packet.length());
-      // Serial.print(", Data: ");
-      // Serial.write(packet.data(), packet.length());
-      // Serial.println();
-      // //reply to the client
-      // packet.printf("Got %u bytes of data", packet.length());
+    udp.onPacket([](AsyncUDPPacket packet)
+                 {
+                   // Serial.print("UDP Packet Type: ");
+                   // Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast"
+                   //                                                                        : "Unicast");
+                   // Serial.print(", From: ");
+                   // Serial.print(packet.remoteIP());
+                   // Serial.print(":");
+                   // Serial.print(packet.remotePort());
+                   // Serial.print(", To: ");
+                   // Serial.print(packet.localIP());
+                   // Serial.print(":");
+                   // Serial.print(packet.localPort());
+                   // Serial.print(", Length: ");
+                   // Serial.print(packet.length());
+                   // Serial.print(", Data: ");
+                   // Serial.write(packet.data(), packet.length());
+                   // Serial.println();
+                   // //reply to the client
+                   // packet.printf("Got %u bytes of data", packet.length());
 
-      leituraUDP(packet);
-      //SendUDP(packet.remoteIP(), "Hello Server!!!");
-    });
+                   leituraUDP(packet);
+                   //SendUDP(packet.remoteIP(), "Hello Server!!!");
+                 });
   }
 }
 
@@ -147,7 +148,7 @@ void leituraUDP(AsyncUDPPacket packet)
           {
             if (LePorta(Porta.toInt()) == HIGH)
             {
-              //request->send(200, "text/html", "true");
+              //gRequest->send(200, "text/html", "true");
 
               Tipo = "R";
               funcao = "true";
@@ -165,7 +166,7 @@ void leituraUDP(AsyncUDPPacket packet)
             }
             else
             {
-              //request->send(200, "text/html", "false");
+              //gRequest->send(200, "text/html", "false");
 
               Tipo = "R";
               funcao = "false";
@@ -185,11 +186,11 @@ void leituraUDP(AsyncUDPPacket packet)
           {
             if (funcao == "true")
             {
-              //request->send(200, "text/html", "true");
+              //gRequest->send(200, "text/html", "true");
             }
             else
             {
-              //request->send(200, "text/html", "false");
+              //gRequest->send(200, "text/html", "false");
             }
           }
           else if (Tipo == "S")
@@ -209,42 +210,42 @@ void leituraUDP(AsyncUDPPacket packet)
                 sSensor2 = '0' + sSensor2;
               }
 
-              //request->send(200, "text/html", sSensor1 + sSensor2);
+              //gRequest->send(200, "text/html", sSensor1 + sSensor2);
             }
             else
             {
-              //request->send(200, "text/html", ultimoDisparo);
+              //gRequest->send(200, "text/html", ultimoDisparo);
             }
           }
           else if (Tipo == "N")
           {
-            //request->send(200, "text/html", String(notificar));
+            //gRequest->send(200, "text/html", String(notificar));
           }
           else if (Tipo == "A")
           {
-            //request->send(200, "text/html", "ok");
+            //gRequest->send(200, "text/html", "ok");
             gravasensor2(Texto);
           }
           else if (Tipo == "B")
           {
-            //request->send(200, "text/html", "ok");
-            String Texto = ""; //request->arg("j");
-            String Telef = ""; //request->arg("b");
+            //gRequest->send(200, "text/html", "ok");
+            String Texto = ""; //gRequest->arg("j");
+            String Telef = ""; //gRequest->arg("b");
             gravasms2(Texto, Telef);
           }
           else if (Tipo == "D")
           {
-            //request->send(200, "text/html", consultasms2());
+            //gRequest->send(200, "text/html", consultasms2());
           }
           else if (Tipo == "F")
           {
-            //request->send(200, "text/html", "ok");
-            String Valor = ""; //request->arg("j");
+            //gRequest->send(200, "text/html", "ok");
+            String Valor = ""; //gRequest->arg("j");
             gravanot2(Valor);
           }
           else if (Tipo == "X") // retorno udp valor do dimmer
           {
-            //request->send(200, "text/html", funcao);
+            //gRequest->send(200, "text/html", funcao);
           }
           else if (Tipo == "I")
           {
@@ -313,7 +314,7 @@ void leituraUDP(AsyncUDPPacket packet)
             // Udp.write(replyPacekt);
             // Udp.endPacket();
 
-            //request->send(200, "text/html", replyPacekt);
+            //gRequest->send(200, "text/html", replyPacekt);
           }
 
           //retorna udp
@@ -332,7 +333,7 @@ void leituraUDP(AsyncUDPPacket packet)
   }
   else if (packet.length() == 2)
   {
-    //request->send(200, "text/html", "ok");
+    //gRequest->send(200, "text/html", "ok");
   }
 }
 

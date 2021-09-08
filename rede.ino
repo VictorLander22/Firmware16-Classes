@@ -60,16 +60,16 @@ void conectar()
     getAvalibleNetwork();
 }
 
-void listawifi2(AsyncWebServerRequest *request)
+void listawifi2()
 {
-  request->send(200, "text/html", vListaWifi);
+  gRequest->send(200, "text/html", vListaWifi);
 }
 
-void WifiNetworkScan(AsyncWebServerRequest *request)
+void WifiNetworkScan()
 {
   millisNetworkScan = millisAtual;
   getAvalibleNetwork();
-  request->send(200, "text/html", vListaWifi);
+  gRequest->send(200, "text/html", vListaWifi);
 }
 
 void getAvalibleNetwork()
@@ -99,53 +99,46 @@ void getAvalibleNetwork()
   }
 }
 
-void gravasenhawifi(AsyncWebServerRequest *request)
+void gravasenhawifi()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
-  if (request->arg("s") == Senha)
+  if (gRequest->arg("s") == Senha)
   {
-    if (vSenhaAP == request->arg("a"))
+    if (vSenhaAP == gRequest->arg("a"))
     {
 
-      vSenhaAP = request->arg("v");
+      vSenhaAP = gRequest->arg("v");
 
       if (vSenhaAP.length() >= 8)
       {
-        request->send(200, "text/html", "ok");
+        gRequest->send(200, "text/html", "ok");
         DevSet.apWifiPwd = vSenhaAP;
         DevSet.setApWifiPwd();
         (!DEBUG_ON) ?: Serial.println("Alterado: " + vSenhaAP);
       }
       else
       {
-        request->send(200, "text/html", "-1");
+        gRequest->send(200, "text/html", "-1");
       }
     }
     else
     {
-      request->send(200, "text/html", "-1");
+      gRequest->send(200, "text/html", "-1");
     }
   }
   else
   {
-    request->send(200, "text/html", "-1");
+    gRequest->send(200, "text/html", "-1");
   }
 }
 
-void gravasenhahttp(AsyncWebServerRequest *request)
+void gravasenhahttp()
 {
-  //args - [s=senha padrao] [u=new http user] [v=new http pwd] [ua=old http user] [a=old http pwd]
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
-  if (request->arg("s") == Senha)
+  if (gRequest->arg("s") == Senha)
   {
-    String newHttpUser = request->arg("u");
-    String newHttpPwd = request->arg("v");
+    String newHttpUser = gRequest->arg("u");
+    String newHttpPwd = gRequest->arg("v");
 
-    if ((newHttpUser.length() >= 4 && newHttpPwd.length() >= 4) && (request->arg("ua") == DevSet.httpUser && request->arg("a") == DevSet.httpPwd))
+    if ((newHttpUser.length() >= 4 && newHttpPwd.length() >= 4) && (gRequest->arg("ua") == DevSet.httpUser && gRequest->arg("a") == DevSet.httpPwd))
     {
       String ip = WiFi.localIP().toString();
       if (ip == "(IP unset)")
@@ -153,35 +146,26 @@ void gravasenhahttp(AsyncWebServerRequest *request)
       String restartPage(FPSTR(webRestart));
       restartPage.replace("#oldip#", ip);
       restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-      request->send_P(200, "text/html", restartPage.c_str());
+      gRequest->send_P(200, "text/html", restartPage.c_str());
 
       DevSet.httpUser = newHttpUser;
       DevSet.httpPwd = newHttpPwd;
       DevSet.setHttpSeg();
 
       (!DEBUG_ON) ?: Serial.println("Reiniciando sistema depois de alterar http senha");
-      delay(500);
+      delay(300);
       ESP.restart();
     }
     else
     {
-      request->send(200, "text/html", "-1");
+      gRequest->send(200, "text/html", "-1");
     }
   }
   else
   {
-    request->send(200, "text/html", "-1");
+    gRequest->send(200, "text/html", "-1");
   }
 }
-
-// void prinScanResult(int networksFound)
-// {
-//   (!DEBUG_ON) ?: Serial.printf("%d prinScanResult network(s) found\n", networksFound);
-//   for (int i = 0; i < networksFound; i++)
-//   {
-//     (!DEBUG_ON) ?: Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
-//   }
-// }
 
 void wifiConectSTA()
 {

@@ -1,107 +1,20 @@
 void ConfigurarWebServer(void)
 {
   server.on("/", handleHtmlConfig);
-  server.on("/gravarwifi", ExecuteFunction);
-  server.on("/gravasenhawifi", gravasenhawifi);
-  server.on("/gravasenhahttp", gravasenhahttp);
-  server.on("/reset", wifireset);
-  server.on("/reiniciar", ExecuteFunction);
-  server.on("/valida", valida);
-  server.on("/controle", controle);
-  server.on("/situacao", situacao);
-  server.on("/chipid", retornachip);
-  server.on("/chipmac", RetornaChipMac);
-  server.on("/chamaddns", chamaddns);
-  server.on("/consultaagenda", conagenda);
-  server.on("/gravaragenda", gravaragenda);
-  server.on("/atualizahora", atualizahora);
-  server.on("/lersensores", lersensores);
-  server.on("/gravasensor", ExecuteFunction);
-  server.on("/consultasensor", consensor);
-  server.on("/gravadevice", gravadevice);
-  server.on("/buscadevice", buscadevice);
-  server.on("/executeupdate", executeupdate);
-  server.on("/executeupdatebeta", executeupdateBeta);
-  server.on("/versao", versao);
-  server.on("/link", linkversao);
-  server.on("/link", linkversaoBeta);
-  server.on("/ultimodisparo", ultimodisp);
-  server.on("/buscaNotificar", buscaNotificar);
-  server.on("/gravanot", gravanot);
-  server.on("/gravasms", gravasms);
-  server.on("/consultasms", consultasms);
-  server.on("/wifi", valorwifi);
-  server.on("/listawifi", WifiNetworkScan);
-  server.on("/listawifi2", listawifi2);
-  //IR
-  server.on("/getir", getIR);
-  server.on("/sendir", sendir);
-  server.on("/habir", habir);
-  //RF
-  server.on("/habrf", habRF);
-  server.on("/getrf", getRF);
-  server.on("/gravarf", gravarf);
-  server.on("/ultimodisparorf", ultimodisprf);
-  server.on("/sendrf", sendRFp);
-  server.on("/modelo", fmodelo);
-  server.on("/memoria", fMemoria);
-  server.on("/api", api);
-  server.on("/apiativo", apiativo);
-  server.on("/apiconfig", apiconfig);
-  server.on("/alterasenhapi", alterasenhapi);
-  server.on("/about", ExecuteFunction);
-  server.on("/gravacena", gravacena);
-  server.on("/log", readlog);
-  server.on("/gravacloud", GravaCloud);
-  //server.on("/dirarquivos", dirarquivos);
-  //server.on("/downloadfile", File_Download);
-  //server.on("/deletefile", File_Delete);
-  server.on("/asyncRestart", asyncESPRestart);
-  //server.on("/espbackup", ExecuteFunction);
-  //server.on("/esprestore", ExecuteFunction);
-  //server.on("/espformat", ExecuteFunction);
-  //server.on("/uploadfile", FileUpload);
+  server.on("/exec", ExecuteFunction);
   server.on(
       "/fupload", HTTP_POST, [](AsyncWebServerRequest *request)
       { request->send(200); },
       onUpload);
-
-  server.on("/exec", ExecuteFunction);
-
-  server.onNotFound(handleNotFound);
+  server.onNotFound(ExecuteFunction);
   server.begin();
-
   (!DEBUG_ON) ?: Serial.println("HTTP server started");
 }
 
 void ExecuteFunction(AsyncWebServerRequest *request)
 {
   gRequest = request;
-
-  String functionName = (gRequest->hasArg("fn")) ? gRequest->arg("fn") : gRequest->url();
-
-  //(gRequest->hasArg("fn")) ? functionName = gRequest->arg("fn") : functionName = gRequest->url();
-
-  (!DEBUG_ON) ?: Serial.println(functionName);
-
-  if (functionName == "filedir")
-    FileDir();
-  else if (functionName == "filedownload")
-    FileDownload();
-  else if (functionName == "filedelete")
-    FileDelete();
-  else if (functionName == "fileupload")
-    FileUpload();
-  else if (functionName == "/gravarwifi")
-    gravawifi();
-  else if (functionName == "/reiniciar")
-    reiniciar();
-  else if (functionName == "/about")
-    about();
-  else
-  {
-    asyncExecuteFunction = true;
-  }
+  asyncExecuteFunction = true;
 }
 
 void AsyncFunctions()
@@ -110,6 +23,8 @@ void AsyncFunctions()
   {
     asyncExecuteFunction = false;
     String functionName = (gRequest->hasArg("fn")) ? gRequest->arg("fn") : gRequest->url();
+
+    (!DEBUG_ON) ?: Serial.println(functionName);
 
     for (size_t i = 0; i < gRequest->args(); i++)
     {
@@ -122,8 +37,116 @@ void AsyncFunctions()
       AsyncRestoreEsp();
     else if (functionName == "espformat")
       AsyncFormatEsp();
+    else if (functionName == "filedir")
+      FileDir();
+    else if (functionName == "filedownload")
+      FileDownload();
+    else if (functionName == "filedelete")
+      FileDelete();
+    else if (functionName == "fileupload")
+      FileUpload();
+    else if (functionName == "api")
+      api();
+    else if (functionName == "chipmac")
+      GetChipMac();
+    else if (functionName == "/controle")
+      controle();
+    else if (functionName == "/gravarwifi")
+      gravawifi();
+    else if (functionName == "/gravasenhawifi")
+      gravasenhawifi();
+    else if (functionName == "/gravasenhahttp")
+      gravasenhahttp();
+    else if (functionName == "/situacao")
+      situacao();
+    else if (functionName == "/chipid")
+      retornachip();
+    else if (functionName == "/chamaddns")
+      chamaddns();
+    else if (functionName == "/consultaagenda")
+      conagenda();
+    else if (functionName == "/gravaragenda")
+      gravaragenda();
+    else if (functionName == "/atualizahora")
+      atualizahora();
+    else if (functionName == "/lersensores")
+      lersensores();
+    else if (functionName == "/consultasensor")
+      consensor();
+    else if (functionName == "/gravadevice")
+      gravadevice();
+    else if (functionName == "/buscadevice")
+      buscadevice();
+    else if (functionName == "/executeupdate")
+      executeupdate();
+    else if (functionName == "/executeupdatebeta")
+      executeupdateBeta();
+    else if (functionName == "/versao")
+      versao();
+    else if (functionName == "/link")
+      linkversao();
+    else if (functionName == "/link")
+      linkversaoBeta();
+    else if (functionName == "/ultimodisparo")
+      ultimodisp();
+    else if (functionName == "/buscaNotificar")
+      buscaNotificar();
+    else if (functionName == "/gravanot")
+      gravanot();
+    else if (functionName == "/gravasms")
+      gravasms();
+    else if (functionName == "/consultasms")
+      consultasms();
+    else if (functionName == "/wifi")
+      valorwifi();
+    else if (functionName == "/listawifi")
+      WifiNetworkScan();
+    else if (functionName == "/listawifi2")
+      listawifi2();
+    else if (functionName == "/getir")
+      getIR();
+    else if (functionName == "/habir")
+      habir();
+    else if (functionName == "/habrf")
+      habRF();
+    else if (functionName == "/getrf")
+      getRF();
+    else if (functionName == "/gravarf")
+      gravarf();
+    else if (functionName == "/ultimodisparorf")
+      ultimodisprf();
+    else if (functionName == "/sendrf")
+      sendRFp();
+    else if (functionName == "/modelo")
+      fmodelo();
+    else if (functionName == "/memoria")
+      fMemoria();
+    else if (functionName == "/apiativo")
+      apiativo();
+    else if (functionName == "/apiconfig")
+      apiconfig();
+    else if (functionName == "/alterasenhapi")
+      alterasenhapi();
+    else if (functionName == "/gravacena")
+      gravacena();
+    else if (functionName == "/log")
+      readlog();
+    else if (functionName == "/gravacloud")
+      GravaCloud();
+    else if (functionName == "/valida")
+      valida();
+    else if (functionName == "/reset")
+      wifireset();
+    else if (functionName == "/about")
+      about();
     else if (functionName == "/gravasensor")
       AsyncSaveInputConfig();
+    else if (functionName == "/reiniciar")
+      reiniciar();
+    else if (functionName == "/sendir")
+      AsyncSendIR();
+    else
+      handleNotFound();
   }
 }
 
@@ -155,6 +178,9 @@ void reiniciar()
   restartPage.replace("#oldip#", CurrentIP());
   restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
   gRequest->send_P(200, "text/html", restartPage.c_str());
+
+  delay(300);
+  ESP.restart();
 }
 
 void gravawifi()
@@ -180,18 +206,6 @@ void gravawifi()
   }
 }
 
-// void redirectPage()
-// {
-//   gRequest->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
-// }
-
-void asyncESPRestart(AsyncWebServerRequest *request)
-{
-  request->send(200, "text/html", "ok");
-  ESP.restart();
-}
-
-//void dirarquivos(AsyncWebServerRequest *request)
 void FileDir()
 {
   String arquivos = "";
@@ -216,7 +230,6 @@ void FileDir()
   gRequest->send(200, "text/html", arquivos);
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void FileDownload()
 {
   String path = gRequest->arg("f");
@@ -241,11 +254,7 @@ void FileDownload()
 }
 
 void FileDelete()
-{ // This gets called twice, the first pass selects the input, the second pass then processes the command line arguments
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
+{
   String path = gRequest->arg("f");
 
   if (!path.startsWith("/"))
@@ -396,14 +405,11 @@ void AsyncRestoreEsp()
 
       httpCode = http.GET();
 
-      //Serial.println(httpCode);
-      //delay(100);
       if (httpCode == 200)
       {
         (!DEBUG_ON) ?: Serial.println("/" + file);
-        Serial.println("AsyncRestoreEsp 1");
         payload = http.getString(); //Get the request response payload
-        Serial.println(payload);
+        (!DEBUG_ON) ?: Serial.println(payload);
         File f = SPIFFS.open("/" + file, "w");
         if (f)
         {

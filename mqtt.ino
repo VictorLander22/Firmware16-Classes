@@ -31,21 +31,21 @@ PubSubClient client(espClient);
 // recebido mqtt pela cloud
 void callback(char *topic, byte *payload, unsigned int length)
 {
-  AsyncWebServerRequest *request;
-
   payload[length] = '\0';
-  msgMqtt = (char *)payload;
-  String strRec = String(msgMqtt);
+
+  String strRec = (String)(char *)payload;
+
   newMqttMsg = true;
 
   (!DEBUG_ON) ?: Serial.println("mqttcloud: " + String(topic) + "-" + (String)msgMqtt);
 
-  String str = "Recibido Cloud: " + strRec;
-  const char *cloudStr = str.c_str();
+  String str = "Recibido MQTT: " + strRec;
 
-  client.publish(mqttTopicoCloudRet, cloudStr);
+  client.publish(mqttTopicoCloudRet, str.c_str());
 
-  api(request);
+  msgMqtt = (char *)strRec.c_str();
+
+  api();
 }
 
 void MqttCloudReconnect()
@@ -140,43 +140,31 @@ String MqttArg(char *msg, char *pkey)
 {
   char *pch;
   char *lch;
-
   char key[] = "";
   int plen, llen;
 
   strcat(key, pkey);
   strcat(key, "=");
-
   pch = strstr(msg, key);
 
   if (pch != NULL)
   {
-
-    pch = strstr(msg, key) + strlen(key);
-
+    pch = pch + strlen(pkey) + 1;
     plen = strlen(pch);
-
     lch = strchr(pch, '&');
-
     if (lch == NULL)
     {
       lch = strchr(pch, '\0');
       llen = 0;
     }
     llen = strlen(lch);
-  }
-  else
-    plen = 0;
 
-  char strcp[(plen - llen)];
-
-  if (pch != NULL)
-  {
     String msgtrata = pch;
     msgtrata.remove(plen - llen);
-
     return msgtrata;
   }
   else
+  {
     return "";
+  }
 }

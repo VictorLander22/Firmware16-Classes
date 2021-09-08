@@ -1,19 +1,16 @@
-void api(AsyncWebServerRequest *request)
+void api()
 {
   String vPassApi, action, apiPort, apiSource, valueApi, typeApi;
   bool isPost = false;
 
   if (!newMqttMsg)
   {
-    // if (!request->authenticate(www_username, www_password))
-    //   return request->requestAuthentication();
     isPost = true;
-    vPassApi = request->arg("pw");
+    vPassApi = gRequest->arg("pw");
     vPassApi.toLowerCase();
-    action = request->arg("a");
-    apiPort = request->arg("p");
-    apiSource = request->arg("s");
-    //(!DEBUG_ON) ?:   Serial.println(apiSource);
+    action = gRequest->arg("a");
+    apiPort = gRequest->arg("p");
+    apiSource = gRequest->arg("s");
   }
   else
   {
@@ -99,7 +96,7 @@ void api(AsyncWebServerRequest *request)
         }
 
         if (isPost)
-          request->send(200, "text/html", sDados2 + sDados1);
+          gRequest->send(200, "text/html", sDados2 + sDados1);
       }
       else
       {
@@ -108,12 +105,12 @@ void api(AsyncWebServerRequest *request)
           if (LePorta(apiPort.toInt() - 1) == HIGH)
           {
             if (isPost)
-              request->send(200, "text/html", "1");
+              gRequest->send(200, "text/html", "1");
           }
           else
           {
             if (isPost)
-              request->send(200, "text/html", "0");
+              gRequest->send(200, "text/html", "0");
           }
         }
         else
@@ -121,12 +118,12 @@ void api(AsyncWebServerRequest *request)
           if (LeSensor(apiPort.toInt() - 1) == HIGH)
           {
             if (isPost)
-              request->send(200, "text/html", "1");
+              gRequest->send(200, "text/html", "1");
           }
           else
           {
             if (isPost)
-              request->send(200, "text/html", "0");
+              gRequest->send(200, "text/html", "0");
           }
         }
       }
@@ -135,8 +132,8 @@ void api(AsyncWebServerRequest *request)
     {
       if (isPost)
       {
-        valueApi = request->arg("v");
-        typeApi = request->arg("t");
+        valueApi = gRequest->arg("v");
+        typeApi = gRequest->arg("t");
       }
       else
       {
@@ -160,12 +157,12 @@ void api(AsyncWebServerRequest *request)
               SaveOutputs();
 
               if (isPost)
-                request->send(200, "text/html", "1");
+                gRequest->send(200, "text/html", "1");
             }
             else
             {
               if (isPost)
-                request->send(200, "text/html", "-1");
+                gRequest->send(200, "text/html", "-1");
             }
           }
           else if (valueApi == "1")
@@ -179,7 +176,7 @@ void api(AsyncWebServerRequest *request)
               SaveOutputs();
 
               if (isPost)
-                request->send(200, "text/html", "1");
+                gRequest->send(200, "text/html", "1");
             }
             else if (typeApi == "p")
             {
@@ -190,30 +187,29 @@ void api(AsyncWebServerRequest *request)
                 g_tempoInicioPulso[pulsoApiCount] = millisAtual;
                 g_pulsoHabilita[pulsoApiCount] = true;
               }
-
               //memRtc.outValues = 255 << 8 | 255; //Se for pulso sempre vai escrever off para ram
               //memRtc.setOutputs();
               SaveOutputs();
 
               if (isPost)
-                request->send(200, "text/html", "1");
+                gRequest->send(200, "text/html", "1");
             }
             else
             {
               if (isPost)
-                request->send(200, "text/html", "-1");
+                gRequest->send(200, "text/html", "-1");
             }
           }
           else
           {
             if (isPost)
-              request->send(200, "text/html", "-1");
+              gRequest->send(200, "text/html", "-1");
           }
         }
         else
         {
           if (isPost)
-            request->send(200, "text/html", "-1");
+            gRequest->send(200, "text/html", "-1");
         }
       }
       else // porta
@@ -226,18 +222,18 @@ void api(AsyncWebServerRequest *request)
             {
               LigaDesliga(apiPort.toInt() - 1, LOW, "", 0);
               if (isPost)
-                request->send(200, "text/html", "1");
+                gRequest->send(200, "text/html", "1");
             }
             else if (valueApi == "1") // Liga
             {
               LigaDesliga(apiPort.toInt() - 1, HIGH, "", 0);
               if (isPost)
-                request->send(200, "text/html", "1");
+                gRequest->send(200, "text/html", "1");
             }
             else
             {
               if (isPost)
-                request->send(200, "text/html", "-1");
+                gRequest->send(200, "text/html", "-1");
             }
           }
           else if (typeApi == "p") // pulsado
@@ -246,56 +242,56 @@ void api(AsyncWebServerRequest *request)
             {
               LigaDesliga(apiPort.toInt() - 1, LOW, "", 1);
               if (isPost)
-                request->send(200, "text/html", "1");
+                gRequest->send(200, "text/html", "1");
             }
             else if (valueApi == "1") // Liga
             {
               LigaDesliga(apiPort.toInt() - 1, HIGH, "", 1);
               if (isPost)
-                request->send(200, "text/html", "1");
+                gRequest->send(200, "text/html", "1");
             }
             else
             {
               if (isPost)
-                request->send(200, "text/html", "-1");
+                gRequest->send(200, "text/html", "-1");
             }
           }
           else
           {
             if (isPost)
-              request->send(200, "text/html", "-1");
+              gRequest->send(200, "text/html", "-1");
           }
         }
         else
         {
           if (isPost)
-            request->send(200, "text/html", "-1");
+            gRequest->send(200, "text/html", "-1");
         }
       }
     }
     else if (action == "i") // Infravermelho
     {
       (!DEBUG_ON) ?: Serial.println("api infravermelho");
-      // String vModel1 = request->arg("m1");
-      // String vModel2 = request->arg("m2");
-      // String vModel3 = request->arg("m3");
-      // String vModel4 = request->arg("m4");
-      // String Comando1 = request->arg("c1");
-      // String Comando2 = request->arg("c2");
-      // String Comando3 = request->arg("c3");
-      // String Comando4 = request->arg("c4");
-      // String Comando12 = request->arg("c12");
-      // String Comando22 = request->arg("c22");
-      // String Comando32 = request->arg("c32");
-      // String Comando42 = request->arg("c42");
-      // String qtde1 = request->arg("qt1");
-      // String qtde2 = request->arg("qt2");
-      // String qtde3 = request->arg("qt3");
-      // String qtde4 = request->arg("qt4");
-      // String vp1 = request->arg("p1");
-      // String vp2 = request->arg("p2");
-      // String vp3 = request->arg("p3");
-      // String vp4 = request->arg("p4");
+      // String vModel1 = gRequest->arg("m1");
+      // String vModel2 = gRequest->arg("m2");
+      // String vModel3 = gRequest->arg("m3");
+      // String vModel4 = gRequest->arg("m4");
+      // String Comando1 = gRequest->arg("c1");
+      // String Comando2 = gRequest->arg("c2");
+      // String Comando3 = gRequest->arg("c3");
+      // String Comando4 = gRequest->arg("c4");
+      // String Comando12 = gRequest->arg("c12");
+      // String Comando22 = gRequest->arg("c22");
+      // String Comando32 = gRequest->arg("c32");
+      // String Comando42 = gRequest->arg("c42");
+      // String qtde1 = gRequest->arg("qt1");
+      // String qtde2 = gRequest->arg("qt2");
+      // String qtde3 = gRequest->arg("qt3");
+      // String qtde4 = gRequest->arg("qt4");
+      // String vp1 = gRequest->arg("p1");
+      // String vp2 = gRequest->arg("p2");
+      // String vp3 = gRequest->arg("p3");
+      // String vp4 = gRequest->arg("p4");
 
       // if (vModel1 != "")
       // {
@@ -324,10 +320,10 @@ void api(AsyncWebServerRequest *request)
       // }
       if (isPost)
       {
-        irNumBits = request->arg("qt1").toInt();
-        irModel = request->arg("m1").toInt();
-        irPort = request->arg("p1").toInt();
-        irData = request->arg("c1") + request->arg("c12");
+        irNumBits = gRequest->arg("qt1").toInt();
+        irModel = gRequest->arg("m1").toInt();
+        irPort = gRequest->arg("p1").toInt();
+        irData = gRequest->arg("c1") + gRequest->arg("c12");
       }
       else
       {
@@ -340,15 +336,15 @@ void api(AsyncWebServerRequest *request)
       (!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
 
       if (isPost)
-        request->send(200, "text/html", "1");
+        gRequest->send(200, "text/html", "1");
     }
     else if (action == "c") // Cenas
     {
       (!DEBUG_ON) ?: Serial.println("api cenas");
       if (isPost)
       {
-        valueApi = request->arg("v");
-        request->send(200, "text/html", "1");
+        valueApi = gRequest->arg("v");
+        gRequest->send(200, "text/html", "1");
       }
       else
         valueApi = MqttArg(msgMqtt, "v");
@@ -379,84 +375,84 @@ void api(AsyncWebServerRequest *request)
       }
 
       if (isPost)
-        request->send(200, "text/html", "1");
+        gRequest->send(200, "text/html", "1");
     }
     else if (action == "update") // executaupdate
     {
-      (!DEBUG_ON) ?: Serial.println("API: Executar update");
+      (!DEBUG_ON) ?: Serial.println(F("API: Executar update"));
 
       if (isPost)
       {
-        // if (!request->authenticate(www_username, www_password))
-        //   return request->requestAuthentication();
-        //executeupdateBeta(request);
+        // if (!gRequest->authenticate(www_username, www_password))
+        //   return gRequest->gRequestAuthentication();
+        //executeupdateBeta(gRequest);
       }
       else
-        //executeupdateBeta(request);
-        Serial.println("");
+        //executeupdateBeta(gRequest);
+        (!DEBUG_ON) ?: Serial.println("");
     }
   }
   else
   {
     if (isPost)
-      request->send(200, "text/html", "-1");
+      gRequest->send(200, "text/html", "-1");
   }
 }
 
-void apiativo(AsyncWebServerRequest *request)
+void apiativo()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
   if (AlowApi == true)
   {
-    request->send(200, "text/html", "1");
+    gRequest->send(200, "text/html", "1");
   }
   else
   {
-    request->send(200, "text/html", "0");
+    gRequest->send(200, "text/html", "0");
   }
 }
 
-void apiconfig(AsyncWebServerRequest *request)
+void apiconfig()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  if (request->arg("s") == Senha)
+  if (gRequest->arg("s") == Senha)
   {
-    request->send(200, "text/html", "ok");
+    gRequest->send(200, "text/html", "ok");
 
-    AlowApi = (request->arg("v") == "1") ? true : false;
+    AlowApi = (gRequest->arg("v") == "1") ? true : false;
     bitWrite(DevSet.mode, 0, AlowApi);
     DevSet.setMode();
   }
   else
   {
-    request->send(200, "text/html", "-1");
+    gRequest->send(200, "text/html", "-1");
   }
 }
 
-void alterasenhapi(AsyncWebServerRequest *request)
+void alterasenhapi()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  if (request->arg("s") == Senha)
+  if (gRequest->arg("s") == Senha)
   {
 
     MD5Builder md5;
     md5.begin();
-    md5.add(request->arg("a"));
+    md5.add(gRequest->arg("a"));
     md5.calculate();
 
     if (ApiPass == md5.toString())
     {
 
-      request->send(200, "text/html", "ok");
+      gRequest->send(200, "text/html", "ok");
 
-      String req = request->arg("v");
+      String req = gRequest->arg("v");
       if (req == "")
       {
         req = "12345678"; // se não houver registro, vai para o padrão
@@ -472,11 +468,11 @@ void alterasenhapi(AsyncWebServerRequest *request)
     }
     else
     {
-      request->send(200, "text/html", "-1");
+      gRequest->send(200, "text/html", "-1");
     }
   }
   else
   {
-    request->send(200, "text/html", "-1");
+    gRequest->send(200, "text/html", "-1");
   }
 }

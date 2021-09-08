@@ -388,18 +388,18 @@ void verificaAgenda()
   }
 }
 
-void atualizahora(AsyncWebServerRequest *request)
+void atualizahora()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  uint32_t vHora = request->arg("h").toInt();
-  String Senha = request->arg("k");
+  uint32_t vHora = gRequest->arg("h").toInt();
+  String Senha = gRequest->arg("k");
   (!DEBUG_ON) ?: Serial.println(vHora);
 
   if (Senha == "kdi9e")
   {
-    request->send(200, "text/html", "ok");
+    gRequest->send(200, "text/html", "ok");
     RtcDateTime HoraNova = vHora;
 
     Rtc.year = HoraNova.Year();
@@ -415,7 +415,7 @@ void atualizahora(AsyncWebServerRequest *request)
   }
   else
   {
-    request->send(200, "text/html", "-1");
+    gRequest->send(200, "text/html", "-1");
   }
 }
 
@@ -474,39 +474,32 @@ void consultaAgenda2()
   }
 }
 
-void conagenda(AsyncWebServerRequest *request)
+void conagenda()
 {
-
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
-  //int idAgenda = request->arg("ag").toInt();
-  String Senha = request->arg("k");
+  //int idAgenda = gRequest->arg("ag").toInt();
+  String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
   {
     //(!DEBUG_ON) ?:   Serial.println("consultando agenda");
     String texto = consultaAgenda(0);
-    request->send(200, "text/html", texto);
+    gRequest->send(200, "text/html", texto);
   }
   else
   {
-    request->send(200, "text/html", "-1");
+    gRequest->send(200, "text/html", "-1");
   }
 }
 
-void gravaragenda(AsyncWebServerRequest *request)
+void gravaragenda()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
-  request->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", "ok");
 
   AgendaAlterada = true;
-  //String idAgenda = request->arg("ag");
-  String Valor = request->arg("v");
-  String Senha = request->arg("k");
+  //String idAgenda = gRequest->arg("ag");
+  String Valor = gRequest->arg("v");
+  String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
   {

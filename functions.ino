@@ -210,7 +210,7 @@ void AsyncIRSend()
     sendIRCMD(irData, "", irNumBits, irPort, irModel, irNumBits);
     irEnSend = false;
     irData = "";
-    (!DEBUG_ON) ?: Serial.println(F("...IR Enviado"));
+    (!DEBUG_ON) ?: Serial.println(F("IR Enviado"));
   }
 }
 

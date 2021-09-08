@@ -103,13 +103,11 @@ void convertConfig()
   SPIFFS.end();
 }
 
-void wifireset(AsyncWebServerRequest *request)
+void wifireset()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
-
-  request->send(200, "text/html", "ESP resetado");
+  gRequest->send(200, "text/html", "ESP resetado");
   DevSet.factoryReset();
+  delay(300);
   ESP.restart();
 }
 
@@ -162,24 +160,24 @@ RtcDateTime carregaHora()
   return dt2;
 }
 
-void valorwifi(AsyncWebServerRequest *request)
+void valorwifi()
 {
 
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
   // int32_t rssi;
   // rssi = WiFi.RSSI();
 
-  request->send(200, "text/html", String(getRSSI()));
+  gRequest->send(200, "text/html", String(getRSSI()));
 }
 
-void fmodelo(AsyncWebServerRequest *request)
+void fmodelo()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  request->send(200, "text/html", "2");
+  gRequest->send(200, "text/html", "2");
 }
 
 String lerMemoria()
@@ -207,11 +205,11 @@ void Memoria()
   }
 }
 
-void fMemoria(AsyncWebServerRequest *request)
+void fMemoria()
 {
-  request->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", "ok");
 
-  if (request->arg("m") == "1")
+  if (gRequest->arg("m") == "1")
   {
     bitWrite(DevSet.mode, 3, true);
     SaveOutputs();
@@ -241,18 +239,18 @@ void lerConfiguracao()
   TipoMemoria = bitRead(DevSet.mode, 3);
 }
 
-void GravaCloud(AsyncWebServerRequest *request)
+void GravaCloud()
 {
-  // if (!request->authenticate(www_username, www_password))
-  //   return request->requestAuthentication();
+  // if (!gRequest->authenticate(www_username, www_password))
+  //   return gRequest->requestAuthentication();
 
-  if (request->arg("s") == Senha)
+  if (gRequest->arg("s") == Senha)
   {
-    if (request->arg("f") == "w")
+    if (gRequest->arg("f") == "w")
     {
-      request->send(200, "text/html", "1");
+      gRequest->send(200, "text/html", "1");
 
-      usaCloud = (request->arg("v") == "1") ? true : false;
+      usaCloud = (gRequest->arg("v") == "1") ? true : false;
       hasCloud = usaCloud;
       bitWrite(DevSet.mode, 1, usaCloud);
       DevSet.setMode();
@@ -261,11 +259,11 @@ void GravaCloud(AsyncWebServerRequest *request)
     }
     else
     {
-      request->send(200, "text/html", (usaCloud) ? "1" : "0");
+      gRequest->send(200, "text/html", (usaCloud) ? "1" : "0");
     }
   }
   else
   {
-    request->send(200, "text/html", "-1");
+    gRequest->send(200, "text/html", "-1");
   }
 }

@@ -26,43 +26,30 @@ void parseBytes(const char *str, char sep, byte *bytes, int maxBytes, int base)
   }
 }
 
-void retornachip(AsyncWebServerRequest *request)
+void retornachip()
 {
-  request->send(200, "text/html", vchipId);
+  gRequest->send(200, "text/html", vchipId);
 }
 
-void RetornaChipMac(AsyncWebServerRequest *request)
+void GetChipMac()
 {
-  request->send(200, "text/html", gchipId);
+  gRequest->send(200, "text/html", gchipId);
 }
 
-void controle(AsyncWebServerRequest *request)
+void controle()
 {
-  request->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", "ok");
 
-  String p = request->arg("p");
-  String k = request->arg("k");
-  String f = request->arg("f");
-  String Nome = request->arg("n");
-  int Tipoa = request->arg("pu").toInt();
+  String p = gRequest->arg("p");
+  String k = gRequest->arg("k");
+  String f = gRequest->arg("f");
+  String Nome = gRequest->arg("n");
+  int Tipoa = gRequest->arg("pu").toInt();
   if (p == "a")
   {
-    //if (f == "true")
-    //{
-    //uint16_t outputs = memRtc.getOutputs();
     chip1.write8(f.toInt() & 0xff);
     chip2.write8((f.toInt() >> 8) & 0xff);
-
-    //chip1.write8(0);
-    //chip2.write8(0);
     SaveOutputs();
-    //}
-    //else
-    //{
-    //  chip1.write8(255);
-    //  chip2.write8(255);
-    //  SaveOutputs();
-    //}
   }
   else
   {
@@ -85,10 +72,10 @@ void controle(AsyncWebServerRequest *request)
   }
 }
 
-void situacao(AsyncWebServerRequest *request)
+void situacao()
 {
-  String p = request->arg("p");
-  String k = request->arg("k");
+  String p = gRequest->arg("p");
+  String k = gRequest->arg("k");
   int porta = p.toInt();
 
   porta = retornaPorta(porta);
@@ -98,35 +85,35 @@ void situacao(AsyncWebServerRequest *request)
     {
       if (LePorta(porta) == HIGH)
       {
-        request->send(200, "text/html", "true");
+        gRequest->send(200, "text/html", "true");
       }
       else
       {
-        request->send(200, "text/html", "false");
+        gRequest->send(200, "text/html", "false");
       }
     }
 }
 
-void valida(AsyncWebServerRequest *request)
+void valida()
 {
-  request->send(200, "text/html", "16|2|16|" + vchipId + "|");
+  gRequest->send(200, "text/html", "16|2|16|" + vchipId + "|");
 }
 
-void handleNotFound(AsyncWebServerRequest *request)
+void handleNotFound()
 {
   String message = "File Not Found\n\n";
   message += "URI: ";
-  message += request->url();
+  message += gRequest->url();
   message += "\nMethod: ";
-  message += (request->method() == HTTP_GET) ? "GET" : "POST";
+  message += (gRequest->method() == HTTP_GET) ? "GET" : "POST";
   message += "\nArguments: ";
-  message += request->args();
+  message += gRequest->args();
   message += "\n";
-  for (uint8_t i = 0; i < request->args(); i++)
+  for (uint8_t i = 0; i < gRequest->args(); i++)
   {
-    message += " " + request->argName(i) + ": " + request->arg(i) + "\n";
+    message += " " + gRequest->argName(i) + ": " + gRequest->arg(i) + "\n";
   }
-  request->send(404, "text/plain", message);
+  gRequest->send(404, "text/plain", message);
 }
 
 void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)

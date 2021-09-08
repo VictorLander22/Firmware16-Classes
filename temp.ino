@@ -1,16 +1,16 @@
-void teste(AsyncWebServerRequest *request)
+void teste()
 {
-  String functionName = request->arg("fn");
+  String functionName = gRequest->arg("fn");
   (!DEBUG_ON) ?: Serial.println(functionName);
   //gRequest = request;
   //asyncExecuteFunction = true;
   if (functionName == "teste")
   {
-    request->send(200, "text/html", "OK");
+    gRequest->send(200, "text/html", "OK");
   }
   else
   {
-    request->send(200, "text/html", "NOK");
+    gRequest->send(200, "text/html", "NOK");
   }
 }
 
@@ -34,7 +34,7 @@ void FreeMemory(String functionName)
   }
 }
 
-void mostarEEProm(AsyncWebServerRequest *request)
+void mostarEEProm()
 {
   DevSet.getDeviceSettings();
   if (DEBUG_ON)
