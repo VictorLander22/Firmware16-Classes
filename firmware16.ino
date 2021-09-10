@@ -7,11 +7,11 @@ void setup(void)
 {
 
   Serial.begin(115200);
-  Serial.println();
+  slogln();
   Wire.begin(5, 4);
   Wire.setClock(100000L);
   delay(300); //Wait for start I2C transmission
-  (!DEBUG_ON) ?: Serial.println();
+  slogln();
 
   scanI2c();
 
@@ -31,8 +31,8 @@ void setup(void)
   WiFi.disconnect();
 
   String Razao = ESP.getResetReason();
-  (!DEBUG_ON) ?: Serial.print("Motivo Reset: ");
-  (!DEBUG_ON) ?: Serial.println(Razao);
+  slog(F("Motivo Reset: "));
+  slogln(Razao);
   UpdateDisplay("Rst Mod: " + Razao);
   delay(1000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
 
@@ -41,23 +41,23 @@ void setup(void)
   gchipId = WiFi.macAddress();
   gchipId.replace(":", "");
   UpdateDisplay(F("MAC OK"));
-  (!DEBUG_ON) ?: Serial.println();
-  (!DEBUG_ON) ?: Serial.println("Keepin Firmware: " + String(Placa_Version));
-  (!DEBUG_ON) ?: Serial.println("Keepin ID: " + vchipId);
-  (!DEBUG_ON) ?: Serial.println("Keepin MAC: " + gchipId);
+  slogln();
+  slogln("Keepin Firmware: " + String(Placa_Version));
+  slogln("Keepin ID: " + vchipId);
+  slogln("Keepin MAC: " + gchipId);
 
   //Reset mode
   if (digitalRead(buttonState))
   {
-    (!DEBUG_ON) ?: Serial.println();
-    (!DEBUG_ON) ?: Serial.println(F("Factory reset\n"));
+    slogln();
+    slogln(F("Factory reset\n"));
     UpdateDisplay(F("Factory Reset"));
     DevSet.factoryReset();
   }
   else
   {
-    (!DEBUG_ON) ?: Serial.println();
-    (!DEBUG_ON) ?: Serial.println(F("Simple restart\n"));
+    slogln();
+    slogln(F("Simple restart\n"));
     UpdateDisplay(F("Simple restart"));
   }
 
@@ -66,8 +66,7 @@ void setup(void)
   convertConfig();
   UpdateDisplay(F("Loading settings"));
   DevSet.getDeviceSettings();
-  if (DEBUG_ON)
-    DevSet.showVariables();
+  DevSet.showVariables();
 
   UpdateDisplay(F("Configuring IR"));
   configIR(); //consome 2K da ram 20000
@@ -92,19 +91,20 @@ void setup(void)
   scanningWifi = WiFi.scanNetworks();
 
   //WiFi.scanNetworksAsync(prinScanResult);
-  (!DEBUG_ON) ?: Serial.printf("\nAvailable Wifi: %d\n", scanningWifi);
+  slogln("\nAvailable Wifi: " + scanningWifi);
+
   UpdateDisplay(F("Connecting Wifi"));
   conectar(); //consome 1K da ram 19000
   // Wait for connection
-  (!DEBUG_ON) ?: Serial.print(F("Connected... IP address: "));
-  (!DEBUG_ON) ?: Serial.println(WiFi.localIP());
+  slog(F("Connected... IP address: "));
+  slogln(WiFi.localIP());
 
   UpdateDisplay(F("Configuring WebServer"));
   ConfigurarWebServer(); //consome 6.2K da ram 13500
 
   retornaNotificar();
 
-  (!DEBUG_ON) ?: Serial.println("Notificar: " + String(notificar));
+  slogln("Notificar: " + String(notificar));
 
   UpdateDisplay(F("Loading Inputs"));
   //CarregaEntradas();
@@ -167,8 +167,6 @@ void loop(void)
     ResetSaidasPulsadas();
 
     ExecuteUpdate();
-
-    //cloud1();
 
     LoopDisplay();
 

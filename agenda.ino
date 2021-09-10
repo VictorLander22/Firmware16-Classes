@@ -7,7 +7,7 @@
 void agenda()
 {
 
-  (!DEBUG_ON) ?: Serial.println(F("Consultado agenda..."));
+  slogln(F("Consultado agenda..."));
 
   verificaAgenda();
 }
@@ -218,7 +218,7 @@ void verificaAgenda()
             triggerCena(CenaDesliga);
           }
           Agendas[i - 1] = ValorAgendaDesligada;
-          (!DEBUG_ON) ?: Serial.println(Agendas[i - 1]);
+          slogln(Agendas[i - 1]);
           gravaragenda2();
         }
         else
@@ -230,7 +230,7 @@ void verificaAgenda()
             LigaDesliga(retornaPorta(Porta.toInt()), LOW, "", 0);
 
             Agendas[i - 1] = ValorAgendaDesligada;
-            (!DEBUG_ON) ?: Serial.println(Agendas[i - 1]);
+            slogln(Agendas[i - 1]);
             gravaragenda2();
           }
         }
@@ -392,11 +392,11 @@ void atualizahora()
 {
   uint32_t vHora = gRequest->arg("h").toInt();
   String Senha = gRequest->arg("k");
-  (!DEBUG_ON) ?: Serial.println(vHora);
+  slogln(vHora);
 
   if (Senha == "kdi9e")
   {
-    gRequest->send(200, "text/html", "ok");
+    gRequest->send(200, "text/html", sdefOK);
     RtcDateTime HoraNova = vHora;
 
     Rtc.year = HoraNova.Year();
@@ -491,7 +491,7 @@ void conagenda()
 void gravaragenda()
 {
 
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
 
   AgendaAlterada = true;
   //String idAgenda = gRequest->arg("ag");
@@ -535,7 +535,7 @@ void printDateTime(const RtcDateTime &dt)
              dt.Hour(),
              dt.Minute(),
              dt.Second());
-  (!DEBUG_ON) ?: Serial.print(datestring);
+  slog(datestring);
 }
 
 String RetornaData(const RtcDateTime &dt)
@@ -558,10 +558,10 @@ void LoopAgenda()
 {
   if (HorarioAtual.Minute() != Minuto)
   {
-    (!DEBUG_ON) ?: Serial.println("\nCiclos por segundos: " + String(nCiclos / 60));
-    (!DEBUG_ON) ?: Serial.println("Ciclos por minuto: " + String(nCiclos));
+    slogln("\nCiclos por segundos: " + String(nCiclos / 60));
+    slogln("Ciclos por minuto: " + String(nCiclos));
     //memorialivre = system_get_free_heap_size();
-    //(!DEBUG_ON) ?: Serial.println("memoria livre: " + String(memorialivre));
+    //slogln("memoria livre: " + String(memorialivre));
     FreeMemory(F("LoopAgenda()"));
 
     nCiclos = 0;
@@ -569,7 +569,7 @@ void LoopAgenda()
 
     char time[50];
     sprintf(time, "%02d/%02d/%02d %02d:%02d:%02d", HorarioAtual.Day(), HorarioAtual.Month(), HorarioAtual.Year(), HorarioAtual.Hour(), HorarioAtual.Minute(), HorarioAtual.Second());
-    (!DEBUG_ON) ?: Serial.println(time);
+    slogln(time);
 
     agenda();
   }

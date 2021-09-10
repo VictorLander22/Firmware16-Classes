@@ -4,9 +4,9 @@ void configIR()
   save.rawbuf = new uint16_t[irrecv.getBufSize()];
   if (save.rawbuf == NULL)
   {
-    (!DEBUG_ON) ?: Serial.printf("Não foi possível alocar %d de tamanho de buffer.\n"
-                                 "Try a smaller size for CAPTURE_BUFFER_SIZE.\nRebooting!",
-                                 irrecv.getBufSize());
+    // Serial.printf("Não foi possível alocar %d de tamanho de buffer.\n"
+    //                              "Try a smaller size for CAPTURE_BUFFER_SIZE.\nRebooting!",
+    //                              irrecv.getBufSize());
     ESP.restart();
   }
   irrecv.setUnknownThreshold(kMinUnknownSize);
@@ -16,102 +16,102 @@ void configIR()
 //
 void encoding(decode_results *results)
 {
-  (!DEBUG_ON) ?: Serial.print("\nDecode type: ");
-  (!DEBUG_ON) ?: Serial.println(results->decode_type);
+  slog("\nDecode type: ");
+  slogln(results->decode_type);
   switch (results->decode_type)
   {
   default:
   case UNKNOWN:
-    //(!DEBUG_ON) ?: Serial.print("UNKNOWN");
+    //slog("UNKNOWN");
     Modelo = 0;
     break;
   case NEC:
-    //(!DEBUG_ON) ?: Serial.print("NEC");
+    //slog("NEC");
     Modelo = 1;
     break;
   case NEC_LIKE:
-    //(!DEBUG_ON) ?: Serial.print("NEC (non-strict)");
+    //slog("NEC (non-strict)");
     Modelo = 2;
     break;
   case SONY:
-    //(!DEBUG_ON) ?: Serial.print("SONY");
+    //slog("SONY");
     Modelo = 3;
     break;
   case RC5:
-    //(!DEBUG_ON) ?: Serial.print("RC5");
+    //slog("RC5");
     Modelo = 4;
     break;
   case RC5X:
-    //(!DEBUG_ON) ?: Serial.print("RC5X");
+    //slog("RC5X");
     Modelo = 5;
     break;
   case RC6:
-    //(!DEBUG_ON) ?: Serial.print("RC6");
+    //slog("RC6");
     Modelo = 6;
     break;
   case RCMM:
-    //(!DEBUG_ON) ?: Serial.print("RCMM");
+    //slog("RCMM");
     Modelo = 7;
     break;
   case DISH:
-    //(!DEBUG_ON) ?: Serial.print("DISH");
+    //slog("DISH");
     Modelo = 8;
     break;
   case SHARP:
-    //(!DEBUG_ON) ?: Serial.print("SHARP");
+    //slog("SHARP");
     Modelo = 9;
     break;
   case JVC:
-    //(!DEBUG_ON) ?: Serial.print("JVC");
+    //slog("JVC");
     Modelo = 10;
     break;
   case SANYO:
-    //(!DEBUG_ON) ?: Serial.print("SANYO");
+    //slog("SANYO");
     Modelo = 11;
     break;
   case SANYO_LC7461:
-    //(!DEBUG_ON) ?: Serial.print("SANYO_LC7461");
+    //slog("SANYO_LC7461");
     Modelo = 12;
     break;
   case MITSUBISHI:
-    //(!DEBUG_ON) ?: Serial.print("MITSUBISHI");
+    //slog("MITSUBISHI");
     Modelo = 13;
     break;
   case SAMSUNG:
-    //(!DEBUG_ON) ?: Serial.print("SAMSUNG");
+    //slog("SAMSUNG");
     Modelo = 14;
     break;
   case LG:
-    //(!DEBUG_ON) ?: Serial.print("LG");
+    //slog("LG");
     Modelo = 15;
     break;
   case WHYNTER:
-    //(!DEBUG_ON) ?: Serial.print("WHYNTER");
+    //slog("WHYNTER");
     Modelo = 16;
     break;
   case AIWA_RC_T501:
-    //(!DEBUG_ON) ?: Serial.print("AIWA_RC_T501");
+    //slog("AIWA_RC_T501");
     Modelo = 17;
     break;
   case PANASONIC:
-    //(!DEBUG_ON) ?: Serial.print("PANASONIC");
+    //slog("PANASONIC");
     Modelo = 18;
     break;
   case DENON:
-    //(!DEBUG_ON) ?: Serial.print("DENON");
+    //slog("DENON");
     Modelo = 19;
     break;
   case COOLIX:
-    //(!DEBUG_ON) ?: Serial.print("COOLIX");
+    //slog("COOLIX");
     Modelo = 20;
     break;
   case GREE:
-    //(!DEBUG_ON) ?: Serial.print("GREE");
+    //slog("GREE");
     Modelo = 21;
     break;
   }
   if (results->repeat)
-    (!DEBUG_ON) ?: Serial.print(" (Repeat)");
+    slog(" (Repeat)");
 }
 
 // Dump out the decode_results structure.
@@ -119,21 +119,21 @@ void encoding(decode_results *results)
 void dumpInfo(decode_results *results)
 {
   if (results->overflow)
-    (!DEBUG_ON) ?: Serial.printf("WARNING: IR code too big for buffer (>= %d). "
-                                 "These results shouldn't be trusted until this is resolved. "
-                                 "Edit & increase CAPTURE_BUFFER_SIZE.\n",
-                                 CAPTURE_BUFFER_SIZE);
+    // Serial.printf("WARNING: IR code too big for buffer (>= %d). "
+    //                              "These results shouldn't be trusted until this is resolved. "
+    //                              "Edit & increase CAPTURE_BUFFER_SIZE.\n",
+    //                              CAPTURE_BUFFER_SIZE);
 
-  // Show Encoding standard
-  //(!DEBUG_ON) ?: Serial.print("Encoding  : ");
-  encoding(results);
-  //(!DEBUG_ON) ?: Serial.println("");
+    // Show Encoding standard
+    //slog("Encoding  : ");
+    encoding(results);
+  //slogln("");
 
   // Show Code & length
-  //(!DEBUG_ON) ?: Serial.print("Code      : ");
+  //slog("Code      : ");
   serialPrintUint64(results->value, 10);
 
-  //(!DEBUG_ON) ?: Serial.print(" (");
+  //slog(" (");
   //if (Modelo == 3 || Modelo == 1 || Modelo == 14)
   if (Modelo > 0 && Modelo < 22)
   {
@@ -160,9 +160,9 @@ uint16_t getCookedLength(decode_results *results)
 void dumpRaw(decode_results *results)
 {
   // Print Raw data
-  (!DEBUG_ON) ?: Serial.print("Timing[");
-  (!DEBUG_ON) ?: Serial.print(results->rawlen - 1, DEC);
-  (!DEBUG_ON) ?: Serial.println("]: ");
+  slog("Timing[");
+  slog(String(results->rawlen - 1, DEC));
+  slogln("]: ");
 
   for (uint16_t i = 1; i < results->rawlen; i++)
   {
@@ -170,19 +170,19 @@ void dumpRaw(decode_results *results)
       yield(); // Preemptive yield every 100th entry to feed the WDT.
     if (i % 2 == 0)
     { // even
-      (!DEBUG_ON) ?: Serial.print("-");
+      slog("-");
     }
     else
     { // odd
-      (!DEBUG_ON) ?: Serial.print("   +");
+      slog("   +");
     }
-    (!DEBUG_ON) ?: Serial.printf("%6d", results->rawbuf[i] * RAWTICK);
+    slog(results->rawbuf[i] * RAWTICK);
     if (i < results->rawlen - 1)
-      (!DEBUG_ON) ?: Serial.print(", "); // ',' not needed for last one
+      slog(", "); // ',' not needed for last one
     if (!(i % 8))
-      (!DEBUG_ON) ?: Serial.println("");
+      slogln("");
   }
-  (!DEBUG_ON) ?: Serial.println(""); // Newline
+  slogln(""); // Newline
 }
 
 // Dump out the decode_results structure.
@@ -193,12 +193,12 @@ void dumpCode(decode_results *results)
 
   // Start declaration
   String codigoIR2 = "";
-  (!DEBUG_ON) ?: Serial.print("uint16_t "); // variable type
-  (!DEBUG_ON) ?: Serial.print("rawData[");  // array name
+  slog("uint16_t "); // variable type
+  slog("rawData[");  // array name
   tamanho = String(getCookedLength(results), DEC).toInt();
-  (!DEBUG_ON) ?: Serial.print(getCookedLength(results), DEC); // array size
+  slog(String(getCookedLength(results), DEC)); // array size
   codigoIR2 = "{";
-  (!DEBUG_ON) ?: Serial.print("] = {"); // Start declaration
+  slog("] = {"); // Start declaration
 
   // Dump data
   for (uint16_t i = 1; i < results->rawlen; i++)
@@ -208,25 +208,25 @@ void dumpCode(decode_results *results)
          usecs > UINT16_MAX;
          usecs -= UINT16_MAX)
     {
-      (!DEBUG_ON) ?: Serial.printf("%d, 0", UINT16_MAX);
+      Serial.printf("%d, 0", UINT16_MAX);
       codigoIR2 += printf("%d, 0", UINT16_MAX);
     }
-    (!DEBUG_ON) ?: Serial.print(usecs, DEC);
+    slog(String(usecs, DEC));
     codigoIR2 += String(usecs, DEC);
     if (i < results->rawlen - 1)
     {
-      (!DEBUG_ON) ?: Serial.print(", "); // ',' not needed on last one
+      slog(", "); // ',' not needed on last one
       codigoIR2 += ", ";
     }
     if (i % 2 == 0)
     {
-      (!DEBUG_ON) ?: Serial.print(" "); // Extra if it was even.
+      slog(" "); // Extra if it was even.
       codigoIR2 += " ";
     }
   }
 
   // End declaration
-  (!DEBUG_ON) ?: Serial.print("};"); //
+  slog("};"); //
   codigoIR2 += "}";
   //  (!DEBUG_ON) ?:   Serial.println("tamanho");
   // (!DEBUG_ON) ?:   Serial.println(String(tamanho));
@@ -234,9 +234,9 @@ void dumpCode(decode_results *results)
   //(!DEBUG_ON) ?:   Serial.println(codigoIR2);
 
   // Comment
-  //(!DEBUG_ON) ?: Serial.print("  // ");
+  //slog("  // ");
   encoding(results);
-  //(!DEBUG_ON) ?: Serial.print(" ");
+  //slog(" ");
   //serialPrintUint64(results->value, HEX);
   //if (Modelo == 3 || Modelo == 1 || Modelo == 14){
   if (Modelo >= 0 && Modelo < 22)
@@ -263,9 +263,9 @@ void dumpCode(decode_results *results)
   */
     codigoIR = "" + uint64ToString(results->value, 16) + "";
   }
-  (!DEBUG_ON) ?: Serial.println("CodigoIR: " + codigoIR);
+  slogln("CodigoIR: " + codigoIR);
 
-  (!DEBUG_ON) ?: Serial.println("Modelo: " + String(Modelo));
+  slogln("Modelo: " + String(Modelo));
   if (Modelo == 0)
   {
     SPIFFS.begin();
@@ -274,12 +274,12 @@ void dumpCode(decode_results *results)
     rFile.close();
     SPIFFS.end();
 
-    (!DEBUG_ON) ?: Serial.print("arquivo: ");
-    (!DEBUG_ON) ?: Serial.println(codigoIR2);
+    slog("arquivo: ");
+    slogln(codigoIR2);
   }
 
   // Newline
-  (!DEBUG_ON) ?: Serial.println("");
+  slogln("");
 
   // Now dump "known" codes
   if (results->decode_type != UNKNOWN)
@@ -289,16 +289,16 @@ void dumpCode(decode_results *results)
     // but the address & the command are both 0.
     if (results->address > 0 || results->command > 0)
     {
-      (!DEBUG_ON) ?: Serial.print("uint32_t address = 0x");
-      (!DEBUG_ON) ?: Serial.print(results->address, HEX);
-      (!DEBUG_ON) ?: Serial.println(";");
-      (!DEBUG_ON) ?: Serial.print("uint32_t command = 0x");
-      (!DEBUG_ON) ?: Serial.print(results->command, HEX);
-      (!DEBUG_ON) ?: Serial.println(";");
+      slog("uint32_t address = 0x");
+      slog(String(results->address, HEX));
+      slogln(";");
+      slog("uint32_t command = 0x");
+      slog(String(results->command, HEX));
+      slogln(";");
     }
 
     // All protocols have data
-    (!DEBUG_ON) ?: Serial.print("uint64_t data = 0x");
+    slog("uint64_t data = 0x");
     serialPrintUint64(results->value, 16);
     if (Modelo == 19)
     {
@@ -317,7 +317,7 @@ void dumpCode(decode_results *results)
       (!DEBUG_ON) ?:   Serial.print("Tamanho: ");
       (!DEBUG_ON) ?:   Serial.println(tamanho);*/
     }
-    (!DEBUG_ON) ?: Serial.println(";");
+    slogln(";");
   }
 }
 
@@ -337,8 +337,8 @@ void AsyncSendIR()
   irData = gRequest->arg("c") + gRequest->arg("c2");
   if (S == Senha)
     irEnSend = true;
-  (!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
-  gRequest->send(200, "text/html", "ok");
+  slogln(F("Enviar IR..."));
+  gRequest->send(200, "text/html", sdefOK);
 }
 
 void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vModelo, int q)
@@ -355,13 +355,13 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
   {
     IRsend irsend(16, true);
     irsend.begin();
-    (!DEBUG_ON) ?: Serial.println("Modelo: " + String(vModelo));
-    (!DEBUG_ON) ?: Serial.print("tamanho: ");
-    (!DEBUG_ON) ?: Serial.println(String(QtdeBit));
-    (!DEBUG_ON) ?: Serial.print("Codigo1: ");
-    (!DEBUG_ON) ?: Serial.println(Codigo);
-    (!DEBUG_ON) ?: Serial.print("Codigo2: ");
-    (!DEBUG_ON) ?: Serial.println(Codigo2);
+    slogln("Modelo: " + String(vModelo));
+    slog("tamanho: ");
+    slogln(String(QtdeBit));
+    slog("Codigo1: ");
+    slogln(Codigo);
+    slog("Codigo2: ");
+    slogln(Codigo2);
     if (vModelo == 1) // NEC
     {
       Codigo = "0x" + Codigo;
@@ -524,11 +524,11 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
 
       //irsend.sendGree(0x0309205000200080, 64);
       irsend.sendGree(vCodigo, QtdeBit);
-      // (!DEBUG_ON) ?: Serial.println("é nesta rotina");
-      // (!DEBUG_ON) ?: Serial.println("GREE");
-      // (!DEBUG_ON) ?: Serial.println(Codigo);
-      // (!DEBUG_ON) ?: Serial.println("Qtde Bit");
-      // (!DEBUG_ON) ?: Serial.println(QtdeBit);
+      // slogln("é nesta rotina");
+      // slogln("GREE");
+      // slogln(Codigo);
+      // slogln("Qtde Bit");
+      // slogln(QtdeBit);
     }
     else if (vModelo == 23) // Raw
     {
@@ -542,8 +542,8 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
       if (rFile.available())
       {
         linhas = rFile.readStringUntil('\n');
-        (!DEBUG_ON) ?: Serial.println(F("[rawData]"));
-        (!DEBUG_ON) ?: Serial.print(linhas);
+        slogln(F("[rawData]"));
+        slog(linhas);
       }
       rFile.close();
       SPIFFS.end();
@@ -582,14 +582,14 @@ int retornaPorIRS(int PortaIRS)
 
 void habir()
 {
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
   irrecv.resume();
   irrecv.resume();
   irrecv.resume();
 
   enReadIR = true;
   millisIREnabled = millisAtual;
-  (!DEBUG_ON) ?: Serial.println("IR Receiving Enabled");
+  slogln("IR Receiving Enabled");
 }
 
 char hexCharToBin(char c)
@@ -700,23 +700,23 @@ void LoopIR()
   {
     if (irrecv.decode(&results))
     {
-      (!DEBUG_ON) ?: Serial.print(resultToHumanReadableBasic(&results));
+      slog(resultToHumanReadableBasic(&results));
       dumpCode(&results);
       dumpInfo(&results);
-      (!DEBUG_ON) ?: Serial.println(""); // Blank line between entries
+      slogln(""); // Blank line between entries
       //tone(Buzzer, 4000, 800);
       chip3.write(Buzzer, HIGH);
       delay(300);
       chip3.write(Buzzer, LOW);
       //noTone(Buzzer);
       enReadIR = false;
-      (!DEBUG_ON) ?: Serial.println("IR Receiving Disabled");
+      slogln("IR Receiving Disabled");
       irrecv.resume();
     }
     else if (millisAtual > millisIREnabled + 30000)
     {
       enReadIR = false;
-      (!DEBUG_ON) ?: Serial.println("IR Receiving Disabled");
+      slogln("IR Receiving Disabled");
       irrecv.resume();
     }
   }
@@ -736,9 +736,9 @@ void IRSendRaw(char *str, const size_t bufferSize)
   }
   // for (size_t i = 0; i < index; i++)
   // {
-  //   (!DEBUG_ON) ?: Serial.print(i);
-  //   (!DEBUG_ON) ?: Serial.print(": ");
-  //   (!DEBUG_ON) ?: Serial.println(arr[i]);
+  //   slog(i);
+  //   slog(": ");
+  //   slogln(arr[i]);
   // }
   irsend.sendRaw(arr, bufferSize, 38);
 }

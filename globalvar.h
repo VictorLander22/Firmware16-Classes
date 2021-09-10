@@ -3,6 +3,17 @@
 #define ntpServer "pool.ntp.org"
 #define numDNSquery 5
 #define pulseTime 600
+#define DEBUG_ON
+
+const String sdefOK = "ok";
+
+#ifdef DEBUG_ON
+#define slog(x) Serial.print(x)
+#define slogln(x) Serial.println(x)
+#else
+#define slog(x)
+#define slogln(x)
+#endif
 
 #include <user_interface.h>
 #include <Arduino.h>
@@ -31,11 +42,19 @@
 #include "AsyncPing.h"
 #include "Ticker.h"
 #include <SSD1306Wire.h>
+//#include <string>
+#include <PubSubClient.h>
+
 #include "src\KPDeviceSetting.h"
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
 
-const bool DEBUG_ON = false;
+//const bool DEBUG_ON = false;
+
+const String cloudServer = "http://cloud.keepin.com.br/api/";
+const char *mqtt_server = "cloudmqtt.keepin.com.br";
+const char *mqtt_server_user = "keepinadm";
+const char *mqtt_server_userpw = "Keepin@2020@Cloud";
 
 String vchipId;
 String gchipId;
@@ -51,10 +70,9 @@ unsigned long millisNetworkScan;
 unsigned long lastDisplay;
 unsigned long millisIREnabled;
 unsigned long millisSendUDP;
+unsigned long millisFreeMemory;
 
 File UploadFile;
-
-const String cloudServer = "http://cloud.keepin.com.br/api/";
 
 bool TipoMemoria = true;
 String vListaWifi = "";
@@ -253,3 +271,13 @@ String dispText[5] = {"", "", "", "", ""};
 uint8_t dispLine = 0;
 bool hasDisplay = false;
 bool clock2s;
+
+String idChip = "";
+const char *mqttTopicoCloud;
+const char *mqttTopicoCloudRet;
+String str = "";
+String strRet = "";
+String *clientestr;
+
+WiFiClient espClient;
+PubSubClient client(espClient);

@@ -1,6 +1,6 @@
 void gravacena()
 {
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
 
   String Senha = gRequest->arg("k");
 
@@ -10,7 +10,7 @@ void gravacena()
     String vTipo = gRequest->arg("t");
     String Valor = gRequest->arg("v");
     String IdCena = gRequest->arg("id");
-    (!DEBUG_ON) ?: Serial.println(Valor);
+    slogln(Valor);
     SPIFFS.begin();
 
     if (ia == "1") // inicio de arquivo
@@ -53,14 +53,14 @@ void lerArquivo(String id)
   while (rFile.available())
   {
     String linhas = rFile.readStringUntil('\n');
-    (!DEBUG_ON) ?: Serial.print(linhas);
+    slog(linhas);
     qtde++;
   }
 
   rFile.close();
   SPIFFS.end();
   //(!DEBUG_ON) ?:   Serial.print("qtde de linhas: ");
-  (!DEBUG_ON) ?: Serial.println(qtde);
+  slogln(qtde);
 }
 
 void triggerCena(String arq)
@@ -92,9 +92,9 @@ void checkCena()
         }
         cenaPTotal++;
       }
-      (!DEBUG_ON) ?: Serial.println("Total cena: " + String(cenaPTotal));
+      slogln("Total cena: " + String(cenaPTotal));
       cenaPAtual++;
-      (!DEBUG_ON) ?: Serial.println("Cena atual: " + String(cenaPAtual));
+      slogln("Cena atual: " + String(cenaPAtual));
 
       rFile.close();
       SPIFFS.end();
@@ -109,13 +109,13 @@ void checkCena()
         //(!DEBUG_ON) ?:   Serial.print(Comando);
         //(!DEBUG_ON) ?:   Serial.println("primeiro");
         //(!DEBUG_ON) ?:   Serial.println("Cena atual: " + String(cenaPAtual));
-        (!DEBUG_ON) ?: Serial.println("Executar cena: " + Comando);
+        slogln("Executar cena: " + Comando);
         executaCena(Comando);
         //(!DEBUG_ON) ?:   Serial.println("Exceutou cena primeiro");
       }
       else
       {
-        (!DEBUG_ON) ?: Serial.println("Cena atual: " + String(cenaPAtual));
+        slogln("Cena atual: " + String(cenaPAtual));
         //rFile.seek(0, SeekSet);
 
         SPIFFS.begin();
@@ -138,7 +138,7 @@ void checkCena()
             Comando = linhas;
             //(!DEBUG_ON) ?:   Serial.println("Executar cena while: " + Comando);
             //(!DEBUG_ON) ?:   Serial.println("Cena atual antes execução: " + String(cenaPAtual));
-            (!DEBUG_ON) ?: Serial.println("Executar cena: " + Comando);
+            slogln("Executar cena: " + Comando);
             executaCena(Comando);
             //(!DEBUG_ON) ?:   Serial.println("Cena atual apos execução" + String(cenaPAtual));
             rFile.close();
@@ -157,7 +157,7 @@ void checkCena()
     {
       rFile.close();
       SPIFFS.end();
-      (!DEBUG_ON) ?: Serial.println("\nfim da cena\n");
+      slogln("\nfim da cena\n");
       cenaExecucao = false;
       cenaPAtual = 0;
       cenaPTotal = 0;
@@ -308,9 +308,9 @@ void executaCena(String comandoCena)
       {
         Texto = cmdIP + "|" + cmdPorta + "|false|" + String(cmdChipID) + "|E|1|";
       }
-      (!DEBUG_ON) ?: Serial.println(Texto);
+      slogln(Texto);
       Texto.toCharArray(replyPacekt, 255);
-      (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
+      slogln("enviado comando UDP");
       SendUDP(Destino, localUdpPort, String(replyPacekt));
       // Udp.beginPacket(Destino, localUdpPort);
       // Udp.write(replyPacekt);
@@ -372,7 +372,7 @@ void executaCena(String comandoCena)
     Texto += cmdValorMin + "|n|";
     Texto.toCharArray(replyPacekt, 255);
 
-    (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
+    slogln("enviado comando UDP");
     SendUDP(Destino, localUdpPort, String(replyPacekt));
     // Udp.beginPacket(Destino, localUdpPort);
     // Udp.write(replyPacekt);

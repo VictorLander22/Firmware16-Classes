@@ -36,7 +36,7 @@ void conectar()
 
         if (digitalRead(buttonState) == HIGH)
         {
-          (!DEBUG_ON) ?: Serial.print("resetando");
+          slog("resetando");
           WiFi.disconnect();
           DevSet.factoryReset();
           ESP.restart();
@@ -44,10 +44,10 @@ void conectar()
 
         delay(400);
         chip3.write(LedWifiConnected, !chip3.read(LedWifiConnected));
-        (!DEBUG_ON) ?: Serial.print(".");
+        slog(".");
         waitingWifi++;
       }
-      (!DEBUG_ON) ?: Serial.println("");
+      slogln("");
       //SetupUDP();
     }
     else if (WiFi.getMode() < 2)
@@ -79,11 +79,11 @@ void getAvalibleNetwork()
   if (n >= 0)
   {
     //scanningWifi = n;
-    (!DEBUG_ON) ?: Serial.printf("%d network(s) found\n", n);
+    slogln(n + "network(s) found");
     vListaWifi = "";
     for (int i = 0; i < n; i++)
     {
-      (!DEBUG_ON) ?: Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
+      Serial.printf("%d: %s, Ch:%d (%ddBm) %s\n", i + 1, WiFi.SSID(i).c_str(), WiFi.channel(i), WiFi.RSSI(i), WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "");
       vListaWifi += WiFi.SSID(i);
       vListaWifi += "|";
     }
@@ -94,7 +94,7 @@ void getAvalibleNetwork()
   {
     millisNetworkScan = millisAtual + 30000;
     //scanningWifi = n;
-    (!DEBUG_ON) ?: Serial.println("\nNetwork scan started");
+    slogln("\nNetwork scan started");
     WiFi.scanNetworks(true);
   }
 }
@@ -110,10 +110,10 @@ void gravasenhawifi()
 
       if (vSenhaAP.length() >= 8)
       {
-        gRequest->send(200, "text/html", "ok");
+        gRequest->send(200, "text/html", sdefOK);
         DevSet.apWifiPwd = vSenhaAP;
         DevSet.setApWifiPwd();
-        (!DEBUG_ON) ?: Serial.println("Alterado: " + vSenhaAP);
+        slogln("Alterado: " + vSenhaAP);
       }
       else
       {
@@ -152,7 +152,7 @@ void gravasenhahttp()
       DevSet.httpPwd = newHttpPwd;
       DevSet.setHttpSeg();
 
-      (!DEBUG_ON) ?: Serial.println("Reiniciando sistema depois de alterar http senha");
+      slogln("Reiniciando sistema depois de alterar http senha");
       delay(300);
       ESP.restart();
     }
@@ -169,7 +169,7 @@ void gravasenhahttp()
 
 void wifiConectSTA()
 {
-  (!DEBUG_ON) ?: Serial.println(F("\nWifi trying conection in: STA MODE"));
+  slogln(F("\nWifi trying conection in: STA MODE"));
   UpdateDisplay(F("Trying Wifi in: STA MODE"));
   WiFi.mode(WIFI_STA);
   tipoWifiAtual = 1;
@@ -181,7 +181,7 @@ void wifiConectSTA()
   IPAddress gateway(DevSet.wifiGTW);
   IPAddress dns(8, 8, 8, 8);
 
-  (!DEBUG_ON) ?: Serial.println(ssid);
+  slogln(ssid);
   // (!DEBUG_ON) ?:   Serial.println(password);
   // (!DEBUG_ON) ?:   Serial.println(ip);
   // (!DEBUG_ON) ?:   Serial.println(subnet);
@@ -201,9 +201,9 @@ void wifiConectSTA()
 
 void wifiConectAP()
 {
-  (!DEBUG_ON) ?: Serial.print("Rede não localizada: ");
-  (!DEBUG_ON) ?: Serial.println(DevSet.wifiSSID);
-  (!DEBUG_ON) ?: Serial.println("Wifi trying conection in: AP MODE");
+  slog("Rede não localizada: ");
+  slogln(DevSet.wifiSSID);
+  slogln("Wifi trying conection in: AP MODE");
   UpdateDisplay(DevSet.wifiSSID);
   UpdateDisplay(F("Trying Wifi in: AP MODE"));
   WiFi.mode(WIFI_AP);
@@ -215,16 +215,16 @@ void wifiConectAP()
   IPAddress gateway(DevSet.apWifiGTW);
   IPAddress subnet(DevSet.apWifiMSK);
 
-  (!DEBUG_ON) ?: Serial.print("Setting soft-AP configuration ... ");
-  (!DEBUG_ON) ?: Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
+  slog("Setting soft-AP configuration ... ");
+  slogln(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
-  (!DEBUG_ON) ?: Serial.print("Setting soft-AP ... ");
-  (!DEBUG_ON) ?: Serial.println("idencitifcador");
+  slog("Setting soft-AP ... ");
+  slogln("idencitifcador");
   //int chipId = ESP.getChipId();
   String NomeRede = "KEEPIN_" + gchipId;
-  (!DEBUG_ON) ?: Serial.println(NomeRede);
+  slogln(NomeRede);
   const char *nRede = NomeRede.c_str();
-  (!DEBUG_ON) ?: Serial.println(nRede);
+  slogln(nRede);
 
   //(!DEBUG_ON) ?:   Serial.println(WiFi.softAP(nRede) ? "Ready" : "Failed!");
 
@@ -234,8 +234,8 @@ void wifiConectAP()
     DevSet.factoryReset();
   }
 
-  (!DEBUG_ON) ?: Serial.print("Soft-AP IP address = ");
-  (!DEBUG_ON) ?: Serial.println(WiFi.softAPIP());
+  slog("Soft-AP IP address = ");
+  slogln(WiFi.softAPIP());
   IpDispositivo = local_IP;
   setBroadcastIP(DevSet.apWifiMSK);
 
@@ -266,11 +266,11 @@ void SetupPing()
                   IPAddress addr(response.addr);
                   if (response.total_recv > 1)
                   {
-                    (!DEBUG_ON) ?: Serial.println(F("Internet connected"));
+                    slogln(F("Internet connected"));
                     numberPingResponse++;
                   }
                   else
-                    (!DEBUG_ON) ?: Serial.println(F("Internet disconnected"));
+                    slogln(F("Internet disconnected"));
 
                   if (numberPingResponse > 0)
                   {
@@ -307,7 +307,7 @@ void LoopPing()
 
 void UpdatePing()
 {
-  (!DEBUG_ON) ?: Serial.println(F("Atualizando endereços do ping"));
+  slogln(F("Atualizando endereços do ping"));
   for (int i; i < numDNSquery; i++)
   {
     if (ips[i])
@@ -323,7 +323,7 @@ void setBroadcastIP(uint32_t _currentSubnet)
   IPAddress _broadcastIP(_currentSubnet);
   for (int i = 0; i <= 3; i++)
   {
-    //(!DEBUG_ON) ?: Serial.println(_broadcastIP[i]);
+    //slogln(_broadcastIP[i]);
     (_broadcastIP[i] == 0) ? _broadcastIP[i] = 255 : _broadcastIP[i] = IpDispositivo[i];
   }
   broadcastIP = _broadcastIP;

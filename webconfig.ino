@@ -7,7 +7,7 @@ void ConfigurarWebServer(void)
       { request->send(200); },
       onUpload);
   server.begin();
-  //(!DEBUG_ON) ?: Serial.println(F("HTTP server started"));
+  //slogln(F("HTTP server started"));
 }
 
 void ExecuteFunction(AsyncWebServerRequest *request)
@@ -24,11 +24,11 @@ void AsyncFunctions()
 
     String functionName = gRequest->url();
 
-    (!DEBUG_ON) ?: Serial.println(functionName);
+    slogln(functionName);
 
     for (size_t i = 0; i < gRequest->args(); i++)
     {
-      (!DEBUG_ON) ?: Serial.println("[" + (String)i + "] " + gRequest->getParam(i)->name() + " : " + gRequest->getParam(i)->value());
+      slogln("[" + (String)i + "] " + gRequest->getParam(i)->name() + " : " + gRequest->getParam(i)->value());
     }
     if (functionName == F("/"))
       handleHtmlConfig();
@@ -199,18 +199,15 @@ void gravawifi()
   DevSet.wifiMSK = DevSet.ipStringToNumber(wifiMSK);
   DevSet.wifiGTW = DevSet.ipStringToNumber(wifiGTW);
   DevSet.setWifi();
-  if (DEBUG_ON)
-  {
-    (!DEBUG_ON) ?: Serial.println(F("New WIFI Settings"));
-    DevSet.showVariables();
-  }
+  slogln(F("New WIFI Settings"));
+  DevSet.showVariables();
 }
 
 void FileDir()
 {
   String arquivos = "";
   SPIFFS.begin();
-  (!DEBUG_ON) ?: Serial.println(F("Consultar sistema de arquivos"));
+  slogln(F("Consultar sistema de arquivos"));
   Dir dir = SPIFFS.openDir("/");
   while (dir.next())
   {
@@ -242,12 +239,12 @@ void FileDownload()
 
   if (fileExist)
   {
-    (!DEBUG_ON) ?: Serial.println(F("Arquivo existe"));
+    slogln(F("Arquivo existe"));
     gRequest->send(SPIFFS, path, String(), true);
   }
   else
   {
-    (!DEBUG_ON) ?: Serial.println(F("Arquivo não existe"));
+    slogln(F("Arquivo não existe"));
     gRequest->send(200, "text/html", F("File not found"));
     SPIFFS.end();
   }
@@ -263,16 +260,16 @@ void FileDelete()
   SPIFFS.begin();
   if (SPIFFS.exists(path))
   {
-    (!DEBUG_ON) ?: Serial.println(F("Arquivo existe"));
+    slogln(F("Arquivo existe"));
     if (SPIFFS.remove(path))
     {
-      (!DEBUG_ON) ?: Serial.println(F("Removido"));
+      slogln(F("Removido"));
       gRequest->send(200, "text/html", F("Removido"));
     }
   }
   else
   {
-    (!DEBUG_ON) ?: Serial.println(F("Arquivo não existe"));
+    slogln(F("Arquivo não existe"));
     gRequest->send(200, "text/html", F("File not found"));
   }
   SPIFFS.end();
@@ -287,7 +284,7 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
 {
   if (!index)
   {
-    (!DEBUG_ON) ?: Serial.printf("UploadStart: %s\n", filename.c_str());
+    slogln("UploadStart: " + filename);
     if (!filename.startsWith("/"))
       filename = "/" + filename;
     SPIFFS.begin();
@@ -300,7 +297,7 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
 
   if (final)
   {
-    (!DEBUG_ON) ?: Serial.printf("UploadEnd: %s (%u)\n", filename.c_str(), index + len);
+    slogln("UploadEnd: " + filename + "(" + index + len + ")");
     if (UploadFile) // If the file was successfully created
     {
       UploadFile.close(); // Close the file again
@@ -332,7 +329,7 @@ void AsyncBackupEsp(bool isPost)
     bool fileExist = SPIFFS.exists(path);
     if (fileExist)
     {
-      (!DEBUG_ON) ?: Serial.println(path);
+      slogln(path);
       http.setTimeout(2000);
       http.setReuse(true);
 
@@ -344,13 +341,13 @@ void AsyncBackupEsp(bool isPost)
 
       int httpCode = http.sendRequest("POST", &f, f.size());
 
-      (!DEBUG_ON) ?: Serial.println(uri);
-      (!DEBUG_ON) ?: Serial.println(httpCode);
+      slogln(uri);
+      slogln(httpCode);
 
       if (httpCode >= 200 && httpCode < 300)
       {
         String payload = http.getString();
-        (!DEBUG_ON) ?: Serial.println(payload);
+        slogln(payload);
       }
 
       http.end();
@@ -378,16 +375,16 @@ void AsyncRestoreEsp(bool isPost)
   String payload = http.getString();
   http.end();
 
-  (!DEBUG_ON) ?: Serial.println(payload);
-  (!DEBUG_ON) ?: Serial.println(payload.length());
+  slogln(payload);
+  slogln(payload.length());
 
   DynamicJsonDocument dirlist(payload.length() * 2);
   auto error = deserializeJson(dirlist, payload);
 
   if (error)
   {
-    (!DEBUG_ON) ?: Serial.print(F("deserializeJson() failed with code "));
-    (!DEBUG_ON) ?: Serial.println(error.c_str());
+    slog(F("deserializeJson() failed with code "));
+    slogln(error.c_str());
     return;
   }
   else
@@ -410,9 +407,9 @@ void AsyncRestoreEsp(bool isPost)
 
       if (httpCode == 200)
       {
-        (!DEBUG_ON) ?: Serial.println("/" + file);
+        slogln("/" + file);
         payload = http.getString(); //Get the request response payload
-        (!DEBUG_ON) ?: Serial.println(payload);
+        slogln(payload);
         File f = SPIFFS.open("/" + file, "w");
         if (f)
         {
@@ -432,8 +429,8 @@ void AsyncFormatEsp(bool isPost)
   if (isPost)
     gRequest->send(200, "text/html", F("Formating..."));
 
-  (!DEBUG_ON) ?: Serial.println(F("Formating"));
+  slogln(F("Formating"));
   //LittleFS.format();
   SPIFFS.format();
-  (!DEBUG_ON) ?: Serial.println(F("Format SUCCESS!"));
+  slogln(F("Format SUCCESS!"));
 }

@@ -1,6 +1,6 @@
 void cloud()
 {
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
 
   executeCloud = true;
 }
@@ -77,7 +77,7 @@ void sendCloud(bool onlyNotify = false)
   dataPost = dataPost + "\"macid\": \"" + gchipId + "\"";
   dataPost = dataPost + " }";
 
-  //(!DEBUG_ON) ?: Serial.println(dataPost);
+  //slogln(dataPost);
 
   WiFiClient cliente;
   HTTPClient http;
@@ -98,23 +98,23 @@ void sendCloud(bool onlyNotify = false)
 
   hasCloud = (httpCode == 200);
 
-  //(!DEBUG_ON) ?: Serial.println(dataPost);
-  //(!DEBUG_ON) ?: Serial.println("Cloud code: " + String(httpCode));
+  //slogln(dataPost);
+  //slogln("Cloud code: " + String(httpCode));
   if (httpCode == 200 && payload != "[]" && !onlyNotify)
   {
     //(!DEBUG_ON) ?:   Serial.println("Payload: " + payload);
     //DynamicJsonBuffer jsonBuffer(payload.length());
     //JsonArray &array1 = jsonBuffer.parseArray(payload);
-    (!DEBUG_ON) ?: Serial.println(payload);
-    (!DEBUG_ON) ?: Serial.println(payload.length());
+    slogln(payload);
+    slogln(payload.length());
     DynamicJsonDocument array1(payload.length() * 2);
     auto error = deserializeJson(array1, payload);
     //    JsonObject& root = jsonBuffer.parseObject(payload);
 
     if (error)
     {
-      (!DEBUG_ON) ?: Serial.print(F("deserializeJson() failed with code "));
-      (!DEBUG_ON) ?: Serial.println(error.c_str());
+      slog(F("deserializeJson() failed with code "));
+      slogln(error.c_str());
       return;
     }
     else
@@ -228,7 +228,7 @@ void sendCloud(bool onlyNotify = false)
   }
   else if (httpCode != 200 && !onlyNotify)
   {
-    (!DEBUG_ON) ?: Serial.println("servidor fora! Code: " + String(httpCode));
+    slogln("servidor fora! Code: " + String(httpCode));
     hasCloud = false;
     http.end();
   }

@@ -104,6 +104,7 @@ void MillisResets()
     millisLedRunning = 0;
     millisIREnabled = 0;
     millisSendUDP = 0;
+    millisFreeMemory = 0;
     for (uint8_t iPorta = 0; iPorta <= 15; iPorta++)
     {
       g_tempoInicioPulso[iPorta] = 0;
@@ -117,7 +118,7 @@ void NtpSetDateTimeNTP()
   NTPClient timeClient(ntpUDP, ntpServer);
 
   //(!DEBUG_ON) ?: Serial.print("Config UTC: ");
-  //(!DEBUG_ON) ?: Serial.println(DevSet.utcConfig);
+  //slogln(DevSet.utcConfig);
   const unsigned long initTimeSet = 946684800;
   int8_t tryGetTime = 0;
 
@@ -126,7 +127,7 @@ void NtpSetDateTimeNTP()
   while ((timeClient.getEpochTime() < initTimeSet) && (tryGetTime < 5))
   {
     timeClient.update();
-    //(!DEBUG_ON) ?: Serial.println(timeClient.getEpochTime());
+    //slogln(timeClient.getEpochTime());
     tryGetTime++;
     delay(100);
   }
@@ -134,7 +135,7 @@ void NtpSetDateTimeNTP()
   if (timeClient.getEpochTime() > initTimeSet)
   {
     timeClient.setTimeOffset(DevSet.utcConfig * 3600);
-    (!DEBUG_ON) ?: Serial.println("Atualizado UTC");
+    slogln("Atualizado UTC");
     RtcDateTime dtNow(timeClient.getEpochTime() - initTimeSet);
     Rtc.year = dtNow.Year();
     Rtc.month = dtNow.Month();
@@ -148,8 +149,7 @@ void NtpSetDateTimeNTP()
   timeClient.end();
 
   Rtc.get_time();
-  (!DEBUG_ON) ?: Serial.printf("Data e hora ajustados para: %02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
-  (!DEBUG_ON) ?: Serial.println();
+  Serial.printf("Data e hora ajustados para: %02d/%02d/%04d %02d:%02d:%02d\n", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
 }
 
 void CheckSPIFFS()
@@ -160,12 +160,12 @@ void CheckSPIFFS()
   {
     //(!DEBUG_ON) ?: Serial.print(F("Creating file system... "));
     if (SPIFFS.format())
-      (!DEBUG_ON) ?: Serial.println(F("OK"));
+      slogln(F("OK"));
     else
-      (!DEBUG_ON) ?: Serial.println(F("Fail"));
+      slogln(F("Fail"));
   }
   else
-    (!DEBUG_ON) ?: Serial.println(F("Filesystem is OK"));
+    slogln(F("Filesystem is OK"));
 
   f.close();
   SPIFFS.end();
@@ -210,14 +210,14 @@ void AsyncIRSend()
     sendIRCMD(irData, "", irNumBits, irPort, irModel, irNumBits);
     irEnSend = false;
     irData = "";
-    (!DEBUG_ON) ?: Serial.println(F("IR Enviado"));
+    slogln(F("IR Enviado"));
   }
 }
 
 void checkOutput()
 {
-  //(!DEBUG_ON) ?: Serial.println(lastOutputs);
-  //(!DEBUG_ON) ?: Serial.println(memRtc.outValues);
+  //slogln(lastOutputs);
+  //slogln(memRtc.outValues);
   if (lastOutputs != memRtc.outValues)
   {
     sendCloud(true);
@@ -247,7 +247,7 @@ void scanI2c()
   {
     hasDisplay = true;
     DisplaySetup();
-    (!DEBUG_ON) ?: Serial.println(F("Display OK"));
+    slogln(F("Display OK"));
     Serial.print(F("Funcions -1"));
     UpdateDisplay("Display Present");
     Serial.print(F("Funcions 0"));
@@ -255,7 +255,7 @@ void scanI2c()
   else
   {
     hasDisplay = false;
-    (!DEBUG_ON) ?: Serial.print(F("Display Fails"));
+    slogln(F("Display Fails"));
   }
   Serial.print(F("Funcions 1"));
   delay(waitDelay);
@@ -305,4 +305,17 @@ void scanI2c()
   delay(waitDelay);
 
   (devices == 6) ? UpdateDisplay(F("Devices OK..")) : UpdateDisplay(F("Devices Fail.."));
+}
+
+void FreeMemory(String functionName)
+{
+  if ((millis() > millisFreeMemory))
+  {
+    Serial.print(functionName);
+    Serial.print(F(" Aloc: "));
+    Serial.print((espMemory - ESP.getFreeHeap()));
+    Serial.print(F(" Livre: "));
+    Serial.println(ESP.getFreeHeap());
+    millisFreeMemory = millis() + 10000;
+  }
 }

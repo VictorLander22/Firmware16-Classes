@@ -40,8 +40,8 @@
 
 //       Texto.toCharArray(replyPacekt, 255);
 
-//       (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
-//       (!DEBUG_ON) ?: Serial.println(Texto);
+//       slogln("enviado comando UDP");
+//       slogln(Texto);
 //       SendUDP(Destino, localUdpPort, String(replyPacekt));
 //       // Udp.beginPacket(Destino, localUdpPort);
 //       // Udp.write(replyPacekt);
@@ -49,11 +49,11 @@
 
 //       if (Tipo == "E")
 //       {
-//         //gRequest->send(200, "text/html", "ok");
+//         //gRequest->send(200, "text/html", sdefOK);
 //       }
 //       else
 //       {
-//         //gRequest->send(200, "text/html", "ok");
+//         //gRequest->send(200, "text/html", sdefOK);
 //       }
 //     }
 //   }
@@ -68,15 +68,15 @@
 //         {
 //           if (funcao == "true")
 //           {
-//             gRequest->send(200, "text/html", "ok");
+//             gRequest->send(200, "text/html", sdefOK);
 //             LigaDesliga(Porta, HIGH, Nome, Tipoa);
-//             (!DEBUG_ON) ?: Serial.println("led 1 ligado");
+//             slogln("led 1 ligado");
 //           }
 //           else
 //           {
-//             gRequest->send(200, "text/html", "ok");
+//             gRequest->send(200, "text/html", sdefOK);
 //             LigaDesliga(Porta, LOW, Nome, Tipoa);
-//             (!DEBUG_ON) ?: Serial.println("led 1 desligado");
+//             slogln("led 1 desligado");
 //           }
 //         }
 //         else if (Tipo == "C")
@@ -120,7 +120,7 @@
 //         }
 //         else if (Tipo == "A")
 //         {
-//           gRequest->send(200, "text/html", "ok");
+//           gRequest->send(200, "text/html", sdefOK);
 //           String Texto = gRequest->arg("j");
 //           gravasensor2(Texto);
 //         }
@@ -128,11 +128,11 @@
 //         {
 //           String Texto = gRequest->arg("j");
 //           // liberar depois que colocar o arquivo de RF          gravarf2(Texto);
-//           gRequest->send(200, "text/html", "ok");
+//           gRequest->send(200, "text/html", sdefOK);
 //         }
 //         else if (Tipo == "B")
 //         {
-//           gRequest->send(200, "text/html", "ok");
+//           gRequest->send(200, "text/html", sdefOK);
 //           String Texto = gRequest->arg("j");
 //           String Telef = gRequest->arg("b");
 //           //sms gravasms2(Texto, Telef);
@@ -144,7 +144,7 @@
 //         }
 //         else if (Tipo == "F")
 //         {
-//           gRequest->send(200, "text/html", "ok");
+//           gRequest->send(200, "text/html", sdefOK);
 //           String Valor = gRequest->arg("j");
 //           gravanot2(Valor);
 //         }

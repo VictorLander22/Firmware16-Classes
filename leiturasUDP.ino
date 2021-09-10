@@ -46,7 +46,7 @@ void leituraUDP(AsyncUDPPacket packet)
       {
 
         SendUDP(packet.remoteIP(), 35701, getDevStatus());
-        // //(!DEBUG_ON) ?: Serial.println(incomingPacket);
+        // //slogln(incomingPacket);
         // Udp.beginPacket(Udp.remoteIP(), 35701);
         // Udp.write(getDevStatus().c_str());
         // //Udp.write(resp);
@@ -55,7 +55,7 @@ void leituraUDP(AsyncUDPPacket packet)
       }
       else
       {
-        //(!DEBUG_ON) ?: Serial.println(cabecalho);
+        //slogln(cabecalho);
         // receive incoming UDP packets
         // (!DEBUG_ON) ?: Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
         // (!DEBUG_ON) ?: Serial.printf("UDP packet contents: %s\n", incomingPacket);
@@ -108,12 +108,12 @@ void leituraUDP(AsyncUDPPacket packet)
             i2++;
           }
         }
-        // (!DEBUG_ON) ?: Serial.println("");
-        // (!DEBUG_ON) ?: Serial.println("IP: " + sIP);
-        // (!DEBUG_ON) ?: Serial.println("Porta: " + Porta);
-        // (!DEBUG_ON) ?: Serial.println("Funcao: " + funcao);
-        // (!DEBUG_ON) ?: Serial.println("ChipId: " + ChipId);
-        // (!DEBUG_ON) ?: Serial.println("Tipo: " + Tipo);
+        // slogln("");
+        // slogln("IP: " + sIP);
+        // slogln("Porta: " + Porta);
+        // slogln("Funcao: " + funcao);
+        // slogln("ChipId: " + ChipId);
+        // slogln("Tipo: " + Tipo);
 
         IPAddress Destino;
         Destino.fromString(sIP);
@@ -135,13 +135,13 @@ void leituraUDP(AsyncUDPPacket packet)
             {
               //digitalWrite(Porta.toInt(), 1);
               LigaDesliga(Porta.toInt(), HIGH, "", Texto.toInt());
-              (!DEBUG_ON) ?: Serial.println("led ligado UDP");
+              slogln("led ligado UDP");
             }
             else
             {
               //digitalWrite(Porta.toInt(), 0);
               LigaDesliga(Porta.toInt(), LOW, "", Texto.toInt());
-              (!DEBUG_ON) ?: Serial.println("led 1 desligado UDP");
+              slogln("led 1 desligado UDP");
             }
           }
           else if (Tipo == "C")
@@ -159,7 +159,7 @@ void leituraUDP(AsyncUDPPacket packet)
 
               SendUDP(packet.remoteIP(), packet.remotePort(), String(replyPacekt));
 
-              // (!DEBUG_ON) ?: Serial.println("enviado comando UDP");
+              // slogln("enviado comando UDP");
               // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
               // Udp.write(replyPacekt);
               // Udp.endPacket();
@@ -223,12 +223,12 @@ void leituraUDP(AsyncUDPPacket packet)
           }
           else if (Tipo == "A")
           {
-            //gRequest->send(200, "text/html", "ok");
+            //gRequest->send(200, "text/html", sdefOK);
             gravasensor2(Texto);
           }
           else if (Tipo == "B")
           {
-            //gRequest->send(200, "text/html", "ok");
+            //gRequest->send(200, "text/html", sdefOK);
             String Texto = ""; //gRequest->arg("j");
             String Telef = ""; //gRequest->arg("b");
             //sms gravasms2(Texto, Telef);
@@ -239,7 +239,7 @@ void leituraUDP(AsyncUDPPacket packet)
           }
           else if (Tipo == "F")
           {
-            //gRequest->send(200, "text/html", "ok");
+            //gRequest->send(200, "text/html", sdefOK);
             String Valor = ""; //gRequest->arg("j");
             gravanot2(Valor);
           }
@@ -319,7 +319,7 @@ void leituraUDP(AsyncUDPPacket packet)
 
           //retorna udp
           char replyPacekt[255] = "";
-          String Texto = "ok";
+          String Texto = sdefOK;
           Texto.toCharArray(replyPacekt, 255);
 
           //(!DEBUG_ON) ?:   Serial.println("enviado comando UDP");
@@ -333,7 +333,7 @@ void leituraUDP(AsyncUDPPacket packet)
   }
   else if (packet.length() == 2)
   {
-    //gRequest->send(200, "text/html", "ok");
+    //gRequest->send(200, "text/html", sdefOK);
   }
 }
 

@@ -7,12 +7,14 @@ void DisplaySetup()
   }
 }
 
-void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, bool enIRRec, String internet, String mqtt, String cloud, int16_t rssi)
+void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, int16_t rssi)
 {
   String sIn = "";
   String sIn2 = "";
   String sOut = "";
   String sOut2 = "";
+  String srF = "F";
+  String srOK = "OK";
   for (uint8_t bit = 0; bit <= 7; bit++)
   {
     (bitRead(in1, bit)) ? sIn += String(bit + 1) : sIn += " ";
@@ -35,10 +37,12 @@ void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, bool 
   display.drawString(1, dispY[3], "IP: " + IpDispositivo.toString());
   //display.drawString(1, dispY[3], IpDispositivo.toString());
   display.drawString(121, dispY[3], String(clock2s));
-  if (enIRRec)
+  if (enReadIR)
     display.drawString(1, dispY[4], F("Waiting for IR Code..."));
   else
-    display.drawString(1, dispY[4], "I:" + internet + " M:" + mqtt + " C:" + cloud);
+    //display.drawString(1, dispY[4], "I:" + ((hasInternet) ? retOK : retF) + " M:" + ((hasMQTT) ? retOK : retF) + " C:" + ((hasCloud) ? retOK : retF));
+    display.drawString(1, dispY[4], "I:" + ((hasInternet) ? srOK : srF) + " M:" + ((hasMQTT) ? srOK : srF) + " C:" + ((hasCloud) ? srOK : srF));
+  //display.drawString(1, dispY[4], "I:" + (String)hasInternet + " M:" + (String)hasMQTT + " C:" + (String)hasCloud);
 }
 
 void UpdateDisplay(String text)
@@ -65,11 +69,8 @@ void LoopDisplay()
   {
     lastDisplay = millisAtual;
     display.clear();
-    String internet = (hasInternet) ? "OK" : "F";
-    String mqtt = (hasMQTT) ? "OK" : "F";
-    String cloud = (hasCloud) ? "OK" : "F";
     clock2s = !clock2s;
-    atualizaDisplay(~sensor1.read8(), ~sensor2.read8(), ~chip1.read8(), ~chip2.read8(), enReadIR, internet, mqtt, cloud, 60);
+    atualizaDisplay(~sensor1.read8(), ~sensor2.read8(), ~chip1.read8(), ~chip2.read8(), 60);
     display.display();
   }
 }

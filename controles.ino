@@ -38,7 +38,7 @@ void GetChipMac()
 
 void controle()
 {
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
 
   String p = gRequest->arg("p");
   String k = gRequest->arg("k");

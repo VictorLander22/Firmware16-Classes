@@ -1,13 +1,13 @@
 void executeupdate()
 {
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
   shouldUpdate = 1;
 }
 
 void executeupdateBeta(bool isPost)
 {
   if (isPost)
-    gRequest->send(200, "text/html", "ok");
+    gRequest->send(200, "text/html", sdefOK);
   shouldUpdate = 2;
 }
 
@@ -25,26 +25,26 @@ void ExecuteUpdate()
 
     shouldUpdate = 0;
 
-    (!DEBUG_ON) ?: Serial.print("Iniciando Update em: ");
+    slog("Iniciando Update em: ");
 
-    (!DEBUG_ON) ?: Serial.println(url);
+    slogln(url);
 
     t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
 
     switch (ret)
     {
     case HTTP_UPDATE_FAILED:
-      (!DEBUG_ON) ?: Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
       //            gRequest->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
       break;
 
     case HTTP_UPDATE_NO_UPDATES:
-      (!DEBUG_ON) ?: Serial.println("HTTP_UPDATE_NO_UPDATES");
+      slogln("HTTP_UPDATE_NO_UPDATES");
       //    gRequest->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
       break;
 
     case HTTP_UPDATE_OK:
-      (!DEBUG_ON) ?: Serial.println("ok");
+      slogln(sdefOK);
       //    gRequest->send(200, "text/html", "HTTP_UPDATE_OK");
       break;
     }
@@ -116,6 +116,6 @@ void versao()
 //   }
 //   else
 //   {
-//     gRequest->send(200, "text/html", "ok");
+//     gRequest->send(200, "text/html", sdefOK);
 //   }
 // }

@@ -37,7 +37,7 @@ void trataDevice(String (&Devices)[20])
       }
     }
   }
-  (!DEBUG_ON) ?: Serial.println(valorDevice);
+  slogln(valorDevice);
   DeviceAlterado = false;
 }
 
@@ -105,11 +105,11 @@ void trataSensores()
         else if (enviarsms)
         {
           //sms sendSMS(numSensor);
-          (!DEBUG_ON) ?: Serial.println("Sensor disparado");
+          slogln("Sensor disparado");
         }
         ultimoDisparo = sInValues; //sSensor1 + sSensor2;
         limparUltimoDisparo = 0;
-        (!DEBUG_ON) ?: Serial.println("Sensor disparado");
+        slogln("Sensor disparado");
       }
     }
   }
@@ -138,7 +138,7 @@ void trataSensores()
 //       String data = "";
 //       if (reg.substring(0, 1) == "2")
 //       {
-//         (!DEBUG_ON) ?: Serial.println("Iphone");
+//         slogln("Iphone");
 //         data = "{";
 //         data = data + "\"to\": \"" + reg.substring(1) + "\",";
 //         data = data + "\"notification\": {";
@@ -175,11 +175,11 @@ void trataSensores()
 //         data = data + "}";
 //         data = data + " }";
 //       }
-//       (!DEBUG_ON) ?: Serial.println("Send data...");
+//       slogln("Send data...");
 //       //      if (cliente.connect("fcm.googleapis.com", 80)) {
 //       if (cliente.connect("cloud.fcleal.com.br", 80))
 //       {
-//         (!DEBUG_ON) ?: Serial.println("Connected to the server..");
+//         slogln("Connected to the server..");
 //         //        cliente.println("POST /fcm/send HTTP/1.1");
 //         cliente.println("POST /api/keepin/fcm HTTP/1.1");
 //         cliente.println("Authorization: key=" + serve + "");
@@ -191,15 +191,15 @@ void trataSensores()
 //         cliente.print("\n");
 //         cliente.print(data);
 //       }
-//       (!DEBUG_ON) ?: Serial.println("Data sent...Reading response..");
+//       slogln("Data sent...Reading response..");
 //       while (cliente.available())
 //       {
 //         char c = cliente.read();
-//         (!DEBUG_ON) ?: Serial.print(c);
+//         slog(c);
 //       }
-//       (!DEBUG_ON) ?: Serial.println("Finished!");
+//       slogln("Finished!");
 //       cliente.flush();
-//       (!DEBUG_ON) ?: Serial.println(data);
+//       slogln(data);
 //       msgDisparada[numSen] = true;
 //       msgDisparadaRF[numSen] = true;
 //     }
@@ -446,7 +446,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
 
       if ((millisAtual - inicioAcionado[nsensor] > 1300) && (vDisparadoSensor[nsensor] == false))
       {
-        (!DEBUG_ON) ?: Serial.println("maior que 2 segundos"); /// acionamento 2
+        slogln("maior que 2 segundos"); /// acionamento 2
         inicioAcionado[nsensor] = 0;
         vDisparadoSensor[nsensor] = true;
 
@@ -486,19 +486,19 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|I|";
           }
           Texto.toCharArray(replyPacekt, 255);
-          (!DEBUG_ON) ?: Serial.println("enviado comando UDP1");
+          slogln("enviado comando UDP1");
           SendUDP(Destino, localUdpPort, String(replyPacekt));
           // Udp.beginPacket(Destino, localUdpPort);
           // Udp.write(replyPacekt);
           // Udp.endPacket();
           msgDisparada[nsensor] = true;
 
-          (!DEBUG_ON) ?: Serial.println(replyPacekt);
+          slogln(replyPacekt);
         }
       }
       else if (vDisparadoSensor[nsensor] == false)
       {
-        (!DEBUG_ON) ?: Serial.println("Menor que 2 segundos");
+        slogln("Menor que 2 segundos");
         inicioAcionado[nsensor] = 0;
         vDisparadoSensor[nsensor] = true;
 
@@ -534,13 +534,13 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
           }
           Texto.toCharArray(replyPacekt, 255);
-          (!DEBUG_ON) ?: Serial.print("enviar comando UDP2");
+          slog("enviar comando UDP2");
           SendUDP(Destino, localUdpPort, String(replyPacekt));
           // Udp.beginPacket(Destino, localUdpPort);
           // Udp.write(replyPacekt);
           // Udp.endPacket();
           msgDisparada[nsensor] = true;
-          (!DEBUG_ON) ?: Serial.println(replyPacekt);
+          slogln(replyPacekt);
         }
       }
     }
@@ -554,7 +554,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
 
     if ((millisAtual - inicioAcionado[nsensor] > 1300) && (vDisparadoSensor[nsensor] == false))
     {
-      (!DEBUG_ON) ?: Serial.println("maior que 2 segundos");
+      slogln("maior que 2 segundos");
       inicioAcionado[nsensor] = 0;
       vDisparadoSensor[nsensor] = true;
 
@@ -594,13 +594,13 @@ boolean verificaSensores(int nsensor, String vsAtual)
           Texto = vIPDest2 + "|" + PortaAparelho2 + "|false|" + String(vChip2) + "|I|";
         }
         Texto.toCharArray(replyPacekt, 255);
-        (!DEBUG_ON) ?: Serial.println("enviado comando UDP3");
+        slogln("enviado comando UDP3");
         SendUDP(Destino, localUdpPort, String(replyPacekt));
         // Udp.beginPacket(Destino, localUdpPort);
         // Udp.write(replyPacekt);
         // Udp.endPacket();
         msgDisparada[nsensor] = true;
-        (!DEBUG_ON) ?: Serial.println(replyPacekt);
+        slogln(replyPacekt);
       }
     }
   }
@@ -630,15 +630,15 @@ boolean verificaSensores(int nsensor, String vsAtual)
       {
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|true|" + String(vChip) + "|E|0|";
-        (!DEBUG_ON) ?: Serial.println(Texto);
+        slogln(Texto);
         Texto.toCharArray(replyPacekt, 255);
-        (!DEBUG_ON) ?: Serial.println("enviado comando UDP4");
+        slogln("enviado comando UDP4");
         SendUDP(Destino, localUdpPort, String(replyPacekt));
         // Udp.beginPacket(Destino, localUdpPort);
         // Udp.write(replyPacekt);
         // Udp.endPacket();
         msgDisparada[nsensor] = true;
-        (!DEBUG_ON) ?: Serial.println(replyPacekt);
+        slogln(replyPacekt);
       }
       if (Msg == "1")
       {
@@ -664,13 +664,13 @@ boolean verificaSensores(int nsensor, String vsAtual)
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|0|";
         Texto.toCharArray(replyPacekt, 255);
-        (!DEBUG_ON) ?: Serial.println("enviado comando UDP5");
+        slogln("enviado comando UDP5");
         SendUDP(Destino, localUdpPort, String(replyPacekt));
         // Udp.beginPacket(Destino, localUdpPort);
         // Udp.write(replyPacekt);
         // Udp.endPacket();
         msgDisparada[nsensor] = true;
-        (!DEBUG_ON) ?: Serial.println(replyPacekt);
+        slogln(replyPacekt);
       }
       if (Msg == "1")
       {
@@ -704,13 +704,13 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            (!DEBUG_ON) ?: Serial.println("enviado comando UDP6");
+            slogln("enviado comando UDP6");
             SendUDP(Destino, localUdpPort, String(replyPacekt));
             // Udp.beginPacket(Destino, localUdpPort);
             // Udp.write(replyPacekt);
             // Udp.endPacket();
             msgDisparada[nsensor] = true;
-            (!DEBUG_ON) ?: Serial.println(replyPacekt);
+            slogln(replyPacekt);
           }
         }
       }
@@ -739,14 +739,14 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            (!DEBUG_ON) ?: Serial.print("enviado comando UDP7");
-            (!DEBUG_ON) ?: Serial.println(Texto);
+            slog("enviado comando UDP7");
+            slogln(Texto);
             SendUDP(Destino, localUdpPort, String(replyPacekt));
             // Udp.beginPacket(Destino, localUdpPort);
             // Udp.write(replyPacekt);
             // Udp.endPacket();
             msgDisparada[nsensor] = true;
-            (!DEBUG_ON) ?: Serial.println(replyPacekt);
+            slogln(replyPacekt);
           }
         }
       }
@@ -787,14 +787,14 @@ boolean verificaSensores(int nsensor, String vsAtual)
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
         Texto.toCharArray(replyPacekt, 255);
-        (!DEBUG_ON) ?: Serial.println("enviado comando UDP8");
+        slogln("enviado comando UDP8");
         SendUDP(Destino, localUdpPort, String(replyPacekt));
         // Udp.beginPacket(Destino, localUdpPort);
         // Udp.write(replyPacekt);
         // Udp.endPacket();
         msgDisparada[nsensor] = true;
         ultimoEstado[nsensor] = estadoAtual[nsensor];
-        (!DEBUG_ON) ?: Serial.println(replyPacekt);
+        slogln(replyPacekt);
       }
     }
     else if (Funcao == "8")
@@ -837,13 +837,13 @@ boolean verificaSensores(int nsensor, String vsAtual)
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
-            (!DEBUG_ON) ?: Serial.println("enviado comando UDP9");
+            slogln("enviado comando UDP9");
             SendUDP(Destino, localUdpPort, String(replyPacekt));
             // Udp.beginPacket(Destino, localUdpPort);
             // Udp.write(replyPacekt);
             // Udp.endPacket();
             msgDisparada[nsensor] = true;
-            (!DEBUG_ON) ?: Serial.println(replyPacekt);
+            slogln(replyPacekt);
           }
         }
       }
@@ -968,7 +968,7 @@ void consultaSensor()
 
   for (uint8_t i = 0; i < 16; i++)
   {
-    (!DEBUG_ON) ?: Serial.println("ConsultaSensor[" + (String)i + "] - " + Sensores[i] + " - " + nomeSensores[i]);
+    slogln("ConsultaSensor[" + (String)i + "] - " + Sensores[i] + " - " + nomeSensores[i]);
   }
 }
 
@@ -1004,7 +1004,7 @@ void consensor()
 void gravadevice()
 {
 
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
   String Valor = gRequest->arg("d");
   //String Senha = ;
 
@@ -1024,7 +1024,7 @@ void gravadevice()
     f.close();
     SPIFFS.end();
     DeviceAlterado = true;
-    (!DEBUG_ON) ?: Serial.println("gravado device");
+    slogln("gravado device");
   }
 }
 
@@ -1090,7 +1090,7 @@ void buscaNotificar()
 
 void gravanot()
 {
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
   String Valor = gRequest->arg("v");
   String Senha = gRequest->arg("k");
 
@@ -1103,7 +1103,7 @@ void gravanot()
 
     f.close();
     SPIFFS.end();
-    (!DEBUG_ON) ?: Serial.println("gravado notificacao");
+    slogln("gravado notificacao");
 
     if (Valor == "true")
     {
@@ -1132,7 +1132,7 @@ void gravanot2(String Valor)
 
   f.close();
   SPIFFS.end();
-  (!DEBUG_ON) ?: Serial.println("gravado notificacao");
+  slogln("gravado notificacao");
 
   if (Valor == "true")
   {

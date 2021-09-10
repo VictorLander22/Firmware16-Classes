@@ -67,8 +67,8 @@ void api()
           sDados2 = "00000000";
         }
 
-        (!DEBUG_ON) ?: Serial.println("tamanho");
-        (!DEBUG_ON) ?: Serial.println(sDados1.length());
+        slogln("tamanho");
+        slogln(sDados1.length());
         while (sDados1.length() < 8)
         {
           sDados1 = '0' + sDados1;
@@ -225,7 +225,7 @@ void api()
       // if (isPost)
       //   gRequest->send(200, "text/html", "1");
       ret = 1;
-      (!DEBUG_ON) ?: Serial.println("Numero da cena: " + valueApi);
+      slogln("Numero da cena: " + valueApi);
       triggerCena(valueApi);
     }
     else if (action == "l") // linha de ação
@@ -288,7 +288,7 @@ void apiconfig()
 {
   if (gRequest->arg("s") == Senha)
   {
-    gRequest->send(200, "text/html", "ok");
+    gRequest->send(200, "text/html", sdefOK);
 
     AlowApi = (gRequest->arg("v") == "1") ? true : false;
     bitWrite(DevSet.mode, 0, AlowApi);
@@ -314,7 +314,7 @@ void alterasenhapi()
     if (ApiPass == md5.toString())
     {
 
-      gRequest->send(200, "text/html", "ok");
+      gRequest->send(200, "text/html", sdefOK);
 
       String req = gRequest->arg("v");
       if (req == "")

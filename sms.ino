@@ -20,13 +20,13 @@
 //   {
 //     String data = "user=fcleal&password=201277&destinatario=" + Numeros + "&msg=" + Texto;
 
-//     (!DEBUG_ON) ?: Serial.println("envia sms");
-//     (!DEBUG_ON) ?: Serial.println(data);
+//     slogln("envia sms");
+//     slogln(data);
 
-//     (!DEBUG_ON) ?: Serial.println("Send data...");
+//     slogln("Send data...");
 //     if (cliente.connect("www.facilitamovel.com.br", 80))
 //     {
-//       (!DEBUG_ON) ?: Serial.println("Connected to the server..");
+//       slogln("Connected to the server..");
 //       cliente.println("POST /api/multipleSend.ft HTTP/1.1");
 //       //        cliente.println("Authorization: key=" + serve + "");
 //       cliente.println("Content-Type: application/x-www-form-urlencoded");
@@ -36,13 +36,13 @@
 //       cliente.println();
 //       cliente.println(data);
 //     }
-//     (!DEBUG_ON) ?: Serial.println("Enviado sms...Aguardando confirmacao..");
+//     slogln("Enviado sms...Aguardando confirmacao..");
 //     while (cliente.available())
 //     {
 //       char c = cliente.read();
 //       //        (!DEBUG_ON) ?:   Serial.print(c);
 //     }
-//     (!DEBUG_ON) ?: Serial.println("SMS Enviado!");
+//     slogln("SMS Enviado!");
 //     cliente.flush();
 //     //(!DEBUG_ON) ?:   Serial.println(data);
 
@@ -54,7 +54,7 @@
 // void gravasms()
 // {
 
-//   gRequest->send(200, "text/html", "ok");
+//   gRequest->send(200, "text/html", sdefOK);
 //   String Senha = gRequest->arg("k");
 //   String Texto = gRequest->arg("t");
 //   String Numeros = gRequest->arg("n");
@@ -81,7 +81,7 @@
 //     fTexto.close();
 //     SPIFFS.end();
 
-//     (!DEBUG_ON) ?: Serial.println(Numeros);
+//     slogln(Numeros);
 //   }
 // }
 
@@ -133,7 +133,7 @@
 //     if (Texto == "" && Numeros == "")
 //     {
 //       gravasms2("*", "*");
-//       (!DEBUG_ON) ?: Serial.println("SMS: " + Texto);
+//       slogln("SMS: " + Texto);
 //     }
 
 //     gRequest->send(200, "text/html", Texto + "|" + Numeros);

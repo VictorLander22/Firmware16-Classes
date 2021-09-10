@@ -140,10 +140,12 @@ void IniciaRTC()
     //memRtc.setOutputs();
     SaveOutputs();
 
-    (!DEBUG_ON) ?: Serial.println(F("Set Date"));
+    slogln(F("Set Date"));
     Rtc.get_time();
-    (!DEBUG_ON) ?: Serial.printf("%02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
-    (!DEBUG_ON) ?: Serial.println();
+#ifdef DEBUG_ON
+    Serial.printf("%02d/%02d/%04d %02d:%02d:%02d", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
+#endif
+    slogln();
   }
 
   RtcDateTime now;
@@ -187,8 +189,7 @@ void Memoria()
 {
   if (TipoMemoria)
   {
-    (!DEBUG_ON) ?: Serial.printf("\nSet outputs ON: %d", memRtc.getOutputs());
-    (!DEBUG_ON) ?: Serial.println();
+    slogln("\nSet outputs ON: " + memRtc.getOutputs());
     uint16_t outputs = memRtc.getOutputs();
     chip1.write8(outputs & 0xff);
     chip2.write8((outputs >> 8) & 0xff);
@@ -197,7 +198,7 @@ void Memoria()
 
 void fMemoria()
 {
-  gRequest->send(200, "text/html", "ok");
+  gRequest->send(200, "text/html", sdefOK);
 
   if (gRequest->arg("m") == "1")
   {
@@ -241,8 +242,7 @@ void GravaCloud()
       hasCloud = usaCloud;
       bitWrite(DevSet.mode, 1, usaCloud);
       DevSet.setMode();
-      if (DEBUG_ON)
-        DevSet.showVariables();
+      DevSet.showVariables();
     }
     else
     {
