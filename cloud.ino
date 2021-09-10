@@ -1,6 +1,6 @@
 void cloud()
 {
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
 
   executeCloud = true;
 }

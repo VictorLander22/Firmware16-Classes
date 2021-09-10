@@ -105,7 +105,7 @@ void convertConfig()
 
 void wifireset()
 {
-  gRequest->send(200, "text/html", "ESP resetado");
+  gRequest->send(200, sdefTextHtml, "ESP resetado");
   DevSet.factoryReset();
   delay(300);
   ESP.restart();
@@ -164,12 +164,12 @@ RtcDateTime carregaHora()
 
 void valorwifi()
 {
-  gRequest->send(200, "text/html", String(getRSSI()));
+  gRequest->send(200, sdefTextHtml, String(getRSSI()));
 }
 
 void fmodelo()
 {
-  gRequest->send(200, "text/html", "2");
+  gRequest->send(200, sdefTextHtml, "2");
 }
 
 String lerMemoria()
@@ -189,7 +189,7 @@ void Memoria()
 {
   if (TipoMemoria)
   {
-    slogln("\nSet outputs ON: " + memRtc.getOutputs());
+    slogln("Set outputs ON: " + (String)memRtc.getOutputs());
     uint16_t outputs = memRtc.getOutputs();
     chip1.write8(outputs & 0xff);
     chip2.write8((outputs >> 8) & 0xff);
@@ -198,7 +198,7 @@ void Memoria()
 
 void fMemoria()
 {
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
 
   if (gRequest->arg("m") == "1")
   {
@@ -236,7 +236,7 @@ void GravaCloud()
   {
     if (gRequest->arg("f") == "w")
     {
-      gRequest->send(200, "text/html", "1");
+      gRequest->send(200, sdefTextHtml, "1");
 
       usaCloud = (gRequest->arg("v") == "1") ? true : false;
       hasCloud = usaCloud;
@@ -246,11 +246,11 @@ void GravaCloud()
     }
     else
     {
-      gRequest->send(200, "text/html", (usaCloud) ? "1" : "0");
+      gRequest->send(200, sdefTextHtml, (usaCloud) ? "1" : "0");
     }
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }

@@ -1,69 +1,73 @@
-void executeupdate()
-{
-  gRequest->send(200, "text/html", sdefOK);
-  shouldUpdate = 1;
-}
+// void executeupdate(bool isPost, bool beta)
+// {
+//   gRequest->send(200, sdefTextHtml, sdefOK);
+//   shouldUpdate = 1;
+// }
 
-void executeupdateBeta(bool isPost)
-{
-  if (isPost)
-    gRequest->send(200, "text/html", sdefOK);
-  shouldUpdate = 2;
-}
+// void executeupdateBeta(bool isPost)
+// {
+//   if (isPost)
+//     gRequest->send(200, sdefTextHtml, sdefOK);
+//   shouldUpdate = 2;
+// }
 
-void ExecuteUpdate()
+void ExecuteUpdate(bool isPost, bool beta)
 {
   WiFiClient client;
-  if (shouldUpdate != 0)
+  // if (shouldUpdate != 0)
+  // {
+  String url = (beta) ? "http://keepin.com.br/firmware/16/beta/firmware16.bin" : "http://keepin.com.br/firmware/16/firmware16.bin";
+  //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
+
+  // if (shouldUpdate == 1) //executa update
+  //   url = "http://keepin.com.br/firmware/16/firmware16.bin";
+  // else if (shouldUpdate == 2) // executa update beta
+  //   url = "http://keepin.com.br/firmware/16/beta/firmware16.bin";
+
+  // shouldUpdate = 0;
+
+  slog("Iniciando Update em: ");
+
+  slogln(url);
+
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
+
+  switch (ret)
   {
-    String url;
-    //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
-    if (shouldUpdate == 1) //executa update
-      url = "http://keepin.com.br/firmware/16/firmware16.bin";
-    else if (shouldUpdate == 2) // executa update beta
-      url = "http://keepin.com.br/firmware/16/beta/firmware16.bin";
+  case HTTP_UPDATE_FAILED:
+    Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    if (isPost)
+      gRequest->send(200, sdefTextHtml, "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
+    break;
 
-    shouldUpdate = 0;
+  case HTTP_UPDATE_NO_UPDATES:
+    slogln("HTTP_UPDATE_NO_UPDATES");
+    if (isPost)
+      gRequest->send(200, sdefTextHtml, "HTTP_UPDATE_NO_UPDATES");
+    break;
 
-    slog("Iniciando Update em: ");
-
-    slogln(url);
-
-    t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
-
-    switch (ret)
-    {
-    case HTTP_UPDATE_FAILED:
-      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-      //            gRequest->send(200, "text/html", "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
-      break;
-
-    case HTTP_UPDATE_NO_UPDATES:
-      slogln("HTTP_UPDATE_NO_UPDATES");
-      //    gRequest->send(200, "text/html","HTTP_UPDATE_NO_UPDATES");
-      break;
-
-    case HTTP_UPDATE_OK:
-      slogln(sdefOK);
-      //    gRequest->send(200, "text/html", "HTTP_UPDATE_OK");
-      break;
-    }
+  case HTTP_UPDATE_OK:
+    slogln(sdefOK);
+    if (isPost)
+      gRequest->send(200, sdefTextHtml, "HTTP_UPDATE_OK");
+    break;
   }
+  //}
 }
 
 void versao()
 {
-  gRequest->send(200, "text/html", Placa_Version);
+  gRequest->send(200, sdefTextHtml, Placa_Version);
 }
 
 // void linkversao()
 // {
-//   gRequest->send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
+//   gRequest->send(200, sdefTextHtml, "http://keepin.com.br/firmware/16/versao.txt");
 // }
 
 // void linkversaoBeta()
 // {
-//   gRequest->send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
+//   gRequest->send(200, sdefTextHtml, "http://keepin.com.br/firmware/16/beta/versao.txt");
 // }
 
 // void logData(String dados)
@@ -93,12 +97,12 @@ void versao()
 //     if (SPIFFS.remove("/log.txt"))
 //     {
 //       SPIFFS.end();
-//       gRequest->send(200, "text/html", "remove");
+//       gRequest->send(200, sdefTextHtml, "remove");
 //     }
 //     else
 //     {
 //       SPIFFS.end();
-//       gRequest->send(200, "text/html", "falha");
+//       gRequest->send(200, sdefTextHtml, "falha");
 //     }
 //   }
 //   else if (comando == "read")
@@ -112,10 +116,10 @@ void versao()
 //     dados = dados + "</ul></body></html>";
 //     f.close();
 //     SPIFFS.end();
-//     gRequest->send(200, "text/html", dados);
+//     gRequest->send(200, sdefTextHtml, dados);
 //   }
 //   else
 //   {
-//     gRequest->send(200, "text/html", sdefOK);
+//     gRequest->send(200, sdefTextHtml, sdefOK);
 //   }
 // }

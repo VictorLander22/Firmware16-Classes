@@ -6,11 +6,11 @@
 //   //asyncExecuteFunction = true;
 //   if (functionName == "teste")
 //   {
-//     gRequest->send(200, "text/html", "OK");
+//     gRequest->send(200, sdefTextHtml, "OK");
 //   }
 //   else
 //   {
-//     gRequest->send(200, "text/html", "NOK");
+//     gRequest->send(200, sdefTextHtml, "NOK");
 //   }
 // }
 

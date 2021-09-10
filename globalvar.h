@@ -6,6 +6,7 @@
 #define DEBUG_ON
 
 const String sdefOK = "ok";
+const String sdefTextHtml = "text/html";
 
 #ifdef DEBUG_ON
 #define slog(x) Serial.print(x)
@@ -262,7 +263,7 @@ AsyncPing Pings[numDNSquery];
 IPAddress addrs[numDNSquery];
 const char *ips[] = {"8.8.8.8", "8.8.4.4", "208.67.222.222", "google.com", "keepin.com.br"};
 
-uint8_t shouldUpdate;
+//uint8_t shouldUpdate;
 bool executeCloud;
 uint16_t lastOutputs;
 

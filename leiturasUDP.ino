@@ -46,12 +46,6 @@ void leituraUDP(AsyncUDPPacket packet)
       {
 
         SendUDP(packet.remoteIP(), 35701, getDevStatus());
-        // //slogln(incomingPacket);
-        // Udp.beginPacket(Udp.remoteIP(), 35701);
-        // Udp.write(getDevStatus().c_str());
-        // //Udp.write(resp);
-        // Udp.endPacket();
-        // //api(request);
       }
       else
       {
@@ -148,7 +142,7 @@ void leituraUDP(AsyncUDPPacket packet)
           {
             if (LePorta(Porta.toInt()) == HIGH)
             {
-              //gRequest->send(200, "text/html", "true");
+              //gRequest->send(200, sdefTextHtml, "true");
 
               Tipo = "R";
               funcao = "true";
@@ -166,7 +160,7 @@ void leituraUDP(AsyncUDPPacket packet)
             }
             else
             {
-              //gRequest->send(200, "text/html", "false");
+              //gRequest->send(200, sdefTextHtml, "false");
 
               Tipo = "R";
               funcao = "false";
@@ -186,11 +180,11 @@ void leituraUDP(AsyncUDPPacket packet)
           {
             if (funcao == "true")
             {
-              //gRequest->send(200, "text/html", "true");
+              //gRequest->send(200, sdefTextHtml, "true");
             }
             else
             {
-              //gRequest->send(200, "text/html", "false");
+              //gRequest->send(200, sdefTextHtml, "false");
             }
           }
           else if (Tipo == "S")
@@ -210,42 +204,42 @@ void leituraUDP(AsyncUDPPacket packet)
                 sSensor2 = '0' + sSensor2;
               }
 
-              //gRequest->send(200, "text/html", sSensor1 + sSensor2);
+              //gRequest->send(200, sdefTextHtml, sSensor1 + sSensor2);
             }
             else
             {
-              //gRequest->send(200, "text/html", ultimoDisparo);
+              //gRequest->send(200, sdefTextHtml, ultimoDisparo);
             }
           }
           else if (Tipo == "N")
           {
-            //gRequest->send(200, "text/html", String(notificar));
+            //gRequest->send(200, sdefTextHtml, String(notificar));
           }
           else if (Tipo == "A")
           {
-            //gRequest->send(200, "text/html", sdefOK);
+            //gRequest->send(200, sdefTextHtml, sdefOK);
             gravasensor2(Texto);
           }
           else if (Tipo == "B")
           {
-            //gRequest->send(200, "text/html", sdefOK);
+            //gRequest->send(200, sdefTextHtml, sdefOK);
             String Texto = ""; //gRequest->arg("j");
             String Telef = ""; //gRequest->arg("b");
             //sms gravasms2(Texto, Telef);
           }
           else if (Tipo == "D")
           {
-            //gRequest->send(200, "text/html", consultasms2());
+            //gRequest->send(200, sdefTextHtml, consultasms2());
           }
           else if (Tipo == "F")
           {
-            //gRequest->send(200, "text/html", sdefOK);
+            //gRequest->send(200, sdefTextHtml, sdefOK);
             String Valor = ""; //gRequest->arg("j");
             gravanot2(Valor);
           }
           else if (Tipo == "X") // retorno udp valor do dimmer
           {
-            //gRequest->send(200, "text/html", funcao);
+            //gRequest->send(200, sdefTextHtml, funcao);
           }
           else if (Tipo == "I")
           {
@@ -314,7 +308,7 @@ void leituraUDP(AsyncUDPPacket packet)
             // Udp.write(replyPacekt);
             // Udp.endPacket();
 
-            //gRequest->send(200, "text/html", replyPacekt);
+            //gRequest->send(200, sdefTextHtml, replyPacekt);
           }
 
           //retorna udp
@@ -333,7 +327,7 @@ void leituraUDP(AsyncUDPPacket packet)
   }
   else if (packet.length() == 2)
   {
-    //gRequest->send(200, "text/html", sdefOK);
+    //gRequest->send(200, sdefTextHtml, sdefOK);
   }
 }
 

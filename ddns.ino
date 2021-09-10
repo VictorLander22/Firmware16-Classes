@@ -49,11 +49,11 @@
 
 //       if (Tipo == "E")
 //       {
-//         //gRequest->send(200, "text/html", sdefOK);
+//         //gRequest->send(200, sdefTextHtml, sdefOK);
 //       }
 //       else
 //       {
-//         //gRequest->send(200, "text/html", sdefOK);
+//         //gRequest->send(200, sdefTextHtml, sdefOK);
 //       }
 //     }
 //   }
@@ -68,13 +68,13 @@
 //         {
 //           if (funcao == "true")
 //           {
-//             gRequest->send(200, "text/html", sdefOK);
+//             gRequest->send(200, sdefTextHtml, sdefOK);
 //             LigaDesliga(Porta, HIGH, Nome, Tipoa);
 //             slogln("led 1 ligado");
 //           }
 //           else
 //           {
-//             gRequest->send(200, "text/html", sdefOK);
+//             gRequest->send(200, sdefTextHtml, sdefOK);
 //             LigaDesliga(Porta, LOW, Nome, Tipoa);
 //             slogln("led 1 desligado");
 //           }
@@ -83,11 +83,11 @@
 //         {
 //           if (LePorta(Porta) == HIGH)
 //           {
-//             gRequest->send(200, "text/html", "true");
+//             gRequest->send(200, sdefTextHtml, "true");
 //           }
 //           else
 //           {
-//             gRequest->send(200, "text/html", "false");
+//             gRequest->send(200, sdefTextHtml, "false");
 //           }
 //         }
 //         else if (Tipo == "S")
@@ -107,20 +107,20 @@
 //               sSensor2 = '0' + sSensor2;
 //             }
 
-//             gRequest->send(200, "text/html", sSensor1 + sSensor2);
+//             gRequest->send(200, sdefTextHtml, sSensor1 + sSensor2);
 //           }
 //           else
 //           {
-//             gRequest->send(200, "text/html", ultimoDisparo);
+//             gRequest->send(200, sdefTextHtml, ultimoDisparo);
 //           }
 //         }
 //         else if (Tipo == "N")
 //         {
-//           gRequest->send(200, "text/html", String(notificar));
+//           gRequest->send(200, sdefTextHtml, String(notificar));
 //         }
 //         else if (Tipo == "A")
 //         {
-//           gRequest->send(200, "text/html", sdefOK);
+//           gRequest->send(200, sdefTextHtml, sdefOK);
 //           String Texto = gRequest->arg("j");
 //           gravasensor2(Texto);
 //         }
@@ -128,23 +128,23 @@
 //         {
 //           String Texto = gRequest->arg("j");
 //           // liberar depois que colocar o arquivo de RF          gravarf2(Texto);
-//           gRequest->send(200, "text/html", sdefOK);
+//           gRequest->send(200, sdefTextHtml, sdefOK);
 //         }
 //         else if (Tipo == "B")
 //         {
-//           gRequest->send(200, "text/html", sdefOK);
+//           gRequest->send(200, sdefTextHtml, sdefOK);
 //           String Texto = gRequest->arg("j");
 //           String Telef = gRequest->arg("b");
 //           //sms gravasms2(Texto, Telef);
 //         }
 //         else if (Tipo == "D")
 //         {
-//           //sms gRequest->send(200, "text/html", consultasms2());
-//           gRequest->send(200, "text/html", "consultasms2()");
+//           //sms gRequest->send(200, sdefTextHtml, consultasms2());
+//           gRequest->send(200, sdefTextHtml, "consultasms2()");
 //         }
 //         else if (Tipo == "F")
 //         {
-//           gRequest->send(200, "text/html", sdefOK);
+//           gRequest->send(200, sdefTextHtml, sdefOK);
 //           String Valor = gRequest->arg("j");
 //           gravanot2(Valor);
 //         }
@@ -205,7 +205,7 @@
 //           String valSensores = sSensor1 + sSensor2;
 //           valSensores = "2934d03" + String(IpDispositivo[0]) + "." + String(IpDispositivo[1]) + "." + String(IpDispositivo[2]) + "." + String(IpDispositivo[3]) + "|" + valSensores + "|" + sChip1 + sChip2 + "|" + getRSSI() + "*";
 //           valSensores.toCharArray(replyPacekt, 255);
-//           gRequest->send(200, "text/html", replyPacekt);
+//           gRequest->send(200, sdefTextHtml, replyPacekt);
 //         }
 //       }
 //     }

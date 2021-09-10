@@ -54,7 +54,7 @@
 // void gravasms()
 // {
 
-//   gRequest->send(200, "text/html", sdefOK);
+//   gRequest->send(200, sdefTextHtml, sdefOK);
 //   String Senha = gRequest->arg("k");
 //   String Texto = gRequest->arg("t");
 //   String Numeros = gRequest->arg("n");
@@ -136,7 +136,7 @@
 //       slogln("SMS: " + Texto);
 //     }
 
-//     gRequest->send(200, "text/html", Texto + "|" + Numeros);
+//     gRequest->send(200, sdefTextHtml, Texto + "|" + Numeros);
 //   }
 // }
 

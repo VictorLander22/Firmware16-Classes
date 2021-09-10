@@ -91,7 +91,7 @@ void setup(void)
   scanningWifi = WiFi.scanNetworks();
 
   //WiFi.scanNetworksAsync(prinScanResult);
-  slogln("\nAvailable Wifi: " + scanningWifi);
+  slogln("Available Wifi: " + (String)scanningWifi);
 
   UpdateDisplay(F("Connecting Wifi"));
   conectar(); //consome 1K da ram 19000
@@ -100,14 +100,15 @@ void setup(void)
   slogln(WiFi.localIP());
 
   UpdateDisplay(F("Configuring WebServer"));
-  ConfigurarWebServer(); //consome 6.2K da ram 13500
+  ConfigurarWebServer();
 
   retornaNotificar();
 
   slogln("Notificar: " + String(notificar));
 
-  UpdateDisplay(F("Loading Inputs"));
-  //CarregaEntradas();
+  UpdateDisplay(F("Reading inputs"));
+  LoadInputs();
+
   UpdateDisplay(F("Configuring MQTT"));
   MqttSetup(); //consome 2k da ram 11400
   UpdateDisplay(F("Configuring UDP"));
@@ -120,7 +121,7 @@ void setup(void)
 
   timer.attach(30, LoopPing);
 
-  dispText[0] = "INITIALING KEEPIN";
+  dispText[0] = "INITIALING KEEPIN " + (String)Placa_Version;
   UpdateDisplay(F("Setup finished!!!"));
 }
 
@@ -165,8 +166,6 @@ void loop(void)
     MillisResets();
 
     ResetSaidasPulsadas();
-
-    ExecuteUpdate();
 
     LoopDisplay();
 

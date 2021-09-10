@@ -222,7 +222,7 @@ void lersensores()
     sSensor2 = '0' + sSensor2;
   }
 
-  gRequest->send(200, "text/html", sSensor1);
+  gRequest->send(200, sdefTextHtml, sSensor1);
 }
 
 void AsyncSaveInputConfig()
@@ -266,7 +266,7 @@ void AsyncSaveInputConfig()
     SPIFFS.end();
   }
   SensorAlterado = true;
-  gRequest->send(200, "text/html", "OK");
+  gRequest->send(200, sdefTextHtml, sdefOK);
 }
 
 void gravasensor2(String Valor)
@@ -889,6 +889,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
     valorRetorno = false;
   }
   ultimoEstado[nsensor] = estadoAtual[nsensor];
+  //slogln(ultimoEstado[nsensor]);
   return valorRetorno;
 }
 
@@ -993,18 +994,18 @@ void consensor()
 
   if (Senha == "kdi9e")
   {
-    gRequest->send(200, "text/html", lerSensor());
+    gRequest->send(200, sdefTextHtml, lerSensor());
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }
 
 void gravadevice()
 {
 
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
   String Valor = gRequest->arg("d");
   //String Senha = ;
 
@@ -1036,12 +1037,12 @@ void buscadevice()
     File f = SPIFFS.open("/device.txt", "r");
     if (!f)
     {
-      gRequest->send(200, "text/html", "");
+      gRequest->send(200, sdefTextHtml, "");
     }
     else
     {
       String valorDevice = f.readStringUntil('*');
-      gRequest->send(200, "text/html", valorDevice);
+      gRequest->send(200, sdefTextHtml, valorDevice);
     }
     f.close();
     SPIFFS.end();
@@ -1052,7 +1053,7 @@ void ultimodisp()
 {
   if (gRequest->arg("k") == "kdi9e")
   {
-    gRequest->send(200, "text/html", ultimoDisparo);
+    gRequest->send(200, sdefTextHtml, ultimoDisparo);
   }
 }
 
@@ -1080,17 +1081,17 @@ void buscaNotificar()
 
   if (Senha == "kdi9e")
   {
-    gRequest->send(200, "text/html", String(notificar));
+    gRequest->send(200, sdefTextHtml, String(notificar));
   }
   else
   {
-    gRequest->send(200, "text/html", "0");
+    gRequest->send(200, sdefTextHtml, "0");
   }
 }
 
 void gravanot()
 {
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
   String Valor = gRequest->arg("v");
   String Senha = gRequest->arg("k");
 
@@ -1141,5 +1142,15 @@ void gravanot2(String Valor)
   else
   {
     notificar = false;
+  }
+}
+
+void LoadInputs()
+{
+  uint16_t inputs = getInputs();
+  for (int i = 0; i < 16; i++)
+  {
+    estadoAtual[i] = (bitRead(inputs, i));
+    ultimoEstado[i] = estadoAtual[i];
   }
 }

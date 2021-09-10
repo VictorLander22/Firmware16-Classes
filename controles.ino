@@ -28,17 +28,17 @@ void parseBytes(const char *str, char sep, byte *bytes, int maxBytes, int base)
 
 void retornachip()
 {
-  gRequest->send(200, "text/html", vchipId);
+  gRequest->send(200, sdefTextHtml, vchipId);
 }
 
 void GetChipMac()
 {
-  gRequest->send(200, "text/html", gchipId);
+  gRequest->send(200, sdefTextHtml, gchipId);
 }
 
 void controle()
 {
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
 
   String p = gRequest->arg("p");
   String k = gRequest->arg("k");
@@ -85,18 +85,18 @@ void situacao()
     {
       if (LePorta(porta) == HIGH)
       {
-        gRequest->send(200, "text/html", "true");
+        gRequest->send(200, sdefTextHtml, "true");
       }
       else
       {
-        gRequest->send(200, "text/html", "false");
+        gRequest->send(200, sdefTextHtml, "false");
       }
     }
 }
 
 void valida()
 {
-  gRequest->send(200, "text/html", "16|2|16|" + vchipId + "|");
+  gRequest->send(200, sdefTextHtml, "16|2|16|" + vchipId + "|");
 }
 
 void handleNotFound()

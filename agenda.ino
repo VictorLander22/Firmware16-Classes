@@ -396,7 +396,7 @@ void atualizahora()
 
   if (Senha == "kdi9e")
   {
-    gRequest->send(200, "text/html", sdefOK);
+    gRequest->send(200, sdefTextHtml, sdefOK);
     RtcDateTime HoraNova = vHora;
 
     Rtc.year = HoraNova.Year();
@@ -412,7 +412,7 @@ void atualizahora()
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }
 
@@ -480,18 +480,18 @@ void conagenda()
   {
     //(!DEBUG_ON) ?:   Serial.println("consultando agenda");
     String texto = consultaAgenda(0);
-    gRequest->send(200, "text/html", texto);
+    gRequest->send(200, sdefTextHtml, texto);
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }
 
 void gravaragenda()
 {
 
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
 
   AgendaAlterada = true;
   //String idAgenda = gRequest->arg("ag");

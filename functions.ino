@@ -160,7 +160,7 @@ void CheckSPIFFS()
   {
     //(!DEBUG_ON) ?: Serial.print(F("Creating file system... "));
     if (SPIFFS.format())
-      slogln(F("OK"));
+      slogln(sdefOK);
     else
       slogln(F("Fail"));
   }
@@ -189,7 +189,12 @@ void SaveOutputs()
 
 uint16_t getInputs()
 {
-  return sensor2.read8() << 8 | sensor1.read8();
+  return ~(sensor2.read8() << 8 | sensor1.read8());
+}
+
+uint16_t getOutputs()
+{
+  return ~(chip2.read8() << 8 | chip1.read8());
 }
 
 String getDevStatus()
@@ -198,7 +203,7 @@ String getDevStatus()
          ",\"ip:\"" + CurrentIP() +
          ",\"v:\"" + Placa_Version +
          ",\"i:\"" + String(getInputs()) +
-         ",\"o:\"" + String(memRtc.outValues) +
+         ",\"o:\"" + String(getOutputs()) +
          ",\"s:\"" + String(getRSSI()) + "}";
 }
 
@@ -238,7 +243,7 @@ void scanI2c()
   const unsigned long waitDelay = 50;
   uint8_t devices;
 
-  dispText[0] = "EXECUTING SETUP";
+  dispText[0] = "EXECUTING SETUP " + (String)Placa_Version;
   dispText[4] = ("Starting devices..");
 
   // Testar Display
@@ -248,25 +253,20 @@ void scanI2c()
     hasDisplay = true;
     DisplaySetup();
     slogln(F("Display OK"));
-    Serial.print(F("Funcions -1"));
     UpdateDisplay("Display Present");
-    Serial.print(F("Funcions 0"));
   }
   else
   {
     hasDisplay = false;
     slogln(F("Display Fails"));
   }
-  Serial.print(F("Funcions 1"));
   delay(waitDelay);
-  Serial.print(F("Funcions 2"));
   //Testar Out1
   Wire.beginTransmission(0x21);
   if (Wire.endTransmission() == 0)
     devices++;
   else
     UpdateDisplay(F("21 Fail"));
-  Serial.print(F("Funcions 3"));
   delay(waitDelay);
   //Testar Out2
   Wire.beginTransmission(0x22);

@@ -62,14 +62,14 @@ void conectar()
 
 // void listawifi2()
 // {
-//   gRequest->send(200, "text/html", vListaWifi);
+//   gRequest->send(200, sdefTextHtml, vListaWifi);
 // }
 
 void WifiNetworkScan()
 {
   millisNetworkScan = millisAtual;
   getAvalibleNetwork();
-  gRequest->send(200, "text/html", vListaWifi);
+  gRequest->send(200, sdefTextHtml, vListaWifi);
 }
 
 void getAvalibleNetwork()
@@ -79,7 +79,7 @@ void getAvalibleNetwork()
   if (n >= 0)
   {
     //scanningWifi = n;
-    slogln(n + "network(s) found");
+    slogln((String)n + " network(s) found");
     vListaWifi = "";
     for (int i = 0; i < n; i++)
     {
@@ -110,24 +110,24 @@ void gravasenhawifi()
 
       if (vSenhaAP.length() >= 8)
       {
-        gRequest->send(200, "text/html", sdefOK);
+        gRequest->send(200, sdefTextHtml, sdefOK);
         DevSet.apWifiPwd = vSenhaAP;
         DevSet.setApWifiPwd();
         slogln("Alterado: " + vSenhaAP);
       }
       else
       {
-        gRequest->send(200, "text/html", "-1");
+        gRequest->send(200, sdefTextHtml, "-1");
       }
     }
     else
     {
-      gRequest->send(200, "text/html", "-1");
+      gRequest->send(200, sdefTextHtml, "-1");
     }
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }
 
@@ -146,7 +146,7 @@ void gravasenhahttp()
       String restartPage(FPSTR(webRestart));
       restartPage.replace("#oldip#", ip);
       restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-      gRequest->send_P(200, "text/html", restartPage.c_str());
+      gRequest->send_P(200, sdefTextHtml, restartPage.c_str());
 
       DevSet.httpUser = newHttpUser;
       DevSet.httpPwd = newHttpPwd;
@@ -158,12 +158,12 @@ void gravasenhahttp()
     }
     else
     {
-      gRequest->send(200, "text/html", "-1");
+      gRequest->send(200, sdefTextHtml, "-1");
     }
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }
 

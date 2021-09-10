@@ -7,44 +7,6 @@ void DisplaySetup()
   }
 }
 
-void atualizaDisplay(uint8_t in1, uint8_t in2, uint8_t out1, uint8_t out2, int16_t rssi)
-{
-  String sIn = "";
-  String sIn2 = "";
-  String sOut = "";
-  String sOut2 = "";
-  String srF = "F";
-  String srOK = "OK";
-  for (uint8_t bit = 0; bit <= 7; bit++)
-  {
-    (bitRead(in1, bit)) ? sIn += String(bit + 1) : sIn += " ";
-    (bitRead(in2, bit)) ? sIn2 += String(bit + 1) : sIn2 += " ";
-    (bitRead(out1, bit)) ? sOut += String(bit + 1) : sOut += " ";
-    (bitRead(out2, bit)) ? sOut2 += String(bit + 1) : sOut2 += " ";
-  }
-  sIn += ":" + sIn2;
-  sOut += ":" + sOut2;
-
-  display.setFont(Cousine_Regular_12);
-  display.drawString(3, dispY[0], sOut);
-  display.drawString(3, dispY[1], sIn);
-
-  display.setFont(ArialMT_Plain_10);
-  display.drawLine(0, 28, 127, 28);
-  //display.drawString(1, dispY[2], "WiFi: OK ");
-  //display.drawString(50, dispY[2], "Sinal");
-  //display.drawProgressBar(80, 31, 47, 8, rssi);
-  display.drawString(1, dispY[3], "IP: " + IpDispositivo.toString());
-  //display.drawString(1, dispY[3], IpDispositivo.toString());
-  display.drawString(121, dispY[3], String(clock2s));
-  if (enReadIR)
-    display.drawString(1, dispY[4], F("Waiting for IR Code..."));
-  else
-    //display.drawString(1, dispY[4], "I:" + ((hasInternet) ? retOK : retF) + " M:" + ((hasMQTT) ? retOK : retF) + " C:" + ((hasCloud) ? retOK : retF));
-    display.drawString(1, dispY[4], "I:" + ((hasInternet) ? srOK : srF) + " M:" + ((hasMQTT) ? srOK : srF) + " C:" + ((hasCloud) ? srOK : srF));
-  //display.drawString(1, dispY[4], "I:" + (String)hasInternet + " M:" + (String)hasMQTT + " C:" + (String)hasCloud);
-}
-
 void UpdateDisplay(String text)
 {
   if (hasDisplay)
@@ -67,10 +29,43 @@ void LoopDisplay()
 {
   if ((millisAtual > (lastDisplay + 2000)) && hasDisplay)
   {
+    String sIn = "";
+    String sIn2 = "";
+    String sOut = "";
+    String sOut2 = "";
+    String srF = "F";
+    String srOK = "OK";
+
     lastDisplay = millisAtual;
     display.clear();
     clock2s = !clock2s;
-    atualizaDisplay(~sensor1.read8(), ~sensor2.read8(), ~chip1.read8(), ~chip2.read8(), 60);
+
+    for (uint8_t bit = 0; bit <= 7; bit++)
+    {
+      (bitRead(~sensor1.read8(), bit)) ? sIn += String(bit + 1) : sIn += " ";
+      (bitRead(~sensor2.read8(), bit)) ? sIn2 += String(bit + 1) : sIn2 += " ";
+      (bitRead(~chip1.read8(), bit)) ? sOut += String(bit + 1) : sOut += " ";
+      (bitRead(~chip2.read8(), bit)) ? sOut2 += String(bit + 1) : sOut2 += " ";
+    }
+    sIn += ":" + sIn2;
+    sOut += ":" + sOut2;
+
+    display.setFont(Cousine_Regular_12);
+    display.drawString(3, dispY[0], sOut);
+    display.drawString(3, dispY[1], sIn);
+
+    display.setFont(ArialMT_Plain_10);
+    display.drawLine(0, 28, 127, 28);
+    //display.drawString(1, dispY[2], "WiFi: OK ");
+    //display.drawString(50, dispY[2], "Sinal");
+    //display.drawProgressBar(80, 31, 47, 8, rssi);
+    display.drawString(1, dispY[3], "IP: " + IpDispositivo.toString());
+    display.drawString(121, dispY[3], String(clock2s));
+    if (enReadIR)
+      display.drawString(1, dispY[4], F("Waiting for IR Code..."));
+    else
+      display.drawString(1, dispY[4], "I:" + ((hasInternet) ? srOK : srF) + " M:" + ((hasMQTT) ? srOK : srF) + " C:" + ((hasCloud) ? srOK : srF));
+
     display.display();
   }
 }

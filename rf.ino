@@ -7,7 +7,7 @@ void configRF()
 
 void getRF()
 {
-  gRequest->send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
+  gRequest->send(200, sdefTextHtml, String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
   tamanhoRF = -1;
   gProtocoloRF = -1;
   codigoRF = "-1";
@@ -16,13 +16,13 @@ void getRF()
 void habRF()
 {
   //enReadRF = true;
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
 }
 
 void gravarf()
 {
 
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
 
   SensorRFAlterado = true;
   //String idAgenda = gRequest->arg("ag");
@@ -592,14 +592,14 @@ void ultimodisprf()
 
   if (Senha == "kdi9e")
   {
-    gRequest->send(200, "text/html", ultimoDisparoRF);
+    gRequest->send(200, sdefTextHtml, ultimoDisparoRF);
   }
 }
 
 void sendRFp()
 {
 
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
   unsigned long Valor = strtoul(gRequest->arg("c").c_str(), NULL, 10);
   unsigned long _tamanhorf = strtoul(gRequest->arg("t").c_str(), NULL, 10);
   unsigned long _protocol = strtoul(gRequest->arg("p").c_str(), NULL, 10);

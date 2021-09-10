@@ -1,6 +1,6 @@
 void gravacena()
 {
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
 
   String Senha = gRequest->arg("k");
 
@@ -36,7 +36,7 @@ void gravacena()
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }
 

@@ -323,7 +323,7 @@ void dumpCode(decode_results *results)
 
 void getIR()
 {
-  gRequest->send(200, "text/html", String(tamanho) + "|" + String(Modelo) + "|" + codigoIR + "*");
+  gRequest->send(200, sdefTextHtml, String(tamanho) + "|" + String(Modelo) + "|" + codigoIR + "*");
   tamanho = -1;
   codigoIR = "-1";
 }
@@ -338,7 +338,7 @@ void AsyncSendIR()
   if (S == Senha)
     irEnSend = true;
   slogln(F("Enviar IR..."));
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
 }
 
 void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vModelo, int q)
@@ -582,7 +582,7 @@ int retornaPorIRS(int PortaIRS)
 
 void habir()
 {
-  gRequest->send(200, "text/html", sdefOK);
+  gRequest->send(200, sdefTextHtml, sdefOK);
   irrecv.resume();
   irrecv.resume();
   irrecv.resume();

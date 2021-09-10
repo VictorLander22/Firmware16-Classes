@@ -79,9 +79,11 @@ void AsyncFunctions()
     else if (functionName == F("/buscadevice"))
       buscadevice();
     else if (functionName == F("/executeupdate"))
-      executeupdate();
+      ExecuteUpdate(true, false);
+    //executeupdate();
     else if (functionName == F("/executeupdatebeta"))
-      executeupdateBeta(true);
+      ExecuteUpdate(true, true);
+    //executeupdateBeta(true);
     else if (functionName == F("/versao"))
       versao();
     // else if (functionName == F("/link"))
@@ -164,12 +166,12 @@ void handleHtmlConfig()
   defaultPage.replace("#ip#", DevSet.numberToIpString(DevSet.wifiIP));
   defaultPage.replace("#msk#", DevSet.numberToIpString(DevSet.wifiMSK));
   defaultPage.replace("#gtw#", DevSet.numberToIpString(DevSet.wifiGTW));
-  gRequest->send(200, "text/html", defaultPage.c_str());
+  gRequest->send(200, sdefTextHtml, defaultPage.c_str());
 }
 
 void about()
 {
-  gRequest->send_P(200, "text/html", webAbout);
+  gRequest->send_P(200, sdefTextHtml, webAbout);
 }
 
 void reiniciar()
@@ -177,7 +179,7 @@ void reiniciar()
   String restartPage(FPSTR(webRestart));
   restartPage.replace("#oldip#", CurrentIP());
   restartPage.replace("#newip#", DevSet.numberToIpString(DevSet.wifiIP));
-  gRequest->send_P(200, "text/html", restartPage.c_str());
+  gRequest->send_P(200, sdefTextHtml, restartPage.c_str());
 
   delay(300);
   ESP.restart();
@@ -185,7 +187,7 @@ void reiniciar()
 
 void gravawifi()
 {
-  gRequest->send(200, "text/html", "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
+  gRequest->send(200, sdefTextHtml, "<html>ok<meta charset='UTF-8'><script>location.replace(\"http://" + CurrentIP() + "\")</script></html>");
 
   String wifiSSID = gRequest->arg("txtnomerede");
   String wifiPWD = gRequest->arg("txtsenha");
@@ -224,7 +226,7 @@ void FileDir()
 
   arquivos += "*";
 
-  gRequest->send(200, "text/html", arquivos);
+  gRequest->send(200, sdefTextHtml, arquivos);
 }
 
 void FileDownload()
@@ -245,7 +247,7 @@ void FileDownload()
   else
   {
     slogln(F("Arquivo não existe"));
-    gRequest->send(200, "text/html", F("File not found"));
+    gRequest->send(200, sdefTextHtml, F("File not found"));
     SPIFFS.end();
   }
 }
@@ -264,20 +266,20 @@ void FileDelete()
     if (SPIFFS.remove(path))
     {
       slogln(F("Removido"));
-      gRequest->send(200, "text/html", F("Removido"));
+      gRequest->send(200, sdefTextHtml, F("Removido"));
     }
   }
   else
   {
     slogln(F("Arquivo não existe"));
-    gRequest->send(200, "text/html", F("File not found"));
+    gRequest->send(200, sdefTextHtml, F("File not found"));
   }
   SPIFFS.end();
 }
 
 void FileUpload()
 {
-  gRequest->send_P(200, "text/html", webUpload);
+  gRequest->send_P(200, sdefTextHtml, webUpload);
 }
 
 void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
@@ -301,7 +303,7 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
     if (UploadFile) // If the file was successfully created
     {
       UploadFile.close(); // Close the file again
-      request->send(200, "text/html", F("<h3>File was successfully uploaded</h3>"));
+      request->send(200, sdefTextHtml, F("<h3>File was successfully uploaded</h3>"));
       //  SPIFFS.end();
     }
 
@@ -312,7 +314,7 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
 void AsyncBackupEsp(bool isPost)
 {
   if (isPost)
-    gRequest->send(200, "text/html", F("Backup"));
+    gRequest->send(200, sdefTextHtml, F("Backup"));
 
   WiFiClient cliente;
   HTTPClient http;
@@ -360,7 +362,7 @@ void AsyncBackupEsp(bool isPost)
 void AsyncRestoreEsp(bool isPost)
 {
   if (isPost)
-    gRequest->send(200, "text/html", F("Restoring"));
+    gRequest->send(200, sdefTextHtml, F("Restoring"));
 
   HTTPClient http;
   WiFiClient client;
@@ -427,7 +429,7 @@ void AsyncRestoreEsp(bool isPost)
 void AsyncFormatEsp(bool isPost)
 {
   if (isPost)
-    gRequest->send(200, "text/html", F("Formating..."));
+    gRequest->send(200, sdefTextHtml, F("Formating..."));
 
   slogln(F("Formating"));
   //LittleFS.format();

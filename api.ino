@@ -104,7 +104,7 @@ void api()
         }
 
         if (isPost)
-          gRequest->send(200, "text/html", sDados2 + sDados1);
+          gRequest->send(200, sdefTextHtml, sDados2 + sDados1);
       }
       else
       {
@@ -114,13 +114,13 @@ void api()
           {
             ret = 1;
             // if (isPost)
-            //   gRequest->send(200, "text/html", "1");
+            //   gRequest->send(200, sdefTextHtml, "1");
           }
           else
           {
             ret = 0;
             // if (isPost)
-            //   gRequest->send(200, "text/html", "0");
+            //   gRequest->send(200, sdefTextHtml, "0");
           }
         }
         else
@@ -129,13 +129,13 @@ void api()
           {
             ret = 1;
             // if (isPost)
-            //   gRequest->send(200, "text/html", "1");
+            //   gRequest->send(200, sdefTextHtml, "1");
           }
           else
           {
             ret = 0;
             // if (isPost)
-            //   gRequest->send(200, "text/html", "0");
+            //   gRequest->send(200, sdefTextHtml, "0");
           }
         }
       }
@@ -218,12 +218,12 @@ void api()
       irEnSend = true;
       ret = 1;
       // if (isPost)
-      //   gRequest->send(200, "text/html", "1");
+      //   gRequest->send(200, sdefTextHtml, "1");
     }
     else if (action == "c") // Cenas
     {
       // if (isPost)
-      //   gRequest->send(200, "text/html", "1");
+      //   gRequest->send(200, sdefTextHtml, "1");
       ret = 1;
       slogln("Numero da cena: " + valueApi);
       triggerCena(valueApi);
@@ -247,14 +247,15 @@ void api()
       }
       ret = 1;
       // if (isPost)
-      //   gRequest->send(200, "text/html", "1");
+      //   gRequest->send(200, sdefTextHtml, "1");
     }
     else if (action == "update") // executaupdate
     {
-      executeupdateBeta(false);
+      //executeupdateBeta(false);
+      ExecuteUpdate(false, true);
       ret = 1;
       // if (isPost)
-      //   gRequest->send(200, "text/html", "1");
+      //   gRequest->send(200, sdefTextHtml, "1");
     }
     else if (action == "bkp") // executaupdate
     {
@@ -269,18 +270,18 @@ void api()
   }
 
   if (isPost)
-    gRequest->send(200, "text/html", (String)ret);
+    gRequest->send(200, sdefTextHtml, (String)ret);
 }
 
 void apiativo()
 {
   if (AlowApi == true)
   {
-    gRequest->send(200, "text/html", "1");
+    gRequest->send(200, sdefTextHtml, "1");
   }
   else
   {
-    gRequest->send(200, "text/html", "0");
+    gRequest->send(200, sdefTextHtml, "0");
   }
 }
 
@@ -288,7 +289,7 @@ void apiconfig()
 {
   if (gRequest->arg("s") == Senha)
   {
-    gRequest->send(200, "text/html", sdefOK);
+    gRequest->send(200, sdefTextHtml, sdefOK);
 
     AlowApi = (gRequest->arg("v") == "1") ? true : false;
     bitWrite(DevSet.mode, 0, AlowApi);
@@ -296,7 +297,7 @@ void apiconfig()
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }
 
@@ -314,7 +315,7 @@ void alterasenhapi()
     if (ApiPass == md5.toString())
     {
 
-      gRequest->send(200, "text/html", sdefOK);
+      gRequest->send(200, sdefTextHtml, sdefOK);
 
       String req = gRequest->arg("v");
       if (req == "")
@@ -332,11 +333,11 @@ void alterasenhapi()
     }
     else
     {
-      gRequest->send(200, "text/html", "-1");
+      gRequest->send(200, sdefTextHtml, "-1");
     }
   }
   else
   {
-    gRequest->send(200, "text/html", "-1");
+    gRequest->send(200, sdefTextHtml, "-1");
   }
 }
