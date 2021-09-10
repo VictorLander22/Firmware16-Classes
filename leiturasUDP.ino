@@ -2,43 +2,17 @@ void SetupUDP()
 {
   if (udp.listen(localUdpPort))
   {
-    // Serial.print("UDP Listening on IP: ");
-    // Serial.println(WiFi.localIP());
     udp.onPacket([](AsyncUDPPacket packet)
-                 {
-                   // Serial.print("UDP Packet Type: ");
-                   // Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast"
-                   //                                                                        : "Unicast");
-                   // Serial.print(", From: ");
-                   // Serial.print(packet.remoteIP());
-                   // Serial.print(":");
-                   // Serial.print(packet.remotePort());
-                   // Serial.print(", To: ");
-                   // Serial.print(packet.localIP());
-                   // Serial.print(":");
-                   // Serial.print(packet.localPort());
-                   // Serial.print(", Length: ");
-                   // Serial.print(packet.length());
-                   // Serial.print(", Data: ");
-                   // Serial.write(packet.data(), packet.length());
-                   // Serial.println();
-                   // //reply to the client
-                   // packet.printf("Got %u bytes of data", packet.length());
-
-                   leituraUDP(packet);
-                   //SendUDP(packet.remoteIP(), "Hello Server!!!");
-                 });
+                 { leituraUDP(packet); });
   }
 }
 
 void leituraUDP(AsyncUDPPacket packet)
 {
-
   String cabecalho = String((char *)packet.data());
-
+  //slogln(cabecalho);
   if (packet.length() > 16)
   {
-    //(!DEBUG_ON) ?:   Serial.println(cabecalho.substring(0,7));
 
     if (cabecalho.substring(0, 7) != "2934d03")
     {
@@ -49,10 +23,6 @@ void leituraUDP(AsyncUDPPacket packet)
       }
       else
       {
-        //slogln(cabecalho);
-        // receive incoming UDP packets
-        // (!DEBUG_ON) ?: Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
-        // (!DEBUG_ON) ?: Serial.printf("UDP packet contents: %s\n", incomingPacket);
 
         String sIP = "";
         String Porta = "";
@@ -102,23 +72,9 @@ void leituraUDP(AsyncUDPPacket packet)
             i2++;
           }
         }
-        // slogln("");
-        // slogln("IP: " + sIP);
-        // slogln("Porta: " + Porta);
-        // slogln("Funcao: " + funcao);
-        // slogln("ChipId: " + ChipId);
-        // slogln("Tipo: " + Tipo);
 
         IPAddress Destino;
         Destino.fromString(sIP);
-
-        // if (Porta != "")
-        //pinMode(Porta.toInt(), OUTPUT);
-
-        //if (Porta.toInt() == 1)
-        //{
-        //      Porta = "14";
-        //  }
 
         if (Destino == IpDispositivo)
         {
@@ -152,11 +108,6 @@ void leituraUDP(AsyncUDPPacket packet)
               Texto.toCharArray(replyPacekt, 255);
 
               SendUDP(packet.remoteIP(), packet.remotePort(), String(replyPacekt));
-
-              // slogln("enviado comando UDP");
-              // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-              // Udp.write(replyPacekt);
-              // Udp.endPacket();
             }
             else
             {
@@ -171,9 +122,6 @@ void leituraUDP(AsyncUDPPacket packet)
 
               //(!DEBUG_ON) ?:   Serial.println("enviado comando UDP");
               SendUDP(packet.remoteIP(), packet.remotePort(), String(replyPacekt));
-              // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-              // Udp.write(replyPacekt);
-              // Udp.endPacket();
             }
           }
           else if (Tipo == "R")
@@ -303,12 +251,6 @@ void leituraUDP(AsyncUDPPacket packet)
             //(!DEBUG_ON) ?:   Serial.println(Contador);
             //    Contador = 0;
             SendUDP(packet.remoteIP(), packet.remotePort(), String(replyPacekt));
-
-            // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-            // Udp.write(replyPacekt);
-            // Udp.endPacket();
-
-            //gRequest->send(200, sdefTextHtml, replyPacekt);
           }
 
           //retorna udp
@@ -318,9 +260,6 @@ void leituraUDP(AsyncUDPPacket packet)
 
           //(!DEBUG_ON) ?:   Serial.println("enviado comando UDP");
           SendUDP(packet.remoteIP(), packet.remotePort(), String(replyPacekt));
-          // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-          // Udp.write(replyPacekt);
-          // Udp.endPacket();
         }
       }
     }
