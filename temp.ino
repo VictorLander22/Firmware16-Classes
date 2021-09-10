@@ -1,18 +1,18 @@
-void teste()
-{
-  String functionName = gRequest->arg("fn");
-  (!DEBUG_ON) ?: Serial.println(functionName);
-  //gRequest = request;
-  //asyncExecuteFunction = true;
-  if (functionName == "teste")
-  {
-    gRequest->send(200, "text/html", "OK");
-  }
-  else
-  {
-    gRequest->send(200, "text/html", "NOK");
-  }
-}
+// void teste()
+// {
+//   String functionName = gRequest->arg("fn");
+//   (!DEBUG_ON) ?: Serial.println(functionName);
+//   //gRequest = request;
+//   //asyncExecuteFunction = true;
+//   if (functionName == "teste")
+//   {
+//     gRequest->send(200, "text/html", "OK");
+//   }
+//   else
+//   {
+//     gRequest->send(200, "text/html", "NOK");
+//   }
+// }
 
 void showDateTime()
 {

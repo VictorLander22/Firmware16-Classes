@@ -22,7 +22,7 @@ void verificaArquivos()
 
 void verificaAgenda()
 {
-  for (int i = 1; i <= 6; i++)
+  for (uint8_t i = 1; i <= 6; i++)
   {
     if (AgendaAlterada)
     {
@@ -390,9 +390,6 @@ void verificaAgenda()
 
 void atualizahora()
 {
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   uint32_t vHora = gRequest->arg("h").toInt();
   String Senha = gRequest->arg("k");
   (!DEBUG_ON) ?: Serial.println(vHora);

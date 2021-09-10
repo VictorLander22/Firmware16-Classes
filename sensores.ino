@@ -11,7 +11,7 @@ void trataDevice(String (&Devices)[20])
 
   int posicaoDevice = 0;
 
-  for (int i = 0; i < 20; i++)
+  for (uint8_t i = 0; i < 20; i++)
   {
     Devices[i] = "";
   }
@@ -95,16 +95,17 @@ void trataSensores()
         {
           if (nomeSensores[numSensor + 1] != "")
           {
-            sendDataToFirebase("Sensor " + nomeSensores[numSensor + 1] + " disparado", numSensor, "1");
+            //sendDataToFirebase("Sensor " + nomeSensores[numSensor + 1] + " disparado", numSensor, "1");
           }
           else
           {
-            sendDataToFirebase("Sensor " + String(numSensor + 1) + " disparado", numSensor, "1");
+            //sendDataToFirebase("Sensor " + String(numSensor + 1) + " disparado", numSensor, "1");
           }
         }
         else if (enviarsms)
         {
-          sendSMS(numSensor);
+          //sms sendSMS(numSensor);
+          (!DEBUG_ON) ?: Serial.println("Sensor disparado");
         }
         ultimoDisparo = sInValues; //sSensor1 + sSensor2;
         limparUltimoDisparo = 0;
@@ -114,97 +115,97 @@ void trataSensores()
   }
 }
 
-void sendDataToFirebase(String MSG, int numSen, String vTag)
-{
-  WiFiClient cliente;
-  String Devices[20];
-  trataDevice(Devices);
-  String serve = "AAAAKmhc-Lk:APA91bFrNKIu9Ufqj3AmtXBPcd-87smD9kO4Z6CNdBOejY9nGFjvMCBCP2-7eTVqXlqmJpL2o4cTXD6eD4gbkvnpihPFxougju-536CCPZZn62DNTGhgtUFHoBPw0yyq4xmbjb7Bm9IF";
+// void sendDataToFirebase(String MSG, int numSen, String vTag)
+// {
+//   WiFiClient cliente;
+//   String Devices[20];
+//   trataDevice(Devices);
+//   String serve = "AAAAKmhc-Lk:APA91bFrNKIu9Ufqj3AmtXBPcd-87smD9kO4Z6CNdBOejY9nGFjvMCBCP2-7eTVqXlqmJpL2o4cTXD6eD4gbkvnpihPFxougju-536CCPZZn62DNTGhgtUFHoBPw0yyq4xmbjb7Bm9IF";
 
-  String reg = "";
+//   String reg = "";
 
-  for (int i = 0; i <= 9; i++)
-  {
-    //    reg = "APA91bH1RwO17t1VXFfQ4HkQTsvIncLp-SjhGH3WTDtO3_fTDJiOdk43wjNR2-IaOPcEOJvfm-Gp5iRMdk8c-Sy-GNyspsUxK4JS8ZuPo6Nhe9tR9smyrxvSRWBU216mVgTN6UjzdjEj";
-    //    reg = "fshYIY1u_GY:APA91bFXybZ0qcmldA8uIqltpGz8nHImMYV6B2I_PqsCmQiE6WKQFSXJhq0zo3vlIi-h-JZLt5i6HyZbJE9qFGJvA_Qg2ioDdQqfNnIY8Emun_LzEUCO48xXTKs9GcyU9UuaaASkEDOX";
-    reg = String(Devices[i]);
-    //reg.trim();
+//   for (int i = 0; i <= 9; i++)
+//   {
+//     //    reg = "APA91bH1RwO17t1VXFfQ4HkQTsvIncLp-SjhGH3WTDtO3_fTDJiOdk43wjNR2-IaOPcEOJvfm-Gp5iRMdk8c-Sy-GNyspsUxK4JS8ZuPo6Nhe9tR9smyrxvSRWBU216mVgTN6UjzdjEj";
+//     //    reg = "fshYIY1u_GY:APA91bFXybZ0qcmldA8uIqltpGz8nHImMYV6B2I_PqsCmQiE6WKQFSXJhq0zo3vlIi-h-JZLt5i6HyZbJE9qFGJvA_Qg2ioDdQqfNnIY8Emun_LzEUCO48xXTKs9GcyU9UuaaASkEDOX";
+//     reg = String(Devices[i]);
+//     //reg.trim();
 
-    if (reg.length() > 10)
-    {
-      //(!DEBUG_ON) ?:   Serial.println(reg.substring(0,1));
-      //(!DEBUG_ON) ?:   Serial.println(reg.substring(1));
-      String data = "";
-      if (reg.substring(0, 1) == "2")
-      {
-        (!DEBUG_ON) ?: Serial.println("Iphone");
-        data = "{";
-        data = data + "\"to\": \"" + reg.substring(1) + "\",";
-        data = data + "\"notification\": {";
-        //data = data + "\"custom_notification\": {";
-        data = data + "\"body\": \"" + MSG + "\",";
-        data = data + "\"title\" : \"" + MSG + "\",";
-        data = data + "\"tag\":\"" + vTag + "\",";
-        data = data + "\"badge\":\"0\",";
-        data = data + "\"content-available\": \"1\",";
-        data = data + "\"sound\":\"default\"";
-        data = data + "},";
-        data = data + "\"data\": {";
-        data = data + "\"app\": \"keepin\",";
-        data = data + "\"msg\": \"" + MSG + "\"";
-        data = data + "}";
-        data = data + " }";
-      }
-      else
-      {
-        data = "{";
-        data = data + "\"to\": \"" + reg.substring(1) + "\",";
-        data = data + "\"notification\": {";
-        //data = data + "\"custom_notification\": {";
-        data = data + "\"body\": \"" + MSG + "\",";
-        data = data + "\"title\" : \"" + MSG + "\",";
-        data = data + "\"tag\":\"" + vTag + "\",";
-        data = data + "\"badge\":\"0\",";
-        data = data + "\"content-available\": \"1\",";
-        data = data + "\"sound\":\"default\"";
-        data = data + "},";
-        data = data + "\"data\": {";
-        data = data + "\"app\": \"keepin\",";
-        data = data + "\"msg\": \"" + MSG + "\"";
-        data = data + "}";
-        data = data + " }";
-      }
-      (!DEBUG_ON) ?: Serial.println("Send data...");
-      //      if (cliente.connect("fcm.googleapis.com", 80)) {
-      if (cliente.connect("cloud.fcleal.com.br", 80))
-      {
-        (!DEBUG_ON) ?: Serial.println("Connected to the server..");
-        //        cliente.println("POST /fcm/send HTTP/1.1");
-        cliente.println("POST /api/keepin/fcm HTTP/1.1");
-        cliente.println("Authorization: key=" + serve + "");
-        cliente.println("Content-Type: application/json");
-        //        cliente.println("Host: fcm.googleapis.com");
-        cliente.println("Host: cloud.fcleal.com.br");
-        cliente.print("Content-Length: ");
-        cliente.println(data.length());
-        cliente.print("\n");
-        cliente.print(data);
-      }
-      (!DEBUG_ON) ?: Serial.println("Data sent...Reading response..");
-      while (cliente.available())
-      {
-        char c = cliente.read();
-        (!DEBUG_ON) ?: Serial.print(c);
-      }
-      (!DEBUG_ON) ?: Serial.println("Finished!");
-      cliente.flush();
-      (!DEBUG_ON) ?: Serial.println(data);
-      msgDisparada[numSen] = true;
-      msgDisparadaRF[numSen] = true;
-    }
-  }
-  cliente.stop();
-}
+//     if (reg.length() > 10)
+//     {
+//       //(!DEBUG_ON) ?:   Serial.println(reg.substring(0,1));
+//       //(!DEBUG_ON) ?:   Serial.println(reg.substring(1));
+//       String data = "";
+//       if (reg.substring(0, 1) == "2")
+//       {
+//         (!DEBUG_ON) ?: Serial.println("Iphone");
+//         data = "{";
+//         data = data + "\"to\": \"" + reg.substring(1) + "\",";
+//         data = data + "\"notification\": {";
+//         //data = data + "\"custom_notification\": {";
+//         data = data + "\"body\": \"" + MSG + "\",";
+//         data = data + "\"title\" : \"" + MSG + "\",";
+//         data = data + "\"tag\":\"" + vTag + "\",";
+//         data = data + "\"badge\":\"0\",";
+//         data = data + "\"content-available\": \"1\",";
+//         data = data + "\"sound\":\"default\"";
+//         data = data + "},";
+//         data = data + "\"data\": {";
+//         data = data + "\"app\": \"keepin\",";
+//         data = data + "\"msg\": \"" + MSG + "\"";
+//         data = data + "}";
+//         data = data + " }";
+//       }
+//       else
+//       {
+//         data = "{";
+//         data = data + "\"to\": \"" + reg.substring(1) + "\",";
+//         data = data + "\"notification\": {";
+//         //data = data + "\"custom_notification\": {";
+//         data = data + "\"body\": \"" + MSG + "\",";
+//         data = data + "\"title\" : \"" + MSG + "\",";
+//         data = data + "\"tag\":\"" + vTag + "\",";
+//         data = data + "\"badge\":\"0\",";
+//         data = data + "\"content-available\": \"1\",";
+//         data = data + "\"sound\":\"default\"";
+//         data = data + "},";
+//         data = data + "\"data\": {";
+//         data = data + "\"app\": \"keepin\",";
+//         data = data + "\"msg\": \"" + MSG + "\"";
+//         data = data + "}";
+//         data = data + " }";
+//       }
+//       (!DEBUG_ON) ?: Serial.println("Send data...");
+//       //      if (cliente.connect("fcm.googleapis.com", 80)) {
+//       if (cliente.connect("cloud.fcleal.com.br", 80))
+//       {
+//         (!DEBUG_ON) ?: Serial.println("Connected to the server..");
+//         //        cliente.println("POST /fcm/send HTTP/1.1");
+//         cliente.println("POST /api/keepin/fcm HTTP/1.1");
+//         cliente.println("Authorization: key=" + serve + "");
+//         cliente.println("Content-Type: application/json");
+//         //        cliente.println("Host: fcm.googleapis.com");
+//         cliente.println("Host: cloud.fcleal.com.br");
+//         cliente.print("Content-Length: ");
+//         cliente.println(data.length());
+//         cliente.print("\n");
+//         cliente.print(data);
+//       }
+//       (!DEBUG_ON) ?: Serial.println("Data sent...Reading response..");
+//       while (cliente.available())
+//       {
+//         char c = cliente.read();
+//         (!DEBUG_ON) ?: Serial.print(c);
+//       }
+//       (!DEBUG_ON) ?: Serial.println("Finished!");
+//       cliente.flush();
+//       (!DEBUG_ON) ?: Serial.println(data);
+//       msgDisparada[numSen] = true;
+//       msgDisparadaRF[numSen] = true;
+//     }
+//   }
+//   cliente.stop();
+// }
 
 void lersensores()
 {
@@ -242,7 +243,7 @@ void AsyncSaveInputConfig()
 
   if (Senha == "kdi9e")
   {
-    for (int id = 0; id < 16; id++)
+    for (uint8_t id = 0; id < 16; id++)
     {
       nomesG += nomeSensores[id] + "|";
     }
@@ -309,7 +310,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
   static boolean vDisparadoSensor[16] = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
 
   //separa dados nas variaveis
-  for (int i2 = 0; i2 <= 100; i2++)
+  for (uint8_t i2 = 0; i2 <= 100; i2++)
   {
     if (texto[i2] != '|' && i3 <= 11 && texto != "")
     {
@@ -965,7 +966,7 @@ void consultaSensor()
     }
   }
 
-  for (size_t i = 0; i < 16; i++)
+  for (uint8_t i = 0; i < 16; i++)
   {
     (!DEBUG_ON) ?: Serial.println("ConsultaSensor[" + (String)i + "] - " + Sensores[i] + " - " + nomeSensores[i]);
   }
@@ -987,9 +988,7 @@ String lerSensor()
 
 void consensor()
 {
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-  (!DEBUG_ON) ?: Serial.println("Passei em consensor");
+
   String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
@@ -1004,8 +1003,7 @@ void consensor()
 
 void gravadevice()
 {
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
+
   gRequest->send(200, "text/html", "ok");
   String Valor = gRequest->arg("d");
   //String Senha = ;
@@ -1078,9 +1076,6 @@ void retornaNotificar()
 void buscaNotificar()
 {
 
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
@@ -1095,9 +1090,6 @@ void buscaNotificar()
 
 void gravanot()
 {
-
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
   gRequest->send(200, "text/html", "ok");
   String Valor = gRequest->arg("v");
   String Senha = gRequest->arg("k");

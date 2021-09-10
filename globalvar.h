@@ -5,31 +5,23 @@
 #define pulseTime 600
 
 #include <user_interface.h>
-//#ifndef UNIT_TEST
 #include <Arduino.h>
-//#endif
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
-#include <LittleFS.h>
-//#include <WiFiUdp.h>
+//#include <LittleFS.h>
 #include <ESPAsyncUDP.h>
-//#include <ESP8266WiFiMesh.h>
 #include <pgmspace.h>
 #include <Wire.h>
 #include <RtcDateTime.h>
 #include <PCF8583.h>
 #include <PCF8574.h>
-#include <ESP8266WiFiMulti.h>
 #include <ESP8266httpUpdate.h>
-//#include <ArduinoOTA.h>
-//IR
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
 #include <IRsend.h>
 #include <IRutils.h>
-//RF
 #include <RCSwitch.h>
 //FIREBASE
 //#include <FirebaseArduino.h>
@@ -38,9 +30,7 @@
 #include <NTPClient.h>
 #include "AsyncPing.h"
 #include "Ticker.h"
-
 #include <SSD1306Wire.h>
-
 #include "src\KPDeviceSetting.h"
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
@@ -64,20 +54,7 @@ unsigned long millisSendUDP;
 
 File UploadFile;
 
-//const String cloudServer = "http://192.168.137.1:3000/";
 const String cloudServer = "http://cloud.keepin.com.br/api/";
-
-//String CloudAddress = "http://keepin.com.br/api/"";
-//Const CloudAddress = "http://192.168.15.16:4000/";
-
-//Fim Declarações Globais - Leo
-
-//Seguranca seg;
-//String usuario1 = seg.retornaUsuario();
-//String senha1 = seg.retornaSenha();
-
-const char *www_username;
-const char *www_password;
 
 bool TipoMemoria = true;
 String vListaWifi = "";
@@ -90,13 +67,10 @@ String vgateway = "";
 
 bool vConfigWIFI = false;
 unsigned long millisWifiLed;
-//long lastPulso;
+
 int tipoWifiAtual;
 int scanningWifi;
 
-//MySQL_Connection conn(&cliente);
-
-//int tempoatual;
 IPAddress DNS1(8, 8, 8, 8);
 IPAddress DNS2(4, 4, 4, 4);
 String vSenhaAP = "12345678";
@@ -167,16 +141,15 @@ IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress broadcastIP;
 IPAddress IpDispositivo;
-//ESP8266WebServer server(80);
+
 AsyncWebServer server(80);
 AsyncWebServerRequest *gRequest;
 bool asyncExecuteFunction;
 
 int contadorled = 0;
 
-unsigned long starTime = 0; // Use unsigned long when dealing with millisAtual
+unsigned long starTime = 0;
 unsigned long interval = 2000;
-//unsigned long Contador = 0;
 
 //Dispositivos
 String Senha = "kdi9e";

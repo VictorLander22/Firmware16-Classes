@@ -7,10 +7,6 @@ void configRF()
 
 void getRF()
 {
-
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   gRequest->send(200, "text/html", String(tamanhoRF) + "|" + codigoRF + "|" + String(gProtocoloRF) + "*");
   tamanhoRF = -1;
   gProtocoloRF = -1;
@@ -19,10 +15,6 @@ void getRF()
 
 void habRF()
 {
-
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   //enReadRF = true;
   gRequest->send(200, "text/html", "ok");
 }
@@ -30,8 +22,6 @@ void habRF()
 void gravarf()
 {
 
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
   gRequest->send(200, "text/html", "ok");
 
   SensorRFAlterado = true;
@@ -82,11 +72,12 @@ void trataRF()
       //(!DEBUG_ON) ?:   Serial.println(notificar);
       if (notificar)
       {
-        sendDataToFirebase("Sensor " + String(numSensorMSG + 1) + " disparado", numSensorMSG, "2");
+        //sendDataToFirebase("Sensor " + String(numSensorMSG + 1) + " disparado", numSensorMSG, "2");
       }
       else if (enviarsms)
       {
-        sendSMS(numSensorMSG);
+        //sms sendSMS(numSensorMSG);
+        (!DEBUG_ON) ?: Serial.print("sendSMS(numSensorMSG)");
       }
       ultimoDisparo = numSensorMSG;
       limparUltimoDisparoRF = 0;
@@ -128,7 +119,7 @@ boolean verificaSensoresRF()
     vCodigo = "";
     vTamanho = "";
     i3 = 1;
-    for (int i2 = 0; i2 <= 60; i2++)
+    for (uint8_t i2 = 0; i2 <= 60; i2++)
     {
       if (texto[i2] != '|' && i3 <= 7 && texto != "")
       {
@@ -198,7 +189,7 @@ boolean verificaSensoresRF()
     i3 = 1;
 
     //separa dados nas variaveis
-    for (int i2 = 0; i2 <= 60; i2++)
+    for (uint8_t i2 = 0; i2 <= 60; i2++)
     {
       if (texto[i2] != '|' && i3 <= 7 && texto != "")
       {
@@ -597,10 +588,6 @@ void consultaSensorRF()
 
 void ultimodisprf()
 {
-
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
@@ -612,8 +599,6 @@ void ultimodisprf()
 void sendRFp()
 {
 
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
   gRequest->send(200, "text/html", "ok");
   unsigned long Valor = strtoul(gRequest->arg("c").c_str(), NULL, 10);
   unsigned long _tamanhorf = strtoul(gRequest->arg("t").c_str(), NULL, 10);
@@ -642,7 +627,7 @@ void LoopRF()
     if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
     {
       rfmilis = millisAtual;
-      for (int i = 0; i < 30; i++)
+      for (uint8_t i = 0; i < 30; i++)
       {
         ultimoEstadoRF[i] = LOW;
       }

@@ -4,9 +4,10 @@ void executeupdate()
   shouldUpdate = 1;
 }
 
-void executeupdateBeta()
+void executeupdateBeta(bool isPost)
 {
-  gRequest->send(200, "text/html", "ok");
+  if (isPost)
+    gRequest->send(200, "text/html", "ok");
   shouldUpdate = 2;
 }
 
@@ -55,66 +56,66 @@ void versao()
   gRequest->send(200, "text/html", Placa_Version);
 }
 
-void linkversao()
-{
-  gRequest->send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
-}
+// void linkversao()
+// {
+//   gRequest->send(200, "text/html", "http://keepin.com.br/firmware/16/versao.txt");
+// }
 
-void linkversaoBeta()
-{
-  gRequest->send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
-}
+// void linkversaoBeta()
+// {
+//   gRequest->send(200, "text/html", "http://keepin.com.br/firmware/16/beta/versao.txt");
+// }
 
-void logData(String dados)
-{
-  RtcDateTime HorarioAtual;
-  HorarioAtual = carregaHora();
+// void logData(String dados)
+// {
+//   RtcDateTime HorarioAtual;
+//   HorarioAtual = carregaHora();
 
-  char time[50];
-  sprintf(time, "%02d/%02d/%02d %02d:%02d:%02d", HorarioAtual.Day(), HorarioAtual.Month(), HorarioAtual.Year(), HorarioAtual.Hour(), HorarioAtual.Minute(), HorarioAtual.Second());
+//   char time[50];
+//   sprintf(time, "%02d/%02d/%02d %02d:%02d:%02d", HorarioAtual.Day(), HorarioAtual.Month(), HorarioAtual.Year(), HorarioAtual.Hour(), HorarioAtual.Minute(), HorarioAtual.Second());
 
-  dados = "Data: " + String(time) + " - " + dados;
+//   dados = "Data: " + String(time) + " - " + dados;
 
-  SPIFFS.begin();
-  File f = SPIFFS.open("/log.txt", "a");
-  f.println(dados);
-  f.close();
-  SPIFFS.end();
-}
+//   SPIFFS.begin();
+//   File f = SPIFFS.open("/log.txt", "a");
+//   f.println(dados);
+//   f.close();
+//   SPIFFS.end();
+// }
 
-void readlog()
-{
-  SPIFFS.begin();
-  String comando = gRequest->arg("c");
+// void readlog()
+// {
+//   SPIFFS.begin();
+//   String comando = gRequest->arg("c");
 
-  if (comando == "delete")
-  {
-    if (SPIFFS.remove("/log.txt"))
-    {
-      SPIFFS.end();
-      gRequest->send(200, "text/html", "remove");
-    }
-    else
-    {
-      SPIFFS.end();
-      gRequest->send(200, "text/html", "falha");
-    }
-  }
-  else if (comando == "read")
-  {
-    File f = SPIFFS.open("/log.txt", "r");
-    String dados = "<html><body><p><h3><strong>Log</strong></p></h3><br><ul>";
-    while (f.available())
-    {
-      dados = dados + "<li>" + f.readStringUntil('\n') + "</li>";
-    }
-    dados = dados + "</ul></body></html>";
-    f.close();
-    SPIFFS.end();
-    gRequest->send(200, "text/html", dados);
-  }
-  else
-  {
-    gRequest->send(200, "text/html", "ok");
-  }
-}
+//   if (comando == "delete")
+//   {
+//     if (SPIFFS.remove("/log.txt"))
+//     {
+//       SPIFFS.end();
+//       gRequest->send(200, "text/html", "remove");
+//     }
+//     else
+//     {
+//       SPIFFS.end();
+//       gRequest->send(200, "text/html", "falha");
+//     }
+//   }
+//   else if (comando == "read")
+//   {
+//     File f = SPIFFS.open("/log.txt", "r");
+//     String dados = "<html><body><p><h3><strong>Log</strong></p></h3><br><ul>";
+//     while (f.available())
+//     {
+//       dados = dados + "<li>" + f.readStringUntil('\n') + "</li>";
+//     }
+//     dados = dados + "</ul></body></html>";
+//     f.close();
+//     SPIFFS.end();
+//     gRequest->send(200, "text/html", dados);
+//   }
+//   else
+//   {
+//     gRequest->send(200, "text/html", "ok");
+//   }
+// }

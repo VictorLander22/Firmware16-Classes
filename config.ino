@@ -162,21 +162,11 @@ RtcDateTime carregaHora()
 
 void valorwifi()
 {
-
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
-  // int32_t rssi;
-  // rssi = WiFi.RSSI();
-
   gRequest->send(200, "text/html", String(getRSSI()));
 }
 
 void fmodelo()
 {
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   gRequest->send(200, "text/html", "2");
 }
 
@@ -241,9 +231,6 @@ void lerConfiguracao()
 
 void GravaCloud()
 {
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   if (gRequest->arg("s") == Senha)
   {
     if (gRequest->arg("f") == "w")

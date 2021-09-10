@@ -161,10 +161,14 @@ String MqttArg(char *msg, char *pkey)
 
     String msgtrata = pch;
     msgtrata.remove(plen - llen);
+    (!DEBUG_ON) ?: Serial.print(key);
+    (!DEBUG_ON) ?: Serial.println(msgtrata);
     return msgtrata;
   }
   else
   {
+    (!DEBUG_ON) ?: Serial.print(key);
+    (!DEBUG_ON) ?: Serial.println("");
     return "";
   }
 }

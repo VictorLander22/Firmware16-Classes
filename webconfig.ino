@@ -1,14 +1,13 @@
 void ConfigurarWebServer(void)
 {
-  server.on("/", handleHtmlConfig);
-  server.on("/exec", ExecuteFunction);
+  //server.on("/", handleHtmlConfig);
+  server.onNotFound(ExecuteFunction);
   server.on(
       "/fupload", HTTP_POST, [](AsyncWebServerRequest *request)
       { request->send(200); },
       onUpload);
-  server.onNotFound(ExecuteFunction);
   server.begin();
-  (!DEBUG_ON) ?: Serial.println("HTTP server started");
+  //(!DEBUG_ON) ?: Serial.println(F("HTTP server started"));
 }
 
 void ExecuteFunction(AsyncWebServerRequest *request)
@@ -22,7 +21,8 @@ void AsyncFunctions()
   if (asyncExecuteFunction)
   {
     asyncExecuteFunction = false;
-    String functionName = (gRequest->hasArg("fn")) ? gRequest->arg("fn") : gRequest->url();
+
+    String functionName = gRequest->url();
 
     (!DEBUG_ON) ?: Serial.println(functionName);
 
@@ -30,130 +30,131 @@ void AsyncFunctions()
     {
       (!DEBUG_ON) ?: Serial.println("[" + (String)i + "] " + gRequest->getParam(i)->name() + " : " + gRequest->getParam(i)->value());
     }
-
-    if (functionName == "espbackup")
-      AsyncBackupEsp();
-    else if (functionName == "esprestore")
-      AsyncRestoreEsp();
-    else if (functionName == "espformat")
-      AsyncFormatEsp();
-    else if (functionName == "filedir")
+    if (functionName == F("/"))
+      handleHtmlConfig();
+    else if (functionName == F("/espbackup"))
+      AsyncBackupEsp(true);
+    else if (functionName == F("/esprestore"))
+      AsyncRestoreEsp(true);
+    else if (functionName == F("/espformat"))
+      AsyncFormatEsp(true);
+    else if (functionName == F("/filedir"))
       FileDir();
-    else if (functionName == "filedownload")
+    else if (functionName == F("/filedownload"))
       FileDownload();
-    else if (functionName == "filedelete")
+    else if (functionName == F("/filedelete"))
       FileDelete();
-    else if (functionName == "fileupload")
+    else if (functionName == F("/fileupload"))
       FileUpload();
-    else if (functionName == "api")
+    else if (functionName == F("/api"))
       api();
-    else if (functionName == "chipmac")
+    else if (functionName == F("/chipmac"))
       GetChipMac();
-    else if (functionName == "/controle")
+    else if (functionName == F("/controle"))
       controle();
-    else if (functionName == "/gravarwifi")
+    else if (functionName == F("/gravarwifi"))
       gravawifi();
-    else if (functionName == "/gravasenhawifi")
+    else if (functionName == F("/gravasenhawifi"))
       gravasenhawifi();
-    else if (functionName == "/gravasenhahttp")
+    else if (functionName == F("/gravasenhahttp"))
       gravasenhahttp();
-    else if (functionName == "/situacao")
+    else if (functionName == F("/situacao"))
       situacao();
-    else if (functionName == "/chipid")
+    else if (functionName == F("/chipid"))
       retornachip();
-    else if (functionName == "/chamaddns")
-      chamaddns();
-    else if (functionName == "/consultaagenda")
+    // else if (functionName == F("/chamaddns"))
+    //   chamaddns();
+    else if (functionName == F("/consultaagenda"))
       conagenda();
-    else if (functionName == "/gravaragenda")
+    else if (functionName == F("/gravaragenda"))
       gravaragenda();
-    else if (functionName == "/atualizahora")
+    else if (functionName == F("/atualizahora"))
       atualizahora();
-    else if (functionName == "/lersensores")
+    else if (functionName == F("/lersensores"))
       lersensores();
-    else if (functionName == "/consultasensor")
+    else if (functionName == F("/consultasensor"))
       consensor();
-    else if (functionName == "/gravadevice")
+    else if (functionName == F("/gravadevice"))
       gravadevice();
-    else if (functionName == "/buscadevice")
+    else if (functionName == F("/buscadevice"))
       buscadevice();
-    else if (functionName == "/executeupdate")
+    else if (functionName == F("/executeupdate"))
       executeupdate();
-    else if (functionName == "/executeupdatebeta")
-      executeupdateBeta();
-    else if (functionName == "/versao")
+    else if (functionName == F("/executeupdatebeta"))
+      executeupdateBeta(true);
+    else if (functionName == F("/versao"))
       versao();
-    else if (functionName == "/link")
-      linkversao();
-    else if (functionName == "/link")
-      linkversaoBeta();
-    else if (functionName == "/ultimodisparo")
+    // else if (functionName == F("/link"))
+    //   linkversao();
+    // else if (functionName == F("/link"))
+    //   linkversaoBeta();
+    else if (functionName == F("/ultimodisparo"))
       ultimodisp();
-    else if (functionName == "/buscaNotificar")
+    else if (functionName == F("/buscaNotificar"))
       buscaNotificar();
-    else if (functionName == "/gravanot")
+    else if (functionName == F("/gravanot"))
       gravanot();
-    else if (functionName == "/gravasms")
-      gravasms();
-    else if (functionName == "/consultasms")
-      consultasms();
-    else if (functionName == "/wifi")
+    //sms else if (functionName == F("/gravasms"))
+    //sms gravasms();
+    //sms else if (functionName == F("/consultasms"))
+    //sms consultasms();
+    else if (functionName == F("/wifi"))
       valorwifi();
-    else if (functionName == "/listawifi")
+    else if (functionName == F("/listawifi"))
       WifiNetworkScan();
-    else if (functionName == "/listawifi2")
-      listawifi2();
-    else if (functionName == "/getir")
+    // else if (functionName == F("/listawifi2"))
+    //   listawifi2();
+    else if (functionName == F("/getir"))
       getIR();
-    else if (functionName == "/habir")
+    else if (functionName == F("/habir"))
       habir();
-    else if (functionName == "/habrf")
+    else if (functionName == F("/habrf"))
       habRF();
-    else if (functionName == "/getrf")
+    else if (functionName == F("/getrf"))
       getRF();
-    else if (functionName == "/gravarf")
+    else if (functionName == F("/gravarf"))
       gravarf();
-    else if (functionName == "/ultimodisparorf")
+    else if (functionName == F("/ultimodisparorf"))
       ultimodisprf();
-    else if (functionName == "/sendrf")
+    else if (functionName == F("/sendrf"))
       sendRFp();
-    else if (functionName == "/modelo")
+    else if (functionName == F("/modelo"))
       fmodelo();
-    else if (functionName == "/memoria")
+    else if (functionName == F("/memoria"))
       fMemoria();
-    else if (functionName == "/apiativo")
+    else if (functionName == F("/apiativo"))
       apiativo();
-    else if (functionName == "/apiconfig")
+    else if (functionName == F("/apiconfig"))
       apiconfig();
-    else if (functionName == "/alterasenhapi")
+    else if (functionName == F("/alterasenhapi"))
       alterasenhapi();
-    else if (functionName == "/gravacena")
+    else if (functionName == F("/gravacena"))
       gravacena();
-    else if (functionName == "/log")
-      readlog();
-    else if (functionName == "/gravacloud")
+    // else if (functionName == F("/log"))
+    //   readlog();
+    else if (functionName == F("/gravacloud"))
       GravaCloud();
-    else if (functionName == "/valida")
+    else if (functionName == F("/valida"))
       valida();
-    else if (functionName == "/reset")
+    else if (functionName == F("/reset"))
       wifireset();
-    else if (functionName == "/about")
+    else if (functionName == F("/about"))
       about();
-    else if (functionName == "/gravasensor")
+    else if (functionName == F("/gravasensor"))
       AsyncSaveInputConfig();
-    else if (functionName == "/reiniciar")
+    else if (functionName == F("/reiniciar"))
       reiniciar();
-    else if (functionName == "/sendir")
+    else if (functionName == F("/sendir"))
       AsyncSendIR();
     else
       handleNotFound();
   }
 }
 
-void handleHtmlConfig(AsyncWebServerRequest *request)
+void handleHtmlConfig()
 {
-  if (!request->authenticate(www_username, www_password))
-    return request->requestAuthentication();
+  if (!gRequest->authenticate(DevSet.httpUser.c_str(), DevSet.httpPwd.c_str()))
+    return gRequest->requestAuthentication();
 
   String defaultPage(FPSTR(webDefaultPage));
   defaultPage.replace("#ipfixo#", "true");
@@ -163,8 +164,7 @@ void handleHtmlConfig(AsyncWebServerRequest *request)
   defaultPage.replace("#ip#", DevSet.numberToIpString(DevSet.wifiIP));
   defaultPage.replace("#msk#", DevSet.numberToIpString(DevSet.wifiMSK));
   defaultPage.replace("#gtw#", DevSet.numberToIpString(DevSet.wifiGTW));
-
-  request->send_P(200, "text/html", defaultPage.c_str());
+  gRequest->send(200, "text/html", defaultPage.c_str());
 }
 
 void about()
@@ -312,9 +312,10 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
   }
 }
 
-void AsyncBackupEsp()
+void AsyncBackupEsp(bool isPost)
 {
-  gRequest->send(200, "text/html", F("Backup"));
+  if (isPost)
+    gRequest->send(200, "text/html", F("Backup"));
 
   WiFiClient cliente;
   HTTPClient http;
@@ -359,9 +360,11 @@ void AsyncBackupEsp()
   SPIFFS.end();
 }
 
-void AsyncRestoreEsp()
+void AsyncRestoreEsp(bool isPost)
 {
-  gRequest->send(200, "text/html", F("Restoring"));
+  if (isPost)
+    gRequest->send(200, "text/html", F("Restoring"));
+
   HTTPClient http;
   WiFiClient client;
   //String payload;
@@ -424,9 +427,10 @@ void AsyncRestoreEsp()
   }
 }
 
-void AsyncFormatEsp()
+void AsyncFormatEsp(bool isPost)
 {
-  gRequest->send(200, "text/html", F("Formating..."));
+  if (isPost)
+    gRequest->send(200, "text/html", F("Formating..."));
 
   (!DEBUG_ON) ?: Serial.println(F("Formating"));
   //LittleFS.format();

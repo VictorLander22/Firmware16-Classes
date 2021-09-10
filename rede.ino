@@ -60,10 +60,10 @@ void conectar()
     getAvalibleNetwork();
 }
 
-void listawifi2()
-{
-  gRequest->send(200, "text/html", vListaWifi);
-}
+// void listawifi2()
+// {
+//   gRequest->send(200, "text/html", vListaWifi);
+// }
 
 void WifiNetworkScan()
 {

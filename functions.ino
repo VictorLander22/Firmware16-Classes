@@ -1,6 +1,6 @@
 void ResetSaidasPulsadas()
 {
-  for (int iPorta = 0; iPorta <= 15; iPorta++)
+  for (uint8_t iPorta = 0; iPorta <= 15; iPorta++)
   {
     if (g_pulsoHabilita[iPorta])
     {
@@ -116,8 +116,8 @@ void NtpSetDateTimeNTP()
   WiFiUDP ntpUDP;
   NTPClient timeClient(ntpUDP, ntpServer);
 
-  (!DEBUG_ON) ?: Serial.print("Config UTC: ");
-  (!DEBUG_ON) ?: Serial.println(DevSet.utcConfig);
+  //(!DEBUG_ON) ?: Serial.print("Config UTC: ");
+  //(!DEBUG_ON) ?: Serial.println(DevSet.utcConfig);
   const unsigned long initTimeSet = 946684800;
   int8_t tryGetTime = 0;
 
@@ -126,7 +126,7 @@ void NtpSetDateTimeNTP()
   while ((timeClient.getEpochTime() < initTimeSet) && (tryGetTime < 5))
   {
     timeClient.update();
-    (!DEBUG_ON) ?: Serial.println(timeClient.getEpochTime());
+    //(!DEBUG_ON) ?: Serial.println(timeClient.getEpochTime());
     tryGetTime++;
     delay(100);
   }
@@ -158,7 +158,7 @@ void CheckSPIFFS()
   File f = SPIFFS.open("/checkSPIFFS.txt", "w+");
   if (!f)
   {
-    (!DEBUG_ON) ?: Serial.print(F("Creating file system... "));
+    //(!DEBUG_ON) ?: Serial.print(F("Creating file system... "));
     if (SPIFFS.format())
       (!DEBUG_ON) ?: Serial.println(F("OK"));
     else
@@ -248,38 +248,60 @@ void scanI2c()
     hasDisplay = true;
     DisplaySetup();
     (!DEBUG_ON) ?: Serial.println(F("Display OK"));
+    Serial.print(F("Funcions -1"));
     UpdateDisplay("Display Present");
+    Serial.print(F("Funcions 0"));
   }
   else
   {
     hasDisplay = false;
     (!DEBUG_ON) ?: Serial.print(F("Display Fails"));
   }
-
+  Serial.print(F("Funcions 1"));
   delay(waitDelay);
+  Serial.print(F("Funcions 2"));
   //Testar Out1
   Wire.beginTransmission(0x21);
-  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("21 Fail"));
+  if (Wire.endTransmission() == 0)
+    devices++;
+  else
+    UpdateDisplay(F("21 Fail"));
+  Serial.print(F("Funcions 3"));
   delay(waitDelay);
   //Testar Out2
   Wire.beginTransmission(0x22);
-  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("22 Fail"));
+  if (Wire.endTransmission() == 0)
+    devices++;
+  else
+    UpdateDisplay(F("22 Fail"));
   delay(waitDelay);
   //Testar In1
   Wire.beginTransmission(0x23);
-  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("23 Fail"));
+  if (Wire.endTransmission() == 0)
+    devices++;
+  else
+    UpdateDisplay(F("23 Fail"));
   delay(waitDelay);
   //Testar In2
   Wire.beginTransmission(0x24);
-  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("24 Fail"));
+  if (Wire.endTransmission() == 0)
+    devices++;
+  else
+    UpdateDisplay(F("24 Fail"));
   delay(waitDelay);
   //Testar chip3
   Wire.beginTransmission(0x25);
-  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("25 Fail"));
+  if (Wire.endTransmission() == 0)
+    devices++;
+  else
+    UpdateDisplay(F("25 Fail"));
   delay(waitDelay);
   //Testar RTC
   Wire.beginTransmission(0x50);
-  (Wire.endTransmission() == 0) ? devices++ : UpdateDisplay(F("50 Fail"));
+  if (Wire.endTransmission() == 0)
+    devices++;
+  else
+    UpdateDisplay(F("50 Fail"));
   delay(waitDelay);
 
   (devices == 6) ? UpdateDisplay(F("Devices OK..")) : UpdateDisplay(F("Devices Fail.."));

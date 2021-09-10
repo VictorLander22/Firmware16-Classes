@@ -1,8 +1,5 @@
 void gravacena()
 {
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   gRequest->send(200, "text/html", "ok");
 
   String Senha = gRequest->arg("k");

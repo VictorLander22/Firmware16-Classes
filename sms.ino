@@ -1,170 +1,163 @@
-void sendSMS(int numSensor)
-{
-  WiFiClient cliente;
-  String Texto = "";
-  String Numeros = "";
+// void sendSMS(int numSensor)
+// {
+//   WiFiClient cliente;
+//   String Texto = "";
+//   String Numeros = "";
 
-  SPIFFS.begin();
-  File fTexto = SPIFFS.open("/sms_text.txt", "r");
-  if (fTexto)
-    Texto = fTexto.readStringUntil('*');
-  fTexto.close();
+//   SPIFFS.begin();
+//   File fTexto = SPIFFS.open("/sms_text.txt", "r");
+//   if (fTexto)
+//     Texto = fTexto.readStringUntil('*');
+//   fTexto.close();
 
-  fTexto = SPIFFS.open("/sms_numb.txt", "r");
-  if (fTexto)
-    Numeros = fTexto.readStringUntil('*');
-  fTexto.close();
-  SPIFFS.end();
+//   fTexto = SPIFFS.open("/sms_numb.txt", "r");
+//   if (fTexto)
+//     Numeros = fTexto.readStringUntil('*');
+//   fTexto.close();
+//   SPIFFS.end();
 
-  if (Numeros.length() > 8 && Texto.length() > 4)
-  {
-    String data = "user=fcleal&password=201277&destinatario=" + Numeros + "&msg=" + Texto;
+//   if (Numeros.length() > 8 && Texto.length() > 4)
+//   {
+//     String data = "user=fcleal&password=201277&destinatario=" + Numeros + "&msg=" + Texto;
 
-    (!DEBUG_ON) ?: Serial.println("envia sms");
-    (!DEBUG_ON) ?: Serial.println(data);
+//     (!DEBUG_ON) ?: Serial.println("envia sms");
+//     (!DEBUG_ON) ?: Serial.println(data);
 
-    (!DEBUG_ON) ?: Serial.println("Send data...");
-    if (cliente.connect("www.facilitamovel.com.br", 80))
-    {
-      (!DEBUG_ON) ?: Serial.println("Connected to the server..");
-      cliente.println("POST /api/multipleSend.ft HTTP/1.1");
-      //        cliente.println("Authorization: key=" + serve + "");
-      cliente.println("Content-Type: application/x-www-form-urlencoded");
-      cliente.println("Host: www.facilitamovel.com.br");
-      cliente.print("Content-Length: ");
-      cliente.println(data.length());
-      cliente.println();
-      cliente.println(data);
-    }
-    (!DEBUG_ON) ?: Serial.println("Enviado sms...Aguardando confirmacao..");
-    while (cliente.available())
-    {
-      char c = cliente.read();
-      //        (!DEBUG_ON) ?:   Serial.print(c);
-    }
-    (!DEBUG_ON) ?: Serial.println("SMS Enviado!");
-    cliente.flush();
-    //(!DEBUG_ON) ?:   Serial.println(data);
+//     (!DEBUG_ON) ?: Serial.println("Send data...");
+//     if (cliente.connect("www.facilitamovel.com.br", 80))
+//     {
+//       (!DEBUG_ON) ?: Serial.println("Connected to the server..");
+//       cliente.println("POST /api/multipleSend.ft HTTP/1.1");
+//       //        cliente.println("Authorization: key=" + serve + "");
+//       cliente.println("Content-Type: application/x-www-form-urlencoded");
+//       cliente.println("Host: www.facilitamovel.com.br");
+//       cliente.print("Content-Length: ");
+//       cliente.println(data.length());
+//       cliente.println();
+//       cliente.println(data);
+//     }
+//     (!DEBUG_ON) ?: Serial.println("Enviado sms...Aguardando confirmacao..");
+//     while (cliente.available())
+//     {
+//       char c = cliente.read();
+//       //        (!DEBUG_ON) ?:   Serial.print(c);
+//     }
+//     (!DEBUG_ON) ?: Serial.println("SMS Enviado!");
+//     cliente.flush();
+//     //(!DEBUG_ON) ?:   Serial.println(data);
 
-    msgDisparada[numSensor] = true;
-  }
-  cliente.stop();
-}
+//     msgDisparada[numSensor] = true;
+//   }
+//   cliente.stop();
+// }
 
-void gravasms()
-{
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-  gRequest->send(200, "text/html", "ok");
-  String Senha = gRequest->arg("k");
-  String Texto = gRequest->arg("t");
-  String Numeros = gRequest->arg("n");
+// void gravasms()
+// {
 
-  if (Senha == "kdi9e")
-  {
-    SPIFFS.begin();
-    File fTexto = SPIFFS.open("/sms_text.txt", "w");
-    // if (!fTexto)
-    // {
-    //   SPIFFS.format();
-    //   File fTexto = SPIFFS.open("/sms_text.txt", "w");
-    // }
-    fTexto.println(Texto);
-    fTexto.close();
+//   gRequest->send(200, "text/html", "ok");
+//   String Senha = gRequest->arg("k");
+//   String Texto = gRequest->arg("t");
+//   String Numeros = gRequest->arg("n");
 
-    fTexto = SPIFFS.open("/sms_numb.txt", "w");
-    // if (!fTexto)
-    // {
-    //   SPIFFS.format();
-    //   fTexto = SPIFFS.open("/sms_numb.txt", "w");
-    // }
-    fTexto.println(Numeros);
-    fTexto.close();
-    SPIFFS.end();
+//   if (Senha == "kdi9e")
+//   {
+//     SPIFFS.begin();
+//     File fTexto = SPIFFS.open("/sms_text.txt", "w");
+//     // if (!fTexto)
+//     // {
+//     //   SPIFFS.format();
+//     //   File fTexto = SPIFFS.open("/sms_text.txt", "w");
+//     // }
+//     fTexto.println(Texto);
+//     fTexto.close();
 
-    (!DEBUG_ON) ?: Serial.println(Numeros);
-  }
-}
+//     fTexto = SPIFFS.open("/sms_numb.txt", "w");
+//     // if (!fTexto)
+//     // {
+//     //   SPIFFS.format();
+//     //   fTexto = SPIFFS.open("/sms_numb.txt", "w");
+//     // }
+//     fTexto.println(Numeros);
+//     fTexto.close();
+//     SPIFFS.end();
 
-void gravasms2(String Texto, String Numeros)
-{
-  SPIFFS.begin();
-  File fTexto = SPIFFS.open("/sms_text.txt", "w");
-  // if (!fTexto)
-  // {
-  //   SPIFFS.format();
-  //   File fTexto = SPIFFS.open("/sms_text.txt", "w");
-  // }
-  fTexto.println(Texto);
-  fTexto.close();
+//     (!DEBUG_ON) ?: Serial.println(Numeros);
+//   }
+// }
 
-  fTexto = SPIFFS.open("/sms_numb.txt", "w");
-  // if (!fTexto)
-  // {
-  //   SPIFFS.format();
-  //   fTexto = SPIFFS.open("/sms_numb.txt", "w");
-  // }
-  fTexto.println(Numeros);
-  fTexto.close();
-  SPIFFS.end();
-}
+// void gravasms2(String Texto, String Numeros)
+// {
+//   SPIFFS.begin();
+//   File fTexto = SPIFFS.open("/sms_text.txt", "w");
+//   // if (!fTexto)
+//   // {
+//   //   SPIFFS.format();
+//   //   File fTexto = SPIFFS.open("/sms_text.txt", "w");
+//   // }
+//   fTexto.println(Texto);
+//   fTexto.close();
 
-void consultasms()
-{
-  //const char* www_username = www_username2.c_str();
-  //const char* www_password = www_password2.c_str();
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-  String Texto = "";
-  String Numeros = "";
-  String Senha = gRequest->arg("k");
+//   fTexto = SPIFFS.open("/sms_numb.txt", "w");
+//   // if (!fTexto)
+//   // {
+//   //   SPIFFS.format();
+//   //   fTexto = SPIFFS.open("/sms_numb.txt", "w");
+//   // }
+//   fTexto.println(Numeros);
+//   fTexto.close();
+//   SPIFFS.end();
+// }
 
-  if (Senha == "kdi9e")
-  {
-    SPIFFS.begin();
+// void consultasms()
+// {
+//   String Texto = "";
+//   String Numeros = "";
+//   String Senha = gRequest->arg("k");
 
-    File fTexto = SPIFFS.open("/sms_text.txt", "r");
-    if (fTexto)
-      Texto = fTexto.readStringUntil('*');
-    fTexto.close();
+//   if (Senha == "kdi9e")
+//   {
+//     SPIFFS.begin();
 
-    fTexto = SPIFFS.open("/sms_numb.txt", "r");
-    if (fTexto)
-      Numeros = fTexto.readStringUntil('*');
-    fTexto.close();
+//     File fTexto = SPIFFS.open("/sms_text.txt", "r");
+//     if (fTexto)
+//       Texto = fTexto.readStringUntil('*');
+//     fTexto.close();
 
-    SPIFFS.end();
+//     fTexto = SPIFFS.open("/sms_numb.txt", "r");
+//     if (fTexto)
+//       Numeros = fTexto.readStringUntil('*');
+//     fTexto.close();
 
-    if (Texto == "" && Numeros == "")
-    {
-      gravasms2("*", "*");
-      (!DEBUG_ON) ?: Serial.println("SMS: " + Texto);
-    }
+//     SPIFFS.end();
 
-    gRequest->send(200, "text/html", Texto + "|" + Numeros);
-  }
-}
+//     if (Texto == "" && Numeros == "")
+//     {
+//       gravasms2("*", "*");
+//       (!DEBUG_ON) ?: Serial.println("SMS: " + Texto);
+//     }
 
-String consultasms2()
-{
-  String Texto = "";
-  String Numeros = "";
+//     gRequest->send(200, "text/html", Texto + "|" + Numeros);
+//   }
+// }
 
-  SPIFFS.begin();
+// String consultasms2()
+// {
+//   String Texto = "";
+//   String Numeros = "";
 
-  File fTexto = SPIFFS.open("/sms_text.txt", "r");
-  if (fTexto)
-    Texto = fTexto.readStringUntil('*');
-  fTexto.close();
+//   SPIFFS.begin();
 
-  fTexto = SPIFFS.open("/sms_numb.txt", "r");
-  if (fTexto)
-    Numeros = fTexto.readStringUntil('*');
-  fTexto.close();
+//   File fTexto = SPIFFS.open("/sms_text.txt", "r");
+//   if (fTexto)
+//     Texto = fTexto.readStringUntil('*');
+//   fTexto.close();
 
-  SPIFFS.end();
+//   fTexto = SPIFFS.open("/sms_numb.txt", "r");
+//   if (fTexto)
+//     Numeros = fTexto.readStringUntil('*');
+//   fTexto.close();
 
-  return Texto + "|" + Numeros;
-}
+//   SPIFFS.end();
+
+//   return Texto + "|" + Numeros;
+// }

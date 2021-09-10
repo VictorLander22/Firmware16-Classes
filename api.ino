@@ -2,6 +2,7 @@ void api()
 {
   String vPassApi, action, apiPort, apiSource, valueApi, typeApi;
   bool isPost = false;
+  int8_t ret = -1;
 
   if (!newMqttMsg)
   {
@@ -11,27 +12,34 @@ void api()
     action = gRequest->arg("a");
     apiPort = gRequest->arg("p");
     apiSource = gRequest->arg("s");
+    valueApi = gRequest->arg("v");
+    typeApi = gRequest->arg("t");
+    if (action == "i")
+    {
+      irNumBits = gRequest->arg("qt1").toInt();
+      irModel = gRequest->arg("m1").toInt();
+      irPort = gRequest->arg("p1").toInt();
+      irData = gRequest->arg("c1") + gRequest->arg("c12");
+    }
   }
   else
   {
     newMqttMsg = false;
-    isPost = false;
+    //isPost = false;
     vPassApi = MqttArg(msgMqtt, "pw");
     vPassApi.toLowerCase();
-    (!DEBUG_ON) ?: Serial.print("vPassApi: ");
-    (!DEBUG_ON) ?: Serial.println(vPassApi);
-
     action = MqttArg(msgMqtt, "a");
-    (!DEBUG_ON) ?: Serial.print("action: ");
-    (!DEBUG_ON) ?: Serial.println(action);
-
     apiPort = MqttArg(msgMqtt, "p");
-    (!DEBUG_ON) ?: Serial.print("apiPort: ");
-    (!DEBUG_ON) ?: Serial.println(apiPort);
-
     apiSource = MqttArg(msgMqtt, "s");
-    (!DEBUG_ON) ?: Serial.print("apiSource: ");
-    (!DEBUG_ON) ?: Serial.println(apiSource);
+    valueApi = MqttArg(msgMqtt, "v");
+    typeApi = MqttArg(msgMqtt, "t");
+    if (action == "i")
+    {
+      irNumBits = MqttArg(msgMqtt, "qt1").toInt();
+      irModel = MqttArg(msgMqtt, "m1").toInt();
+      irPort = MqttArg(msgMqtt, "p1").toInt();
+      irData = MqttArg(msgMqtt, "c1");
+    }
   }
 
   if (AlowApi == true && vPassApi == ApiPass)
@@ -71,7 +79,7 @@ void api()
           sDados2 = '0' + sDados2;
         }
 
-        for (int i = 0; i < 8; i++)
+        for (uint8_t i = 0; i < 8; i++)
         {
           if (sDados1[i] == '0')
           {
@@ -83,7 +91,7 @@ void api()
           }
         }
 
-        for (int i = 0; i < 8; i++)
+        for (uint8_t i = 0; i < 8; i++)
         {
           if (sDados2[i] == '0')
           {
@@ -104,43 +112,36 @@ void api()
         {
           if (LePorta(apiPort.toInt() - 1) == HIGH)
           {
-            if (isPost)
-              gRequest->send(200, "text/html", "1");
+            ret = 1;
+            // if (isPost)
+            //   gRequest->send(200, "text/html", "1");
           }
           else
           {
-            if (isPost)
-              gRequest->send(200, "text/html", "0");
+            ret = 0;
+            // if (isPost)
+            //   gRequest->send(200, "text/html", "0");
           }
         }
         else
         {
           if (LeSensor(apiPort.toInt() - 1) == HIGH)
           {
-            if (isPost)
-              gRequest->send(200, "text/html", "1");
+            ret = 1;
+            // if (isPost)
+            //   gRequest->send(200, "text/html", "1");
           }
           else
           {
-            if (isPost)
-              gRequest->send(200, "text/html", "0");
+            ret = 0;
+            // if (isPost)
+            //   gRequest->send(200, "text/html", "0");
           }
         }
       }
     }
     else if (action == "a") // ação
     {
-      if (isPost)
-      {
-        valueApi = gRequest->arg("v");
-        typeApi = gRequest->arg("t");
-      }
-      else
-      {
-        valueApi = MqttArg(msgMqtt, "v");
-        typeApi = MqttArg(msgMqtt, "t");
-      }
-
       if (apiPort == "a") // todos
       {
         if (apiSource == "o") // saidas
@@ -149,20 +150,10 @@ void api()
           {
             if (typeApi == "n" || typeApi == "p")
             {
-
               chip1.write8(255);
               chip2.write8(255);
-              //memRtc.outValues = 255 << 8 | 255;
-              //memRtc.setOutputs();
               SaveOutputs();
-
-              if (isPost)
-                gRequest->send(200, "text/html", "1");
-            }
-            else
-            {
-              if (isPost)
-                gRequest->send(200, "text/html", "-1");
+              ret = 1;
             }
           }
           else if (valueApi == "1")
@@ -171,12 +162,8 @@ void api()
             {
               chip1.write8(0);
               chip2.write8(0);
-              //memRtc.outValues = 0;
-              //memRtc.setOutputs();
               SaveOutputs();
-
-              if (isPost)
-                gRequest->send(200, "text/html", "1");
+              ret = 1;
             }
             else if (typeApi == "p")
             {
@@ -187,29 +174,10 @@ void api()
                 g_tempoInicioPulso[pulsoApiCount] = millisAtual;
                 g_pulsoHabilita[pulsoApiCount] = true;
               }
-              //memRtc.outValues = 255 << 8 | 255; //Se for pulso sempre vai escrever off para ram
-              //memRtc.setOutputs();
               SaveOutputs();
-
-              if (isPost)
-                gRequest->send(200, "text/html", "1");
-            }
-            else
-            {
-              if (isPost)
-                gRequest->send(200, "text/html", "-1");
+              ret = 1;
             }
           }
-          else
-          {
-            if (isPost)
-              gRequest->send(200, "text/html", "-1");
-          }
-        }
-        else
-        {
-          if (isPost)
-            gRequest->send(200, "text/html", "-1");
         }
       }
       else // porta
@@ -221,19 +189,12 @@ void api()
             if (valueApi == "0") // desliga
             {
               LigaDesliga(apiPort.toInt() - 1, LOW, "", 0);
-              if (isPost)
-                gRequest->send(200, "text/html", "1");
+              ret = 1;
             }
             else if (valueApi == "1") // Liga
             {
               LigaDesliga(apiPort.toInt() - 1, HIGH, "", 0);
-              if (isPost)
-                gRequest->send(200, "text/html", "1");
-            }
-            else
-            {
-              if (isPost)
-                gRequest->send(200, "text/html", "-1");
+              ret = 1;
             }
           }
           else if (typeApi == "p") // pulsado
@@ -241,118 +202,31 @@ void api()
             if (valueApi == "0") // desliga
             {
               LigaDesliga(apiPort.toInt() - 1, LOW, "", 1);
-              if (isPost)
-                gRequest->send(200, "text/html", "1");
+              ret = 1;
             }
             else if (valueApi == "1") // Liga
             {
               LigaDesliga(apiPort.toInt() - 1, HIGH, "", 1);
-              if (isPost)
-                gRequest->send(200, "text/html", "1");
-            }
-            else
-            {
-              if (isPost)
-                gRequest->send(200, "text/html", "-1");
+              ret = 1;
             }
           }
-          else
-          {
-            if (isPost)
-              gRequest->send(200, "text/html", "-1");
-          }
-        }
-        else
-        {
-          if (isPost)
-            gRequest->send(200, "text/html", "-1");
         }
       }
     }
     else if (action == "i") // Infravermelho
     {
-      (!DEBUG_ON) ?: Serial.println("api infravermelho");
-      // String vModel1 = gRequest->arg("m1");
-      // String vModel2 = gRequest->arg("m2");
-      // String vModel3 = gRequest->arg("m3");
-      // String vModel4 = gRequest->arg("m4");
-      // String Comando1 = gRequest->arg("c1");
-      // String Comando2 = gRequest->arg("c2");
-      // String Comando3 = gRequest->arg("c3");
-      // String Comando4 = gRequest->arg("c4");
-      // String Comando12 = gRequest->arg("c12");
-      // String Comando22 = gRequest->arg("c22");
-      // String Comando32 = gRequest->arg("c32");
-      // String Comando42 = gRequest->arg("c42");
-      // String qtde1 = gRequest->arg("qt1");
-      // String qtde2 = gRequest->arg("qt2");
-      // String qtde3 = gRequest->arg("qt3");
-      // String qtde4 = gRequest->arg("qt4");
-      // String vp1 = gRequest->arg("p1");
-      // String vp2 = gRequest->arg("p2");
-      // String vp3 = gRequest->arg("p3");
-      // String vp4 = gRequest->arg("p4");
-
-      // if (vModel1 != "")
-      // {
-      //   sendirAPI(qtde1.toInt(), vModel1.toInt(), Comando1, Comando12, vp1.toInt());
-      //   (!DEBUG_ON) ?: Serial.println("1");
-      // }
-
-      // if (vModel2 != "")
-      // {
-      //   delay(300);
-      //   sendirAPI(qtde2.toInt(), vModel2.toInt(), Comando2, Comando22, vp2.toInt());
-      //   (!DEBUG_ON) ?: Serial.println("2");
-      // }
-
-      // if (vModel3 != "")
-      // {
-      //   delay(300);
-      //   sendirAPI(qtde3.toInt(), vModel3.toInt(), Comando3, Comando32, vp3.toInt());
-      //   (!DEBUG_ON) ?: Serial.println("3");
-      // }
-
-      // if (vModel4 != "")
-      // {
-      //   delay(300);
-      //   sendirAPI(qtde4.toInt(), vModel4.toInt(), Comando4, Comando42, vp4.toInt());
-      // }
-      if (isPost)
-      {
-        irNumBits = gRequest->arg("qt1").toInt();
-        irModel = gRequest->arg("m1").toInt();
-        irPort = gRequest->arg("p1").toInt();
-        irData = gRequest->arg("c1") + gRequest->arg("c12");
-      }
-      else
-      {
-        irNumBits = MqttArg(msgMqtt, "qt1").toInt();
-        irModel = MqttArg(msgMqtt, "m1").toInt();
-        irPort = MqttArg(msgMqtt, "p1").toInt();
-        irData = MqttArg(msgMqtt, "c1");
-      }
       irEnSend = true;
-      (!DEBUG_ON) ?: Serial.println(F("Enviar IR..."));
-
-      if (isPost)
-        gRequest->send(200, "text/html", "1");
+      ret = 1;
+      // if (isPost)
+      //   gRequest->send(200, "text/html", "1");
     }
     else if (action == "c") // Cenas
     {
-      (!DEBUG_ON) ?: Serial.println("api cenas");
-      if (isPost)
-      {
-        valueApi = gRequest->arg("v");
-        gRequest->send(200, "text/html", "1");
-      }
-      else
-        valueApi = MqttArg(msgMqtt, "v");
-
+      // if (isPost)
+      //   gRequest->send(200, "text/html", "1");
+      ret = 1;
       (!DEBUG_ON) ?: Serial.println("Numero da cena: " + valueApi);
-
       triggerCena(valueApi);
-      //if (isPost)
     }
     else if (action == "l") // linha de ação
     {
@@ -363,47 +237,43 @@ void api()
         {
           if (apiPort[posicaoPorta] == '0')
           {
-            // desliga
             LigaDesliga(posicaoPorta, LOW, "", 0);
           }
           else if (apiPort[posicaoPorta] == '1')
           {
-            // liga
             LigaDesliga(posicaoPorta, HIGH, "", 0);
           }
         }
       }
-
-      if (isPost)
-        gRequest->send(200, "text/html", "1");
+      ret = 1;
+      // if (isPost)
+      //   gRequest->send(200, "text/html", "1");
     }
     else if (action == "update") // executaupdate
     {
-      (!DEBUG_ON) ?: Serial.println(F("API: Executar update"));
-
-      if (isPost)
-      {
-        // if (!gRequest->authenticate(www_username, www_password))
-        //   return gRequest->gRequestAuthentication();
-        //executeupdateBeta(gRequest);
-      }
-      else
-        //executeupdateBeta(gRequest);
-        (!DEBUG_ON) ?: Serial.println("");
+      executeupdateBeta(false);
+      ret = 1;
+      // if (isPost)
+      //   gRequest->send(200, "text/html", "1");
+    }
+    else if (action == "bkp") // executaupdate
+    {
+      if (typeApi == "b")
+        AsyncBackupEsp(false);
+      else if (typeApi == "r")
+        AsyncRestoreEsp(false);
+      else if (typeApi == "f")
+        AsyncFormatEsp(false);
+      ret = 1;
     }
   }
-  else
-  {
-    if (isPost)
-      gRequest->send(200, "text/html", "-1");
-  }
+
+  if (isPost)
+    gRequest->send(200, "text/html", (String)ret);
 }
 
 void apiativo()
 {
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   if (AlowApi == true)
   {
     gRequest->send(200, "text/html", "1");
@@ -416,9 +286,6 @@ void apiativo()
 
 void apiconfig()
 {
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
-
   if (gRequest->arg("s") == Senha)
   {
     gRequest->send(200, "text/html", "ok");
@@ -435,9 +302,6 @@ void apiconfig()
 
 void alterasenhapi()
 {
-
-  // if (!gRequest->authenticate(www_username, www_password))
-  //   return gRequest->requestAuthentication();
 
   if (gRequest->arg("s") == Senha)
   {

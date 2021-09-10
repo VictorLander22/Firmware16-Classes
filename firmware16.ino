@@ -1,10 +1,11 @@
-#define Placa_Version "2.41"
+#define Placa_Version "2.42"
 
 #include "globalvar.h"
 
 //########################################################################################################################################################
 void setup(void)
 {
+
   Serial.begin(115200);
   Serial.println();
   Wire.begin(5, 4);
@@ -67,9 +68,6 @@ void setup(void)
   DevSet.getDeviceSettings();
   if (DEBUG_ON)
     DevSet.showVariables();
-
-  www_username = DevSet.httpUser.c_str();
-  www_password = DevSet.httpPwd.c_str();
 
   UpdateDisplay(F("Configuring IR"));
   configIR(); //consome 2K da ram 20000

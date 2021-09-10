@@ -231,7 +231,7 @@ void leituraUDP(AsyncUDPPacket packet)
             //gRequest->send(200, "text/html", "ok");
             String Texto = ""; //gRequest->arg("j");
             String Telef = ""; //gRequest->arg("b");
-            gravasms2(Texto, Telef);
+            //sms gravasms2(Texto, Telef);
           }
           else if (Tipo == "D")
           {
