@@ -30,6 +30,9 @@ void ExecuteUpdate(bool isPost, bool beta)
 
   slogln(url);
 
+  if (isPost)
+    gRequest->send(200, sdefTextHtml, sdefOK);
+
   t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
 
   switch (ret)
