@@ -1,7 +1,5 @@
 void gravacena()
 {
-  gRequest->send(200, sdefTextHtml, sdefOK);
-
   String Senha = gRequest->arg("k");
 
   if (Senha == "kdi9e")
@@ -10,7 +8,7 @@ void gravacena()
     String vTipo = gRequest->arg("t");
     String Valor = gRequest->arg("v");
     String IdCena = gRequest->arg("id");
-    slogln(Valor);
+    //slogln(Valor);
     SPIFFS.begin();
 
     if (ia == "1") // inicio de arquivo
@@ -22,17 +20,15 @@ void gravacena()
     else
     {
       File rFile = SPIFFS.open("/ce_" + IdCena + ".cfg", "a");
-      //String ValorAnterior = rFile.readString();
-      //rFile.close();
-
-      //rFile = SPIFFS.open("/ce_"+IdCena+".cfg","w");
-      //rFile.print(ValorAnterior);
-      rFile.println(Valor);
+      rFile.print(Valor); //se colocar println esta dando erro ao acrescentar o caractere final
+      rFile.print('\n');
       rFile.close();
     }
 
     SPIFFS.end();
     //lerArquivo(IdCena);
+    //delay(50);
+    gRequest->send(200, sdefTextHtml, sdefOK);
   }
   else
   {
