@@ -10,14 +10,6 @@ void agenda()
   slogln(F("Consultado agenda..."));
 }
 
-// void verificaArquivos()
-// {
-//   SPIFFS.begin();
-//   File f = SPIFFS.open("/agenda.txt", "w");
-//   f.close();
-//   SPIFFS.end();
-// }
-
 void verificaAgenda()
 {
   for (uint8_t i = 1; i <= 6; i++)
@@ -345,14 +337,6 @@ void verificaAgenda()
           EDiaSemana = false;
         }
 
-        //(!DEBUG_ON) ?:   Serial.println("Agenda tipo 4 encontrada");
-        //(!DEBUG_ON) ?:   Serial.println("Valor EdiaSemana = " + String(EDiaSemana));
-        //(!DEBUG_ON) ?:   Serial.println("Valor DiaSemanaAgora = " + String(DiaSemanaAgora));
-        //(!DEBUG_ON) ?:   Serial.println("Porta: " + Porta);
-        //domingo
-        //if (EDiaSemana == 1)
-        //(!DEBUG_ON) ?:   Serial.println("Vai rodar");
-
         if ((HoraAgora == HoraI) && (ECena == "1") && (EDiaSemana == 1))
         {
           triggerCena(CenaLiga);
@@ -361,7 +345,6 @@ void verificaAgenda()
         {
           if ((HoraAgora == HoraI) && (EstadoPorta == LOW) && (EDiaSemana == 1))
           {
-            //digitalWrite(retornaPorta(Porta.toInt()), 1);
             LigaDesliga(retornaPorta(Porta.toInt()), HIGH, "", 0);
           }
         }
@@ -376,8 +359,6 @@ void verificaAgenda()
         {
           if ((HoraAgora == HoraF) && (EstadoPorta == HIGH) && (EDiaSemana == 1))
           {
-            // desliga e desativa agenda
-            //digitalWrite(retornaPorta(Porta.toInt()), 0);
             LigaDesliga(retornaPorta(Porta.toInt()), LOW, "", 0);
           }
         }

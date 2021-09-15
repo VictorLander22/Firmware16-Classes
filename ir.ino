@@ -708,9 +708,10 @@ void LoopIR()
       dumpInfo(&results);
       slogln(""); // Blank line between entries
       //tone(Buzzer, 4000, 800);
-      chip3.write(Buzzer, HIGH);
-      delay(300);
-      chip3.write(Buzzer, LOW);
+      // chip3.write(Buzzer, HIGH);
+      // delay(300);
+      // chip3.write(Buzzer, LOW);
+      BeepBuzzer();
       //noTone(Buzzer);
       enReadIR = false;
       slogln("IR Receiving Disabled");

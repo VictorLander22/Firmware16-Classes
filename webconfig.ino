@@ -79,10 +79,16 @@ void AsyncFunctions()
     else if (functionName == F("/buscadevice"))
       buscadevice();
     else if (functionName == F("/executeupdate"))
+    {
+      AsyncBackupEsp(false);
       ExecuteUpdate(true, false);
+    }
     //executeupdate();
     else if (functionName == F("/executeupdatebeta"))
+    {
+      AsyncBackupEsp(false);
       ExecuteUpdate(true, true);
+    }
     //executeupdateBeta(true);
     else if (functionName == F("/versao"))
       versao();
@@ -360,6 +366,7 @@ void AsyncBackupEsp(bool isPost)
     }
   }
   SPIFFS.end();
+  BeepBuzzer();
 }
 
 void AsyncRestoreEsp(bool isPost)
@@ -426,6 +433,7 @@ void AsyncRestoreEsp(bool isPost)
     SPIFFS.end();
     delay(50);
   }
+  BeepBuzzer();
 }
 
 void AsyncFormatEsp(bool isPost)
@@ -436,4 +444,5 @@ void AsyncFormatEsp(bool isPost)
   //LittleFS.format();
   SPIFFS.format();
   slogln(F("Format SUCCESS!"));
+  BeepBuzzer();
 }

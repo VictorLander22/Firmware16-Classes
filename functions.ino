@@ -327,3 +327,10 @@ String ReadFirstLine(String fName)
   SPIFFS.end();
   return str;
 }
+
+void BeepBuzzer()
+{
+  chip3.write(Buzzer, HIGH);
+  delay(300);
+  chip3.write(Buzzer, LOW);
+}

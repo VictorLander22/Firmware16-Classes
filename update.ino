@@ -1,39 +1,18 @@
-// void executeupdate(bool isPost, bool beta)
-// {
-//   gRequest->send(200, sdefTextHtml, sdefOK);
-//   shouldUpdate = 1;
-// }
-
-// void executeupdateBeta(bool isPost)
-// {
-//   if (isPost)
-//     gRequest->send(200, sdefTextHtml, sdefOK);
-//   shouldUpdate = 2;
-// }
-
 void ExecuteUpdate(bool isPost, bool beta)
 {
   WiFiClient client;
-  // if (shouldUpdate != 0)
-  // {
+
   String url = (beta) ? "http://keepin.com.br/firmware/16/beta/firmware16.bin" : "http://keepin.com.br/firmware/16/firmware16.bin";
   //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
-
-  // if (shouldUpdate == 1) //executa update
-  //   url = "http://keepin.com.br/firmware/16/firmware16.bin";
-  // else if (shouldUpdate == 2) // executa update beta
-  //   url = "http://keepin.com.br/firmware/16/beta/firmware16.bin";
-
-  // shouldUpdate = 0;
 
   slog("Iniciando Update em: ");
 
   slogln(url);
 
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
+
   if (isPost)
     gRequest->send(200, sdefTextHtml, sdefOK);
-
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
 
   switch (ret)
   {
@@ -56,6 +35,7 @@ void ExecuteUpdate(bool isPost, bool beta)
     break;
   }
   //}
+  BeepBuzzer();
 }
 
 void versao()
