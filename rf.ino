@@ -541,15 +541,16 @@ boolean verificaSensoresRF()
 
 void consultaSensorRF()
 {
-  String texto = "";
-  SPIFFS.begin();
-  File f = SPIFFS.open("/rf.txt", "r");
-  if (f)
-    texto = f.readStringUntil('*');
-  texto += '*';
-  slogln(texto);
-  f.close();
-  SPIFFS.end();
+  //String texto = "";
+  // SPIFFS.begin();
+  // File f = SPIFFS.open("/rf.txt", "r");
+  // if (f)
+  //   texto = f.readStringUntil('*');
+  // texto += '*';
+  // slogln(texto);
+  // f.close();
+  // SPIFFS.end();
+  String texto = ReadFirstLine("/rf.txt");
 
   int posicao = 0;
   int contador = 0;

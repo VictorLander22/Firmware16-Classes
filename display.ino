@@ -50,11 +50,11 @@ void LoopDisplay()
     sIn += ":" + sIn2;
     sOut += ":" + sOut2;
 
-    display.setFont(Cousine_Regular_12);
+    //display.setFont(Cousine_Regular_12);
     display.drawString(3, dispY[0], sOut);
     display.drawString(3, dispY[1], sIn);
 
-    display.setFont(ArialMT_Plain_10);
+    //display.setFont(ArialMT_Plain_10);
     display.drawLine(0, 28, 127, 28);
     //display.drawString(1, dispY[2], "WiFi: OK ");
     //display.drawString(50, dispY[2], "Sinal");

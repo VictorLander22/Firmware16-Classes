@@ -1,4 +1,5 @@
 
+#define Placa_Version "2.42"
 #define espMemory 52696
 #define ntpServer "pool.ntp.org"
 #define numDNSquery 5
@@ -49,8 +50,6 @@ const String sdefTextHtml = "text/html";
 #include "src\KPDeviceSetting.h"
 #include "src\KPPCF8583Class.h"
 #include "src\webpage.h"
-
-//const bool DEBUG_ON = false;
 
 const String cloudServer = "http://cloud.keepin.com.br/api/";
 const char *mqtt_server = "cloudmqtt.keepin.com.br";

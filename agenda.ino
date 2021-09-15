@@ -6,19 +6,17 @@
 
 void agenda()
 {
-
-  slogln(F("Consultado agenda..."));
-
   verificaAgenda();
+  slogln(F("Consultado agenda..."));
 }
 
-void verificaArquivos()
-{
-  SPIFFS.begin();
-  File f = SPIFFS.open("/agenda.txt", "w");
-  f.close();
-  SPIFFS.end();
-}
+// void verificaArquivos()
+// {
+//   SPIFFS.begin();
+//   File f = SPIFFS.open("/agenda.txt", "w");
+//   f.close();
+//   SPIFFS.end();
+// }
 
 void verificaAgenda()
 {
@@ -416,59 +414,65 @@ void atualizahora()
   }
 }
 
-String consultaAgenda(int id)
-{
-  String texto = "";
-  SPIFFS.begin();
-  File f = SPIFFS.open("/agenda.txt", "r");
-  if (f)
-    texto = f.readStringUntil('*');
-  f.close();
-  SPIFFS.end();
-  return texto;
-}
+// String consultaAgenda()
+// {
+//   String texto = "";
+//   SPIFFS.begin();
+//   File f = SPIFFS.open("/agenda.txt", "r");
+//   if (f)
+//     texto = f.readStringUntil('\n');
+//   f.close();
+//   SPIFFS.end();
+//   //slogln(tex)
+//   return texto;
+// }
 
 void consultaAgenda2()
 {
-  String texto = "";
-  SPIFFS.begin();
-  File f = SPIFFS.open("/agenda.txt", "r");
-  if (f)
-    texto = f.readStringUntil('*');
-  texto += '*';
-  f.close();
-  SPIFFS.end();
+  // String texto = "";
+  // SPIFFS.begin();
+  // File f = SPIFFS.open("/agenda.txt", "r");
+  // if (f)
+  //   texto = f.readStringUntil('*');
+  // texto += '*';
+  // f.close();
+  // SPIFFS.end();
 
-  int posicao = 0;
-  int contador = 0;
-  int i = 0;
-  String textoAgenda = "";
+  //ConvertAgenda(texto);
+  ConvertAgenda(ReadFirstLine("/agenda.txt"));
 
-  if (texto.length() > 13)
-  {
-    Agendas[i] = "";
-    while (texto[posicao] != '*')
-    {
-      if (texto[posicao] != '|')
-      {
-        textoAgenda += texto[posicao];
-      }
-      else if (texto[posicao] == '|' && contador < 16)
-      {
-        contador++;
-        textoAgenda += texto[posicao];
-      }
+  // int posicao = 0;
+  // int contador = 0;
+  // int i = 0;
+  // String textoAgenda = "";
 
-      if (contador == 16)
-      {
-        Agendas[i] = textoAgenda;
-        textoAgenda = "";
-        contador = 0;
-        i++;
-      }
-      posicao++;
-    }
-  }
+  // if (texto.length() > 13)
+  // {
+  //   Agendas[i] = "";
+  //   while (texto[posicao] != '*')
+  //   {
+  //     if (texto[posicao] != '|')
+  //     {
+  //       textoAgenda += texto[posicao];
+  //     }
+  //     else if (texto[posicao] == '|' && contador < 16)
+  //     {
+  //       contador++;
+  //       textoAgenda += texto[posicao];
+  //     }
+
+  //     if (contador == 16)
+  //     {
+  //       Agendas[i] = textoAgenda;
+  //       slog("consultaAgend2(): ");
+  //       slogln(Agendas[i]);
+  //       textoAgenda = "";
+  //       contador = 0;
+  //       i++;
+  //     }
+  //     posicao++;
+  //   }
+  // }
 }
 
 void conagenda()
@@ -479,7 +483,8 @@ void conagenda()
   if (Senha == "kdi9e")
   {
     //(!DEBUG_ON) ?:   Serial.println("consultando agenda");
-    String texto = consultaAgenda(0);
+    String texto = ReadFirstLine("/agenda.txt"); //consultaAgenda();
+    slogln(texto);
     gRequest->send(200, sdefTextHtml, texto);
   }
   else
@@ -490,13 +495,12 @@ void conagenda()
 
 void gravaragenda()
 {
-
-  gRequest->send(200, sdefTextHtml, sdefOK);
-
   AgendaAlterada = true;
   //String idAgenda = gRequest->arg("ag");
   String Valor = gRequest->arg("v");
   String Senha = gRequest->arg("k");
+
+  ConvertAgenda(Valor);
 
   if (Senha == "kdi9e")
   {
@@ -505,8 +509,29 @@ void gravaragenda()
     f.println(Valor);
     f.close();
     SPIFFS.end();
-    ;
   }
+  gRequest->send(200, sdefTextHtml, sdefOK);
+}
+
+void ConvertAgenda(String texto)
+{
+  //String testValorAg[6] = {"", "", "", "", "", ""};
+
+  int actualSch;
+  //String teste = Valor;
+  texto.replace("*", "");
+
+  for (uint8_t i = 0; i < 6; i++)
+  {
+    actualSch = (texto.lastIndexOf('/') - 5);
+    Agendas[5 - i] = texto.substring(actualSch);
+    texto = texto.substring(0, actualSch);
+  }
+
+  // for (uint8_t i = 0; i < 6; i++)
+  // {
+  //   slogln(Agendas[i]);
+  // }
 }
 
 void gravaragenda2()
@@ -525,34 +550,16 @@ void gravaragenda2()
 void printDateTime(const RtcDateTime &dt)
 {
   char datestring[20];
-
-  snprintf_P(datestring,
-             countof(datestring),
-             PSTR("%02u/%02u/%04u %02u:%02u:%02u"),
-             dt.Day(),
-             dt.Month(),
-             dt.Year(),
-             dt.Hour(),
-             dt.Minute(),
-             dt.Second());
-  slog(datestring);
+  snprintf_P(datestring, countof(datestring), PSTR("%02u/%02u/%04u %02u:%02u:%02u"), dt.Day(), dt.Month(), dt.Year(), dt.Hour(), dt.Minute(), dt.Second());
+  slogln(datestring);
 }
 
-String RetornaData(const RtcDateTime &dt)
-{
-  char datestring[20];
-
-  snprintf_P(datestring,
-             countof(datestring),
-             PSTR("%02u/%02u/%04u %02u:%02u:%02u"),
-             dt.Day(),
-             dt.Month(),
-             dt.Year(),
-             dt.Hour(),
-             dt.Minute(),
-             dt.Second());
-  return datestring;
-}
+// String RetornaData(const RtcDateTime &dt)
+// {
+//   char datestring[20];
+//   snprintf_P(datestring, countof(datestring), PSTR("%02u/%02u/%04u %02u:%02u:%02u"), dt.Day(), dt.Month(), dt.Year(), dt.Hour(), dt.Minute(), dt.Second());
+//   return datestring;
+// }
 
 void LoopAgenda()
 {
@@ -567,9 +574,12 @@ void LoopAgenda()
     nCiclos = 0;
     Minuto = HorarioAtual.Minute();
 
-    char time[50];
-    sprintf(time, "%02d/%02d/%02d %02d:%02d:%02d", HorarioAtual.Day(), HorarioAtual.Month(), HorarioAtual.Year(), HorarioAtual.Hour(), HorarioAtual.Minute(), HorarioAtual.Second());
-    slogln(time);
+    // char time[50];
+    // sprintf(time, "%02d/%02d/%02d %02d:%02d:%02d", HorarioAtual.Day(), HorarioAtual.Month(), HorarioAtual.Year(), HorarioAtual.Hour(), HorarioAtual.Minute(), HorarioAtual.Second());
+
+    // slogln(time);
+
+    printDateTime(HorarioAtual);
 
     agenda();
   }

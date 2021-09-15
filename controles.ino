@@ -113,7 +113,7 @@ void handleNotFound()
   // {
   //   message += " " + gRequest->argName(i) + ": " + gRequest->arg(i) + "\n";
   // }
-  gRequest->send(404, "text/plain", F("File Not Found"));
+  gRequest->send(404, "text/plain", F("Function Not Found"));
 }
 
 void LigaDesliga(int vPorta, int vFuncao, String Nome, int Tipo)

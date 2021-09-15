@@ -1,5 +1,3 @@
-#define Placa_Version "2.42"
-
 #include "globalvar.h"
 
 //########################################################################################################################################################
@@ -171,6 +169,10 @@ void loop(void)
 
     AsyncFunctions();
 
-    FreeMemory(F("loop()"));
+    if ((millisAtual > millisFreeMemory))
+    {
+      FreeMemory(F("loop()"));
+      millisFreeMemory = millisAtual + 10000;
+    }
   }
 }

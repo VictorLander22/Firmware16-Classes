@@ -199,12 +199,12 @@ uint16_t getOutputs()
 
 String getDevStatus()
 {
-  return "{\"mac\":" + gchipId +
-         ",\"ip:\"" + CurrentIP() +
-         ",\"v:\"" + Placa_Version +
-         ",\"i:\"" + String(getInputs()) +
-         ",\"o:\"" + String(getOutputs()) +
-         ",\"s:\"" + String(getRSSI()) + "}";
+  return "{\"mac\":\"" + gchipId +
+         "\",\"ip\":\"" + CurrentIP() +
+         "\",\"v\":" + Placa_Version +
+         ",\"i\":" + String(getInputs()) +
+         ",\"o\":" + String(getOutputs()) +
+         ",\"s\":" + String(getRSSI()) + "}";
 }
 
 void AsyncIRSend()
@@ -309,13 +309,21 @@ void scanI2c()
 
 void FreeMemory(String functionName)
 {
-  if ((millis() > millisFreeMemory))
-  {
-    Serial.print(functionName);
-    Serial.print(F(" Aloc: "));
-    Serial.print((espMemory - ESP.getFreeHeap()));
-    Serial.print(F(" Livre: "));
-    Serial.println(ESP.getFreeHeap());
-    millisFreeMemory = millis() + 10000;
-  }
+  slog(functionName);
+  slog(F(" Aloc: "));
+  slog((espMemory - ESP.getFreeHeap()));
+  slog(F(" Livre: "));
+  slogln(ESP.getFreeHeap());
+}
+
+String ReadFirstLine(String fName)
+{
+  String str = "";
+  SPIFFS.begin();
+  File f = SPIFFS.open(fName, "r");
+  if (f)
+    str = f.readStringUntil('\n');
+  f.close();
+  SPIFFS.end();
+  return str;
 }

@@ -1,28 +1,37 @@
 void teste()
 {
-  // slogln(gRequest->arg("json").toInt() * 16 * 5 + gRequest->arg("json").toInt() * 16 + 2 * 16);
-  // slogln(7 * JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(7) + JSON_OBJECT_SIZE(1));
-  slogln("Novo teste");
+  FreeMemory(F("ptest()"));
+  char *ptest = (char *)malloc(2048);
+  strcpy(ptest, "abcdef");
+  slogln(ptest);
+  FreeMemory(F("ptest()"));
+  free(ptest);
+  FreeMemory(F("ptest()"));
+}
+
+void teste1()
+{
+  uint8_t qtdDados = 5;
+  uint8_t numObj = 1;
+
   SPIFFS.begin();
   File f = SPIFFS.open("/ce_10.cfg", "r");
-  int size = f.readStringUntil('\n').toInt() + 1;
+  uint16_t numDados = f.readStringUntil('\n').toInt() + 1;
   String str = f.readStringUntil('\0');
   f.close();
-  SPIFFS.begin();
+  SPIFFS.end();
 
-  DynamicJsonDocument doc(size * 16 * 5 + size * 16 + 2 * 16);
+  DynamicJsonDocument doc(numDados * JSON_ARRAY_SIZE(qtdDados) + JSON_ARRAY_SIZE(numDados) + JSON_OBJECT_SIZE(numObj));
   deserializeJson(doc, str);
-  // extract the values
-  //Serial.println((String)doc["q"]);
 
   JsonArray array = doc.as<JsonArray>();
   for (JsonVariant v : array)
   {
     Serial.println(v[0].as<String>());
-    Serial.println(v[1].as<String>());
-    Serial.println(v[2].as<int>());
-    Serial.println(v[3].as<int>());
-    Serial.println(v[4].as<int>());
+    // Serial.println(v[1].as<String>());
+    // Serial.println(v[2].as<int>());
+    // Serial.println(v[3].as<int>());
+    // Serial.println(v[4].as<int>());
   }
 
   gRequest->send(200, sdefTextHtml, sdefOK);

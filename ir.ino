@@ -536,17 +536,20 @@ void sendIRCMD(String Codigo, String Codigo2, int QtdeBit, int PortaIRS, int vMo
     }
     else
     {
-      String linhas = "";
-      SPIFFS.begin();
-      File rFile = SPIFFS.open("/ir_" + Codigo + ".cfg", "r");
-      if (rFile.available())
-      {
-        linhas = rFile.readStringUntil('\n');
-        slogln(F("[rawData]"));
-        slog(linhas);
-      }
-      rFile.close();
-      SPIFFS.end();
+      //String linhas = "";
+      // SPIFFS.begin();
+      // File rFile = SPIFFS.open("/ir_" + Codigo + ".cfg", "r");
+      // if (rFile.available())
+      // {
+      //   linhas = rFile.readStringUntil('\n');
+      //   slogln(F("[rawData]"));
+      //   slog(linhas);
+      // }
+      // rFile.close();
+      // SPIFFS.end();
+      String linhas = ReadFirstLine("/ir_" + Codigo + ".cfg");
+      slogln(F("[rawData]"));
+      slog(linhas);
 
       IRSendRaw((char *)linhas.c_str(), QtdeBit);
     }

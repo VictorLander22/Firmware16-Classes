@@ -15,6 +15,11 @@
     "initializer_list": "cpp",
     "ranges": "cpp",
     "system_error": "cpp",
-    "*.tcc": "cpp"
+    "*.tcc": "cpp",
+    "memory_resource": "cpp",
+    "sstream": "cpp",
+    "bitset": "cpp",
+    "utility": "cpp",
+    "fstream": "cpp"
   }
 }

@@ -148,6 +148,10 @@ void AsyncFunctions()
       reiniciar();
     else if (functionName == F("/sendir"))
       AsyncSendIR();
+    // else if (functionName == F("/teste"))
+    //   teste();
+    // else if (functionName == F("/teste1"))
+    //   teste1();
     else
       handleNotFound();
   }
@@ -314,8 +318,7 @@ void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uin
 void AsyncBackupEsp(bool isPost)
 {
   if (isPost)
-    gRequest->send(200, sdefTextHtml, F("Backup"));
-
+    gRequest->send(200, sdefTextHtml, F("Backup!"));
   WiFiClient cliente;
   HTTPClient http;
   String uri = cloudServer + "postfile";
@@ -362,8 +365,7 @@ void AsyncBackupEsp(bool isPost)
 void AsyncRestoreEsp(bool isPost)
 {
   if (isPost)
-    gRequest->send(200, sdefTextHtml, F("Restoring"));
-
+    gRequest->send(200, sdefTextHtml, F("Restore!"));
   HTTPClient http;
   WiFiClient client;
   //String payload;
@@ -422,15 +424,14 @@ void AsyncRestoreEsp(bool isPost)
       http.end();
     }
     SPIFFS.end();
-    delay(100);
+    delay(50);
   }
 }
 
 void AsyncFormatEsp(bool isPost)
 {
   if (isPost)
-    gRequest->send(200, sdefTextHtml, F("Formating..."));
-
+    gRequest->send(200, sdefTextHtml, F("Formating!"));
   slogln(F("Formating"));
   //LittleFS.format();
   SPIFFS.format();
