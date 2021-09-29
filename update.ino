@@ -2,12 +2,13 @@ void ExecuteUpdate(bool isPost, bool beta)
 {
   WiFiClient client;
 
-  String url = (beta) ? "http://keepin.com.br/firmware/16/beta/firmware16.bin" : "http://keepin.com.br/firmware/16/firmware16.bin";
+  String url = (beta) ? "http://keepin.com.br/firmware/16/beta/firmware16.ino.bin" : "http://keepin.com.br/firmware/16/firmware16.ino.bin";
   //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
 
   slog("Iniciando Update em: ");
 
   slogln(url);
+  DisplayPrint(F("Updating firmware..."));
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
 
@@ -16,19 +17,22 @@ void ExecuteUpdate(bool isPost, bool beta)
   case HTTP_UPDATE_FAILED:
     Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
     if (isPost)
-      gRequest->send(200, sdefTextHtml, "HTTP_UPDATE_FAILD Error: " + String(ESPhttpUpdate.getLastErrorString().c_str()));
+      gRequest->send(200, sdefTextHtml, F("HTTP_UPDATE_FAILD Error: ") + String(ESPhttpUpdate.getLastErrorString().c_str()));
+    DisplayPrint(F("FAILD: ") + String(ESPhttpUpdate.getLastErrorString().c_str()));
     break;
 
   case HTTP_UPDATE_NO_UPDATES:
-    slogln("HTTP_UPDATE_NO_UPDATES");
+    slogln(F("HTTP_UPDATE_NO_UPDATES"));
     if (isPost)
-      gRequest->send(200, sdefTextHtml, "HTTP_UPDATE_NO_UPDATES");
+      gRequest->send(200, sdefTextHtml, F("HTTP_UPDATE_NO_UPDATES"));
+    DisplayPrint(F("HTTP_UPDATE_NO_UPDATES"));
     break;
 
   case HTTP_UPDATE_OK:
     slogln(sdefOK);
     if (isPost)
-      gRequest->send(200, sdefTextHtml, "HTTP_UPDATE_OK");
+      gRequest->send(200, sdefTextHtml, F("HTTP_UPDATE_OK"));
+    DisplayPrint(F("HTTP_UPDATE_OK"));
     break;
 
   default:

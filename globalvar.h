@@ -5,7 +5,7 @@
 #define numDNSquery 5
 #define pulseTime 600
 //#define model8
-#define DEBUG_ON
+//#define DEBUG_ON
 
 const String sdefOK = "ok";
 const String sdefTextHtml = "text/html";

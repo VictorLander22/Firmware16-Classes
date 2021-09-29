@@ -243,7 +243,7 @@ void scanI2c()
   const unsigned long waitDelay = 50;
   uint8_t devices;
 
-  dispText[0] = "EXECUTING SETUP " + (String)Placa_Version;
+  dispText[0] = "SETUP " + WiFi.macAddress();
   dispText[4] = ("Starting devices..");
 
   // Testar Display
