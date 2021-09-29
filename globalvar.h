@@ -1,11 +1,11 @@
 
-#define Placa_Version "2.42d"
+#define Placa_Version "2.43"
 #define espMemory 52696
 #define ntpServer "pool.ntp.org"
 #define numDNSquery 5
 #define pulseTime 600
 //#define model8
-//#define DEBUG_ON
+#define DEBUG_ON
 
 const String sdefOK = "ok";
 const String sdefTextHtml = "text/html";
@@ -41,7 +41,7 @@ const String sdefTextHtml = "text/html";
 #include <NTPClient.h>
 #include "AsyncPing.h"
 #include "Ticker.h"
-//#include <SSD1306Wire.h>
+#include <SSD1306Wire.h>
 
 #include <PubSubClient.h>
 
@@ -106,7 +106,7 @@ PCF8574 sensor2(0x24, &Wire);
 
 PCF8583 Rtc(0xA0);
 KPPCF8583Class memRtc(0xA0);
-//SSD1306Wire display(0x3c, -1, -1, GEOMETRY_128_64, I2C_ONE, 100000); //, D1, D2);
+SSD1306Wire display(0x3c, -1, -1, GEOMETRY_128_64, I2C_ONE, 100000); //, D1, D2);
 
 String s2Sensor1 = "";
 String s2Sensor2 = "";
