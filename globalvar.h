@@ -1,5 +1,5 @@
 
-#define Placa_Version "2.43"
+#define Placa_Version "2.42d"
 #define espMemory 52696
 #define ntpServer "pool.ntp.org"
 #define numDNSquery 5
@@ -18,15 +18,12 @@ const String sdefTextHtml = "text/html";
 #define slogln(x)
 #endif
 
-//#include <user_interface.h>
-//#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
 //#include <LittleFS.h>
 #include <ESPAsyncUDP.h>
-//#include <pgmspace.h>
 #include <Wire.h>
 #include <RtcDateTime.h>
 #include <PCF8583.h>
@@ -44,8 +41,8 @@ const String sdefTextHtml = "text/html";
 #include <NTPClient.h>
 #include "AsyncPing.h"
 #include "Ticker.h"
-#include <SSD1306Wire.h>
-//#include <string>
+//#include <SSD1306Wire.h>
+
 #include <PubSubClient.h>
 
 #include "src\KPDeviceSetting.h"
@@ -109,7 +106,7 @@ PCF8574 sensor2(0x24, &Wire);
 
 PCF8583 Rtc(0xA0);
 KPPCF8583Class memRtc(0xA0);
-SSD1306Wire display(0x3c, -1, -1, GEOMETRY_128_64, I2C_ONE, 100000); //, D1, D2);
+//SSD1306Wire display(0x3c, -1, -1, GEOMETRY_128_64, I2C_ONE, 100000); //, D1, D2);
 
 String s2Sensor1 = "";
 String s2Sensor2 = "";
