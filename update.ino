@@ -11,9 +11,6 @@ void ExecuteUpdate(bool isPost, bool beta)
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(client, url);
 
-  if (isPost)
-    gRequest->send(200, sdefTextHtml, sdefOK);
-
   switch (ret)
   {
   case HTTP_UPDATE_FAILED:
@@ -33,6 +30,10 @@ void ExecuteUpdate(bool isPost, bool beta)
     if (isPost)
       gRequest->send(200, sdefTextHtml, "HTTP_UPDATE_OK");
     break;
+
+  default:
+    if (isPost)
+      gRequest->send(200, sdefTextHtml, sdefOK);
   }
   //}
   BeepBuzzer();

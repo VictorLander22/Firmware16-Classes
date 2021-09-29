@@ -1,9 +1,7 @@
 void api()
 {
-  String vPassApi, action, apiPort, apiSource, valueApi, typeApi;
+  String vPassApi, action, apiPort, apiSource, valueApi, typeApi, ret = "-1";
   bool isPost = false;
-  int8_t ret = -1;
-
   if (!newMqttMsg)
   {
     isPost = true;
@@ -41,7 +39,6 @@ void api()
       irData = MqttArg(msgMqtt, "c1");
     }
   }
-
   if (AlowApi == true && vPassApi == ApiPass)
   {
     if (action == "q") //consulta
@@ -49,8 +46,9 @@ void api()
       //todas portas
       if (apiPort == "a")
       {
-        String sDados1 = "";
-        String sDados2 = "";
+        String sDados1 = ""; //(char *)malloc(64);
+        String sDados2 = ""; //(char *)malloc(64);
+
         if (apiSource == "o") // saidas
         {
           sDados1 = String(chip1.read8(), BIN);
@@ -63,6 +61,7 @@ void api()
         }
         else
         {
+          //sDados1 = '00000000';
           sDados1 = "00000000";
           sDados2 = "00000000";
         }
@@ -73,7 +72,6 @@ void api()
         {
           sDados1 = '0' + sDados1;
         }
-
         while (sDados2.length() < 8)
         {
           sDados2 = '0' + sDados2;
@@ -103,8 +101,7 @@ void api()
           }
         }
 
-        if (isPost)
-          gRequest->send(200, sdefTextHtml, sDados2 + sDados1);
+        ret = (String)sDados2 + (String)sDados1;
       }
       else
       {
@@ -112,30 +109,22 @@ void api()
         {
           if (LePorta(apiPort.toInt() - 1) == HIGH)
           {
-            ret = 1;
-            // if (isPost)
-            //   gRequest->send(200, sdefTextHtml, "1");
+            ret = "1";
           }
           else
           {
-            ret = 0;
-            // if (isPost)
-            //   gRequest->send(200, sdefTextHtml, "0");
+            ret = "0";
           }
         }
         else
         {
           if (LeSensor(apiPort.toInt() - 1) == HIGH)
           {
-            ret = 1;
-            // if (isPost)
-            //   gRequest->send(200, sdefTextHtml, "1");
+            ret = "1";
           }
           else
           {
-            ret = 0;
-            // if (isPost)
-            //   gRequest->send(200, sdefTextHtml, "0");
+            ret = "0";
           }
         }
       }
@@ -153,7 +142,7 @@ void api()
               chip1.write8(255);
               chip2.write8(255);
               SaveOutputs();
-              ret = 1;
+              ret = "1";
             }
           }
           else if (valueApi == "1")
@@ -163,7 +152,7 @@ void api()
               chip1.write8(0);
               chip2.write8(0);
               SaveOutputs();
-              ret = 1;
+              ret = "1";
             }
             else if (typeApi == "p")
             {
@@ -175,7 +164,7 @@ void api()
                 g_pulsoHabilita[pulsoApiCount] = true;
               }
               SaveOutputs();
-              ret = 1;
+              ret = "1";
             }
           }
         }
@@ -189,12 +178,12 @@ void api()
             if (valueApi == "0") // desliga
             {
               LigaDesliga(apiPort.toInt() - 1, LOW, "", 0);
-              ret = 1;
+              ret = "1";
             }
             else if (valueApi == "1") // Liga
             {
               LigaDesliga(apiPort.toInt() - 1, HIGH, "", 0);
-              ret = 1;
+              ret = "1";
             }
           }
           else if (typeApi == "p") // pulsado
@@ -202,12 +191,12 @@ void api()
             if (valueApi == "0") // desliga
             {
               LigaDesliga(apiPort.toInt() - 1, LOW, "", 1);
-              ret = 1;
+              ret = "1";
             }
             else if (valueApi == "1") // Liga
             {
               LigaDesliga(apiPort.toInt() - 1, HIGH, "", 1);
-              ret = 1;
+              ret = "1";
             }
           }
         }
@@ -216,15 +205,11 @@ void api()
     else if (action == "i") // Infravermelho
     {
       irEnSend = true;
-      ret = 1;
-      // if (isPost)
-      //   gRequest->send(200, sdefTextHtml, "1");
+      ret = "1";
     }
     else if (action == "c") // Cenas
     {
-      // if (isPost)
-      //   gRequest->send(200, sdefTextHtml, "1");
-      ret = 1;
+      ret = "1";
       slogln("Numero da cena: " + valueApi);
       triggerCena(valueApi);
     }
@@ -245,17 +230,13 @@ void api()
           }
         }
       }
-      ret = 1;
-      // if (isPost)
-      //   gRequest->send(200, sdefTextHtml, "1");
+      ret = "1";
     }
     else if (action == "update") // executaupdate
     {
-      //executeupdateBeta(false);
+
       ExecuteUpdate(false, true);
-      ret = 1;
-      // if (isPost)
-      //   gRequest->send(200, sdefTextHtml, "1");
+      ret = "1";
     }
     else if (action == "bkp") // executaupdate
     {
@@ -265,7 +246,7 @@ void api()
         AsyncRestoreEsp(false);
       else if (typeApi == "f")
         AsyncFormatEsp(false);
-      ret = 1;
+      ret = "1";
     }
   }
 

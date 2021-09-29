@@ -1,9 +1,10 @@
 
-#define Placa_Version "2.42"
+#define Placa_Version "2.43"
 #define espMemory 52696
 #define ntpServer "pool.ntp.org"
 #define numDNSquery 5
 #define pulseTime 600
+//#define model8
 //#define DEBUG_ON
 
 const String sdefOK = "ok";
@@ -17,15 +18,15 @@ const String sdefTextHtml = "text/html";
 #define slogln(x)
 #endif
 
-#include <user_interface.h>
-#include <Arduino.h>
+//#include <user_interface.h>
+//#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
 //#include <LittleFS.h>
 #include <ESPAsyncUDP.h>
-#include <pgmspace.h>
+//#include <pgmspace.h>
 #include <Wire.h>
 #include <RtcDateTime.h>
 #include <PCF8583.h>
@@ -72,7 +73,7 @@ unsigned long millisIREnabled;
 unsigned long millisSendUDP;
 unsigned long millisFreeMemory;
 
-File UploadFile;
+//File UploadFile;
 
 bool TipoMemoria = true;
 String vListaWifi = "";
@@ -95,10 +96,17 @@ String vSenhaAP = "12345678";
 
 //Congiguração chips I2C
 PCF8574 chip1(0x21, &Wire);
-PCF8574 chip2(0x22, &Wire);
 PCF8574 chip3(0x25, &Wire);
 PCF8574 sensor1(0x23, &Wire);
+#ifdef model8
+#include "src\KPPCFClass.h"
+KPPCF chip2;
+KPPCF sensor2;
+#else
+PCF8574 chip2(0x22, &Wire);
 PCF8574 sensor2(0x24, &Wire);
+#endif
+
 PCF8583 Rtc(0xA0);
 KPPCF8583Class memRtc(0xA0);
 SSD1306Wire display(0x3c, -1, -1, GEOMETRY_128_64, I2C_ONE, 100000); //, D1, D2);

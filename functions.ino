@@ -253,7 +253,7 @@ void scanI2c()
     hasDisplay = true;
     DisplaySetup();
     slogln(F("Display OK"));
-    UpdateDisplay("Display Present");
+    //UpdateDisplay("Display Present");
   }
   else
   {
@@ -266,45 +266,45 @@ void scanI2c()
   if (Wire.endTransmission() == 0)
     devices++;
   else
-    UpdateDisplay(F("21 Fail"));
-  delay(waitDelay);
+    //UpdateDisplay(F("21 Fail"));
+    delay(waitDelay);
   //Testar Out2
   Wire.beginTransmission(0x22);
   if (Wire.endTransmission() == 0)
     devices++;
   else
-    UpdateDisplay(F("22 Fail"));
-  delay(waitDelay);
+    //UpdateDisplay(F("22 Fail"));
+    delay(waitDelay);
   //Testar In1
   Wire.beginTransmission(0x23);
   if (Wire.endTransmission() == 0)
     devices++;
   else
-    UpdateDisplay(F("23 Fail"));
-  delay(waitDelay);
+    //UpdateDisplay(F("23 Fail"));
+    delay(waitDelay);
   //Testar In2
   Wire.beginTransmission(0x24);
   if (Wire.endTransmission() == 0)
     devices++;
   else
-    UpdateDisplay(F("24 Fail"));
-  delay(waitDelay);
+    //UpdateDisplay(F("24 Fail"));
+    delay(waitDelay);
   //Testar chip3
   Wire.beginTransmission(0x25);
   if (Wire.endTransmission() == 0)
     devices++;
   else
-    UpdateDisplay(F("25 Fail"));
-  delay(waitDelay);
+    //UpdateDisplay(F("25 Fail"));
+    delay(waitDelay);
   //Testar RTC
   Wire.beginTransmission(0x50);
   if (Wire.endTransmission() == 0)
     devices++;
   else
-    UpdateDisplay(F("50 Fail"));
-  delay(waitDelay);
+    //UpdateDisplay(F("50 Fail"));
+    delay(waitDelay);
 
-  (devices == 6) ? UpdateDisplay(F("Devices OK..")) : UpdateDisplay(F("Devices Fail.."));
+  //(devices == 6) ? UpdateDisplay(F("Devices OK..")) : UpdateDisplay(F("Devices Fail.."));
 }
 
 void FreeMemory(String functionName)

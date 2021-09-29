@@ -2,10 +2,10 @@ void ConfigurarWebServer(void)
 {
   //server.on("/", handleHtmlConfig);
   server.onNotFound(ExecuteFunction);
-  server.on(
-      "/fupload", HTTP_POST, [](AsyncWebServerRequest *request)
-      { request->send(200); },
-      onUpload);
+  // server.on(
+  //     "/fupload", HTTP_POST, [](AsyncWebServerRequest *request)
+  //     { request->send(200); },
+  //     onUpload);
   server.begin();
   //slogln(F("HTTP server started"));
 }
@@ -14,6 +14,7 @@ void ExecuteFunction(AsyncWebServerRequest *request)
 {
   gRequest = request;
   asyncExecuteFunction = true;
+  //request->send(200, sdefTextHtml, "OK");
 }
 
 void AsyncFunctions()
@@ -44,8 +45,8 @@ void AsyncFunctions()
       FileDownload();
     else if (functionName == F("/filedelete"))
       FileDelete();
-    else if (functionName == F("/fileupload"))
-      FileUpload();
+    // else if (functionName == F("/fileupload"))
+    //   FileUpload();
     else if (functionName == F("/api"))
       api();
     else if (functionName == F("/chipmac"))
@@ -146,8 +147,8 @@ void AsyncFunctions()
       valida();
     else if (functionName == F("/reset"))
       wifireset();
-    else if (functionName == F("/about"))
-      about();
+    // else if (functionName == F("/about"))
+    //   about();
     else if (functionName == F("/gravasensor"))
       AsyncSaveInputConfig();
     else if (functionName == F("/reiniciar"))
@@ -179,10 +180,10 @@ void handleHtmlConfig()
   gRequest->send(200, sdefTextHtml, defaultPage.c_str());
 }
 
-void about()
-{
-  gRequest->send_P(200, sdefTextHtml, webAbout);
-}
+// void about()
+// {
+//   gRequest->send_P(200, sdefTextHtml, webAbout);
+// }
 
 void reiniciar()
 {
@@ -258,8 +259,9 @@ void FileDownload()
   {
     slogln(F("Arquivo não existe"));
     gRequest->send(200, sdefTextHtml, F("File not found"));
-    SPIFFS.end();
   }
+
+  SPIFFS.end();
 }
 
 void FileDelete()
@@ -287,39 +289,40 @@ void FileDelete()
   SPIFFS.end();
 }
 
-void FileUpload()
-{
-  gRequest->send_P(200, sdefTextHtml, webUpload);
-}
+// void FileUpload()
+// {
+//   gRequest->send_P(200, sdefTextHtml, webUpload);
+// }
 
-void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
-{
-  if (!index)
-  {
-    slogln("UploadStart: " + filename);
-    if (!filename.startsWith("/"))
-      filename = "/" + filename;
-    SPIFFS.begin();
-    SPIFFS.remove(filename);                 // Remove a previous version, otherwise data is appended the file again
-    UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
-  }
+// void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
+// {
+//   File UploadFile;
+//   if (!index)
+//   {
+//     slogln("UploadStart: " + filename);
+//     if (!filename.startsWith("/"))
+//       filename = "/" + filename;
+//     SPIFFS.begin();
+//     SPIFFS.remove(filename);                 // Remove a previous version, otherwise data is appended the file again
+//     UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
+//   }
 
-  //Serial.printf("%s", (const char *)data);
-  UploadFile.write(data, len); // Write the received bytes to the file
+//   //Serial.printf("%s", (const char *)data);
+//   UploadFile.write(data, len); // Write the received bytes to the file
 
-  if (final)
-  {
-    slogln("UploadEnd: " + filename + "(" + index + len + ")");
-    if (UploadFile) // If the file was successfully created
-    {
-      UploadFile.close(); // Close the file again
-      request->send(200, sdefTextHtml, F("<h3>File was successfully uploaded</h3>"));
-      //  SPIFFS.end();
-    }
+//   if (final)
+//   {
+//     slogln("UploadEnd: " + filename + "(" + index + len + ")");
+//     if (UploadFile) // If the file was successfully created
+//     {
+//       UploadFile.close(); // Close the file again
+//       request->send(200, sdefTextHtml, F("<h3>File was successfully uploaded</h3>"));
+//       //  SPIFFS.end();
+//     }
 
-    SPIFFS.end();
-  }
-}
+//     SPIFFS.end();
+//   }
+// }
 
 void AsyncBackupEsp(bool isPost)
 {

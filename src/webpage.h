@@ -26,9 +26,9 @@ function fValue(v, t) { document.getElementById(v).value = t; }
 </script></body></html>
 )===";
 
-const char webAbout[] PROGMEM = R"===(
-<head><meta charset="UTF-8" name="viewport" content="width=device-width"><title>Keepin</title></head>
-<html><body><h1>Desenvolvido por:</h1><p>Leonardo Aquino</p><p>Julio Valadares</p><p>Vinícus Aquino</p><p>Breno Aquino</p><p><a href=\"http://www.keepin.com.br\">www.keepin.com.br</a></p></body></html>)===";
+// const char webAbout[] PROGMEM = R"===(
+// <head><meta charset="UTF-8" name="viewport" content="width=device-width"><title>Keepin</title></head>
+// <html><body><h1>Desenvolvido por:</h1><p>Leonardo Aquino</p><p>Julio Valadares</p><p>Vinícus Aquino</p><p>Breno Aquino</p><p><a href=\"http://www.keepin.com.br\">www.keepin.com.br</a></p></body></html>)===";
 
 const char webRestart[] PROGMEM = R"===(
 <h1>Redirecting to #newip# after <span id="countdown">15</span> seconds</h1>
@@ -36,6 +36,6 @@ const char webRestart[] PROGMEM = R"===(
 if (seconds < 0) {window.location = "http://#newip#";} else {document.getElementById("countdown").innerHTML = seconds;window.setTimeout("countdown()", 1000);}}countdown();</script>
 )===";
 
-const char webUpload[] PROGMEM = R"===(
-<h3>Select File to Upload</h3><FORM action='/fupload' method='post' enctype='multipart/form-data'><input type="file" id="upload" name="upload"><br><br><button class='buttons' style='width:10%' type='submit'>Upload File</button><br><br><a href='/'>[Back]</a><br><br>
-)===";
+// const char webUpload[] PROGMEM = R"===(
+// <h3>Select File to Upload</h3><FORM action='/fupload' method='post' enctype='multipart/form-data'><input type="file" id="upload" name="upload"><br><br><button class='buttons' style='width:10%' type='submit'>Upload File</button><br><br><a href='/'>[Back]</a><br><br>
+// )===";

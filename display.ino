@@ -7,27 +7,36 @@ void DisplaySetup()
   }
 }
 
-void UpdateDisplay(String text)
-{
-  if (hasDisplay)
-  {
-    display.clear();
-    delay(50);
-    for (uint8_t i = 2; i < 5; i++)
-    {
-      dispText[i - 1] = dispText[i];
-      display.drawString(1, dispY[i - 1], dispText[i - 1]);
-    }
-    display.drawString(1, dispY[0], dispText[0]);
-    dispText[4] = text;
-    display.drawString(1, dispY[4], dispText[4]);
-    display.display();
-  }
-}
+// void UpdateDisplay(String text)
+// {
+//   if (hasDisplay)
+//   {
+//     display.clear();
+//     delay(50);
+//     for (uint8_t i = 2; i < 5; i++)
+//     {
+//       dispText[i - 1] = dispText[i];
+//       display.drawString(1, dispY[i - 1], dispText[i - 1]);
+//     }
+//     display.drawString(1, dispY[0], dispText[0]);
+//     dispText[4] = text;
+//     display.drawString(1, dispY[4], dispText[4]);
+//     display.display();
+//   }
+// }
 
 void LoopDisplay()
 {
   if ((millisAtual > (lastDisplay + 2000)) && hasDisplay)
+  {
+    clock2s = !clock2s;
+    DisplayPrint("");
+  }
+}
+
+void DisplayPrint(String msg)
+{
+  if (hasDisplay)
   {
     String sIn = "";
     String sIn2 = "";
@@ -38,7 +47,6 @@ void LoopDisplay()
 
     lastDisplay = millisAtual;
     display.clear();
-    clock2s = !clock2s;
 
     for (uint8_t bit = 0; bit <= 7; bit++)
     {
@@ -60,11 +68,15 @@ void LoopDisplay()
     //display.drawString(50, dispY[2], "Sinal");
     //display.drawProgressBar(80, 31, 47, 8, rssi);
     display.drawString(1, dispY[3], "IP: " + IpDispositivo.toString());
-    display.drawString(121, dispY[3], String(clock2s));
+    //display.drawString(121, dispY[3], String(clock2s));
+    display.drawString(90, dispY[3], String(ESP.getFreeHeap()) + " " + String(clock2s));
+
     if (enReadIR)
       display.drawString(1, dispY[4], F("Waiting for IR Code..."));
-    else
+    else if (msg == "")
       display.drawString(1, dispY[4], "I:" + ((hasInternet) ? srOK : srF) + " M:" + ((hasMQTT) ? srOK : srF) + " C:" + ((hasCloud) ? srOK : srF));
+    else
+      display.drawString(1, dispY[4], msg);
 
     display.display();
   }
