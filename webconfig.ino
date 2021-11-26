@@ -1,20 +1,20 @@
 void ConfigurarWebServer(void)
 {
-  //server.on("/", handleHtmlConfig);
+  // server.on("/", handleHtmlConfig);
   server.onNotFound(ExecuteFunction);
   // server.on(
   //     "/fupload", HTTP_POST, [](AsyncWebServerRequest *request)
   //     { request->send(200); },
   //     onUpload);
   server.begin();
-  //slogln(F("HTTP server started"));
+  // slogln(F("HTTP server started"));
 }
 
 void ExecuteFunction(AsyncWebServerRequest *request)
 {
   gRequest = request;
   asyncExecuteFunction = true;
-  //request->send(200, sdefTextHtml, "OK");
+  // request->send(200, sdefTextHtml, "OK");
 }
 
 void AsyncFunctions()
@@ -45,8 +45,8 @@ void AsyncFunctions()
       FileDownload();
     else if (functionName == F("/filedelete"))
       FileDelete();
-    // else if (functionName == F("/fileupload"))
-    //   FileUpload();
+    else if (functionName == F("/fileupload"))
+      FileUpload();
     else if (functionName == F("/api"))
       api();
     else if (functionName == F("/chipmac"))
@@ -84,13 +84,13 @@ void AsyncFunctions()
       AsyncBackupEsp(false);
       ExecuteUpdate(true, false);
     }
-    //executeupdate();
+    // executeupdate();
     else if (functionName == F("/executeupdatebeta"))
     {
       AsyncBackupEsp(false);
       ExecuteUpdate(true, true);
     }
-    //executeupdateBeta(true);
+    // executeupdateBeta(true);
     else if (functionName == F("/versao"))
       versao();
     // else if (functionName == F("/link"))
@@ -103,10 +103,10 @@ void AsyncFunctions()
       buscaNotificar();
     else if (functionName == F("/gravanot"))
       gravanot();
-    //sms else if (functionName == F("/gravasms"))
-    //sms gravasms();
-    //sms else if (functionName == F("/consultasms"))
-    //sms consultasms();
+    // sms else if (functionName == F("/gravasms"))
+    // sms gravasms();
+    // sms else if (functionName == F("/consultasms"))
+    // sms consultasms();
     else if (functionName == F("/wifi"))
       valorwifi();
     else if (functionName == F("/listawifi"))
@@ -205,7 +205,7 @@ void gravawifi()
   const char *wifiIP = gRequest->arg("txtip").c_str();
   const char *wifiMSK = gRequest->arg("txtmascara").c_str();
   const char *wifiGTW = gRequest->arg("txtgateway").c_str();
-  bitWrite(DevSet.mode, 2, 0); //wifiPadrao
+  bitWrite(DevSet.mode, 2, 0); // wifiPadrao
   DevSet.wifiSSID = wifiSSID;
   DevSet.wifiPwd = wifiPWD;
   DevSet.wifiIP = DevSet.ipStringToNumber(wifiIP);
@@ -219,9 +219,9 @@ void gravawifi()
 void FileDir()
 {
   String arquivos = "";
-  SPIFFS.begin();
+  LittleFS.begin();
   slogln(F("Consultar sistema de arquivos"));
-  Dir dir = SPIFFS.openDir("/");
+  Dir dir = LittleFS.openDir("/");
   while (dir.next())
   {
     arquivos += dir.fileName() + " ";
@@ -233,7 +233,7 @@ void FileDir()
     }
     arquivos += "<BR>";
   }
-  SPIFFS.end();
+  LittleFS.end();
 
   arquivos += "*";
 
@@ -247,13 +247,13 @@ void FileDownload()
   if (!path.startsWith("/"))
     path = "/" + path;
 
-  SPIFFS.begin();
-  bool fileExist = SPIFFS.exists(path);
+  LittleFS.begin();
+  bool fileExist = LittleFS.exists(path);
 
   if (fileExist)
   {
     slogln(F("Arquivo existe"));
-    gRequest->send(SPIFFS, path, String(), true);
+    gRequest->send(LittleFS, path, String(), true);
   }
   else
   {
@@ -261,7 +261,7 @@ void FileDownload()
     gRequest->send(200, sdefTextHtml, F("File not found"));
   }
 
-  SPIFFS.end();
+  LittleFS.end();
 }
 
 void FileDelete()
@@ -271,11 +271,11 @@ void FileDelete()
   if (!path.startsWith("/"))
     path = "/" + path;
 
-  SPIFFS.begin();
-  if (SPIFFS.exists(path))
+  LittleFS.begin();
+  if (LittleFS.exists(path))
   {
     slogln(F("Arquivo existe"));
-    if (SPIFFS.remove(path))
+    if (LittleFS.remove(path))
     {
       slogln(F("Removido"));
       gRequest->send(200, sdefTextHtml, F("Removido"));
@@ -286,43 +286,43 @@ void FileDelete()
     slogln(F("Arquivo não existe"));
     gRequest->send(200, sdefTextHtml, F("File not found"));
   }
-  SPIFFS.end();
+  LittleFS.end();
 }
 
-// void FileUpload()
-// {
-//   gRequest->send_P(200, sdefTextHtml, webUpload);
-// }
+void FileUpload()
+{
+  gRequest->send_P(200, sdefTextHtml, webUpload);
+}
 
-// void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
-// {
-//   File UploadFile;
-//   if (!index)
-//   {
-//     slogln("UploadStart: " + filename);
-//     if (!filename.startsWith("/"))
-//       filename = "/" + filename;
-//     SPIFFS.begin();
-//     SPIFFS.remove(filename);                 // Remove a previous version, otherwise data is appended the file again
-//     UploadFile = SPIFFS.open(filename, "a"); // Open the file for writing in SPIFFS (create it, if doesn't exist)
-//   }
+void onUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
+{
+  File UploadFile;
+  if (!index)
+  {
+    slogln("UploadStart: " + filename);
+    if (!filename.startsWith("/"))
+      filename = "/" + filename;
+    LittleFS.begin();
+    LittleFS.remove(filename);                 // Remove a previous version, otherwise data is appended the file again
+    UploadFile = LittleFS.open(filename, "a"); // Open the file for writing in LittleFS (create it, if doesn't exist)
+  }
 
-//   //Serial.printf("%s", (const char *)data);
-//   UploadFile.write(data, len); // Write the received bytes to the file
+  // Serial.printf("%s", (const char *)data);
+  UploadFile.write(data, len); // Write the received bytes to the file
 
-//   if (final)
-//   {
-//     slogln("UploadEnd: " + filename + "(" + index + len + ")");
-//     if (UploadFile) // If the file was successfully created
-//     {
-//       UploadFile.close(); // Close the file again
-//       request->send(200, sdefTextHtml, F("<h3>File was successfully uploaded</h3>"));
-//       //  SPIFFS.end();
-//     }
+  if (final)
+  {
+    slogln("UploadEnd: " + filename + "(" + index + len + ")");
+    if (UploadFile) // If the file was successfully created
+    {
+      UploadFile.close(); // Close the file again
+      request->send(200, sdefTextHtml, F("<h3>File was successfully uploaded</h3>"));
+      //  LittleFS.end();
+    }
 
-//     SPIFFS.end();
-//   }
-// }
+    LittleFS.end();
+  }
+}
 
 void AsyncBackupEsp(bool isPost)
 {
@@ -333,21 +333,21 @@ void AsyncBackupEsp(bool isPost)
   String uri = cloudServer + "postfile";
   String path = "";
 
-  SPIFFS.begin();
-  Dir dir = SPIFFS.openDir("/");
+  LittleFS.begin();
+  Dir dir = LittleFS.openDir("/");
   while (dir.next())
   {
     path = dir.fileName();
     if (!path.startsWith("/"))
       path = "/" + path;
-    bool fileExist = SPIFFS.exists(path);
+    bool fileExist = LittleFS.exists(path);
     if (fileExist)
     {
       slogln(path);
       http.setTimeout(2000);
       http.setReuse(true);
 
-      File f = SPIFFS.open(path, "r");
+      File f = LittleFS.open(path, "r");
       http.begin(cliente, uri);
       http.addHeader("Content-Type", "application/octet-stream");
       http.addHeader("dirname", gchipId);
@@ -368,7 +368,7 @@ void AsyncBackupEsp(bool isPost)
       f.close();
     }
   }
-  SPIFFS.end();
+  LittleFS.end();
   BeepBuzzer();
 }
 
@@ -378,7 +378,7 @@ void AsyncRestoreEsp(bool isPost)
     gRequest->send(200, sdefTextHtml, F("Restore!"));
   HTTPClient http;
   WiFiClient client;
-  //String payload;
+  // String payload;
 
   http.setTimeout(2000);
   http.setReuse(true);
@@ -391,8 +391,10 @@ void AsyncRestoreEsp(bool isPost)
 
   slogln(payload);
   slogln(payload.length());
+  DynamicJsonDocument dirlist(payload.length() * 3);
 
-  DynamicJsonDocument dirlist(payload.length() * 2);
+  // DynamicJsonDocument dirlist(payload.length() * 16 * 5 + payload.length() * 16 + 2 * 16);
+
   auto error = deserializeJson(dirlist, payload);
 
   if (error)
@@ -403,12 +405,12 @@ void AsyncRestoreEsp(bool isPost)
   }
   else
   {
-    SPIFFS.begin();
+    LittleFS.begin();
     for (int i = 0; i < dirlist["file"].size(); i++)
     {
-      //Serial.println("AsyncRestoreEsp 1");
+      // Serial.println("AsyncRestoreEsp 1");
       const String file = dirlist["file"][i];
-      //Serial.println("/" + dir);
+      // Serial.println("/" + dir);
 
       http.setTimeout(2000);
       http.setReuse(true);
@@ -422,9 +424,9 @@ void AsyncRestoreEsp(bool isPost)
       if (httpCode == 200)
       {
         slogln("/" + file);
-        payload = http.getString(); //Get the request response payload
+        payload = http.getString(); // Get the request response payload
         slogln(payload);
-        File f = SPIFFS.open("/" + file, "w");
+        File f = LittleFS.open("/" + file, "w");
         if (f)
         {
           f.print(payload);
@@ -433,7 +435,7 @@ void AsyncRestoreEsp(bool isPost)
       }
       http.end();
     }
-    SPIFFS.end();
+    LittleFS.end();
     delay(50);
   }
   BeepBuzzer();
@@ -444,8 +446,8 @@ void AsyncFormatEsp(bool isPost)
   if (isPost)
     gRequest->send(200, sdefTextHtml, F("Formating!"));
   slogln(F("Formating"));
-  //LittleFS.format();
-  SPIFFS.format();
+  // LittleFS.format();
+  LittleFS.format();
   slogln(F("Format SUCCESS!"));
   BeepBuzzer();
 }

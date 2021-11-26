@@ -77,34 +77,34 @@ void sendCloud(bool onlyNotify = false)
   dataPost = dataPost + "\"macid\": \"" + gchipId + "\"";
   dataPost = dataPost + " }";
 
-  //slogln(dataPost);
+  // slogln(dataPost);
 
   WiFiClient cliente;
   HTTPClient http;
   String payload;
   http.setTimeout(600);
   http.setReuse(true);
-  //http.useHTTP10(false);
-  //  http.begin(cliente, "192.168.1.147", 443, "/api/keepin", true);
+  // http.useHTTP10(false);
+  //   http.begin(cliente, "192.168.1.147", 443, "/api/keepin", true);
   http.begin(cliente, "http://cloud.keepin.com.br/api/keepin");
   //  http.begin(cliente, "http://192.168.1.147/api/keepin");
   http.addHeader("Content-Type", "application/json");
   http.setUserAgent("KEEPIN/" + String(Placa_Version) + " Automacao");
-  //http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
+  // http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
   int httpCode = http.POST(dataPost);
-  //http.writeToStream(&Serial);
+  // http.writeToStream(&Serial);
   payload = http.getString();
   http.end();
 
   hasCloud = (httpCode == 200);
 
-  //slogln(dataPost);
-  //slogln("Cloud code: " + String(httpCode));
+  // slogln(dataPost);
+  // slogln("Cloud code: " + String(httpCode));
   if (httpCode == 200 && payload != "[]" && !onlyNotify)
   {
     //(!DEBUG_ON) ?:   Serial.println("Payload: " + payload);
-    //DynamicJsonBuffer jsonBuffer(payload.length());
-    //JsonArray &array1 = jsonBuffer.parseArray(payload);
+    // DynamicJsonBuffer jsonBuffer(payload.length());
+    // JsonArray &array1 = jsonBuffer.parseArray(payload);
     slogln(payload);
     slogln(payload.length());
     DynamicJsonDocument array1(payload.length() * 2);
@@ -124,11 +124,11 @@ void sendCloud(bool onlyNotify = false)
 
       for (int indice = 0; indice < array1.size(); indice++)
       {
-        //JsonObject& root = jsonBuffer.parseObject(array1[indice]);
+        // JsonObject& root = jsonBuffer.parseObject(array1[indice]);
 
-        //if(!root.success()) {
+        // if(!root.success()) {
         //(!DEBUG_ON) ?:   Serial.println("parseObject() failed");
-        //}
+        // }
         //{"tipo":"1","acao":"1","modelo":null,"qtdeBit":null,"porta":3},
         const String tipoJson = array1[indice]["tipo"];
         const String acaoJson = array1[indice]["acao"];
@@ -189,13 +189,13 @@ void sendCloud(bool onlyNotify = false)
         }
         else if (tipoJson == "6") // notificacao
         {
-          SPIFFS.begin();
-          File f = SPIFFS.open("/notific.txt", "w");
+          LittleFS.begin();
+          File f = LittleFS.open("/notific.txt", "w");
 
           f.println(acaoJson);
 
           f.close();
-          SPIFFS.end();
+          LittleFS.end();
 
           if (acaoJson == "true")
           {
@@ -216,7 +216,7 @@ void sendCloud(bool onlyNotify = false)
       http.begin(cliente, "http://cloud.keepin.com.br/api/keepinactions/delete");
       http.addHeader("Content-Type", "application/json");
       http.setUserAgent("KEEPIN/" + String(Placa_Version) + " Automacao");
-      //http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
+      // http.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
       httpCode = http.POST(payload);
       if (httpCode == 200)
       {

@@ -2,8 +2,8 @@ void ExecuteUpdate(bool isPost, bool beta)
 {
   WiFiClient client;
 
-  String url = (beta) ? "http://keepin.com.br/firmware/16/beta/firmware16.ino.bin" : "http://keepin.com.br/firmware/16/firmware16.ino.bin";
-  //http://keepin.com.br/firmware/16/autoresidencial.ino.bin
+  String url = (beta) ? "http://keepin.com.br/firmware/16/beta/firmware16.ino.bin" : "http://keepin.com.br/firmware/16/firmware16.bin";
+  // http://keepin.com.br/firmware/16/autoresidencial.ino.bin
 
   slog("Iniciando Update em: ");
 
@@ -68,34 +68,34 @@ void versao()
 
 //   dados = "Data: " + String(time) + " - " + dados;
 
-//   SPIFFS.begin();
-//   File f = SPIFFS.open("/log.txt", "a");
+//   LittleFS.begin();
+//   File f = LittleFS.open("/log.txt", "a");
 //   f.println(dados);
 //   f.close();
-//   SPIFFS.end();
+//   LittleFS.end();
 // }
 
 // void readlog()
 // {
-//   SPIFFS.begin();
+//   LittleFS.begin();
 //   String comando = gRequest->arg("c");
 
 //   if (comando == "delete")
 //   {
-//     if (SPIFFS.remove("/log.txt"))
+//     if (LittleFS.remove("/log.txt"))
 //     {
-//       SPIFFS.end();
+//       LittleFS.end();
 //       gRequest->send(200, sdefTextHtml, "remove");
 //     }
 //     else
 //     {
-//       SPIFFS.end();
+//       LittleFS.end();
 //       gRequest->send(200, sdefTextHtml, "falha");
 //     }
 //   }
 //   else if (comando == "read")
 //   {
-//     File f = SPIFFS.open("/log.txt", "r");
+//     File f = LittleFS.open("/log.txt", "r");
 //     String dados = "<html><body><p><h3><strong>Log</strong></p></h3><br><ul>";
 //     while (f.available())
 //     {
@@ -103,7 +103,7 @@ void versao()
 //     }
 //     dados = dados + "</ul></body></html>";
 //     f.close();
-//     SPIFFS.end();
+//     LittleFS.end();
 //     gRequest->send(200, sdefTextHtml, dados);
 //   }
 //   else

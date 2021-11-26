@@ -1,95 +1,95 @@
 
 void convertConfig()
-{ //converter configurações antigas para salvar na EEPROM
+{ // converter configurações antigas para salvar na EEPROM
   File f;
   String ret;
 
-  SPIFFS.begin();
+  LittleFS.begin();
 
-  if (SPIFFS.exists("/index.html"))
+  if (LittleFS.exists("/index.html"))
   {
 
-    if (SPIFFS.exists("/wifipadrao.txt"))
+    if (LittleFS.exists("/wifipadrao.txt"))
     {
-      f = SPIFFS.open("/wifipadrao.txt", "r");
+      f = LittleFS.open("/wifipadrao.txt", "r");
       ret = f.readStringUntil('|');
       bool wifipadrao = (ret == "0") ? false : true;
       f.close();
-      SPIFFS.remove("/wifipadrao.txt");
-      bitWrite(DevSet.mode, 2, wifipadrao); //b0:AllowApi, b1:UsaCloud, b2:wifiPadrao, b3:TipoMemoria ..
+      LittleFS.remove("/wifipadrao.txt");
+      bitWrite(DevSet.mode, 2, wifipadrao); // b0:AllowApi, b1:UsaCloud, b2:wifiPadrao, b3:TipoMemoria ..
     }
 
-    if (SPIFFS.exists("/ssid.txt"))
+    if (LittleFS.exists("/ssid.txt"))
     {
-      f = SPIFFS.open("/ssid.txt", "r");
+      f = LittleFS.open("/ssid.txt", "r");
       ret = f.readStringUntil('|');
       f.close();
-      SPIFFS.remove("/ssid.txt");
-      DevSet.wifiSSID = ret; //Limit 35 bytes;
+      LittleFS.remove("/ssid.txt");
+      DevSet.wifiSSID = ret; // Limit 35 bytes;
     }
 
-    if (SPIFFS.exists("/pass.txt"))
+    if (LittleFS.exists("/pass.txt"))
     {
-      f = SPIFFS.open("/pass.txt", "r");
+      f = LittleFS.open("/pass.txt", "r");
       ret = f.readStringUntil('|');
       f.close();
-      SPIFFS.remove("/pass.txt");
-      DevSet.wifiPwd = ret; //Limit 35 bytes;
+      LittleFS.remove("/pass.txt");
+      DevSet.wifiPwd = ret; // Limit 35 bytes;
     }
 
-    if (SPIFFS.exists("/ip.txt"))
+    if (LittleFS.exists("/ip.txt"))
     {
-      f = SPIFFS.open("/ip.txt", "r");
+      f = LittleFS.open("/ip.txt", "r");
       ret = f.readStringUntil('|');
       ret.replace(",", ".");
       f.close();
-      SPIFFS.remove("/ip.txt");
+      LittleFS.remove("/ip.txt");
       DevSet.wifiIP = DevSet.ipStringToNumber(ret.c_str());
     }
 
-    if (SPIFFS.exists("/mask.txt"))
+    if (LittleFS.exists("/mask.txt"))
     {
-      f = SPIFFS.open("/mask.txt", "r");
+      f = LittleFS.open("/mask.txt", "r");
       ret = f.readStringUntil('|');
       ret.replace(",", ".");
       f.close();
-      SPIFFS.remove("/mask.txt");
+      LittleFS.remove("/mask.txt");
       DevSet.wifiMSK = DevSet.ipStringToNumber(ret.c_str());
     }
 
-    if (SPIFFS.exists("/gateway.txt"))
+    if (LittleFS.exists("/gateway.txt"))
     {
-      f = SPIFFS.open("/gateway.txt", "r");
+      f = LittleFS.open("/gateway.txt", "r");
       ret = f.readStringUntil('|');
       ret.replace(",", ".");
       f.close();
-      SPIFFS.remove("/gateway.txt");
+      LittleFS.remove("/gateway.txt");
       DevSet.wifiGTW = DevSet.ipStringToNumber(ret.c_str());
     }
 
-    if (SPIFFS.exists("/httpuser.txt"))
+    if (LittleFS.exists("/httpuser.txt"))
     {
-      SPIFFS.remove("/httpuser.txt");
+      LittleFS.remove("/httpuser.txt");
       DevSet.httpUser = "keepin";
     }
 
-    if (SPIFFS.exists("/httppass.txt"))
+    if (LittleFS.exists("/httppass.txt"))
     {
-      SPIFFS.remove("/httppass.txt");
+      LittleFS.remove("/httppass.txt");
       DevSet.httpPwd = "keepin";
     }
 
-    if (SPIFFS.exists("/apipass.txt"))
-      SPIFFS.remove("/apipass.txt");
+    if (LittleFS.exists("/apipass.txt"))
+      LittleFS.remove("/apipass.txt");
 
-    if (SPIFFS.exists("/alowapi.txt"))
-      SPIFFS.remove("/alowapi.txt");
+    if (LittleFS.exists("/alowapi.txt"))
+      LittleFS.remove("/alowapi.txt");
 
-    if (SPIFFS.exists("/senhaap.txt"))
-      SPIFFS.remove("/senhaap.txt");
+    if (LittleFS.exists("/senhaap.txt"))
+      LittleFS.remove("/senhaap.txt");
 
-    if (SPIFFS.exists("/cloud.txt"))
-      SPIFFS.remove("/cloud.txt");
+    if (LittleFS.exists("/cloud.txt"))
+      LittleFS.remove("/cloud.txt");
 
     DevSet.setMode();
     DevSet.setWifi();
@@ -97,10 +97,10 @@ void convertConfig()
     DevSet.setApiPwd();
     DevSet.setHttpSeg();
 
-    SPIFFS.remove("/index.html");
+    LittleFS.remove("/index.html");
   }
 
-  SPIFFS.end();
+  LittleFS.end();
 }
 
 void wifireset()
@@ -136,8 +136,8 @@ void IniciaRTC()
     Rtc.set_time();
 
     memRtc.setBateryMemStatus();
-    //memRtc.outValues = 255 << 8 | 255;
-    //memRtc.setOutputs();
+    // memRtc.outValues = 255 << 8 | 255;
+    // memRtc.setOutputs();
     SaveOutputs();
 
     slogln(F("Set Date"));
@@ -175,13 +175,13 @@ void fmodelo()
 String lerMemoria()
 {
   String texto = "";
-  SPIFFS.begin();
-  File f = SPIFFS.open("/memoria.txt", "r");
+  LittleFS.begin();
+  File f = LittleFS.open("/memoria.txt", "r");
   if (f)
     texto = f.readStringUntil('|');
 
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
   return texto;
 }
 

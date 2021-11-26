@@ -14,12 +14,12 @@
 //   uint8_t qtdDados = 5;
 //   uint8_t numObj = 1;
 
-//   SPIFFS.begin();
-//   File f = SPIFFS.open("/ce_10.cfg", "r");
+//   LittleFS.begin();
+//   File f = LittleFS.open("/ce_10.cfg", "r");
 //   uint16_t numDados = f.readStringUntil('\n').toInt() + 1;
 //   String str = f.readStringUntil('\0');
 //   f.close();
-//   SPIFFS.end();
+//   LittleFS.end();
 
 //   DynamicJsonDocument doc(numDados * JSON_ARRAY_SIZE(qtdDados) + JSON_ARRAY_SIZE(numDados) + JSON_OBJECT_SIZE(numObj));
 //   deserializeJson(doc, str);

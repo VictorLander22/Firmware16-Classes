@@ -4,17 +4,17 @@
 //   String Texto = "";
 //   String Numeros = "";
 
-//   SPIFFS.begin();
-//   File fTexto = SPIFFS.open("/sms_text.txt", "r");
+//   LittleFS.begin();
+//   File fTexto = LittleFS.open("/sms_text.txt", "r");
 //   if (fTexto)
 //     Texto = fTexto.readStringUntil('*');
 //   fTexto.close();
 
-//   fTexto = SPIFFS.open("/sms_numb.txt", "r");
+//   fTexto = LittleFS.open("/sms_numb.txt", "r");
 //   if (fTexto)
 //     Numeros = fTexto.readStringUntil('*');
 //   fTexto.close();
-//   SPIFFS.end();
+//   LittleFS.end();
 
 //   if (Numeros.length() > 8 && Texto.length() > 4)
 //   {
@@ -61,25 +61,25 @@
 
 //   if (Senha == "kdi9e")
 //   {
-//     SPIFFS.begin();
-//     File fTexto = SPIFFS.open("/sms_text.txt", "w");
+//     LittleFS.begin();
+//     File fTexto = LittleFS.open("/sms_text.txt", "w");
 //     // if (!fTexto)
 //     // {
-//     //   SPIFFS.format();
-//     //   File fTexto = SPIFFS.open("/sms_text.txt", "w");
+//     //   LittleFS.format();
+//     //   File fTexto = LittleFS.open("/sms_text.txt", "w");
 //     // }
 //     fTexto.println(Texto);
 //     fTexto.close();
 
-//     fTexto = SPIFFS.open("/sms_numb.txt", "w");
+//     fTexto = LittleFS.open("/sms_numb.txt", "w");
 //     // if (!fTexto)
 //     // {
-//     //   SPIFFS.format();
-//     //   fTexto = SPIFFS.open("/sms_numb.txt", "w");
+//     //   LittleFS.format();
+//     //   fTexto = LittleFS.open("/sms_numb.txt", "w");
 //     // }
 //     fTexto.println(Numeros);
 //     fTexto.close();
-//     SPIFFS.end();
+//     LittleFS.end();
 
 //     slogln(Numeros);
 //   }
@@ -87,25 +87,25 @@
 
 // void gravasms2(String Texto, String Numeros)
 // {
-//   SPIFFS.begin();
-//   File fTexto = SPIFFS.open("/sms_text.txt", "w");
+//   LittleFS.begin();
+//   File fTexto = LittleFS.open("/sms_text.txt", "w");
 //   // if (!fTexto)
 //   // {
-//   //   SPIFFS.format();
-//   //   File fTexto = SPIFFS.open("/sms_text.txt", "w");
+//   //   LittleFS.format();
+//   //   File fTexto = LittleFS.open("/sms_text.txt", "w");
 //   // }
 //   fTexto.println(Texto);
 //   fTexto.close();
 
-//   fTexto = SPIFFS.open("/sms_numb.txt", "w");
+//   fTexto = LittleFS.open("/sms_numb.txt", "w");
 //   // if (!fTexto)
 //   // {
-//   //   SPIFFS.format();
-//   //   fTexto = SPIFFS.open("/sms_numb.txt", "w");
+//   //   LittleFS.format();
+//   //   fTexto = LittleFS.open("/sms_numb.txt", "w");
 //   // }
 //   fTexto.println(Numeros);
 //   fTexto.close();
-//   SPIFFS.end();
+//   LittleFS.end();
 // }
 
 // void consultasms()
@@ -116,19 +116,19 @@
 
 //   if (Senha == "kdi9e")
 //   {
-//     SPIFFS.begin();
+//     LittleFS.begin();
 
-//     File fTexto = SPIFFS.open("/sms_text.txt", "r");
+//     File fTexto = LittleFS.open("/sms_text.txt", "r");
 //     if (fTexto)
 //       Texto = fTexto.readStringUntil('*');
 //     fTexto.close();
 
-//     fTexto = SPIFFS.open("/sms_numb.txt", "r");
+//     fTexto = LittleFS.open("/sms_numb.txt", "r");
 //     if (fTexto)
 //       Numeros = fTexto.readStringUntil('*');
 //     fTexto.close();
 
-//     SPIFFS.end();
+//     LittleFS.end();
 
 //     if (Texto == "" && Numeros == "")
 //     {
@@ -145,19 +145,19 @@
 //   String Texto = "";
 //   String Numeros = "";
 
-//   SPIFFS.begin();
+//   LittleFS.begin();
 
-//   File fTexto = SPIFFS.open("/sms_text.txt", "r");
+//   File fTexto = LittleFS.open("/sms_text.txt", "r");
 //   if (fTexto)
 //     Texto = fTexto.readStringUntil('*');
 //   fTexto.close();
 
-//   fTexto = SPIFFS.open("/sms_numb.txt", "r");
+//   fTexto = LittleFS.open("/sms_numb.txt", "r");
 //   if (fTexto)
 //     Numeros = fTexto.readStringUntil('*');
 //   fTexto.close();
 
-//   SPIFFS.end();
+//   LittleFS.end();
 
 //   return Texto + "|" + Numeros;
 // }

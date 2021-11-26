@@ -8,26 +8,26 @@ void gravacena()
     String vTipo = gRequest->arg("t");
     String Valor = gRequest->arg("v");
     String IdCena = gRequest->arg("id");
-    //slogln(Valor);
-    SPIFFS.begin();
+    // slogln(Valor);
+    LittleFS.begin();
 
     if (ia == "1") // inicio de arquivo
     {
-      File rFile = SPIFFS.open("/ce_" + IdCena + ".cfg", "w");
+      File rFile = LittleFS.open("/ce_" + IdCena + ".cfg", "w");
       rFile.println(Valor);
       rFile.close();
     }
     else
     {
-      File rFile = SPIFFS.open("/ce_" + IdCena + ".cfg", "a");
-      rFile.print(Valor); //se colocar println esta dando erro ao acrescentar o caractere final
+      File rFile = LittleFS.open("/ce_" + IdCena + ".cfg", "a");
+      rFile.print(Valor); // se colocar println esta dando erro ao acrescentar o caractere final
       rFile.print('\n');
       rFile.close();
     }
 
-    SPIFFS.end();
-    //lerArquivo(IdCena);
-    //delay(50);
+    LittleFS.end();
+    // lerArquivo(IdCena);
+    // delay(50);
     gRequest->send(200, sdefTextHtml, sdefOK);
   }
   else
@@ -38,11 +38,11 @@ void gravacena()
 
 void lerArquivo(String id)
 {
-  SPIFFS.begin();
+  LittleFS.begin();
 
-  File rFile = SPIFFS.open("/ce_" + id + ".cfg", "r");
+  File rFile = LittleFS.open("/ce_" + id + ".cfg", "r");
   String linhas;
-  //linhas = rFile.readString();
+  // linhas = rFile.readString();
 
   //(!DEBUG_ON) ?:   Serial.println("linhas das cenas");
   int qtde = 0;
@@ -54,7 +54,7 @@ void lerArquivo(String id)
   }
 
   rFile.close();
-  SPIFFS.end();
+  LittleFS.end();
   //(!DEBUG_ON) ?:   Serial.print("qtde de linhas: ");
   slogln(qtde);
 }
@@ -73,10 +73,10 @@ void checkCena()
   {
     String Comando;
     static File rFile;
-    SPIFFS.begin();
+    LittleFS.begin();
     if (cenaPAtual == 0) // abre spiff e mantem aberto
     {
-      rFile = SPIFFS.open("/ce_" + ArqCena + ".cfg", "r");
+      rFile = LittleFS.open("/ce_" + ArqCena + ".cfg", "r");
 
       while (rFile.available())
       {
@@ -93,7 +93,7 @@ void checkCena()
       slogln("Cena atual: " + String(cenaPAtual));
 
       rFile.close();
-      SPIFFS.end();
+      LittleFS.end();
     }
     if (cenaPAtual >= 1)
     {
@@ -112,10 +112,10 @@ void checkCena()
       else
       {
         slogln("Cena atual: " + String(cenaPAtual));
-        //rFile.seek(0, SeekSet);
+        // rFile.seek(0, SeekSet);
 
-        SPIFFS.begin();
-        rFile = SPIFFS.open("/ce_" + ArqCena + ".cfg", "r");
+        LittleFS.begin();
+        rFile = LittleFS.open("/ce_" + ArqCena + ".cfg", "r");
         int conCena = 1;
 
         while (rFile.available())
@@ -138,8 +138,8 @@ void checkCena()
             executaCena(Comando);
             //(!DEBUG_ON) ?:   Serial.println("Cena atual apos execução" + String(cenaPAtual));
             rFile.close();
-            SPIFFS.end();
-            //conCena = 0;
+            LittleFS.end();
+            // conCena = 0;
           }
           conCena++;
 
@@ -152,7 +152,7 @@ void checkCena()
     if (cenaPAtual > cenaPTotal)
     {
       rFile.close();
-      SPIFFS.end();
+      LittleFS.end();
       slogln("\nfim da cena\n");
       cenaExecucao = false;
       cenaPAtual = 0;
@@ -249,7 +249,7 @@ void executaCena(String comandoCena)
         if (cmdTipo == "2")
         {
           cmdPorta += comandoCena[i];
-          //cmdModelo += comandoCena[i];
+          // cmdModelo += comandoCena[i];
         }
       }
       else if (posicaoi == 8)
@@ -289,7 +289,7 @@ void executaCena(String comandoCena)
       }
       cenaPAtual++;
     }
-    else //upd
+    else // upd
     {
       char replyPacekt[255] = "";
       if (cmdAcao == "0") // desliga
@@ -325,20 +325,20 @@ void executaCena(String comandoCena)
 
         sendIRCMD(cmdAcao, cmdAcao2, cmdQtde.toInt(), cmdPorta.toInt(), cmdModelo.toInt(), cmdQtde.toInt());
         lastCnTime = millisAtual;
-        //lastCnTime = millis();
+        // lastCnTime = millis();
         //(!DEBUG_ON) ?:   Serial.println("terminou IR");
-        // (!DEBUG_ON) ?:   Serial.println("Cena apos ir " + String(cenaPAtual));
+        //  (!DEBUG_ON) ?:   Serial.println("Cena apos ir " + String(cenaPAtual));
         cenaPAtual++;
         // (!DEBUG_ON) ?:   Serial.println("Cena apos ir + 1 " + String(cenaPAtual));
-        //delay(300);
+        // delay(300);
       }
       else if (millisAtual - lastCnTime < 0)
       {
         lastCnTime = millisAtual;
-        //lastCnTime = millis();
+        // lastCnTime = millis();
       }
     }
-    else //upd - não implentado UPD para IR
+    else // upd - não implentado UPD para IR
     {
     }
   }

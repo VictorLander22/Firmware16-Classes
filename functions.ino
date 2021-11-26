@@ -15,8 +15,8 @@ void ResetSaidasPulsadas()
         {
           chip2.write(iPorta - 8, HIGH);
         }
-        //memRtc.outValues = chip2.read8() << 8 | chip1.read8();
-        //memRtc.setOutputs();
+        // memRtc.outValues = chip2.read8() << 8 | chip1.read8();
+        // memRtc.setOutputs();
         SaveOutputs();
       }
     }
@@ -25,7 +25,7 @@ void ResetSaidasPulsadas()
 
 void LoopResetFabrica()
 {
-  //int ValorbuttonState = digitalRead(buttonState);
+  // int ValorbuttonState = digitalRead(buttonState);
 
   if (digitalRead(buttonState))
   {
@@ -43,7 +43,7 @@ void LoopLedStatus()
     checkOutput();
 
     chip3.write(LedWifiConnected, LOW);
-    //if (!vConfigWIFI)
+    // if (!vConfigWIFI)
     //{
     millisWifiLed = millisAtual + 2000;
     //}
@@ -118,7 +118,7 @@ void NtpSetDateTimeNTP()
   NTPClient timeClient(ntpUDP, ntpServer);
 
   //(!DEBUG_ON) ?: Serial.print("Config UTC: ");
-  //slogln(DevSet.utcConfig);
+  // slogln(DevSet.utcConfig);
   const unsigned long initTimeSet = 946684800;
   int8_t tryGetTime = 0;
 
@@ -127,7 +127,7 @@ void NtpSetDateTimeNTP()
   while ((timeClient.getEpochTime() < initTimeSet) && (tryGetTime < 5))
   {
     timeClient.update();
-    //slogln(timeClient.getEpochTime());
+    // slogln(timeClient.getEpochTime());
     tryGetTime++;
     delay(100);
   }
@@ -152,14 +152,14 @@ void NtpSetDateTimeNTP()
   Serial.printf("Data e hora ajustados para: %02d/%02d/%04d %02d:%02d:%02d\n", Rtc.day, Rtc.month, Rtc.year, Rtc.hour, Rtc.minute, Rtc.second);
 }
 
-void CheckSPIFFS()
-{ //Check if SPIFFS is ok, otherwise format it
-  SPIFFS.begin();
-  File f = SPIFFS.open("/checkSPIFFS.txt", "w+");
+void CheckLittleFS()
+{ // Check if LittleFS is ok, otherwise format it
+  LittleFS.begin();
+  File f = LittleFS.open("/checkLittleFS.txt", "w+");
   if (!f)
   {
     //(!DEBUG_ON) ?: Serial.print(F("Creating file system... "));
-    if (SPIFFS.format())
+    if (LittleFS.format())
       slogln(sdefOK);
     else
       slogln(F("Fail"));
@@ -168,7 +168,7 @@ void CheckSPIFFS()
     slogln(F("Filesystem is OK"));
 
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
 }
 
 int32_t getRSSI()
@@ -211,7 +211,7 @@ void AsyncIRSend()
 {
   if (irEnSend)
   {
-    //sendirCMDAPI(irNumBits, irModel, irData, "", irPort);
+    // sendirCMDAPI(irNumBits, irModel, irData, "", irPort);
     sendIRCMD(irData, "", irNumBits, irPort, irModel, irNumBits);
     irEnSend = false;
     irData = "";
@@ -221,8 +221,8 @@ void AsyncIRSend()
 
 void checkOutput()
 {
-  //slogln(lastOutputs);
-  //slogln(memRtc.outValues);
+  // slogln(lastOutputs);
+  // slogln(memRtc.outValues);
   if (lastOutputs != memRtc.outValues)
   {
     sendCloud(true);
@@ -261,42 +261,42 @@ void scanI2c()
     slogln(F("Display Fails"));
   }
   delay(waitDelay);
-  //Testar Out1
+  // Testar Out1
   Wire.beginTransmission(0x21);
   if (Wire.endTransmission() == 0)
     devices++;
   else
     UpdateDisplay(F("21 Fail"));
   delay(waitDelay);
-  //Testar Out2
+  // Testar Out2
   Wire.beginTransmission(0x22);
   if (Wire.endTransmission() == 0)
     devices++;
   else
     UpdateDisplay(F("22 Fail"));
   delay(waitDelay);
-  //Testar In1
+  // Testar In1
   Wire.beginTransmission(0x23);
   if (Wire.endTransmission() == 0)
     devices++;
   else
     UpdateDisplay(F("23 Fail"));
   delay(waitDelay);
-  //Testar In2
+  // Testar In2
   Wire.beginTransmission(0x24);
   if (Wire.endTransmission() == 0)
     devices++;
   else
     UpdateDisplay(F("24 Fail"));
   delay(waitDelay);
-  //Testar chip3
+  // Testar chip3
   Wire.beginTransmission(0x25);
   if (Wire.endTransmission() == 0)
     devices++;
   else
     UpdateDisplay(F("25 Fail"));
   delay(waitDelay);
-  //Testar RTC
+  // Testar RTC
   Wire.beginTransmission(0x50);
   if (Wire.endTransmission() == 0)
     devices++;
@@ -319,12 +319,12 @@ void FreeMemory(String functionName)
 String ReadFirstLine(String fName)
 {
   String str = "";
-  SPIFFS.begin();
-  File f = SPIFFS.open(fName, "r");
+  LittleFS.begin();
+  File f = LittleFS.open(fName, "r");
   if (f)
     str = f.readStringUntil('\n');
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
   return str;
 }
 

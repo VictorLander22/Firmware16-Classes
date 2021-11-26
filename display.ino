@@ -68,8 +68,8 @@ void DisplayPrint(String msg)
     //display.drawString(50, dispY[2], "Sinal");
     //display.drawProgressBar(80, 31, 47, 8, rssi);
     display.drawString(1, dispY[3], "IP: " + IpDispositivo.toString());
-    //display.drawString(121, dispY[3], String(clock2s));
-    display.drawString(90, dispY[3], String(ESP.getFreeHeap()) + " " + String(clock2s));
+    display.drawString(121, dispY[3], clock2s ? "R" : " ");
+    display.drawString(100, dispY[3], (String)(85 + getRSSI()));
 
     if (enReadIR)
       display.drawString(1, dispY[4], F("Waiting for IR Code..."));

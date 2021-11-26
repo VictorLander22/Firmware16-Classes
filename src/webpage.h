@@ -36,6 +36,6 @@ const char webRestart[] PROGMEM = R"===(
 if (seconds < 0) {window.location = "http://#newip#";} else {document.getElementById("countdown").innerHTML = seconds;window.setTimeout("countdown()", 1000);}}countdown();</script>
 )===";
 
-// const char webUpload[] PROGMEM = R"===(
-// <h3>Select File to Upload</h3><FORM action='/fupload' method='post' enctype='multipart/form-data'><input type="file" id="upload" name="upload"><br><br><button class='buttons' style='width:10%' type='submit'>Upload File</button><br><br><a href='/'>[Back]</a><br><br>
-// )===";
+const char webUpload[] PROGMEM = R"===(
+<h3>Select File to Upload</h3><FORM action='/fupload' method='post' enctype='multipart/form-data'><input type="file" id="upload" name="upload"><br><br><button class='buttons' style='width:10%' type='submit'>Upload File</button><br><br><a href='/'>[Back]</a><br><br>
+)===";

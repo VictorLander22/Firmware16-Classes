@@ -1,5 +1,5 @@
 
-#define Placa_Version "2.43"
+#define Placa_Version "2.44"
 #define espMemory 52696
 #define ntpServer "pool.ntp.org"
 #define numDNSquery 5
@@ -21,8 +21,8 @@ const String sdefTextHtml = "text/html";
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESPAsyncWebServer.h>
-#include <FS.h>
-//#include <LittleFS.h>
+//#include <FS.h>
+#include <LittleFS.h>
 #include <ESPAsyncUDP.h>
 #include <Wire.h>
 #include <RtcDateTime.h>
@@ -34,7 +34,7 @@ const String sdefTextHtml = "text/html";
 #include <IRsend.h>
 #include <IRutils.h>
 #include <RCSwitch.h>
-//FIREBASE
+// FIREBASE
 //#include <FirebaseArduino.h>
 //#include <FirebaseCloudMessaging.h>
 #include <ArduinoJson.h>
@@ -70,7 +70,7 @@ unsigned long millisIREnabled;
 unsigned long millisSendUDP;
 unsigned long millisFreeMemory;
 
-//File UploadFile;
+// File UploadFile;
 
 bool TipoMemoria = true;
 String vListaWifi = "";
@@ -91,7 +91,7 @@ IPAddress DNS1(8, 8, 8, 8);
 IPAddress DNS2(4, 4, 4, 4);
 String vSenhaAP = "12345678";
 
-//Congiguração chips I2C
+// Congiguração chips I2C
 PCF8574 chip1(0x21, &Wire);
 PCF8574 chip3(0x25, &Wire);
 PCF8574 sensor1(0x23, &Wire);
@@ -127,15 +127,15 @@ boolean enviarsms = false;
 boolean estadoAtual[16] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW};
 boolean ultimoEstado[16] = {LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW};
 
-//debounce
+// debounce
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 150;
 unsigned long rfDelay = 1000;
 
 boolean DeviceAlterado = true;
-//String Devices[20];
+// String Devices[20];
 
-//RtcDateTime ultimaconsulta;
+// RtcDateTime ultimaconsulta;
 int Minuto = -1;
 unsigned long millisLedRunning = 0;
 bool ConsultouCloud = false;
@@ -149,15 +149,15 @@ unsigned int response_i = 0;
 
 const int LedWifiConnected = 4;
 const int LedWifiHI = 5;
-const int LedWifiLOW = 6; //14;
+const int LedWifiLOW = 6; // 14;
 const int LedRunning = 7;
 
-//UDP
-//WiFiUDP Udp;
+// UDP
+// WiFiUDP Udp;
 AsyncUDP udp;
 uint16_t localUdpPort = 4210;
-//char incomingPacket[255];
-//FIM UDP
+// char incomingPacket[255];
+// FIM UDP
 
 IPAddress local_IP(192, 168, 4, 1);
 IPAddress gateway(192, 168, 4, 1);
@@ -174,7 +174,7 @@ int contadorled = 0;
 unsigned long starTime = 0;
 unsigned long interval = 2000;
 
-//Dispositivos
+// Dispositivos
 String Senha = "kdi9e";
 
 //   IR   //
@@ -210,7 +210,7 @@ RCSwitch mySwitch = RCSwitch();
 RCSwitch sSendRF = RCSwitch();
 int rxRF = 12;
 int txRF = 15;
-//boolean enReadRF = false;
+// boolean enReadRF = false;
 int tamanhoRF = -1;
 int gProtocoloRF = 1;
 String codigoRF = "-1";
@@ -230,7 +230,7 @@ int Buzzer = 3;
 // ----         Dados Firebase      ----- //
 //#define FIREBASE_HOST "automacao-6cdcc.firebaseio.com"
 //#define FIREBASE_AUTH "m7WSNbRjPJck9YhLE9AdaFKRtnG6U7ENDiUA3IUF"
-//int vchipId = 0;
+// int vchipId = 0;
 // ----         Fim Dados Firebase      ----- //
 
 // --- API ///
@@ -252,13 +252,13 @@ bool newMqttMsg;
 bool hasMQTT = false;
 bool hasCloud = false;
 
-//EEPROM//
+// EEPROM//
 KPDeviceSettingClass DevSet;
 byte *ipTemp;
 byte ipConfigTemp[4];
 
-//RTC//
-//PING//
+// RTC//
+// PING//
 bool hasInternet = false;
 bool enableConnection = true;
 uint8_t numberPingResponse;
@@ -267,7 +267,7 @@ AsyncPing Pings[numDNSquery];
 IPAddress addrs[numDNSquery];
 const char *ips[] = {"8.8.8.8", "8.8.4.4", "208.67.222.222", "google.com", "keepin.com.br"};
 
-//uint8_t shouldUpdate;
+// uint8_t shouldUpdate;
 bool executeCloud;
 uint16_t lastOutputs;
 

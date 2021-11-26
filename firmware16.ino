@@ -8,7 +8,7 @@ void setup(void)
   slogln();
   Wire.begin(5, 4);
   Wire.setClock(100000L);
-  delay(300); //Wait for start I2C transmission
+  delay(300); // Wait for start I2C transmission
   slogln();
 
   scanI2c();
@@ -23,7 +23,7 @@ void setup(void)
   UpdateDisplay(F("Ports Initialized"));
   IniciaRTC();
   UpdateDisplay(F("RTC Initialized"));
-  CheckSPIFFS();
+  CheckLittleFS();
 
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
@@ -32,9 +32,9 @@ void setup(void)
   slog(F("Motivo Reset: "));
   slogln(Razao);
   UpdateDisplay("Rst Mod: " + Razao);
-  delay(1000); //esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
+  delay(1000); // esperar para começar.. permite o monitoramento logo no inicio ao desligar a placa
 
-  //Set chip id
+  // Set chip id
   vchipId = (String)ESP.getChipId();
   gchipId = WiFi.macAddress();
   gchipId.replace(":", "");
@@ -44,7 +44,7 @@ void setup(void)
   slogln("Keepin ID: " + vchipId);
   slogln("Keepin MAC: " + gchipId);
 
-  //Reset mode
+  // Reset mode
   if (digitalRead(buttonState))
   {
     slogln();
@@ -67,7 +67,7 @@ void setup(void)
   DevSet.showVariables();
 
   UpdateDisplay(F("Configuring IR"));
-  configIR(); //consome 2K da ram 20000
+  configIR(); // consome 2K da ram 20000
 
   UpdateDisplay(F("Loading user configuration"));
   lerConfiguracao();
@@ -81,18 +81,18 @@ void setup(void)
   UpdateDisplay(F("Configuring RF"));
   configRF();
 
-  //verificar se ha necessidade de colocar um delay aqui para evitar dos relés abrirem e fecharem muito rapido
+  // verificar se ha necessidade de colocar um delay aqui para evitar dos relés abrirem e fecharem muito rapido
   UpdateDisplay(F("Loading Outputs"));
   Memoria();
 
   UpdateDisplay(F("Getting Networks"));
   scanningWifi = WiFi.scanNetworks();
 
-  //WiFi.scanNetworksAsync(prinScanResult);
+  // WiFi.scanNetworksAsync(prinScanResult);
   slogln("Available Wifi: " + (String)scanningWifi);
 
   UpdateDisplay(F("Connecting Wifi"));
-  conectar(); //consome 1K da ram 19000
+  conectar(); // consome 1K da ram 19000
   // Wait for connection
   slog(F("Connected... IP address: "));
   slogln(WiFi.localIP());
@@ -108,7 +108,7 @@ void setup(void)
   LoadInputs();
 
   UpdateDisplay(F("Configuring MQTT"));
-  MqttSetup(); //consome 2k da ram 11400
+  MqttSetup(); // consome 2k da ram 11400
   UpdateDisplay(F("Configuring UDP"));
   SetupUDP();
 
@@ -132,7 +132,7 @@ void loop(void)
 
   millisAtual = millis();
 
-  if (chipAtivo == true) //Verifica se o chip é reconhecido com um chip válido
+  if (chipAtivo == true) // Verifica se o chip é reconhecido com um chip válido
   {
     LoopLedStatus();
 
@@ -148,8 +148,8 @@ void loop(void)
 
     LoopResetFabrica();
 
-    //mesh_node.acceptRequest();
-    //leituraUDP();
+    // mesh_node.acceptRequest();
+    // leituraUDP();
 
     trataSensores();
 

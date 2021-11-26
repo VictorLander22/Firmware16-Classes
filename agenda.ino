@@ -398,12 +398,12 @@ void atualizahora()
 // String consultaAgenda()
 // {
 //   String texto = "";
-//   SPIFFS.begin();
-//   File f = SPIFFS.open("/agenda.txt", "r");
+//   LittleFS.begin();
+//   File f = LittleFS.open("/agenda.txt", "r");
 //   if (f)
 //     texto = f.readStringUntil('\n');
 //   f.close();
-//   SPIFFS.end();
+//   LittleFS.end();
 //   //slogln(tex)
 //   return texto;
 // }
@@ -411,13 +411,13 @@ void atualizahora()
 void consultaAgenda2()
 {
   // String texto = "";
-  // SPIFFS.begin();
-  // File f = SPIFFS.open("/agenda.txt", "r");
+  // LittleFS.begin();
+  // File f = LittleFS.open("/agenda.txt", "r");
   // if (f)
   //   texto = f.readStringUntil('*');
   // texto += '*';
   // f.close();
-  // SPIFFS.end();
+  // LittleFS.end();
 
   //ConvertAgenda(texto);
   ConvertAgenda(ReadFirstLine("/agenda.txt"));
@@ -485,11 +485,11 @@ void gravaragenda()
 
   if (Senha == "kdi9e")
   {
-    SPIFFS.begin();
-    File f = SPIFFS.open("/agenda.txt", "w");
+    LittleFS.begin();
+    File f = LittleFS.open("/agenda.txt", "w");
     f.println(Valor);
     f.close();
-    SPIFFS.end();
+    LittleFS.end();
   }
   gRequest->send(200, sdefTextHtml, sdefOK);
 }
@@ -519,11 +519,11 @@ void gravaragenda2()
 {
   String texto = "";
   texto += Agendas[0] + Agendas[1] + Agendas[2] + Agendas[3] + Agendas[4] + Agendas[5] + '*';
-  SPIFFS.begin();
-  File f = SPIFFS.open("/agenda.txt", "w");
+  LittleFS.begin();
+  File f = LittleFS.open("/agenda.txt", "w");
   f.println(texto);
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
 }
 
 #define countof(a) (sizeof(a) / sizeof(a[0]))

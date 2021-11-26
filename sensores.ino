@@ -1,13 +1,13 @@
 void trataDevice(String (&Devices)[20])
 {
   String valorDevice = "";
-  SPIFFS.begin();
-  File f = SPIFFS.open("/device.txt", "r");
+  LittleFS.begin();
+  File f = LittleFS.open("/device.txt", "r");
   if (f)
     String valorDevice = f.readStringUntil('*');
   //(!DEBUG_ON) ?:   Serial.println(valorDevice);
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
 
   int posicaoDevice = 0;
 
@@ -62,7 +62,7 @@ void trataSensores()
     }
   }
 
-  //Envio de UDP em broadcast
+  // Envio de UDP em broadcast
   if (millisAtual >= millisSendUDP)
   {
     limparUltimoDisparo++;
@@ -86,7 +86,7 @@ void trataSensores()
   for (int numSensor = 0; numSensor <= 15; numSensor++)
   {
     //  if (SensorAlterado && (sSensor1 != "11111111" || sSensor2 != "11111111"))
-    //if (verificaSensores(numSensor, valorSensores[numSensor]))
+    // if (verificaSensores(numSensor, valorSensores[numSensor]))
     if (verificaSensores(numSensor, (String)bitRead(inValues, numSensor)))
     {
       if (msgDisparada[numSensor] == false)
@@ -95,19 +95,19 @@ void trataSensores()
         {
           if (nomeSensores[numSensor + 1] != "")
           {
-            //sendDataToFirebase("Sensor " + nomeSensores[numSensor + 1] + " disparado", numSensor, "1");
+            // sendDataToFirebase("Sensor " + nomeSensores[numSensor + 1] + " disparado", numSensor, "1");
           }
           else
           {
-            //sendDataToFirebase("Sensor " + String(numSensor + 1) + " disparado", numSensor, "1");
+            // sendDataToFirebase("Sensor " + String(numSensor + 1) + " disparado", numSensor, "1");
           }
         }
         else if (enviarsms)
         {
-          //sms sendSMS(numSensor);
+          // sms sendSMS(numSensor);
           slogln("Sensor disparado");
         }
-        ultimoDisparo = sInValues; //sSensor1 + sSensor2;
+        ultimoDisparo = sInValues; // sSensor1 + sSensor2;
         limparUltimoDisparo = 0;
         slogln("Sensor disparado");
       }
@@ -232,7 +232,7 @@ void AsyncSaveInputConfig()
   String Senha = gRequest->arg("k");
   String gv = gRequest->arg("gn");
   String nomeS = gRequest->arg("nome");
-  //String idAgenda = gRequest->arg("ag");
+  // String idAgenda = gRequest->arg("ag");
 
   String nomesG = "";
 
@@ -248,22 +248,22 @@ void AsyncSaveInputConfig()
       nomesG += nomeSensores[id] + "|";
     }
     nomesG += "*";
-    SPIFFS.begin();
+    LittleFS.begin();
 
-    //Save input configs
-    File f = SPIFFS.open("/sensores.txt", "w");
+    // Save input configs
+    File f = LittleFS.open("/sensores.txt", "w");
     if (f)
       f.println(Valor);
     f.close();
-    //delay(300);
+    // delay(300);
 
-    //Save input names
-    f = SPIFFS.open("/nsensores.txt", "w");
+    // Save input names
+    f = LittleFS.open("/nsensores.txt", "w");
     if (f)
       f.println(nomesG);
     f.close();
 
-    SPIFFS.end();
+    LittleFS.end();
   }
   SensorAlterado = true;
   gRequest->send(200, sdefTextHtml, sdefOK);
@@ -273,11 +273,11 @@ void gravasensor2(String Valor)
 {
   SensorAlterado = true;
 
-  SPIFFS.begin();
-  File f = SPIFFS.open("/sensores.txt", "w");
+  LittleFS.begin();
+  File f = LittleFS.open("/sensores.txt", "w");
   f.println(Valor);
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
 }
 
 boolean verificaSensores(int nsensor, String vsAtual)
@@ -288,7 +288,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
     consultaSensor();
   }
 
-  //String texto = consultaAgenda(i);
+  // String texto = consultaAgenda(i);
   String texto = Sensores[nsensor];
   texto.trim();
 
@@ -309,7 +309,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
   static unsigned long inicioAcionado[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   static boolean vDisparadoSensor[16] = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
 
-  //separa dados nas variaveis
+  // separa dados nas variaveis
   for (uint8_t i2 = 0; i2 <= 100; i2++)
   {
     if (texto[i2] != '|' && i3 <= 11 && texto != "")
@@ -334,7 +334,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
         Msg += texto[i2];
       }
 
-      if (i3 == 5) //ip
+      if (i3 == 5) // ip
       {
         vIPDest += texto[i2];
       }
@@ -404,7 +404,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
     ValorAtuacao = "0";
   }
 
-  //varial com o status atual da prota
+  // varial com o status atual da prota
 
   if (vsAtual == "0")
   {
@@ -470,11 +470,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Inverte(PortaAparelho2.toInt() - 1);
           }
           ultimoEstado[nsensor] = estadoAtual[nsensor];
-          //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+          // LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
         }
         else
         {
-          //udp
+          // udp
           char replyPacekt[255] = "";
           String Texto = "";
           if (vTipo2 == "1")
@@ -518,11 +518,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
             Inverte(PortaAparelho.toInt() - 1);
           }
           ultimoEstado[nsensor] = estadoAtual[nsensor];
-          //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+          // LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
         }
         else
         {
-          //udp
+          // udp
           char replyPacekt[255] = "";
           String Texto = "";
           if (vTipo1 == "1")
@@ -578,11 +578,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
           Inverte(PortaAparelho2.toInt() - 1);
         }
         ultimoEstado[nsensor] = estadoAtual[nsensor];
-        //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+        // LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
       }
       else
       {
-        //udp
+        // udp
         char replyPacekt[255] = "";
         String Texto = "";
         if (vTipo2 == "1")
@@ -700,7 +700,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
           }
           else
           {
-            //udp
+            // udp
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
@@ -714,7 +714,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
           }
         }
       }
-      //valorRetorno = false;
+      // valorRetorno = false;
     }
     else if (Funcao == "6") // interruptor normal
     {
@@ -731,11 +731,11 @@ boolean verificaSensores(int nsensor, String vsAtual)
             lastDebounceTime = millisAtual;
             Inverte(PortaAparelho.toInt() - 1);
             ultimoEstado[nsensor] = estadoAtual[nsensor];
-            //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+            // LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
           }
           else
           {
-            //udp
+            // udp
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
@@ -756,7 +756,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
         {
           lastDebounceTime = millisAtual;
           Inverte(PortaAparelho.toInt() - 1);
-          //LigaDesliga(PortaAparelho.toInt()-1, LOW, "", 0);
+          // LigaDesliga(PortaAparelho.toInt()-1, LOW, "", 0);
           ultimoEstado[nsensor] = estadoAtual[nsensor];
         }
       }
@@ -783,7 +783,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
       //      }
       else if (Destino != IpDispositivo && ultimoEstado[Porta.toInt()] != estadoAtual[nsensor] && IpDispositivo != Comparacao)
       {
-        //udp
+        // udp
         char replyPacekt[255] = "";
         String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
         Texto.toCharArray(replyPacekt, 255);
@@ -827,13 +827,13 @@ boolean verificaSensores(int nsensor, String vsAtual)
           if (Destino == IpDispositivo || IpDispositivo == Comparacao)
           {
             lastDebounceTime = millisAtual;
-            //Inverte(PortaAparelho.toInt()-1);
+            // Inverte(PortaAparelho.toInt()-1);
             ultimoEstado[nsensor] = estadoAtual[nsensor];
             LigaDesliga(PortaAparelho.toInt() - 1, LOW, "", 0);
           }
           else
           {
-            //udp
+            // udp
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|I|";
             Texto.toCharArray(replyPacekt, 255);
@@ -852,7 +852,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
         if ((millisAtual - lastDebounceTime) > debounceDelay)
         {
           lastDebounceTime = millisAtual;
-          //Inverte(PortaAparelho.toInt()-1);
+          // Inverte(PortaAparelho.toInt()-1);
           LigaDesliga(PortaAparelho.toInt() - 1, HIGH, "", 0);
           ultimoEstado[nsensor] = estadoAtual[nsensor];
         }
@@ -889,7 +889,7 @@ boolean verificaSensores(int nsensor, String vsAtual)
     valorRetorno = false;
   }
   ultimoEstado[nsensor] = estadoAtual[nsensor];
-  //slogln(ultimoEstado[nsensor]);
+  // slogln(ultimoEstado[nsensor]);
   return valorRetorno;
 }
 
@@ -898,21 +898,21 @@ void consultaSensor()
 
   String texto = "";
   String nomeS = "";
-  SPIFFS.begin();
+  LittleFS.begin();
 
-  File f = SPIFFS.open("/sensores.txt", "r");
+  File f = LittleFS.open("/sensores.txt", "r");
   if (f)
     texto = f.readStringUntil('*');
   texto += '*';
   f.close();
   delay(300);
-  f = SPIFFS.open("/nsensores.txt", "r");
+  f = LittleFS.open("/nsensores.txt", "r");
   if (f)
     nomeS = f.readStringUntil('*');
   nomeS += '*';
   f.close();
 
-  SPIFFS.end();
+  LittleFS.end();
 
   int posicao = 0;
   int contador = 0;
@@ -977,12 +977,12 @@ String lerSensor()
 {
 
   String texto;
-  SPIFFS.begin();
-  File f = SPIFFS.open("/sensores.txt", "r");
+  LittleFS.begin();
+  File f = LittleFS.open("/sensores.txt", "r");
   if (f)
     texto = f.readStringUntil('*');
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
 
   return texto;
 }
@@ -1007,23 +1007,23 @@ void gravadevice()
 
   gRequest->send(200, sdefTextHtml, sdefOK);
   String Valor = gRequest->arg("d");
-  //String Senha = ;
+  // String Senha = ;
 
   if (gRequest->arg("k") == "kdi9e")
   {
-    SPIFFS.begin();
-    File f = SPIFFS.open("/device.txt", "w");
+    LittleFS.begin();
+    File f = LittleFS.open("/device.txt", "w");
 
     // if (!f)
     // {
-    //   SPIFFS.format();
-    //   File f = SPIFFS.open("/device.txt", "w");
+    //   LittleFS.format();
+    //   File f = LittleFS.open("/device.txt", "w");
     // }
 
     f.println(Valor);
 
     f.close();
-    SPIFFS.end();
+    LittleFS.end();
     DeviceAlterado = true;
     slogln("gravado device");
   }
@@ -1033,8 +1033,8 @@ void buscadevice()
 {
   if (gRequest->arg("k") == "kdi9e")
   {
-    SPIFFS.begin();
-    File f = SPIFFS.open("/device.txt", "r");
+    LittleFS.begin();
+    File f = LittleFS.open("/device.txt", "r");
     if (!f)
     {
       gRequest->send(200, sdefTextHtml, "");
@@ -1045,7 +1045,7 @@ void buscadevice()
       gRequest->send(200, sdefTextHtml, valorDevice);
     }
     f.close();
-    SPIFFS.end();
+    LittleFS.end();
   }
 }
 
@@ -1059,8 +1059,8 @@ void ultimodisp()
 
 void retornaNotificar()
 {
-  SPIFFS.begin();
-  File f = SPIFFS.open("/notific.txt", "r");
+  LittleFS.begin();
+  File f = LittleFS.open("/notific.txt", "r");
   if (f)
   {
     String valor = f.readStringUntil('*');
@@ -1071,7 +1071,7 @@ void retornaNotificar()
   }
 
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
 }
 
 void buscaNotificar()
@@ -1097,13 +1097,13 @@ void gravanot()
 
   if (Senha == "kdi9e")
   {
-    SPIFFS.begin();
-    File f = SPIFFS.open("/notific.txt", "w");
+    LittleFS.begin();
+    File f = LittleFS.open("/notific.txt", "w");
 
     f.println(Valor);
 
     f.close();
-    SPIFFS.end();
+    LittleFS.end();
     slogln("gravado notificacao");
 
     if (Valor == "true")
@@ -1120,19 +1120,19 @@ void gravanot()
 void gravanot2(String Valor)
 {
 
-  SPIFFS.begin();
-  File f = SPIFFS.open("/notific.txt", "w");
+  LittleFS.begin();
+  File f = LittleFS.open("/notific.txt", "w");
 
   // if (!f)
   // {
-  //   SPIFFS.format();
-  //   File f = SPIFFS.open("/notific.txt", "w");
+  //   LittleFS.format();
+  //   File f = LittleFS.open("/notific.txt", "w");
   // }
 
   f.println(Valor);
 
   f.close();
-  SPIFFS.end();
+  LittleFS.end();
   slogln("gravado notificacao");
 
   if (Valor == "true")

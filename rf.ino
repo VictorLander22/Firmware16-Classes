@@ -15,7 +15,7 @@ void getRF()
 
 void habRF()
 {
-  //enReadRF = true;
+  // enReadRF = true;
   gRequest->send(200, sdefTextHtml, sdefOK);
 }
 
@@ -25,25 +25,25 @@ void gravarf()
   gRequest->send(200, sdefTextHtml, sdefOK);
 
   SensorRFAlterado = true;
-  //String idAgenda = gRequest->arg("ag");
+  // String idAgenda = gRequest->arg("ag");
   String Valor = gRequest->arg("s");
   String Senha = gRequest->arg("k");
 
   slogln(Valor);
   if (Senha == "kdi9e")
   {
-    SPIFFS.begin();
-    File f = SPIFFS.open("/rf.txt", "w");
+    LittleFS.begin();
+    File f = LittleFS.open("/rf.txt", "w");
 
     // if (!f)
     // {
-    //   SPIFFS.format();
-    //   File f = SPIFFS.open("/rf.txt", "w");
+    //   LittleFS.format();
+    //   File f = LittleFS.open("/rf.txt", "w");
     // }
 
     f.println(Valor);
     f.close();
-    SPIFFS.end();
+    LittleFS.end();
   }
   consultaSensorRF();
 }
@@ -52,7 +52,7 @@ void trataRF()
 {
   static unsigned long limparUltimoDisparoRF = 0;
   unsigned long currenTime = millisAtual;
-  //Contador += 1;
+  // Contador += 1;
   if (currenTime - starTime >= interval)
   {
     limparUltimoDisparoRF++;
@@ -72,11 +72,11 @@ void trataRF()
       //(!DEBUG_ON) ?:   Serial.println(notificar);
       if (notificar)
       {
-        //sendDataToFirebase("Sensor " + String(numSensorMSG + 1) + " disparado", numSensorMSG, "2");
+        // sendDataToFirebase("Sensor " + String(numSensorMSG + 1) + " disparado", numSensorMSG, "2");
       }
       else if (enviarsms)
       {
-        //sms sendSMS(numSensorMSG);
+        // sms sendSMS(numSensorMSG);
         slog("sendSMS(numSensorMSG)");
       }
       ultimoDisparo = numSensorMSG;
@@ -110,7 +110,7 @@ boolean verificaSensoresRF()
   {
     texto = SensoresRF[nsensor];
     texto.trim();
-    //separa dados nas variaveis
+    // separa dados nas variaveis
     Funcao = "";
     PortaAparelho = "";
     Msg = "";
@@ -138,7 +138,7 @@ boolean verificaSensoresRF()
           Msg += texto[i2];
         }
 
-        if (i3 == 4) //ip
+        if (i3 == 4) // ip
         {
           vIPDest += texto[i2];
         }
@@ -188,7 +188,7 @@ boolean verificaSensoresRF()
     vTamanho = "";
     i3 = 1;
 
-    //separa dados nas variaveis
+    // separa dados nas variaveis
     for (uint8_t i2 = 0; i2 <= 60; i2++)
     {
       if (texto[i2] != '|' && i3 <= 7 && texto != "")
@@ -208,7 +208,7 @@ boolean verificaSensoresRF()
           Msg += texto[i2];
         }
 
-        if (i3 == 4) //ip
+        if (i3 == 4) // ip
         {
           vIPDest += texto[i2];
         }
@@ -274,7 +274,7 @@ boolean verificaSensoresRF()
       ValorAtuacaoRF = "1";
     }
 
-    //varia com o status atual da prota
+    // varia com o status atual da prota
     if (vsAtualRF == "0")
     {
       estadoAtualRF[numSensorDisparado] = LOW;
@@ -429,7 +429,7 @@ boolean verificaSensoresRF()
               Inverte(PortaAparelho.toInt() - 1);
               msgDisparadaRF[numSensorDisparado] = true;
               ultimoEstadoRF[numSensorDisparado] = estadoAtualRF[numSensorDisparado];
-              //LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
+              // LigaDesliga(PortaAparelho.toInt()-1, HIGH, "", 0);
             }
             else
             {
@@ -495,7 +495,7 @@ boolean verificaSensoresRF()
           }
           else if (Destino != IpDispositivo && ultimoEstadoRF[numSensorDisparado] != estadoAtualRF[numSensorDisparado])
           {
-            //udp
+            // udp
             char replyPacekt[255] = "";
             String Texto = vIPDest + "|" + PortaAparelho + "|false|" + String(vChip) + "|E|1|";
             Texto.toCharArray(replyPacekt, 255);
@@ -541,15 +541,15 @@ boolean verificaSensoresRF()
 
 void consultaSensorRF()
 {
-  //String texto = "";
-  // SPIFFS.begin();
-  // File f = SPIFFS.open("/rf.txt", "r");
-  // if (f)
-  //   texto = f.readStringUntil('*');
-  // texto += '*';
-  // slogln(texto);
-  // f.close();
-  // SPIFFS.end();
+  // String texto = "";
+  //  LittleFS.begin();
+  //  File f = LittleFS.open("/rf.txt", "r");
+  //  if (f)
+  //    texto = f.readStringUntil('*');
+  //  texto += '*';
+  //  slogln(texto);
+  //  f.close();
+  //  LittleFS.end();
   String texto = ReadFirstLine("/rf.txt");
 
   int posicao = 0;
@@ -623,8 +623,8 @@ void LoopRF()
 
   {
 
-    //slogln("sinal de radio detectado");
-    //      output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
+    // slogln("sinal de radio detectado");
+    //       output(mySwitch.getReceivedValue(), mySwitch.getReceivedBitlength(), mySwitch.getReceivedDelay(), mySwitch.getReceivedRawdata(),mySwitch.getReceivedProtocol());
     if (millisAtual - rfmilis >= 10000 || millisAtual - rfmilis < 0)
     {
       rfmilis = millisAtual;
@@ -658,8 +658,8 @@ void LoopRF()
     }
     mySwitch.resetAvailable();
 
-    //delay(300);
-    //    noTone(Buzzer);
-    //  enReadRF = false;
+    // delay(300);
+    //     noTone(Buzzer);
+    //   enReadRF = false;
   }
 }
